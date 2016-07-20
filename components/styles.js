@@ -61,11 +61,11 @@ var styles = StyleSheet.create({
   	color: 'white'
   },
   redButton: {
-    backgroundColor: '#D9534F',
+    backgroundColor: '#d667cd',
     width: 100
   },
   greenButton: {
-    backgroundColor: '#5CB85C',
+    backgroundColor: '#d667cd',
     width: 100
   }
   

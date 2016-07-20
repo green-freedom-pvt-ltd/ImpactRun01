@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "7FFC2EB835245A225B28B727D7832938ED3DD1B7",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "7FFC2EB835245A225B28B727D7832938ED3DD1B7" : 0,
+    "57767EFEB9B77F3F6860DC8721C2DB021C76D0F7" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "09B9110E-FAF7-44DB-86E3-30782BB7B239",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "7FFC2EB835245A225B28B727D7832938ED3DD1B7" : "IMpactRun1\/",
+    "57767EFEB9B77F3F6860DC8721C2DB021C76D0F7" : "ImpactRunV0.2\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ImpactRunV0.2",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ios\/ImpactRunV0.2.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:akashnautiyal013\/ImpactRunV0.2.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "57767EFEB9B77F3F6860DC8721C2DB021C76D0F7"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:akashnautiyal013\/ImpactRun01.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "7FFC2EB835245A225B28B727D7832938ED3DD1B7"
+    }
+  ]
+}

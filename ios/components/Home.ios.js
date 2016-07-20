@@ -25,6 +25,8 @@ var mapRef = 'mapRef';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SettingsService from '../../components/SettingsService';
 import commonStyles from '../../components/styles';
+import haversine from 'haversine'
+
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height-100;
 
@@ -62,9 +64,12 @@ var Home = React.createClass({
 
   getInitialState: function() {
     return {
+      prevLatLng: {},
+      distanceTravelled: 0,
+      prevDistance:0,
       textState:'',
-      enabled: false,
-      isMoving: false,
+      enabled: true,
+      isMoving: true,
       paceButtonStyle: commonStyles.disabledButton,
       paceButtonIcon: 'md-play',
       navigateButtonIcon: 'md-locate',
@@ -146,7 +151,7 @@ var Home = React.createClass({
     });
 
     // Fetch settings and configure.
-    SettingsService.getValues(function(values) {
+     SettingsService.getValues(function(values) {
 
       //values.schedule = SettingsService.generateSchedule(24, 1, 1, 1);
       
@@ -169,53 +174,59 @@ var Home = React.createClass({
     });
 
     this.setState({
-      enabled: false,
-      isMoving: false,
+      enabled: true,
+      isMoving: true,
       textState:'start'
     });
   },
-  addMarker :function(location) {
+  
 
-    if (location.coords.accuracy <= 5){
+  addMarker :function(location) {
+    const {distanceTravelled,prevDistance } = this.state
+    const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
+    const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
+    this.setState({
+        distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
+        prevLatLng: newLatLngs,
+        prevDistance: newDistance-distanceTravelled,
+      })
+    if (location.coords.accuracy <= 15){
+   
     var me = this;
     this.addAnnotations(mapRef, [this.createMarker(location)]);
     if ( this.polyline) {
+
       this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
       // this.polyline.lengthof.push(this.polyline.oneOf(this.polyline));
       this.updateAnnotation(mapRef, this.polyline);
     }
-     this.bgGeo = BackgroundGeolocation;
-     this.bgGeo.getOdometer(function(distance) {
-     me.setState({
-        odometer: (distance/10000).toFixed(2)
-      });
-    });
+  
   }else{
+    var Prevdistance = this.state.prevDistance*1000;
     var locationAccuracy=location.coords.accuracy;
     console.log('otherAccraucy123:'+ JSON.stringify(location));
-    var thresholdAccuracy = 5;
+    var thresholdAccuracy = 16;
     var offset = 1;
     var thresholdFactor = 5; 
     console.log('odometerReading:'+this.state.odometer);
-    var currentDistance = 100/(10 - (thresholdAccuracy-offset)) > thresholdFactor;
+    var currentDistance = Prevdistance;
     console.log('somemoreData:'+currentDistance);
-    if(100/(location.coords.accuracy - (thresholdAccuracy-offset)) > thresholdFactor){
+    if(Prevdistance/(location.coords.accuracy - (thresholdAccuracy-offset)) > thresholdFactor){
     var me = this;
     this.addAnnotations(mapRef, [this.createMarker(location)]);
     if ( this.polyline) {
       this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
       // this.polyline.lengthof.push(this.polyline.oneOf(this.polyline));
       this.updateAnnotation(mapRef, this.polyline);
+      }
     }
-     this.bgGeo = BackgroundGeolocation;
-     this.bgGeo.getOdometer(function(distance) {
-     me.setState({
-        odometer: (distance/10000).toFixed(2)
-      });
-    });
-  }
-}
+   }
   },
+   calcDistance:function(newLatLng) {
+    const { prevLatLng } = this.state
+    return (haversine(prevLatLng, newLatLng) || 0)
+  },
+
   createMarker: function(location) {
     return {
         id: location.timestamp,
@@ -277,7 +288,7 @@ var Home = React.createClass({
 
     this.setState({
       isMoving: isMoving,
-      textState:'stop'
+      textState:'START'
     });
     this.updatePaceButtonStyle();
     
@@ -365,12 +376,14 @@ var Home = React.createClass({
             onOpenAnnotation={this.onOpenAnnotation}
             onRightAnnotationTapped={this.onRightAnnotationTapped}
             onUpdateUserLocation={this.onUpdateUserLocation} />
+            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled).toFixed(2)} km</Text>
+            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled*10).toFixed(2)} rs</Text>
+            <Text style={styles.bottomBarContent}>{parseFloat(this.state.prevDistance).toFixed(2)} km</Text>
         </View>
 
         <View style={commonStyles.bottomToolbar}>
-          <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={styles.StartStopbtn}><Text style={{paddingTop:10,paddingLeft:10,fontSize:25,marginLeft:10,FONTWEIGHT:'800',letterSpacing:1,}}>{this.state.textState}</Text></Icon>
-          <Text style={{width:deviceWidth/4,color:'#00b9ff',}}>{this.state.odometer}km</Text>
-          <Text style={{width:deviceWidth/4,color:'#00b9ff',}}>{this.state.odometer*10}rs</Text>
+          <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={{paddingTop:10,paddingLeft:10,fontSize:25,marginLeft:10,fontWeight:'800',letterSpacing:1,}}>{this.state.textState}</Text></Icon>
+          <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{paddingTop:10,paddingLeft:10,fontSize:25,marginLeft:10,fontWeight:'800',letterSpacing:1,}}>END RUN</Text></TouchableHighlight>
 
         </View>
       </View>
