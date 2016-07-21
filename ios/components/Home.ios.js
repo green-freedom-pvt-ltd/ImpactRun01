@@ -87,15 +87,18 @@ var Home = React.createClass({
 
 
   componentDidMount: function() {
+    
+
+
+
 
     var me = this,
-        gmap = this.refs.gmap;
+    gmap = this.refs.gmap;
     this.locationManager = this.props.locationManager;
 
     // location event
     this.locationManager.on("location", function(location) {
       console.log('- location: ', JSON.stringify(location, null, 2));
-
       if (location.sample) {
         console.log('<sample location>');
         return;
@@ -170,8 +173,10 @@ var Home = React.createClass({
           me.initializePolyline();
           me.updatePaceButtonStyle()
         }
+
       });
     });
+    
 
     this.setState({
       enabled: true,
@@ -185,9 +190,7 @@ var Home = React.createClass({
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
-    this.setState({
-        distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
-        prevLatLng: newLatLngs,
+  this.setState({
         prevDistance: newDistance-distanceTravelled,
       })
     if (location.coords.accuracy <= 15){
@@ -200,18 +203,21 @@ var Home = React.createClass({
       // this.polyline.lengthof.push(this.polyline.oneOf(this.polyline));
       this.updateAnnotation(mapRef, this.polyline);
     }
+    const {distanceTravelled,prevDistance } = this.state
+    const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
+    this.setState({
+        distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
+        prevLatLng: newLatLngs,
+      })
   
   }else{
     var Prevdistance = this.state.prevDistance*1000;
     var locationAccuracy=location.coords.accuracy;
-    console.log('otherAccraucy123:'+ JSON.stringify(location));
     var thresholdAccuracy = 16;
     var offset = 1;
     var thresholdFactor = 5; 
-    console.log('odometerReading:'+this.state.odometer);
     var currentDistance = Prevdistance;
-    console.log('somemoreData:'+currentDistance);
-    if(Prevdistance/(location.coords.accuracy - (thresholdAccuracy-offset)) > thresholdFactor){
+    if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){
     var me = this;
     this.addAnnotations(mapRef, [this.createMarker(location)]);
     if ( this.polyline) {
@@ -223,8 +229,10 @@ var Home = React.createClass({
    }
   },
    calcDistance:function(newLatLng) {
+
     const { prevLatLng } = this.state
     return (haversine(prevLatLng, newLatLng) || 0)
+  
   },
 
   createMarker: function(location) {
@@ -270,6 +278,8 @@ var Home = React.createClass({
         me.initializePolyline();
       });
     } else {
+      this.state.distanceTravelled = 0;
+      this.state.prevDistance = 0;
       this.locationManager.removeGeofences();
       this.locationManager.stop();
       this.locationManager.resetOdometer();
@@ -348,7 +358,7 @@ var Home = React.createClass({
     console.log(e);
   },
 
-  render: function() {
+  render: function(location) {
     return (
       <View style={commonStyles.container}>
         <View style={commonStyles.iosStatusBar} />
@@ -376,9 +386,10 @@ var Home = React.createClass({
             onOpenAnnotation={this.onOpenAnnotation}
             onRightAnnotationTapped={this.onRightAnnotationTapped}
             onUpdateUserLocation={this.onUpdateUserLocation} />
-            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled).toFixed(2)} km</Text>
-            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled*10).toFixed(2)} rs</Text>
-            <Text style={styles.bottomBarContent}>{parseFloat(this.state.prevDistance).toFixed(2)} km</Text>
+            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled).toFixed(2)}km</Text>
+            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled*10).toFixed(2)}rs</Text>
+            <Text style={styles.bottomBarContent}>{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
+
         </View>
 
         <View style={commonStyles.bottomToolbar}>
