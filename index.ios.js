@@ -7,17 +7,17 @@ import {
   View,
   TouchableHighlight,
   StatusBar,
-  Text
+  Text,
+  Navigator
  } from 'react-native';
 
-import Drawer from 'react-native-drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 
 global.bgGeo = BackgroundGeolocation;
-
-import Home from './ios/components/Home.ios';
-import Settings from './ios/components/Settings.ios';
+import Home from './ios/components/HomeScreen.ios';
+import RunScreen from './ios/components/Home.ios';
+import Login from './ios/components/login';
 
 var Application = React.createClass({
   getInitialState: function() {
@@ -40,13 +40,37 @@ var Application = React.createClass({
   },
   render: function() {
     return (
-      <View style={{backgroundColor: "#ffd700", flex: 1}}>
-        <Drawer ref="drawer" side="right" acceptPan={false} content={<Settings drawer={this.refs.drawer} locationManager={BackgroundGeolocation} />}>
-          <Home drawer={this.state.drawer} locationManager={BackgroundGeolocation} />    
-        </Drawer>
-      </View>
+      <View style={{backgroundColor: "#ccc", flex: 1}}>
+      
+        <Navigator
+           ref={(ref) => this._navigator = ref}
+            configureScene={(route) => {
+                        return {
+                            ...Navigator.SceneConfigs.FloatFromRight,
+                            gestures: {}
+                        };
+                    }}
+                    initialRoute={{id: 'login'}}
+                    renderScene={this.renderScene} />
+             </View>
     );
+  },
+
+
+    renderScene:function (route, navigator) {
+        switch (route.id) {
+             case 'home':
+            return <Home navigator={navigator} {...route.passProps}/>;
+            case 'runscreen':
+            return <RunScreen navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>;
+            case 'login':
+            return <Login navigator={navigator} {...route.passProps}/>;
+            default :
+                return <Home navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
+        }
   }
+
+
 });
 
 AppRegistry.registerComponent('ImpactRun', () => Application);
