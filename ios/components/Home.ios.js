@@ -70,7 +70,13 @@ var styles = StyleSheet.create({
   },
   map: {
     flex: 1
-  }
+  },
+  bottomBarContent:{
+  paddingLeft:10, 
+  width:deviceWidth/3,
+  justifyContent: 'center',      
+  alignItems: 'center',
+  },
 });
 
 SettingsService.init('iOS');
