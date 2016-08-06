@@ -2,8 +2,12 @@
 
 import React, { Component } from 'react';
 import {
-  StyleSheet
+  StyleSheet,
+  Dimensions
  } from 'react-native';
+const width = Dimensions.get('window').width
+
+const height = Dimensions.get('window').height
 
 var styles = StyleSheet.create({
   container: {
@@ -27,15 +31,10 @@ var styles = StyleSheet.create({
     backgroundColor: '#00b9ff'
   },
   bottomToolbar: {
-  	paddingLeft: 5,
-    paddingRight: 5,
     backgroundColor: 'white',
-    borderTopColor: 'white',
-    borderTopWidth: 1,
     alignSelf: 'stretch',
     flexDirection: 'row',
-    alignItems: 'center',
-    height: 46
+    height: 50
   },
   toolbarTitle: {
   	fontWeight: 'bold', 
@@ -45,12 +44,16 @@ var styles = StyleSheet.create({
   	textAlign: 'center'
   },
   disabledButton: {
-    backgroundColor: '#ccc'
+    width:width/2,
+    height:50,
+    backgroundColor: '#ccc',
+   paddingTop:10,
+   paddingLeft:10,
   },
   iconButton: {
     marginRight:10,
     marginTop:2,
-    fontSize:35,
+    fontSize:10,
     backgroundColor:'red',
   },
   backButtonIcon: {
@@ -61,12 +64,20 @@ var styles = StyleSheet.create({
   	color: 'white'
   },
   redButton: {
+    padding:0,
+    height:50,
     backgroundColor: '#d667cd',
-    width: 100
+    width:width/2, 
+    justifyContent:'center',
   },
   greenButton: {
+    padding:0,
+    height:50,
     backgroundColor: '#d667cd',
-    width: 100
+    width: 100,
+    width:width/2,
+    alignItems: 'center',
+    justifyContent:'center',
   }
   
 });

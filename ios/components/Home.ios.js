@@ -43,7 +43,27 @@ var styles = StyleSheet.create({
     marginRight:-10,
     fontSize:30,
     color:'white',
+
   
+  },
+  distanceWrap:{
+      flexDirection: 'row',
+      justifyContent:'center',
+      width:deviceWidth,
+      height:50,
+  },
+  playpause:{
+    justifyContent:'center',
+    fontSize:25,
+    color:'white',
+
+  },
+  EndRun:{
+  justifyContent: 'center',      
+  alignItems: 'center',
+  height:50,
+  width:deviceWidth/2,
+  backgroundColor:'#00b9ff'
   },
   workspace: {
     flex: 1
@@ -68,6 +88,7 @@ var Home = React.createClass({
       distanceTravelled: 0,
       prevDistance:0,
       textState:'',
+      Enbtn:'',
       enabled: true,
       isMoving: true,
       paceButtonStyle: commonStyles.disabledButton,
@@ -181,7 +202,8 @@ var Home = React.createClass({
     this.setState({
       enabled: true,
       isMoving: true,
-      textState:'start'
+      textState:'PLAY',
+      EndRun:'BEGIN RUN'
     });
   },
   
@@ -287,7 +309,8 @@ var Home = React.createClass({
       this.polyline = null;
     }
     this.setState({
-      enabled: !this.state.enabled
+      enabled: !this.state.enabled,
+      
     });
     this.updatePaceButtonStyle();
   },
@@ -338,7 +361,9 @@ var Home = React.createClass({
     this.setState({
       paceButtonStyle: style,
       paceButtonIcon: (this.state.enabled && this.state.isMoving) ? 'md-pause' : 'md-play',
-      textState:(this.state.enabled && this.state.isMoving) ? 'STOP':'START', 
+      textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'PLAY', 
+      EndRun:(this.state.enabled && this.state.isMoving) ? 'END RUN':'BEGIN RUN', 
+
     });
   },
   // MapBox
@@ -386,15 +411,16 @@ var Home = React.createClass({
             onOpenAnnotation={this.onOpenAnnotation}
             onRightAnnotationTapped={this.onRightAnnotationTapped}
             onUpdateUserLocation={this.onUpdateUserLocation} />
-            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled).toFixed(2)}km</Text>
-            <Text style={styles.bottomBarContent}>{parseFloat(this.state.distanceTravelled*10).toFixed(2)}rs</Text>
-            <Text style={styles.bottomBarContent}>{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
-
+        <View style={styles.distanceWrap}>
+            <Text style={styles.bottomBarContent}>Distance {"\n"}{parseFloat(this.state.distanceTravelled).toFixed(1)}km</Text>
+            <Text style={styles.bottomBarContent}>Rupees{"\n"}{parseFloat(this.state.distanceTravelled*10).toFixed(0)}rs</Text>
+            <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
+         </View>
         </View>
 
         <View style={commonStyles.bottomToolbar}>
-          <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={{paddingTop:10,paddingLeft:10,fontSize:25,marginLeft:10,fontWeight:'800',letterSpacing:1,}}>{this.state.textState}</Text></Icon>
-          <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{paddingTop:10,paddingLeft:10,fontSize:25,marginLeft:10,fontWeight:'800',letterSpacing:1,}}>END RUN</Text></TouchableHighlight>
+          <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={styles.playpause}>{this.state.textState}</Text></Icon>
+          <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
 
         </View>
       </View>
