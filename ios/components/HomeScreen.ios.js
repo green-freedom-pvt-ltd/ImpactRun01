@@ -47,13 +47,8 @@ class Profile extends Component {
 
 
     componentWillMount() {
-        this.fetchData();
-    }
-
-   
-    componentDidMount () {
-      // let causes = []
-      try {
+        // this.fetchData();
+        try {
         AsyncStorage.multiGet(['cause0', 'cause1', 'cause2', 'cause3','cause4'], (err, stores) => {
             var _this = this
             stores.map((item) => {
@@ -76,27 +71,55 @@ class Profile extends Component {
         } catch (err) {
         console.log(err)
         }
-      }
+    }
+
+   
+    // componentDidMount () {
+    //   // let causes = []
+    //   try {
+    //     AsyncStorage.multiGet(['cause0', 'cause1', 'cause2', 'cause3','cause4'], (err, stores) => {
+    //         var _this = this
+    //         stores.map((item) => {
+    //             let key = item[0];
+    //             let val = JSON.parse(item[1]);
+    //             console.log('myKEy:'+key);
+    //             let causesArr = _this.state.causes.slice()
+    //             causesArr.push(val)
+    //             _this.setState({causes: causesArr})
+    //             console.log('causeArrInne'+JSON.stringify(_this.state.causes))
+    //             _this.setState({album : Object.assign({}, _this.state.album, {[val.pk]: val.cause_image})})
+    //             console.log('album2'+JSON.stringify(_this.state.album.key))
+    //         });
+    //       console.log('album3'+JSON.stringify(this.state.album))
+    //       this.setState({navigation: Object.assign({}, this.state.navigation, {
+    //         index: 1,
+    //         routes: Object.keys(this.state.album).map(key => ({ key })),
+    //       })})
+    //     });
+    //     } catch (err) {
+    //     console.log(err)
+    //     }
+    //   }
       
 
     // CAUSES_FETCH_FUNCTION
-    fetchData(dataValue){
-    fetch(REQUEST_URL)
-      .then((response) => response.json())
-      .then((causes) => { 
-          var causes = causes;
-          console.log('somecausre:'+ causes.results[0].cause_title);
-          let causesData = []
-          causes.results.forEach ((item,i)=> {
-            causesData.push(['cause'+i, JSON.stringify(item)])
-          })
-          console.log('causesData'+JSON.stringify(causesData))
-          AsyncStorage.multiSet(causesData, (err) => {
-            console.log(err)
-          })
-        })
-      .done();
-    }
+    // fetchData(dataValue){
+    // fetch(REQUEST_URL)
+    //   .then((response) => response.json())
+    //   .then((causes) => { 
+    //       var causes = causes;
+    //       console.log('somecausre:'+ causes.results[0].cause_title);
+    //       let causesData = []
+    //       causes.results.forEach ((item,i)=> {
+    //         causesData.push(['cause'+i, JSON.stringify(item)])
+    //       })
+    //       console.log('causesData'+JSON.stringify(causesData))
+    //       AsyncStorage.multiSet(causesData, (err) => {
+    //         console.log(err)
+    //       })
+    //     })
+    //   .done();
+    // }
 
      // SLIDER_COVERFLOW_STYLE
     _buildCoverFlowStyle = ({ layout, position, route, navigationState,data }) => {
@@ -106,7 +129,7 @@ class Profile extends Component {
       const currentIndex = routes.indexOf(route);
       const inputRange = routes.map((x, i) => i);
       const translateOutputRange = inputRange.map(i => {
-        return width * (currentIndex - i) - ((width /3.7/0.2260-deviceWidth) * (currentIndex - i));
+        return width * (currentIndex - i) - ((width-deviceWidth+60) * (currentIndex - i));
       });
       const scaleOutputRange = inputRange.map(i => {
         if (currentIndex === i) {
@@ -281,7 +304,7 @@ class Profile extends Component {
     },
     album: {
       backgroundColor: '#fff',
-      width: deviceWidth-60,
+      width: deviceWidth-55,
       height: deviceheight-170,
       elevation: 12,
       shadowColor: '#000000',
@@ -293,12 +316,12 @@ class Profile extends Component {
       borderRadius:5,
     },
     cover: {
-      width: deviceWidth-60,
+      width: deviceWidth-55,
       height:deviceheight/2-50,
       borderRadius:5,
     },
     borderhide:{
-      width: deviceWidth-60,
+      width: deviceWidth-55,
       height:10,
       top:-10,
       backgroundColor:'white',

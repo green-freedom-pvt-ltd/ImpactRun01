@@ -77,4 +77,4 @@ var Application = React.createClass({
 
 });
 
-AppRegistry.registerComponent('ImpactRun', () => Application);
+AppRegistry.registerComponent('Impactrun', () => Application);

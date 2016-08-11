@@ -13,6 +13,7 @@ import {
  Image
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
+var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 var deviceHeight = Dimensions.get('window').height;
@@ -35,14 +36,35 @@ class Profile extends Component {
     //     this.props.popRoute();
     // }
    componentWillMount() {
+
        GoogleSignin.configure({
        iosClientId:"437150569320-362l4gc7qou0r2u8gpple6lkfo3jjjre.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
        });
+       this.fetchData();
      }
 
+
+
+    fetchData(dataValue){
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((causes) => { 
+          var causes = causes;
+          console.log('somecausre:'+ causes.results[0].cause_title);
+          let causesData = []
+          causes.results.forEach ((item,i)=> {
+            causesData.push(['cause'+i, JSON.stringify(item)])
+          })
+          console.log('causesData'+JSON.stringify(causesData))
+          AsyncStorage.multiSet(causesData, (err) => {
+            console.log(err)
+          })
+        })
+      .done();
+    }
   _signIn() {
     GoogleSignin.signIn()
     .then((user) => {
