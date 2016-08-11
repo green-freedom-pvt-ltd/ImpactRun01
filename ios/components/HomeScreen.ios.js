@@ -49,7 +49,7 @@ class Profile extends Component {
     componentWillMount() {
         // this.fetchData();
         try {
-        AsyncStorage.multiGet(['cause0', 'cause1', 'cause2', 'cause3','cause4'], (err, stores) => {
+        AsyncStorage.multiGet([ 'cause1','cause2', 'cause3','cause4',], (err, stores) => {
             var _this = this
             stores.map((item) => {
                 let key = item[0];
@@ -59,7 +59,7 @@ class Profile extends Component {
                 causesArr.push(val)
                 _this.setState({causes: causesArr})
                 console.log('causeArrInne'+JSON.stringify(_this.state.causes))
-                _this.setState({album : Object.assign({}, _this.state.album, {[val.pk]: val.cause_image})})
+                _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: val.cause_image})})
                 console.log('album2'+JSON.stringify(_this.state.album.key))
             });
           console.log('album3'+JSON.stringify(this.state.album))
@@ -252,7 +252,7 @@ class Profile extends Component {
           <TouchableOpacity  onPress={()=>this.navigateToCauseDetail()} style={styles.album}>
             <Image source={{uri:this.state.album[route.key]}} style={styles.cover}/>
             <View style={styles.borderhide}></View>
-            <Text>{cause.cause_title}</Text>
+            <Text>{route.key}</Text>
           </TouchableOpacity >
           <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
              <Image style={{height:50,width:80}} source={ require('../../images/RunImage.png')}></Image>
@@ -305,7 +305,7 @@ class Profile extends Component {
     album: {
       backgroundColor: '#fff',
       width: deviceWidth-55,
-      height: deviceheight-170,
+      height: deviceheight-100,
       elevation: 12,
       shadowColor: '#000000',
       shadowOpacity: 0.5,

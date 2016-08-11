@@ -36,14 +36,14 @@ class Profile extends Component {
     //     this.props.popRoute();
     // }
    componentWillMount() {
-
+       this.fetchData();
        GoogleSignin.configure({
        iosClientId:"437150569320-362l4gc7qou0r2u8gpple6lkfo3jjjre.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
        });
-       this.fetchData();
+       // this.fetchData();
      }
 
 
