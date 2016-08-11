@@ -546,6 +546,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				8350384F1C9C9B98000DE4BA /* Run Script */,
 				8356DDC51CC922F100FCCEFB /* Embed Frameworks */,
+				38CCD14E1D5D223D00834010 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -831,6 +832,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
+		38CCD14E1D5D223D00834010 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"";
 		};
 		8350384F1C9C9B98000DE4BA /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;

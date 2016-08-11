@@ -12,6 +12,7 @@ import {
  AsyncStorage,
  Image
 } from 'react-native'
+
 import Icon from 'react-native-vector-icons/Ionicons';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 
@@ -79,91 +80,84 @@ class Profile extends Component {
           'Authorization':"Bearer google-oauth2 "+ user.accessToken,
         }
       })
-    .then((response) => {
-      console.log('1>>>>>>____'+response)
-      response.json()
-      console.log('2yahan aaya>>>>>>____'+JSON.stringify(response.json()))
-    })
-    .then((userdata) => { 
-      console.log('came here>>>'+userdata)
-       this.props.navigator.push({
+  
+      .then((response) => response.json())
+      .then((userdata) => { 
+      this.props.navigator.push({
               title: 'Gps',
               id:'home',
               index: 0,
               navigator: this.props.navigator,
              });
-        console.log('MY data:'+ JSON.stringify(userdata));
-        var userdata = userdata;
-        console.log('MY userdata:' + userdata);
-        // AlertIOS.alert(
-        // "Thankyou for Login:)", "You have shared a meal to a hungry child.share your refferal code to your friends to create more impact !",quote)
-       
-                // let UID234_object = {
-                //     first_name:JSON.stringify(userdata[0].first_name),
-                //     user_id: JSON.stringify(userdata[0].user_id),
-                //     last_name: JSON.stringify(userdata[0].last_name),
-                //     gender_user:JSON.stringify(userdata[0].gender_user),
-                //     email:JSON.stringify(userdata[0].email),
-                //     phone_number:JSON.stringify(userdata[0].phone_number),
-                //     social_thumb:JSON.stringify(userdata[0].social_thumb),
-                //     auth_token:JSON.stringify(userdata[0].auth_token),
-                // };
-                // // first user, delta values
-                // let UID234_delta = {
-                //     first_name:JSON.stringify(userdata[0].first_name),
-                //     user_id: JSON.stringify(userdata[0].user_id),
-                //     last_name: JSON.stringify(userdata[0].last_name),
-                //     gender_user:JSON.stringify(userdata[0].gender_user),
-                //     email:JSON.stringify(userdata[0].email),
-                //     phone_number:JSON.stringify(userdata[0].phone_number),
-                //     social_thumb:JSON.stringify(userdata[0].social_thumb),
-                //     auth_token:JSON.stringify(userdata[0].auth_token),
-                // };
+          console.log('MY data:'+ JSON.stringify(userdata));
+          var userdata = userdata;
+          console.log('MY userdata:' + userdata[0].first_name);
 
-                // // // second user, initial values
-                //  let UID345_object = {
-                //     first_name:JSON.stringify(userdata[0].first_name),
-                //     user_id: JSON.stringify(userdata[0].user_id),
-                //     last_name: JSON.stringify(userdata[0].last_name),
-                //     gender_user:JSON.stringify(userdata[0].gender_user),
-                //     email:JSON.stringify(userdata[0].email),
-                //     phone_number:JSON.stringify(userdata[0].phone_number),
-                //     social_thumb:JSON.stringify(userdata[0].social_thumb),
-                //     auth_token:JSON.stringify(userdata[0].auth_token),
-                // };
+          let UID234_object = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+          };
+          // first user, delta values
+          let UID234_delta = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+         };
+          // // second user, initial values
+           let UID345_object = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+          };
 
-                // // // second user, delta values
-                //  let UID345_delta = {
-                //     first_name:JSON.stringify(userdata[0].first_name),
-                //     user_id: JSON.stringify(userdata[0].user_id),
-                //     last_name: JSON.stringify(userdata[0].last_name),
-                //     gender_user:JSON.stringify(userdata[0].gender_user),
-                //     email:JSON.stringify(userdata[0].email),
-                //     phone_number:JSON.stringify(userdata[0].phone_number),
-                //     social_thumb:JSON.stringify(userdata[0].social_thumb),
-                //     auth_token:JSON.stringify(userdata[0].auth_token),
-                // };
+          // // second user, delta values
+           let UID345_delta = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+          };
 
-                // let multi_set_pairs = [
-                //     ['UID234', JSON.stringify(UID234_object)],
-                //     ['UID345', JSON.stringify(UID345_object)]
-                // ]
-                // let multi_merge_pairs = [
-                //     ['UID234', JSON.stringify(UID234_delta)],
-                //     ['UID345', JSON.stringify(UID345_delta)]
-                // ]
+          let multi_set_pairs = [
+              ['UID234', JSON.stringify(UID234_object)],
+              ['UID345', JSON.stringify(UID345_object)]
+          ]
+          let multi_merge_pairs = [
+              ['UID234', JSON.stringify(UID234_delta)],
+              ['UID345', JSON.stringify(UID345_delta)]
+          ]
 
-                // AsyncStorage.multiSet(multi_set_pairs, (err) => {
-                //     AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-                //         AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-                //             stores.map((result, i, store) => {
-                //                 let key = store[i][0];
-                //                 let val = store[i][1];
-                //                 console.log("UserDatakey" + key, val);
-                //             });
-                //         });
-                //     });
-                //  });
+          AsyncStorage.multiSet(multi_set_pairs, (err) => {
+              AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
+                  AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+                      stores.map((result, i, store) => {
+                          let key = store[i][0];
+                          let val = store[i][1];
+                          console.log("UserDatakey1 :" + key, val);
+                      });
+                  });
+              });
+           });
   
           })
         .done();
@@ -173,46 +167,6 @@ class Profile extends Component {
     })
     .done();
   }
-
-
-
-  // _signIn() {
-  //   GoogleSignin.signIn()
-  //   .then((user) => {
-  //     console.log('usertoken:'+ JSON.stringify(user));
-           
-  //     this.setState({user: user});
-  //     // var access_token =JSON.stringify(user.accessToken);
-  //     console.log('MY accessToken:'+ user.accessToken);
-  //     fetch("http://139.59.243.245/api/users/", {
-  //     method: "GET",
-  //      headers: {  
-  //         'Authorization':"Bearer google-oauth2 "+ user.accessToken,
-  //       }
-  //     })
-  //   .then((response) => response.json())
-  //   .then((userdata) => { 
-  //     this.props.navigator.push({
-  //             title: 'Gps',
-  //             id:'home',
-  //             index: 0,
-  //             navigator: this.props.navigator,
-  //            });
-  //         console.log('MY data:'+ JSON.stringify(userdata));
-  //       var userdata = userdata;
-  //       // console.log('MY userdata:' + userdata);
-  //       // AlertIOS.alert(
-  //       // "Thankyou for Login:)", "You have shared a meal to a hungry child.share your refferal code to your friends to create more impact !",quote)
-       
-               
-  //         })
-  //       .done();
-  //      })
-  //  .catch((err) => {
-  //     console.log('WRONG SIGNIN', err);
-  //   })
-  //   .done();
-  // }
 
   
     render() {

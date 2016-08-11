@@ -18,6 +18,7 @@ global.bgGeo = BackgroundGeolocation;
 import Home from './ios/components/HomeScreen.ios';
 import RunScreen from './ios/components/Home.ios';
 import Login from './ios/components/login';
+import Login2 from './ios/components/login2';
 import CauseDetail from './ios/components/CauseDetail';
 
 
@@ -69,6 +70,8 @@ var Application = React.createClass({
             return <RunScreen navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>;
             case 'login':
             return <Login navigator={navigator} {...route.passProps}/>;
+            case 'login2':
+            return <Login2 navigator={navigator} {...route.passProps}/>;
             default :
                 return <Home navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
         }

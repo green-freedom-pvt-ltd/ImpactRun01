@@ -143,7 +143,7 @@ class Profile2 extends Component {
     navigateToHomeScreen(){
       this.props.navigator.push({
         title: 'Gps',
-        id:'home',
+        id:'runscreen',
         index: 0,
         navigator: this.props.navigator,
       });
@@ -160,11 +160,12 @@ class Profile2 extends Component {
           <Image source={require('../../images/login_background.png')} style={styles.shadow}>
             <View style={styles.center}>
               <Image source={require('../../images/Logo.png')} style={styles.logo}/>
+
             </View>
             <View style={styles.container}>
               <TouchableOpacity onPress={() => this.props.navigator.push({
                 title: 'Gps',
-                id:'home',
+                id:'runscreen',
                 navigator: this.props.navigator,
                })} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>LOGIN WITH FACEBOOK</Text><Image source={require('../../images/facebook.png')} style={styles.facebook}/>
               </TouchableOpacity>

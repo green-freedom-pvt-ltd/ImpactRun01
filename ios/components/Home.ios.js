@@ -14,6 +14,7 @@ import {
   AlertIOS,
   AsyncStorage
  } from 'react-native';
+import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 import Mapbox from 'react-native-mapbox-gl';
 import BackgroundGeolocation from 'react-native-background-geolocation';
@@ -113,18 +114,22 @@ var Home = React.createClass({
 
 
   componentDidMount: function() {
-    // AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-    //                         stores.map((result, i, store) => {
-    //                             let key = store[i][0];
-    //                             let val = store[i][1];
-    //                             console.log("UserDatakey" + key, val);
-    //                             this.setState({
-    //                               userData:JSON.parse(val),
-    //                             })
-    //                             console.log('userDataMy:'+this.state.userData.gender_user);
-    //                         });
-    //                     });
-
+       GoogleSignin.configure({
+       iosClientId:"437150569320-362l4gc7qou0r2u8gpple6lkfo3jjjre.apps.googleusercontent.com", // only for iOS
+       })
+      .then((user) => {
+         console.log('Token:'+user);
+       });
+    AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+        stores.map((result, i, store) => {
+            let key = store[i][0];
+            let val = store[i][1];
+            this.setState({
+              Storeduserdata:val
+            })
+            console.log("UserDatakey1 :" + key, val);
+        });
+    });
 
     var me = this,
     gmap = this.refs.gmap;
@@ -218,6 +223,111 @@ var Home = React.createClass({
       textState:'PLAY',
       EndRun:'BEGIN RUN'
     });
+  },
+     _signIn:function() {
+    GoogleSignin.signIn()
+    .then((user) => {
+      console.log('usertoken:'+ JSON.stringify(user));
+      // var user = JSON.parse(JSON.stringify(user));
+      this.setState({user:user});
+      var access_token = user.accessToken;
+      console.log('MY accessToken:'+ access_token);
+      fetch("http://139.59.243.245/api/users/", {
+      method: "GET",
+       headers: {  
+          'Authorization':"Bearer google-oauth2 "+ user.accessToken,
+        }
+      })
+  
+      .then((response) => response.json())
+      .then((userdata) => { 
+      this.props.navigator.push({
+              title: 'Gps',
+              id:'home',
+              index: 0,
+              navigator: this.props.navigator,
+             });
+          console.log('MY data:'+ JSON.stringify(userdata));
+          var userdata = userdata;
+          console.log('MY userdata:' + userdata[0].first_name);
+
+          let UID234_object = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+          };
+          // first user, delta values
+          let UID234_delta = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+         };
+          // // second user, initial values
+           let UID345_object = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+          };
+
+          // // second user, delta values
+           let UID345_delta = {
+              first_name:userdata[0].first_name,
+              user_id:userdata[0].user_id,
+              last_name:userdata[0].last_name,
+              gender_user:userdata[0].gender_user,
+              email:userdata[0].email,
+              phone_number:userdata[0].phone_number,
+              social_thumb:userdata[0].social_thumb,
+              auth_token:userdata[0].auth_token,
+          };
+
+          let multi_set_pairs = [
+              ['UID234', JSON.stringify(UID234_object)],
+              ['UID345', JSON.stringify(UID345_object)]
+          ]
+          let multi_merge_pairs = [
+              ['UID234', JSON.stringify(UID234_delta)],
+              ['UID345', JSON.stringify(UID345_delta)]
+          ]
+
+          AsyncStorage.multiSet(multi_set_pairs, (err) => {
+              AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
+                  AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+                      stores.map((result, i, store) => {
+                          let key = store[i][0];
+                          let val = store[i][1];
+                          this.setState({
+                            Storeduserdata:val
+                          })
+                           this.PostRun();
+                          console.log("UserDatakey145:" + key, val);
+                      });
+                  });
+              });
+           });
+          
+          })
+        .done();
+       })
+   .catch((err) => {
+      console.log('WRONG SIGNIN', err);
+    })
+    .done();
   },
   
   // Add Marker if check clear
@@ -321,21 +431,31 @@ var Home = React.createClass({
       });
     } else {
       if (this.state.enabled) {
-        
+        if (this.state.Storeduserdata != null) {
+         this.PostRun();
+         this.navigateTOHomeScreen();
         // var auth_token = JSON.stringify(this.state.userData.auth_token);
         // var user_id = this.state.userData.user_id
         // console.log('authTokrn:'+ auth_token);
         // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
          
-  
+       }else{
+         AlertIOS.alert(
+           'Login',
+             'Please Login to post run',
+            [
+            {text: 'Google Login', onPress: () => this._signIn() }
+             ],
+             );
+
+     }
 
   
   // }else{
   //   AlertIOS.alert('You didnt even run 100m we dont save run less than 100 m.')
   // }
       };
-      this.state.distanceTravelled = 0;
-      this.state.prevDistance = 0;
+     
       this.locationManager.removeGeofences();
       this.locationManager.stop();
       this.locationManager.resetOdometer();
@@ -358,18 +478,25 @@ var Home = React.createClass({
     },
 
     PostRun:function(){
+      var userdata = this.state.Storeduserdata;
+      var UserDataParsed = JSON.parse(userdata);
+      var user_id =JSON.stringify(UserDataParsed.user_id);
+      var token = JSON.stringify(UserDataParsed.auth_token);
+      var tokenparse = JSON.parse(token);
+      console.log('Tokenuser:' + token);
       var speed = this.state.speed;
       var cause = this.props.data;
       fetch("http://139.59.243.245/api/runs/", {
          method: "POST",
          headers: {  
+            'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization':"Bearer 9bbe462129ccf2134ad12269f3f59feb8ec29a14"
+            
           },
           body:JSON.stringify({
           cause_run_title:cause.cause_title,
-          user_id: 185,
+          user_id:user_id,
           start_time: "2016-05-27 16:50:00",
           distance: parseFloat(this.state.distanceTravelled).toFixed(1),
           peak_speed: 1,
@@ -380,8 +507,9 @@ var Home = React.createClass({
       })
       .then((response) => response.json())
       .then((userRunData) => { 
-        this.navigateTOHomeScreen();
         AlertIOS.alert('rundata'+JSON.stringify(userRunData))
+        this.state.distanceTravelled = 0;
+        this.state.prevDistance = 0;
       })
     },
   onClickPace: function() {

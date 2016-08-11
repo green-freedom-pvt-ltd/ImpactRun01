@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   AsyncStorage
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
@@ -129,7 +130,7 @@ class Profile extends Component {
       const currentIndex = routes.indexOf(route);
       const inputRange = routes.map((x, i) => i);
       const translateOutputRange = inputRange.map(i => {
-        return width * (currentIndex - i) - ((width-deviceWidth+60) * (currentIndex - i));
+        return width * (currentIndex - i) - ((width-deviceWidth+55) * (currentIndex - i));
       });
       const scaleOutputRange = inputRange.map(i => {
         if (currentIndex === i) {
@@ -276,14 +277,23 @@ class Profile extends Component {
 
     // RENDER_FUNCTION
     render() {
+     
       return (
         <View>
+         <Image style={styles.homebg} source={ require('../../images/homebg.jpg')}>
+          <View style={styles.homebgoverlay}>
+          <View style={styles.Navbar}>
+           <TouchableOpacity onPress={this._signOut.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'ios-menu'}></Icon></TouchableOpacity>
+            <Text style={styles.menuTitle}>ImpactRun</Text>
+            <TouchableOpacity onPress={this._signOut.bind(this)}><Icon style={{color:'white',fontSize:30,}}name={'md-text'}></Icon></TouchableOpacity>
+          </View>
+         </View>
+         </Image>
          <TabViewAnimated
            style={[ styles.container, this.props.style ]}
            navigationState={this.state.navigation}
            renderScene={this._renderPage}
            onRequestChangeTab={this._handleChangeTab}/>
-           <TouchableOpacity onPress={this._signOut.bind(this)} style={styles.Loginbtngg}><Text style={{color:'#db3236',textAlign:'left',marginLeft:3,}}>LOGOUT</Text><Image style={{height:40,width:40,}}source={require('../../images/google_plus.png')}/></TouchableOpacity>
           </View>
       );
     }
@@ -296,15 +306,45 @@ class Profile extends Component {
       top:260,
       backgroundColor: '#222'
     },
+    menuTitle:{
+      marginLeft:deviceWidth/2-80,
+      marginRight:deviceWidth/2-80,
+      color:'white',
+      fontSize:20,
+    },
     page: {
       top:-180,
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
     },
+    Navbar:{
+      position:'absolute',
+      top:0,
+      height:55,
+      width:deviceWidth,
+      flexDirection: 'row',
+      justifyContent:'center',
+      alignItems:'center',
+      backgroundColor:'rgba(103, 58, 183, 0.60)',
+      borderBottomWidth:2,
+      borderBottomColor:'#a5389c',
+    },
+    homebgoverlay:{
+      height:deviceheight,
+      width:deviceWidth,
+      backgroundColor:'rgba(103, 58, 183, 0.58)',
+
+    },
+    homebg:{    
+      flexDirection: 'row',
+       position:'absolute',
+      height:deviceheight,
+      width:deviceWidth,
+    },
     album: {
       backgroundColor: '#fff',
-      width: deviceWidth-55,
+      width: deviceWidth-52,
       height: deviceheight-100,
       elevation: 12,
       shadowColor: '#000000',
@@ -316,12 +356,12 @@ class Profile extends Component {
       borderRadius:5,
     },
     cover: {
-      width: deviceWidth-55,
+      width: deviceWidth-52,
       height:deviceheight/2-50,
       borderRadius:5,
     },
     borderhide:{
-      width: deviceWidth-55,
+      width: deviceWidth-52,
       height:10,
       top:-10,
       backgroundColor:'white',
@@ -332,13 +372,19 @@ class Profile extends Component {
       left:deviceWidth/2-60,
     },
      btnbegin:{
-      width:80,
-      height:80,
+      width:70,
+      height:70,
       backgroundColor:'#d667cd',
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,
       top:-90,
+      shadowColor: '#000000',
+      shadowOpacity: 0.8,
+      shadowRadius: 4,
+      shadowOffset: {
+        height: 3,
+      },
     }
   });
   export default Profile;

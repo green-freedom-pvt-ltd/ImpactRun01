@@ -38,13 +38,11 @@ class CauseDetail extends Component {
       var data = this.props.data
         return (
             <View style={{backgroundColor: '#fff'}}>
-              <View>
-                <Icon onPress={() => this.popRoute()} name="ios-arrow-back" size={30} color="black" />
-              </View>
                 <View style={{height:deviceHeight,width:deviceWidth}}>
-                  <ScrollView>
+                    <ScrollView>
                      <View style={styles.container}>
                      <Image source={{uri:data.cause_image}} style={styles.image}>
+                      <Icon  style={styles.backbtn}onPress={() => this.popRoute()} name="md-arrow-back" color="#a5389c" />
                        <View style={styles.overlaytext}>
                          <Text style={styles.categorytext}>{data.cause_category}</Text>
                        </View>
@@ -82,8 +80,12 @@ class CauseDetail extends Component {
     bottom:0,
   },
    backbtn:{
-    height:40,
-    width:40,
+    paddingLeft:10,
+    paddingTop:10,
+    height:50,
+    width:50,
+    fontSize:30,
+    backgroundColor:'transparent',
    },
   image:{
     height:deviceWidth-100,
