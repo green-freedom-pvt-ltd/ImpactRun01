@@ -53,9 +53,8 @@ class CauseDetail extends Component {
                      </Image>
                       <View style={styles.textwraper}>
                           <Text style={styles.colortext}>{data.cause_title}</Text>
-                          <Text style={styles.slidesponser}>by {data.pk} </Text>
+                          <Text style={styles.slidesponser}>By {data.sponsors[0].sponsor_company} </Text>
                           <Text  style={styles.Disctext} >{data.cause_description}</Text>
-                          <Text>{data.pk}</Text>
                       </View>
                      </View>
                   </ScrollView>
@@ -76,12 +75,19 @@ class CauseDetail extends Component {
   container:{
     backgroundColor:'white',
   },
+
   overlaytext:{
     position:"absolute",
     width:deviceWidth,
     height:30,
     backgroundColor:"rgba(51, 35, 80, 0.64)",
     bottom:0,
+  },
+  slidesponser:{
+    paddingTop:5,
+    paddingBottom:5,
+    fontSize:15,
+    color:'#c0c'
   },
    backbtn:{
     paddingLeft:10,
@@ -112,7 +118,7 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    top:deviceHeight-50,
+    top:deviceHeight-105,
     width:deviceWidth,
     height:50,
     justifyContent: 'center',

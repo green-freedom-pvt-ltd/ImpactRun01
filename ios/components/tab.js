@@ -27,6 +27,7 @@ import{
     		return (
       <TabBarIOS style={styles.tabsWrap} selectedTab={this.state.selectedTab}  navigator={this.props.navigator}>
         <TabBarIOS.Item
+          style = {styles.tab}
           selected={this.state.selectedTab === 'aboutus'}
           systemIcon="contacts"
           onPress={() => {
@@ -87,7 +88,12 @@ import{
 
 var styles = StyleSheet.create({
   tabsWrap:{
-   backgroundColor:'white'
+   backgroundColor:'white',
+  },
+  tab:{
+    backgroundColor:'black',
+    height:50,
+    width:50,
   },
 
 })
