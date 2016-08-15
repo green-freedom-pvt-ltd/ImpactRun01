@@ -501,7 +501,7 @@ SettingsService.init('iOS');
            'Are you sure you want to go back ',
             [
               {text: 'Confirm', onPress: () => this.popRoute() },
-              {text: 'Cancle',},
+              {text: 'Cancel',},
              ],
              ); 
     },

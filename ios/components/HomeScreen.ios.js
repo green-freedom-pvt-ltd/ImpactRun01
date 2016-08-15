@@ -73,55 +73,6 @@ class Profile extends Component {
         console.log(err)
         }
     }
-
-   
-    // componentDidMount () {
-    //   // let causes = []
-    //   try {
-    //     AsyncStorage.multiGet(['cause0', 'cause1', 'cause2', 'cause3','cause4'], (err, stores) => {
-    //         var _this = this
-    //         stores.map((item) => {
-    //             let key = item[0];
-    //             let val = JSON.parse(item[1]);
-    //             console.log('myKEy:'+key);
-    //             let causesArr = _this.state.causes.slice()
-    //             causesArr.push(val)
-    //             _this.setState({causes: causesArr})
-    //             console.log('causeArrInne'+JSON.stringify(_this.state.causes))
-    //             _this.setState({album : Object.assign({}, _this.state.album, {[val.pk]: val.cause_image})})
-    //             console.log('album2'+JSON.stringify(_this.state.album.key))
-    //         });
-    //       console.log('album3'+JSON.stringify(this.state.album))
-    //       this.setState({navigation: Object.assign({}, this.state.navigation, {
-    //         index: 1,
-    //         routes: Object.keys(this.state.album).map(key => ({ key })),
-    //       })})
-    //     });
-    //     } catch (err) {
-    //     console.log(err)
-    //     }
-    //   }
-      
-
-    // CAUSES_FETCH_FUNCTION
-    // fetchData(dataValue){
-    // fetch(REQUEST_URL)
-    //   .then((response) => response.json())
-    //   .then((causes) => { 
-    //       var causes = causes;
-    //       console.log('somecausre:'+ causes.results[0].cause_title);
-    //       let causesData = []
-    //       causes.results.forEach ((item,i)=> {
-    //         causesData.push(['cause'+i, JSON.stringify(item)])
-    //       })
-    //       console.log('causesData'+JSON.stringify(causesData))
-    //       AsyncStorage.multiSet(causesData, (err) => {
-    //         console.log(err)
-    //       })
-    //     })
-    //   .done();
-    // }
-
      // SLIDER_COVERFLOW_STYLE
     _buildCoverFlowStyle = ({ layout, position, route, navigationState,data }) => {
       var data = data;
