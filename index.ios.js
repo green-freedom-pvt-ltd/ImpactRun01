@@ -18,8 +18,9 @@ global.bgGeo = BackgroundGeolocation;
 import Home from './ios/components/HomeScreen.ios';
 import RunScreen from './ios/components/Home.ios';
 import Login from './ios/components/login';
-import Login2 from './ios/components/login2';
+import Tab from './ios/components/tab';
 import CauseDetail from './ios/components/CauseDetail';
+import Setting from './ios/components/setting';
 
 
 var Application = React.createClass({
@@ -43,7 +44,7 @@ var Application = React.createClass({
   },
   render: function() {
     return (
-      <View style={{backgroundColor: "#ccc", flex: 1}}>
+      <View style={{flex: 1}}>
       
         <Navigator
            ref={(ref) => this._navigator = ref}
@@ -64,16 +65,18 @@ var Application = React.createClass({
         switch (route.id) {
             case 'home':
             return <Home navigator={navigator} {...route.passProps}/>;
+            case 'tab':
+            return <Tab navigator={navigator} {...route.passProps}/>;
             case 'causedetail':
             return <CauseDetail navigator={navigator} {...route.passProps}/>;
             case 'runscreen':
             return <RunScreen navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>;
             case 'login':
             return <Login navigator={navigator} {...route.passProps}/>;
-            case 'login2':
-            return <Login2 navigator={navigator} {...route.passProps}/>;
+            case 'setting':
+            return <Setting navigator={navigator} {...route.passProps}/>;
             default :
-                return <Home navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
+                return <Tab navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
         }
   }
 

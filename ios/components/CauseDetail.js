@@ -25,9 +25,10 @@ class CauseDetail extends Component {
 
     // Navigate to Run Screen
     NavigateToRunScreen(){
+      var data = this.props.data;
        this.props.navigator.push({
           title:'RunScreen',
-          id:'RunScreen',
+          id:'runscreen',
           navigator: this.props.navigator,
           passProps: {data: data}
        })
@@ -38,11 +39,14 @@ class CauseDetail extends Component {
       var data = this.props.data
         return (
             <View style={{backgroundColor: '#fff'}}>
+               <View style={styles.Navbar}>
+                  <TouchableOpacity onPress={this.popRoute.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
+                  <Text style={styles.menuTitle}>RunScreen</Text>
+                </View>
                 <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
                      <View style={styles.container}>
                      <Image source={{uri:data.cause_image}} style={styles.image}>
-                      <Icon  style={styles.backbtn}onPress={() => this.popRoute()} name="md-arrow-back" color="#a5389c" />
                        <View style={styles.overlaytext}>
                          <Text style={styles.categorytext}>{data.cause_category}</Text>
                        </View>
@@ -133,6 +137,24 @@ class CauseDetail extends Component {
   },
   textwraper:{
     padding:10,
+  },
+  Navbar:{
+    paddingLeft:10,
+    position:'relative',
+    top:0,
+    height:55,
+    width:deviceWidth,
+    flexDirection: 'row',
+    justifyContent:'flex-start',
+    alignItems:'center',
+    backgroundColor:'#d667cd',
+    borderBottomWidth:2,
+    borderBottomColor:'#00b9ff',
+  },
+  menuTitle:{
+    left:20,
+    color:'white',
+    fontSize:20,
   },
 });
 export default CauseDetail;

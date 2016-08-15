@@ -12,10 +12,10 @@ import {
   SwitchIOS,
   TouchableHighlight,
   AlertIOS,
-  AsyncStorage
+  AsyncStorage,
+  TouchableOpacity,
  } from 'react-native';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
-
 import Mapbox from 'react-native-mapbox-gl';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -72,6 +72,24 @@ var styles = StyleSheet.create({
   width:deviceWidth/3,
   justifyContent: 'center',      
   alignItems: 'center',
+  },
+   Navbar:{
+    paddingLeft:10,
+    position:'relative',
+    top:0,
+    height:55,
+    width:deviceWidth,
+    flexDirection: 'row',
+    justifyContent:'flex-start',
+    alignItems:'center',
+    backgroundColor:'#d667cd',
+    borderBottomWidth:2,
+    borderBottomColor:'#00b9ff',
+  },
+  menuTitle:{
+    left:20,
+    color:'white',
+    fontSize:20,
   },
 });
 
@@ -472,7 +490,7 @@ var Home = React.createClass({
    navigateTOHomeScreen:function(){
     this.props.navigator.push({
             title: 'Gps',
-            id:'home',
+            id:'tab',
             navigator: this.props.navigator,
            })
     },
@@ -524,9 +542,6 @@ var Home = React.createClass({
     this.updatePaceButtonStyle();
     
 
-  },
-  navigate:function(){
-    
   },
   onClickLocate: function() {
     var me = this;
@@ -583,15 +598,43 @@ var Home = React.createClass({
   onRightAnnotationTapped:function(e) {
     console.log(e);
   },
-
+  Confimation:function() {
+      AlertIOS.alert(
+           'Go Back',
+           'Are you sure you want to go back ',
+            [
+              {text: 'Confirm', onPress: () => this.popRoute() },
+              {text: 'Cancle',},
+             ],
+             ); 
+    },
+    popRoute:function() {
+      if (this.state.enabled) {    
+      this.locationManager.removeGeofences();
+      this.locationManager.stop();
+      this.navigateTOHomeScreen();
+      this.state.distanceTravelled = 0;
+      this.state.prevDistance = 0;
+      this.locationManager.resetOdometer();
+      this.removeAllAnnotations(mapRef);
+      this.polyline = null;
+     this.setState({
+      enabled: !this.state.enabled, 
+     });
+    this.updatePaceButtonStyle();
+    
+    }else{
+      this.navigateTOHomeScreen();
+    }
+  },
   render: function(location) {
     var data = this.props.data;
     console.log('data'+ JSON.stringify(data));
     return (
       <View style={commonStyles.container}>
-        <View style={commonStyles.iosStatusBar} />
-        <View style={commonStyles.topToolbar}>
-          <Text style={commonStyles.toolbarTitle}>ImpactRun</Text>
+         <View style={styles.Navbar}>
+          <TouchableOpacity onPress={this.Confimation} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
+          <Text style={styles.menuTitle}>RunScreen</Text>
         </View>
         <View ref="workspace" style={styles.workspace}>
           <Text>{data.cause_title}</Text>
@@ -621,7 +664,7 @@ var Home = React.createClass({
 
          </View>
         </View>
-
+        
         <View style={commonStyles.bottomToolbar}>
           <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={styles.playpause}>{this.state.textState}</Text></Icon>
           <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>

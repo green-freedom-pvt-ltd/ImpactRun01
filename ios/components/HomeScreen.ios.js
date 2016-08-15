@@ -204,6 +204,14 @@ class Profile extends Component {
       navigator: this.props.navigator,
       });
     };
+     NavigateToSetting() {
+      this.props.navigator.push({
+      title: 'Setting',
+      id:'setting',
+      index: 0,
+      navigator: this.props.navigator,
+      });
+    };
     navigateToCauseDetail() {
       var cause;
       if (!!this.state.causes.length && this.state.navigation.index+1) {
@@ -280,15 +288,11 @@ class Profile extends Component {
      
       return (
         <View>
-         <Image style={styles.homebg} source={ require('../../images/homebg.jpg')}>
-          <View style={styles.homebgoverlay}>
           <View style={styles.Navbar}>
-           <TouchableOpacity onPress={this._signOut.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'ios-menu'}></Icon></TouchableOpacity>
+           <TouchableOpacity onPress={this.NavigateToSetting.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'ios-cog'}></Icon></TouchableOpacity>
             <Text style={styles.menuTitle}>ImpactRun</Text>
             <TouchableOpacity onPress={this._signOut.bind(this)}><Icon style={{color:'white',fontSize:30,}}name={'md-text'}></Icon></TouchableOpacity>
           </View>
-         </View>
-         </Image>
          <TabViewAnimated
            style={[ styles.container, this.props.style ]}
            navigationState={this.state.navigation}
@@ -326,9 +330,9 @@ class Profile extends Component {
       flexDirection: 'row',
       justifyContent:'center',
       alignItems:'center',
-      backgroundColor:'rgba(103, 58, 183, 0.60)',
+      backgroundColor:'#00b9ff',
       borderBottomWidth:2,
-      borderBottomColor:'#a5389c',
+      borderBottomColor:'#d667cd',
     },
     homebgoverlay:{
       height:deviceheight,
@@ -345,13 +349,13 @@ class Profile extends Component {
     album: {
       backgroundColor: '#fff',
       width: deviceWidth-52,
-      height: deviceheight-100,
+      height: deviceheight-160,
       elevation: 12,
       shadowColor: '#000000',
-      shadowOpacity: 0.5,
-      shadowRadius: 8,
+      shadowOpacity: 0.6,
+      shadowRadius: 3,
       shadowOffset: {
-        height: 8,
+        height: 4,
       },
       borderRadius:5,
     },

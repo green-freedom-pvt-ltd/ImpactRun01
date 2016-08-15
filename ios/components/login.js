@@ -85,7 +85,7 @@ class Profile extends Component {
       .then((userdata) => { 
       this.props.navigator.push({
               title: 'Gps',
-              id:'home',
+              id:'tab',
               index: 0,
               navigator: this.props.navigator,
              });
@@ -180,7 +180,7 @@ class Profile extends Component {
             <View style={styles.container}>
             <TouchableOpacity onPress={() => this.props.navigator.push({
               title: 'Gps',
-              id:'home',
+              id:'tab',
               navigator: this.props.navigator,
              })} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>LOGIN WITH FACEBOOK</Text><Image source={require('../../images/facebook.png')} style={styles.facebook}/>
             </TouchableOpacity>
@@ -191,7 +191,7 @@ class Profile extends Component {
              onPress={() => 
               this.props.navigator.push({
               title: 'Gps',
-              id:'home',
+              id:'tab',
               navigator: this.props.navigator,
              })}>
              <View style={{marginTop: 10}}>
