@@ -47,8 +47,8 @@
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Impactrun"
-                                               initialProperties:nil
-                                                   launchOptions:launchOptions];
+                                                      initialProperties:nil
+                                                      launchOptions:launchOptions];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];

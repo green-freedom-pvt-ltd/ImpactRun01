@@ -382,7 +382,7 @@ class Profile extends Component {
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,
-      top:-90,
+      top:-80,
       shadowColor: '#000000',
       shadowOpacity: 0.8,
       shadowRadius: 4,
