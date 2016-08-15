@@ -450,7 +450,6 @@ SettingsService.init('iOS');
       });
     } else {
       if (this.state.enabled) {
-
         if (this.state.Storeduserdata != null) {
          this.PostRun();
         // var auth_token = JSON.stringify(this.state.userData.auth_token);

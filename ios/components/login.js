@@ -39,7 +39,7 @@ class Profile extends Component {
    componentWillMount() {
        this.fetchData();
        GoogleSignin.configure({
-       iosClientId:"437150569320-362l4gc7qou0r2u8gpple6lkfo3jjjre.apps.googleusercontent.com", // only for iOS
+       iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
