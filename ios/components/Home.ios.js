@@ -21,10 +21,10 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SettingsService from '../../components/SettingsService';
 import commonStyles from '../../components/styles';
-import haversine from 'haversine'
+import haversine from 'haversine';
 var mapRef = 'mapRef';
 var deviceWidth = Dimensions.get('window').width;
-var deviceheight = Dimensions.get('window').height-100;
+var deviceheight = Dimensions.get('window').height;
 
 var styles = StyleSheet.create({
   StartStopbtn:{
@@ -55,25 +55,27 @@ var styles = StyleSheet.create({
 
   },
   EndRun:{
-  justifyContent: 'center',      
-  alignItems: 'center',
-  height:50,
-  width:deviceWidth/2,
-  backgroundColor:'#00b9ff'
+    justifyContent: 'center',      
+    alignItems: 'center',
+    height:50,
+    width:deviceWidth/2,
+    backgroundColor:'#00b9ff'
   },
   workspace: {
-    flex: 1
+      flex: 1
   },
   map: {
-    flex: 1
+    position:'absolute',
+    height:deviceheight,
+    width:deviceWidth,
   },
   bottomBarContent:{
-  paddingLeft:10, 
-  width:deviceWidth/3,
-  justifyContent: 'center',      
-  alignItems: 'center',
+    paddingLeft:10, 
+    width:deviceWidth/3,
+    justifyContent: 'center',      
+    alignItems: 'center',
   },
-   Navbar:{
+  Navbar:{
     paddingLeft:10,
     position:'relative',
     top:0,
@@ -95,13 +97,13 @@ var styles = StyleSheet.create({
 
 SettingsService.init('iOS');
 
-var Home = React.createClass({
+  var Home = React.createClass({
 
-  mixins: [Mapbox.Mixin],
-  annotations: [],
-  locationIcon: 'green-circle.png',
-  currentLocation: undefined,
-  locationManager: undefined,
+    mixins: [Mapbox.Mixin],
+    annotations: [],
+    locationIcon: 'green-circle.png',
+    currentLocation: undefined,
+    locationManager: undefined,
 
   // InitilialStates
 
@@ -133,7 +135,7 @@ var Home = React.createClass({
 
   componentDidMount: function() {
        GoogleSignin.configure({
-       iosClientId:"437150569320-362l4gc7qou0r2u8gpple6lkfo3jjjre.apps.googleusercontent.com", // only for iOS
+       iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
@@ -261,7 +263,7 @@ var Home = React.createClass({
       .then((userdata) => { 
       this.props.navigator.push({
               title: 'Gps',
-              id:'home',
+              id:'tab',
               index: 0,
               navigator: this.props.navigator,
              });
@@ -332,7 +334,6 @@ var Home = React.createClass({
                           this.setState({
                             Storeduserdata:val
                           })
-                           this.PostRun();
                           console.log("UserDatakey145:" + key, val);
                       });
                   });
@@ -449,9 +450,9 @@ var Home = React.createClass({
       });
     } else {
       if (this.state.enabled) {
+
         if (this.state.Storeduserdata != null) {
          this.PostRun();
-         this.navigateTOHomeScreen();
         // var auth_token = JSON.stringify(this.state.userData.auth_token);
         // var user_id = this.state.userData.user_id
         // console.log('authTokrn:'+ auth_token);
@@ -494,8 +495,38 @@ var Home = React.createClass({
             navigator: this.props.navigator,
            })
     },
-
+    
+    Confimation:function() {
+      AlertIOS.alert(
+           'Go Back',
+           'Are you sure you want to go back ',
+            [
+              {text: 'Confirm', onPress: () => this.popRoute() },
+              {text: 'Cancle',},
+             ],
+             ); 
+    },
+    popRoute:function() {
+      if (this.state.enabled) {    
+      this.locationManager.removeGeofences();
+      this.locationManager.stop();
+      this.navigateTOHomeScreen();
+      this.state.distanceTravelled = 0;
+      this.state.prevDistance = 0;
+      this.locationManager.resetOdometer();
+      this.removeAllAnnotations(mapRef);
+      this.polyline = null;
+     this.setState({
+      enabled: !this.state.enabled, 
+     });
+    this.updatePaceButtonStyle();
+    
+    }else{
+      this.navigateTOHomeScreen();
+    }
+  },
     PostRun:function(){
+      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
       var userdata = this.state.Storeduserdata;
       var UserDataParsed = JSON.parse(userdata);
       var user_id =JSON.stringify(UserDataParsed.user_id);
@@ -526,9 +557,13 @@ var Home = React.createClass({
       .then((response) => response.json())
       .then((userRunData) => { 
         AlertIOS.alert('rundata'+JSON.stringify(userRunData))
+        this.navigateTOHomeScreen();
         this.state.distanceTravelled = 0;
         this.state.prevDistance = 0;
       })
+    }else{
+        AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
+    }
     },
   onClickPace: function() {
     if (!this.state.enabled)  { return; }
@@ -543,6 +578,7 @@ var Home = React.createClass({
     
 
   },
+ 
   onClickLocate: function() {
     var me = this;
     this.locationManager.getState(function(state) {
@@ -598,46 +634,20 @@ var Home = React.createClass({
   onRightAnnotationTapped:function(e) {
     console.log(e);
   },
-  Confimation:function() {
-      AlertIOS.alert(
-           'Go Back',
-           'Are you sure you want to go back ',
-            [
-              {text: 'Confirm', onPress: () => this.popRoute() },
-              {text: 'Cancle',},
-             ],
-             ); 
-    },
-    popRoute:function() {
-      if (this.state.enabled) {    
-      this.locationManager.removeGeofences();
-      this.locationManager.stop();
-      this.navigateTOHomeScreen();
-      this.state.distanceTravelled = 0;
-      this.state.prevDistance = 0;
-      this.locationManager.resetOdometer();
-      this.removeAllAnnotations(mapRef);
-      this.polyline = null;
-     this.setState({
-      enabled: !this.state.enabled, 
-     });
-    this.updatePaceButtonStyle();
-    
-    }else{
-      this.navigateTOHomeScreen();
-    }
-  },
+
   render: function(location) {
     var data = this.props.data;
     console.log('data'+ JSON.stringify(data));
     return (
       <View style={commonStyles.container}>
-         <View style={styles.Navbar}>
+       <View style={styles.Navbar}>
           <TouchableOpacity onPress={this.Confimation} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
-          <Text style={styles.menuTitle}>RunScreen</Text>
+            <Text style={styles.menuTitle}>RunScreen</Text>
         </View>
-        <View ref="workspace" style={styles.workspace}>
+         <View ref="workspace" style={styles.workspace}>
+
           <Text>{data.cause_title}</Text>
+            
           <Mapbox
             style={styles.map}
             direction={0}
@@ -656,7 +666,10 @@ var Home = React.createClass({
             annotations={this.state.annotations}
             onOpenAnnotation={this.onOpenAnnotation}
             onRightAnnotationTapped={this.onRightAnnotationTapped}
-            onUpdateUserLocation={this.onUpdateUserLocation} />
+            onUpdateUserLocation={this.onUpdateUserLocation}>
+           
+            </Mapbox>
+    
         <View style={styles.distanceWrap}>
             <Text style={styles.bottomBarContent}>Distance {"\n"}{parseFloat(this.state.distanceTravelled).toFixed(1)}km</Text>
             <Text style={styles.bottomBarContent}>Rupees{"\n"}{parseFloat(this.state.distanceTravelled*10).toFixed(0)}rs</Text>
@@ -664,7 +677,7 @@ var Home = React.createClass({
 
          </View>
         </View>
-        
+
         <View style={commonStyles.bottomToolbar}>
           <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={styles.playpause}>{this.state.textState}</Text></Icon>
           <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
