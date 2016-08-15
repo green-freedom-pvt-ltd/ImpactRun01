@@ -29,7 +29,8 @@ import{
         <TabBarIOS.Item
           style = {styles.tab}
           selected={this.state.selectedTab === 'aboutus'}
-          systemIcon="contacts"
+          icon={require("../../images/aboutus.png")}
+          title="aboutus"
           onPress={() => {
               this.setState({
                   selectedTab: 'aboutus',
@@ -39,7 +40,7 @@ import{
         </TabBarIOS.Item>
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'faq'}
-          systemIcon="recents"
+          icon={require("../../images/faq.png")}
           title="Faq"
           onPress={() => {
               this.setState({
@@ -50,32 +51,34 @@ import{
         </TabBarIOS.Item>
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'welcome'}
-          icon={require("../../images/RunImage.png")}
+          title="Run"
+          icon={require("../../images/RunImage4.png")}
           onPress={() => {
               this.setState({
                   selectedTab: 'welcome',
               });
           }}>
-            <Welcome navigator={this.props.navigator}/>
+        <Welcome navigator={this.props.navigator}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'feedback'}
-          systemIcon="featured"
+          title="feedback"
+          icon={require("../../images/feedback.png")}
           onPress={() => {
                 this.setState({
                     selectedTab: 'feedback',
                 });
           }}>
           <Feedback/>
-        </TabBarIOS.Item>
-                <TabBarIOS.Item
-          selected={this.state.selectedTab === 'profile'}
-          title="me"
-          systemIcon="contacts"
-          onPress={() => {
-              this.setState({
-                  selectedTab: 'profile',
-              });
+         </TabBarIOS.Item>
+          <TabBarIOS.Item
+            selected={this.state.selectedTab === 'profile'}
+            title="me"
+            icon={require("../../images/me.png")}
+            onPress={() => {
+                this.setState({
+                    selectedTab: 'profile',
+                });
           }}>
             <Profile/>
         </TabBarIOS.Item>

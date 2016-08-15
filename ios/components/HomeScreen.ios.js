@@ -330,9 +330,9 @@ class Profile extends Component {
       flexDirection: 'row',
       justifyContent:'center',
       alignItems:'center',
-      backgroundColor:'#00b9ff',
+      backgroundColor:'#d667cd',
       borderBottomWidth:2,
-      borderBottomColor:'#d667cd',
+      borderBottomColor:'#00b9ff',
     },
     homebgoverlay:{
       height:deviceheight,
@@ -378,7 +378,7 @@ class Profile extends Component {
      btnbegin:{
       width:70,
       height:70,
-      backgroundColor:'#d667cd',
+      backgroundColor:'#673ab7',
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,
