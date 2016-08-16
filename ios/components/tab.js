@@ -20,16 +20,29 @@ import{
     	constructor(props) {
 		    super(props);
 		    this.state = {
-		      selectedTab: 'welcome'
+		      selectedTab: 'welcome',
+          notifCount: 0,
+          presses: 0,
 		    };
 	  }
     	render() {
     		return (
-      <TabBarIOS style={styles.tabsWrap} selectedTab={this.state.selectedTab}  navigator={this.props.navigator}>
+      <TabBarIOS 
+        unselectedTintColor="white"
+        tintColor="white"
+        barTintColor="#3c1e71" 
+        selectedTab={this.state.selectedTab} 
+        navigator={this.props.navigator}>
         <TabBarIOS.Item
+         onPress={() => {
+            this.setState({
+              notifCount: this.state.notifCount + 1,
+            });
+            }}
+          badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
           style = {styles.tab}
           selected={this.state.selectedTab === 'aboutus'}
-          icon={require("../../images/aboutus.png")}
+          icon={require("../../images/aboutus2.png")}
           title="aboutus"
           onPress={() => {
               this.setState({
@@ -40,7 +53,7 @@ import{
         </TabBarIOS.Item>
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'faq'}
-          icon={require("../../images/faq.png")}
+          icon={require("../../images/faq2.png")}
           title="Faq"
           onPress={() => {
               this.setState({
@@ -63,7 +76,7 @@ import{
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'feedback'}
           title="feedback"
-          icon={require("../../images/feedback.png")}
+          icon={require("../../images/feedback2.png")}
           onPress={() => {
                 this.setState({
                     selectedTab: 'feedback',
@@ -74,7 +87,7 @@ import{
           <TabBarIOS.Item
             selected={this.state.selectedTab === 'profile'}
             title="me"
-            icon={require("../../images/me.png")}
+            icon={require("../../images/me2.png")}
             onPress={() => {
                 this.setState({
                     selectedTab: 'profile',
@@ -92,6 +105,7 @@ import{
 var styles = StyleSheet.create({
   tabsWrap:{
    backgroundColor:'white',
+
   },
   tab:{
     backgroundColor:'black',

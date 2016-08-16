@@ -86,7 +86,7 @@ var styles = StyleSheet.create({
     alignItems:'center',
     backgroundColor:'#d667cd',
     borderBottomWidth:2,
-    borderBottomColor:'#00b9ff',
+    borderBottomColor:'#673AB7',
   },
   menuTitle:{
     left:20,

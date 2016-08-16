@@ -36,11 +36,13 @@ class Profile extends Component {
          navigation: {
            index: 1,
            routes: [],
+
          },
+         
 
       };
     }
-  
+ 
     locationManager: undefined
         static propTypes = {
       style: View.propTypes.style,
@@ -215,7 +217,7 @@ class Profile extends Component {
             <Text>{route.key}</Text>
           </TouchableOpacity >
           <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-             <Image style={{height:50,width:80}} source={ require('../../images/RunImage.png')}></Image>
+             <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
           </TouchableOpacity>
         </View>
       );
@@ -242,7 +244,7 @@ class Profile extends Component {
           <View style={styles.Navbar}>
            <TouchableOpacity onPress={this.NavigateToSetting.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'ios-cog'}></Icon></TouchableOpacity>
             <Text style={styles.menuTitle}>ImpactRun</Text>
-            <TouchableOpacity onPress={this._signOut.bind(this)}><Icon style={{color:'white',fontSize:30,}}name={'md-text'}></Icon></TouchableOpacity>
+            <TouchableOpacity  ><Icon style={{color:'white',fontSize:30,}}name={'md-text'}></Icon></TouchableOpacity>
           </View>
          <TabViewAnimated
            style={[ styles.container, this.props.style ]}
@@ -258,7 +260,7 @@ class Profile extends Component {
   var styles = StyleSheet.create({
    container: {
       flex: 1,
-      top:260,
+      top:245,
       backgroundColor: '#222'
     },
     menuTitle:{
@@ -283,7 +285,7 @@ class Profile extends Component {
       alignItems:'center',
       backgroundColor:'#d667cd',
       borderBottomWidth:2,
-      borderBottomColor:'#00b9ff',
+      borderBottomColor:'#673AB7',
     },
     homebgoverlay:{
       height:deviceheight,
@@ -293,14 +295,14 @@ class Profile extends Component {
     },
     homebg:{    
       flexDirection: 'row',
-       position:'absolute',
+      position:'absolute',
       height:deviceheight,
       width:deviceWidth,
     },
     album: {
       backgroundColor: '#fff',
       width: deviceWidth-52,
-      height: deviceheight-160,
+      height: deviceheight-130,
       elevation: 12,
       shadowColor: '#000000',
       shadowOpacity: 0.6,
@@ -327,13 +329,13 @@ class Profile extends Component {
       left:deviceWidth/2-60,
     },
      btnbegin:{
-      width:70,
-      height:70,
+      width:60,
+      height:60,
       backgroundColor:'#673ab7',
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,
-      top:-80,
+      top:-70,
       shadowColor: '#000000',
       shadowOpacity: 0.8,
       shadowRadius: 4,
