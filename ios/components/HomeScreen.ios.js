@@ -57,15 +57,11 @@ class Profile extends Component {
             stores.map((item) => {
                 let key = item[0];
                 let val = JSON.parse(item[1]);
-                console.log('myKEy:'+key);
                 let causesArr = _this.state.causes.slice()
                 causesArr.push(val)
                 _this.setState({causes: causesArr})
-                console.log('causeArrInne'+JSON.stringify(_this.state.causes))
                 _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: val.cause_image})})
-                console.log('album2'+JSON.stringify(_this.state.album.key))
             });
-          console.log('album3'+JSON.stringify(this.state.album))
           this.setState({navigation: Object.assign({}, this.state.navigation, {
             index: 1,
             routes: Object.keys(this.state.album).map(key => ({ key })),
@@ -96,7 +92,7 @@ class Profile extends Component {
         if (currentIndex === i) {
           return 1;
         } else {
-          return 0.5;
+          return 0.4;
         }
       });
 
@@ -112,7 +108,6 @@ class Profile extends Component {
         inputRange,
         outputRange: opacityOutputRange,
       });
-      console.log('route get');
 
       return {
         width,
@@ -130,7 +125,6 @@ class Profile extends Component {
       this.setState({
         navigation: { ...this.state.navigation, index },
       });
-      console.log('someData:'+ JSON.stringify(this.state.navigation));
      };
 
    // NAVIGATION
@@ -143,9 +137,10 @@ class Profile extends Component {
       }
       this.props.navigator.push({
       title: 'Gps',
-      id:'runscreen',
+      id:'runlodingscreen',
       index: 0,
       passProps:{data:cause},
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       navigator: this.props.navigator,
       });
     };
@@ -185,7 +180,6 @@ class Profile extends Component {
    _signOut() {
        GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
        this.setState({user: null});
-         console.log('userLogout:');
          this.props.navigator.push({
                 title: 'Gps',
                 id:'login',
@@ -206,8 +200,6 @@ class Profile extends Component {
       } else {
         cause = {}
       }
-      console.log('myalldata:'+ this.state.album[route.key] + 'key'+route.key);
-      console.log('mydata')
    // console.log("PaasData:"+data);
       return (
         <View style={styles.page}>
@@ -237,20 +229,18 @@ class Profile extends Component {
     
 
     // RENDER_FUNCTION
-    render() {
-     
+    render() { 
       return (
         <View>
           <View style={styles.Navbar}>
-           <TouchableOpacity onPress={this.NavigateToSetting.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'ios-cog'}></Icon></TouchableOpacity>
+           <TouchableOpacity onPress={()=>this.NavigateToSetting()} ><Icon style={{color:'white',fontSize:30,left:10}}name={'ios-cog'}></Icon></TouchableOpacity>
             <Text style={styles.menuTitle}>ImpactRun</Text>
-            <TouchableOpacity  ><Icon style={{color:'white',fontSize:30,}}name={'md-text'}></Icon></TouchableOpacity>
           </View>
-         <TabViewAnimated
-           style={[ styles.container, this.props.style ]}
-           navigationState={this.state.navigation}
-           renderScene={this._renderPage}
-           onRequestChangeTab={this._handleChangeTab}/>
+           <TabViewAnimated
+             style={[ styles.container, this.props.style ]}
+             navigationState={this.state.navigation}
+             renderScene={this._renderPage}
+             onRequestChangeTab={this._handleChangeTab}/>
           </View>
       );
     }
@@ -261,11 +251,11 @@ class Profile extends Component {
    container: {
       flex: 1,
       top:245,
-      backgroundColor: '#222'
+      backgroundColor: '#222',
+      width:deviceWidth,
     },
     menuTitle:{
-      marginLeft:deviceWidth/2-80,
-      marginRight:deviceWidth/2-80,
+      marginLeft:30,
       color:'white',
       fontSize:20,
     },
@@ -281,11 +271,11 @@ class Profile extends Component {
       height:55,
       width:deviceWidth,
       flexDirection: 'row',
-      justifyContent:'center',
+      justifyContent:'flex-start',
       alignItems:'center',
       backgroundColor:'#d667cd',
       borderBottomWidth:2,
-      borderBottomColor:'#673AB7',
+      borderBottomColor:'#00b9ff',
     },
     homebgoverlay:{
       height:deviceheight,

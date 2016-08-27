@@ -12,14 +12,13 @@ import React, { Component } from 'react';
   Dimensions,
   AsyncStorage,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  AlertIOS
 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-
-
 class RunHistroy extends Component {
   constructor(props) {
     super(props);
@@ -31,11 +30,7 @@ class RunHistroy extends Component {
     };
   }
 
-  componentDidMount() {
-   
-   
-  }
-   componentWillMount() {
+   componentDidMount() {
      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
             let key = store[i][0];
@@ -44,11 +39,17 @@ class RunHistroy extends Component {
               Storeduserdata:val
             })
             console.log("UserDatakey2 :" + key, val);
-             this.fetchData();
+
+            if (this.state.Storeduserdata != null) {
+               this.fetchData();
+             }else{
+              AlertIOS.alert('you are not Loged in');
+             }
+            
         });
 
     });
-    
+     
    }
   fetchData() {
       var userdata = this.state.Storeduserdata;
@@ -58,7 +59,7 @@ class RunHistroy extends Component {
       var tokenparse = JSON.parse(token);
       console.log('myRunData'+userdata);
       var tokenparse = JSON.parse(token);
-        fetch("http://139.59.243.245/api/runs/", {
+        fetch("http://139.59.243.245/api/runs/?page=" + 1, {
         method: "GET",
          headers: {  
             'Authorization':"Bearer "+tokenparse,
@@ -69,8 +70,13 @@ class RunHistroy extends Component {
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(responseData.results),
           loaded: true,
+          myPage:responseData.count,
+          next:responseData.next,
+
         });
-        console.log('daata'+JSON.stringify(this.state.dataSource));
+        console.log('daatarunHistroy'+JSON.stringify(this.state.dataSource));
+                    console.log('myHistroryRunCount'+ this.state.myPage);
+                  
       })
       .done();
     }
@@ -82,13 +88,12 @@ class RunHistroy extends Component {
     }
 
     return (
-      <ScrollView>
+     
       <ListView
         dataSource={this.state.dataSource}
         renderRow={this.renderMovie}
         style={styles.listView}
       />
-      </ScrollView>
     );
   }
 
@@ -117,7 +122,6 @@ class RunHistroy extends Component {
           <Text style={styles.year}>{data.distance}</Text>
           <Text style={styles.year}>{data.run_amount}</Text>
           <Text style={styles.year}>{data.run_duration}</Text>
-          
           </View>
         </View>
       </View>

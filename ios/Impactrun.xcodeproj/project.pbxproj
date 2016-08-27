@@ -22,6 +22,7 @@
 		3830D5F41D6C61660028922A /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D5F11D6C61660028922A /* FBSDKShareKit.framework */; };
 		3830D60C1D6C63BD0028922A /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D60B1D6C63A90028922A /* libRCTFBLogin.a */; };
 		3830D60E1D6C647C0028922A /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D60D1D6C647C0028922A /* Bolts.framework */; };
+		3830D6151D6F9EB10028922A /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D6141D6F9CB60028922A /* libART.a */; };
 		384508DA00184A359FF87CC8 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A46DD3FC37DF420381A94676 /* FontAwesome.ttf */; };
 		38B00AB11D37765500863FF0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 38B00AB01D37765500863FF0 /* Default-568h@2x.png */; };
 		38B00AD31D377D8100863FF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B00AD21D377D8100863FF0 /* main.m */; };
@@ -130,6 +131,13 @@
 			remoteGlobalIDString = 4F3A6B5B1ACFBCC500CA65F7;
 			remoteInfo = RCTFBLogin;
 		};
+		3830D6131D6F9CB60028922A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3830D60F1D6F9CB40028922A /* ART.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = ART;
+		};
 		38C19AA11D55BA1800E5F990 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC1A3BC49DA74FA3A1E076E0 /* RNGoogleSignin.xcodeproj */;
@@ -228,6 +236,7 @@
 		3830D5F11D6C61660028922A /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		3830D6061D6C63A80028922A /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
 		3830D60D1D6C647C0028922A /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
+		3830D60F1D6F9CB40028922A /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		38B00AB01D37765500863FF0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		38B00AD01D377D6900863FF0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ImpactRun/AppDelegate.m; sourceTree = "<group>"; };
 		38B00AD21D377D8100863FF0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ImpactRun/main.m; sourceTree = "<group>"; };
@@ -279,6 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3830D6151D6F9EB10028922A /* libART.a in Frameworks */,
 				3830D60C1D6C63BD0028922A /* libRCTFBLogin.a in Frameworks */,
 				832B42311CEA99E000E39F50 /* libRNBackgroundGeolocation.a in Frameworks */,
 				8359A6E61CA58BA6008F13B7 /* SystemConfiguration.framework in Frameworks */,
@@ -404,6 +414,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3830D6101D6F9CB40028922A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3830D6141D6F9CB60028922A /* libART.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		38C19A8F1D55BA1800E5F990 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -440,6 +458,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3830D60F1D6F9CB40028922A /* ART.xcodeproj */,
 				3830D6061D6C63A80028922A /* RCTFBLogin.xcodeproj */,
 				832B42281CEA99D100E39F50 /* RNBackgroundGeolocation.xcodeproj */,
 				8350374F1C962E40000DE4BA /* RCTMapboxGL.xcodeproj */,
@@ -632,6 +651,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 3830D6101D6F9CB40028922A /* Products */;
+					ProjectRef = 3830D60F1D6F9CB40028922A /* ART.xcodeproj */;
+				},
+				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
 				},
@@ -766,6 +789,13 @@
 			fileType = archive.ar;
 			path = libRCTFBLogin.a;
 			remoteRef = 3830D60A1D6C63A90028922A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3830D6141D6F9CB60028922A /* libART.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libART.a;
+			remoteRef = 3830D6131D6F9CB60028922A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		38C19AA21D55BA1800E5F990 /* libRNGoogleSignin.a */ = {
@@ -1028,11 +1058,11 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ImpactRunV0.2\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Impactrun;
@@ -1060,11 +1090,11 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ImpactRunV0.2\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Impactrun;

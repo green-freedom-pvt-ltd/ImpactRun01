@@ -98,16 +98,13 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-
     height: 30,
     width: 175,
     paddingLeft: 2,
-
     backgroundColor: 'rgb(66,93,174)',
     borderRadius: 3,
     borderWidth: 1,
     borderColor: 'rgb(66,93,174)',
-
     shadowColor: "#000000",
     shadowOpacity: 0.8,
     shadowRadius: 2,

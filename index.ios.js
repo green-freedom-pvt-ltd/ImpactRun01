@@ -8,9 +8,10 @@ import {
   TouchableHighlight,
   StatusBar,
   Text,
-  Navigator
+  Navigator,
+  AsyncStorage
  } from 'react-native';
-
+ 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 
@@ -21,47 +22,66 @@ import Login from './ios/components/login';
 import Tab from './ios/components/tab';
 import CauseDetail from './ios/components/CauseDetail';
 import Setting from './ios/components/setting';
+import Runlogingscreen from './ios/components/runlodingscreen';
 
 
-var Application = React.createClass({
-  getInitialState: function() {
-    return {
-      drawer: undefined
+
+class Application extends Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      drawer: undefined,
+      timePassed: false,
     };
-  },
-  componentDidMount: function() {
-    var me = this;
-    StatusBar.setBarStyle('default');
+  }
+  componentWillMount() {
+    AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+    stores.map((result, i, store) => {
+        let key = store[i][0];
+        let val = store[i][1];
+        this.setState({
+           user:val,
+          })
+         console.log("UserDatakeyinital:" + key, val);
+         console.log("UserDatakeyinital4:" + this.state.user);
+         
+      });
+    console.log('myDataLOgin'+ this.state.user);
     this.setState({
-      drawer: this.refs.drawer
+      userLogin:this.state.user,
+    })
     });
-  },
-  onClickMenu: function() {
+     
+  }
+
+  onClickMenu() {
     this.refs.drawer.open();
-  },
-  getDrawer: function() {
+  }
+  getDrawer() {
     return this.refs.drawer;
-  },
-  render: function() {
-    return (
+  }
+  render() {
+   console.log("UserDatakeyinitalLogin" + this.state.userLogin);
+   return (
+
       <View style={{flex: 1}}>
-      
         <Navigator
            ref={(ref) => this._navigator = ref}
             configureScene={(route) => {
-                        return {
-                            ...Navigator.SceneConfigs.FloatFromRight,
-                            gestures: {}
-                        };
-                    }}
-                    initialRoute={{id: 'login'}}
-                    renderScene={this.renderScene} />
-             </View>
-    );
-  },
+            return {
+                ...Navigator.SceneConfigs.FloatFromRight,
+                gestures: {}
+            };
+            }}
+            initialRoute={{id:"text"}}
+            renderScene={this.renderScene} />
+      </View>);
+   
+   
+    
+  }
 
-
-    renderScene:function (route, navigator) {
+    renderScene(route, navigator) {
         switch (route.id) {
             case 'home':
             return <Home navigator={navigator} {...route.passProps}/>;
@@ -75,12 +95,12 @@ var Application = React.createClass({
             return <Login navigator={navigator} {...route.passProps}/>;
             case 'setting':
             return <Setting navigator={navigator} {...route.passProps}/>;
+            case 'runlodingscreen':
+            return <Runlogingscreen navigator={navigator} {...route.passProps}/>;
             default :
-                return <Tab navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
+                return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
         }
   }
-
-
-});
+}
 
 AppRegistry.registerComponent('Impactrun', () => Application);

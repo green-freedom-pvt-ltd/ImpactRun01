@@ -15,6 +15,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
+var FBLoginManager = require('NativeModules').FBLoginManager;
 
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 var deviceHeight = Dimensions.get('window').height;
@@ -22,7 +23,11 @@ var deviceHeight = Dimensions.get('window').height;
 var deviceWidth = Dimensions.get('window').width;
 
 class Profile extends Component {
-
+  propTypes: {
+    onPress: React.PropTypes.func,
+    onLogin: React.PropTypes.func,
+    onLogout: React.PropTypes.func,
+  }
    constructor(props) {
         super(props);
         this.state = {
@@ -32,18 +37,23 @@ class Profile extends Component {
         };
       }
   
-  
-    // popRoute() {
-    //     this.props.popRoute();
-    // }
-   componentWillMount() {
-       this.fetchData();
+  componentDidMount() {
+      // if (!this.state.user) {
+      // this.navigateToHome();
+      // }else{console.log('user-null')}
+      this.fetchData();
        GoogleSignin.configure({
        iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
        });
+  }
+    // popRoute() {
+    //     this.props.popRoute();
+    // }
+   componentWillMount() {
+       
        // this.fetchData();
      }
 
@@ -54,26 +64,24 @@ class Profile extends Component {
       .then((response) => response.json())
       .then((causes) => { 
           var causes = causes;
-          console.log('somecausre:'+ causes.results[0].cause_title);
           let causesData = []
           causes.results.forEach ((item,i)=> {
             causesData.push(['cause'+i, JSON.stringify(item)])
           })
-          console.log('causesData'+JSON.stringify(causesData))
           AsyncStorage.multiSet(causesData, (err) => {
-            console.log(err)
+            console.log('myErr'+err)
           })
         })
       .done();
     }
-  _signIn() {
+
+
+  _signInGoogle() {
+    this.navigateToHome();
     GoogleSignin.signIn()
     .then((user) => {
-      console.log('usertoken:'+ JSON.stringify(user));
-      // var user = JSON.parse(JSON.stringify(user));
       this.setState({user:user});
       var access_token = user.accessToken;
-      console.log('MY accessToken:'+ access_token);
       fetch("http://139.59.243.245/api/users/", {
       method: "GET",
        headers: {  
@@ -83,16 +91,8 @@ class Profile extends Component {
   
       .then((response) => response.json())
       .then((userdata) => { 
-      this.props.navigator.push({
-              title: 'Gps',
-              id:'tab',
-              index: 0,
-              navigator: this.props.navigator,
-             });
-          console.log('MY data:'+ JSON.stringify(userdata));
+      
           var userdata = userdata;
-          console.log('MY userdata:' + userdata[0].first_name);
-
           let UID234_object = {
               first_name:userdata[0].first_name,
               user_id:userdata[0].user_id,
@@ -153,7 +153,6 @@ class Profile extends Component {
                       stores.map((result, i, store) => {
                           let key = store[i][0];
                           let val = store[i][1];
-                          console.log("UserDatakey1 :" + key, val);
                       });
                   });
               });
@@ -163,37 +162,151 @@ class Profile extends Component {
         .done();
        })
    .catch((err) => {
-      console.log('WRONG SIGNIN', err);
+      console.log('WRONG SIGNIN Google', err);
     })
     .done();
   }
+   
+    handleFBLogin(){
+      var _this = this;
+      FBLoginManager.login(function(error, data){
+        if (!error) {
+          _this.setState({ user : data});
+          console.log('userFbdata'+JSON.stringify(data.credentials.token));
+          _this.props.onLogin && _this.props.onLogin();
+           _this.navigateToHome();
+           var Fb_token = data.credentials.token;
+            fetch("http://139.59.243.245/api/users/", {
+            method: "GET",
+             headers: {  
+                'Authorization':"Bearer facebook "+ Fb_token,
+              }
+            })
+        
+            .then((response) => response.json())
+            .then((userdata) => { 
+                var userdata = userdata;
+                console.log('userDatafb'+JSON.stringify(userdata));
+                let UID234_object = {
+                    first_name:userdata[0].first_name,
+                    user_id:userdata[0].user_id,
+                    last_name:userdata[0].last_name,
+                    gender_user:userdata[0].gender_user,
+                    email:userdata[0].email,
+                    phone_number:userdata[0].phone_number,
+                    social_thumb:userdata[0].social_thumb,
+                    auth_token:userdata[0].auth_token,
+                };
+                // first user, delta values
+                let UID234_delta = {
+                    first_name:userdata[0].first_name,
+                    user_id:userdata[0].user_id,
+                    last_name:userdata[0].last_name,
+                    gender_user:userdata[0].gender_user,
+                    email:userdata[0].email,
+                    phone_number:userdata[0].phone_number,
+                    social_thumb:userdata[0].social_thumb,
+                    auth_token:userdata[0].auth_token,
+               };
+                // // second user, initial values
+                 let UID345_object = {
+                    first_name:userdata[0].first_name,
+                    user_id:userdata[0].user_id,
+                    last_name:userdata[0].last_name,
+                    gender_user:userdata[0].gender_user,
+                    email:userdata[0].email,
+                    phone_number:userdata[0].phone_number,
+                    social_thumb:userdata[0].social_thumb,
+                    auth_token:userdata[0].auth_token,
+                };
 
+                // // second user, delta values
+                 let UID345_delta = {
+                    first_name:userdata[0].first_name,
+                    user_id:userdata[0].user_id,
+                    last_name:userdata[0].last_name,
+                    gender_user:userdata[0].gender_user,
+                    email:userdata[0].email,
+                    phone_number:userdata[0].phone_number,
+                    social_thumb:userdata[0].social_thumb,
+                    auth_token:userdata[0].auth_token,
+                };
+
+                let multi_set_pairs = [
+                    ['UID234', JSON.stringify(UID234_object)],
+                    ['UID345', JSON.stringify(UID345_object)]
+                ]
+                let multi_merge_pairs = [
+                    ['UID234', JSON.stringify(UID234_delta)],
+                    ['UID345', JSON.stringify(UID345_delta)]
+                ]
+
+                AsyncStorage.multiSet(multi_set_pairs, (err) => {
+                    AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
+                        AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+                            stores.map((result, i, store) => {
+                                let key = store[i][0];
+                                let val = store[i][1];
+                            });
+                        });
+                    });
+                 });
+        
+                })
   
+         .catch((err) => {
+            console.log('WRONG SIGNIN FB', err);
+          })
+        } else {
+          console.log(error, data);
+        }
+      });
+    }
+     handleFBLogout(){
+        var _this = this;
+        FBLoginManager.logout(function(error, data){
+          if (!error) {
+            _this.setState({ user : null});
+            _this.props.onLogout && _this.props.onLogout();
+          } else {
+            console.log(error, data);
+          }
+        });
+      }
+
+      onPress(){
+        this.state.user
+          ? this.handleFBLogout()
+          : this.handleFBLogin();
+
+        this.props.onPress && this.props.onPress();
+      }
+   
+
+     navigateToHome(){
+       this.props.navigator.push({
+        title: 'Gps',
+        id:'tab',
+        navigator: this.props.navigator,
+       })
+     }
     render() {
       var _this = this;
       var user = this.state.user;
+      var text = this.state.user ? "LOG OUT" : "LOG IN WITH FACEBOOK";
         return  (
            <Image source={require('../../images/login_background.png')} style={styles.shadow}>
            <View style={styles.center}>
             <Image source={require('../../images/Logo.png')} style={styles.logo}/>
            </View>
             <View style={styles.container}>
-            <TouchableOpacity onPress={() => this.props.navigator.push({
-              title: 'Gps',
-              id:'tab',
-              navigator: this.props.navigator,
-             })} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>LOGIN WITH FACEBOOK</Text><Image source={require('../../images/facebook.png')} style={styles.facebook}/>
+            <TouchableOpacity onPress={() => this.onPress()} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>{text}</Text><Image source={require('../../images/facebook.png')} style={styles.facebook}/>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this._signIn.bind(this)} style={styles.Loginbtngg}><Text style={{color:'#db3236',textAlign:'left',marginLeft:3,}}>LOGIN WITH GOOGLE</Text><Image source={require('../../images/google_plus.png')} style={styles.google}/>
+            <TouchableOpacity onPress={() => this._signInGoogle()} style={styles.Loginbtngg}><Text style={{color:'#db3236',textAlign:'left',marginLeft:3,}}>LOGIN WITH GOOGLE</Text><Image source={require('../../images/google_plus.png')} style={styles.google}/>
             </TouchableOpacity>
              <TouchableOpacity 
              style={styles.skip}
-             onPress={() => 
-              this.props.navigator.push({
-              title: 'Gps',
-              id:'tab',
-              navigator: this.props.navigator,
-             })}>
+             onPress={() => this.navigateToHome()}>
              <View style={{marginTop: 10}}>
               <Text style={{color:'white'}}>SKIP</Text>
             </View>

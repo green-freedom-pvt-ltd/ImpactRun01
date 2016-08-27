@@ -28,29 +28,13 @@ import{
     	render() {
     		return (
       <TabBarIOS 
+        style={{height:100,padding:10}}
         unselectedTintColor="white"
         tintColor="white"
         barTintColor="#3c1e71" 
         selectedTab={this.state.selectedTab} 
         navigator={this.props.navigator}>
-        <TabBarIOS.Item
-         onPress={() => {
-            this.setState({
-              notifCount: this.state.notifCount + 1,
-            });
-            }}
-          badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
-          style = {styles.tab}
-          selected={this.state.selectedTab === 'aboutus'}
-          icon={require("../../images/aboutus2.png")}
-          title="aboutus"
-          onPress={() => {
-              this.setState({
-                  selectedTab: 'aboutus',
-              });
-          }}>
-            <Aboutus/>
-        </TabBarIOS.Item>
+
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'faq'}
           icon={require("../../images/faq2.png")}
@@ -64,7 +48,7 @@ import{
         </TabBarIOS.Item>
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'welcome'}
-          title="Run"
+          title="Home"
           icon={require("../../images/RunImage4.png")}
           onPress={() => {
               this.setState({
@@ -74,17 +58,6 @@ import{
         <Welcome navigator={this.props.navigator}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          selected={this.state.selectedTab === 'feedback'}
-          title="feedback"
-          icon={require("../../images/feedback2.png")}
-          onPress={() => {
-                this.setState({
-                    selectedTab: 'feedback',
-                });
-          }}>
-          <Feedback/>
-         </TabBarIOS.Item>
-          <TabBarIOS.Item
             selected={this.state.selectedTab === 'profile'}
             title="me"
             icon={require("../../images/me2.png")}
@@ -93,7 +66,7 @@ import{
                     selectedTab: 'profile',
                 });
           }}>
-            <Profile/>
+         <Profile/>
         </TabBarIOS.Item>
       </TabBarIOS>
     		);

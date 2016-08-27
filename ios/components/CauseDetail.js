@@ -153,7 +153,7 @@ class CauseDetail extends Component {
     flexDirection: 'row',
     justifyContent:'flex-start',
     alignItems:'center',
-    backgroundColor:'#673AB7',
+    backgroundColor:'#d667cd',
     borderBottomWidth:2,
     borderBottomColor:'#00b9ff',
   },

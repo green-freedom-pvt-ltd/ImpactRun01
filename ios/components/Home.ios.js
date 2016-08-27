@@ -62,16 +62,17 @@ var styles = StyleSheet.create({
     backgroundColor:'#00b9ff'
   },
   workspace: {
-      flex: 1
+      flex: 1,
   },
   map: {
     position:'absolute',
     height:deviceheight,
     width:deviceWidth,
+    opacity:0,
   },
   bottomBarContent:{
     paddingLeft:10, 
-    width:deviceWidth/3,
+    width:deviceWidth/4,
     justifyContent: 'center',      
     alignItems: 'center',
   },
@@ -86,7 +87,7 @@ var styles = StyleSheet.create({
     alignItems:'center',
     backgroundColor:'#d667cd',
     borderBottomWidth:2,
-    borderBottomColor:'#673AB7',
+    borderBottomColor:'#00b9ff',
   },
   menuTitle:{
     left:20,
@@ -133,23 +134,23 @@ SettingsService.init('iOS');
   },
 
 
-  componentDidMount: function() {
+  componentWillMount: function() {
        GoogleSignin.configure({
        iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
        });
-    AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-        stores.map((result, i, store) => {
-            let key = store[i][0];
-            let val = store[i][1];
-            this.setState({
-              Storeduserdata:val
-            })
-            console.log("UserDatakey1 :" + key, val);
-        });
-    });
+      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+          stores.map((result, i, store) => {
+              let key = store[i][0];
+              let val = store[i][1];
+              this.setState({
+                Storeduserdata:val
+              })
+              console.log("UserDatakey1 :" + key, val);
+          });
+      });
 
     var me = this,
     gmap = this.refs.gmap;
@@ -226,24 +227,30 @@ SettingsService.init('iOS');
       });
 
       me.setState({
-        enabled: state.enabled
+        enabled: true
       });
       if (state.enabled) {
         me.initializePolyline();
-        me.updatePaceButtonStyle()
+        me.updatePaceButtonStyle();
       }
 
     });
     });
     
 
-    this.setState({
+   
+  },
+   componentDidMount:function(){
+     this.setState({
       enabled: true,
       isMoving: true,
-      textState:'PLAY',
-      EndRun:'BEGIN RUN'
+      textState:'PAUSE',
     });
-  },
+    this.locationManager.start();
+     
+    this.updatePaceButtonStyle();
+    },
+   
      _signIn:function() {
     GoogleSignin.signIn()
     .then((user) => {
@@ -351,8 +358,8 @@ SettingsService.init('iOS');
   
   // Add Marker if check clear
   addMarker :function(location) {
-    // IF Speed More than 25km/hr
-    if (location.coords.speed <= 25) {
+    
+
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -361,10 +368,11 @@ SettingsService.init('iOS');
           })
     // If Location accuracy is less than 15
       if (location.coords.accuracy <= 15){
+        // IF Speed More than 35km/hr
+      if (location.coords.speed <= 15) {
       var me = this;
       this.addAnnotations(mapRef, [this.createMarker(location)]);
       if ( this.polyline) {
-
         this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
         // this.polyline.lengthof.push(this.polyline.oneOf(this.polyline));
         this.updateAnnotation(mapRef, this.polyline);
@@ -376,7 +384,15 @@ SettingsService.init('iOS');
           prevLatLng: newLatLngs,
           speed:location.coords.speed,
         })
-  
+        }else{
+          this.locationManager.removeGeofences();
+          this.locationManager.stop();
+             this.setState({
+            enabled: !this.state.enabled,    
+          });
+          this.updatePaceButtonStyle();
+          AlertIOS.alert('Your speed is more than running speed it seems you are travelling in vehicle');
+         }
       }else{
           // else to our algo part
           var Prevdistance = this.state.prevDistance*1000;
@@ -395,9 +411,7 @@ SettingsService.init('iOS');
                 }
              }
           }
-   }else{
-         AlertIOS.alert('Your speed is more than running speed it seems you are travelling in vehicle');
-         }
+      
   },
 
 
@@ -613,7 +627,7 @@ SettingsService.init('iOS');
       paceButtonStyle: style,
       paceButtonIcon: (this.state.enabled && this.state.isMoving) ? 'md-pause' : 'md-play',
       textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'PLAY', 
-      EndRun:(this.state.enabled && this.state.isMoving) ? 'END RUN':'BEGIN RUN', 
+      EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
 
     });
   },
@@ -666,21 +680,19 @@ SettingsService.init('iOS');
             onOpenAnnotation={this.onOpenAnnotation}
             onRightAnnotationTapped={this.onRightAnnotationTapped}
             onUpdateUserLocation={this.onUpdateUserLocation}>
-           
-            </Mapbox>
+           </Mapbox>
     
         <View style={styles.distanceWrap}>
             <Text style={styles.bottomBarContent}>Distance {"\n"}{parseFloat(this.state.distanceTravelled).toFixed(1)}km</Text>
             <Text style={styles.bottomBarContent}>Rupees{"\n"}{parseFloat(this.state.distanceTravelled*10).toFixed(0)}rs</Text>
             <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
-
-         </View>
+            <Text style={styles.bottomBarContent}>Speed {this.state.speed}m/s</Text>
+        </View>
         </View>
 
         <View style={commonStyles.bottomToolbar}>
           <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={styles.playpause}>{this.state.textState}</Text></Icon>
           <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
-
         </View>
       </View>
     );

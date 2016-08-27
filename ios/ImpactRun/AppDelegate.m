@@ -67,10 +67,11 @@
 }
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
+  return [ [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation],
+          [FBSDKApplicationDelegate sharedInstance] application:application
                                                         openURL:url
                                               sourceApplication:sourceApplication
                                                      annotation:annotation];
-  return [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+ 
 }
 @end
