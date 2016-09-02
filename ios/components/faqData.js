@@ -25,6 +25,8 @@ class Motion extends Component {
     this.state = {
       faqData: ds.cloneWithRows([]),
         isConnected: null,
+              loaded: false,
+
     };
   }
   navigateTOhome(){
@@ -53,6 +55,7 @@ class Motion extends Component {
       .then( jsonData => {
         this.setState({
           faqData: this.state.faqData.cloneWithRows(jsonData.results),
+           loaded: true,
         });
       })
     .catch( error => console.log('Error fetching: ' + error) );
@@ -73,7 +76,18 @@ class Motion extends Component {
       </View>
     );
   }
-
+ renderLoadingView() {
+    return (
+      <View style={styles.container}>
+       <View style={styles.Navbar}>
+            <Text style={styles.menuTitle}>Faqs</Text>
+        </View>
+        <Text>
+          Loading faqs...
+        </Text>
+      </View>
+    );
+  }
  SubmitFaq(){
 
   if (this.state.isConnected === true) {
@@ -106,6 +120,9 @@ class Motion extends Component {
  }
 
   render() {
+      if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
     console.log(this.state.isConnected);
     return (
       <View style={{height:deviceHeight,width:deviceWidth}}>
@@ -181,9 +198,9 @@ const styles = StyleSheet.create({
   flexDirection: 'row',
   justifyContent:'flex-start',
   alignItems:'center',
-  backgroundColor:'#d667cd',
+  backgroundColor:'#00b9ff',
   borderBottomWidth:2,
-  borderBottomColor:'#00b9ff',
+  borderBottomColor:'#e03ed2',
 },
   menuTitle:{
     left:20,

@@ -13,7 +13,8 @@ import React, { Component } from 'react';
   AsyncStorage,
   TouchableOpacity,
   ScrollView,
-  AlertIOS
+  AlertIOS,
+  NetInfo
 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -27,10 +28,19 @@ class RunHistroy extends Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       loaded: false,
+      isConnected: null,
+
     };
   }
 
    componentDidMount() {
+     NetInfo.isConnected.addEventListener(
+    'change',
+    this._handleConnectivityChange
+    );
+    NetInfo.isConnected.fetch().done(
+        (isConnected) => { this.setState({isConnected}); }
+    );
      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
             let key = store[i][0];
@@ -40,10 +50,11 @@ class RunHistroy extends Component {
             })
             console.log("UserDatakey2 :" + key, val);
 
-            if (this.state.Storeduserdata != null) {
-               this.fetchData();
-             }else{
-              AlertIOS.alert('you are not Loged in');
+             if (this.state.isConnected === true && this.state.Storeduserdata != null) {
+              
+                this.fetchData();
+              
+              
              }
             
         });
@@ -51,6 +62,11 @@ class RunHistroy extends Component {
     });
      
    }
+    _handleConnectivityChange(isConnected) {
+      this.setState({
+        isConnected,
+      });
+    }
   fetchData() {
       var userdata = this.state.Storeduserdata;
       var UserDataParsed = JSON.parse(userdata);

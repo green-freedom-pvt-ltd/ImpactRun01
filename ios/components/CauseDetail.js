@@ -28,7 +28,7 @@ class CauseDetail extends Component {
       var data = this.props.data;
        this.props.navigator.push({
           title:'RunScreen',
-          id:'runscreen',
+          id:'runlodingscreen',
           navigator: this.props.navigator,
           passProps: {data: data}
        })
@@ -38,15 +38,15 @@ class CauseDetail extends Component {
     render() {
       var data = this.props.data
         return (
-            <View style={{backgroundColor: '#fff'}}>
-               <View style={styles.Navbar}>
-                  <TouchableOpacity onPress={this.popRoute.bind(this)} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
-                  <Text style={styles.menuTitle}>RunScreen</Text>
-                </View>
-                <View style={{height:deviceHeight,width:deviceWidth}}>
+              <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,  backgroundColor: '#fff'}}>  
+                              <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
                      <View style={styles.container}>
                      <Image source={{uri:data.cause_image}} style={styles.image}>
+                     <View style={{top:0,left:0,height:100,width:100,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}> 
+                  <TouchableOpacity style={styles.closebtn} onPress={()=>this.popRoute()} ><Icon style={{color:'white',fontSize:60,}}name={'ios-close'}></Icon></TouchableOpacity>
+                </View>
+
                        <View style={styles.overlaytext}>
                          <Text style={styles.categorytext}>{data.cause_category}</Text>
                        </View>
@@ -118,7 +118,7 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    top:deviceHeight-105,
+    bottom:0,
     width:deviceWidth,
     height:50,
     justifyContent: 'center',
@@ -130,6 +130,17 @@ class CauseDetail extends Component {
      color:'white',
      fontWeight:'500',
      fontSize:20,
+  },
+  closebtn:{
+    left:10,
+    height:100,
+    width:100,
+    shadowColor: '#000000',
+      shadowOpacity: 0.6,
+      shadowRadius: 3,
+      shadowOffset: {
+        height: 4,
+      },
   },
   categorytext:{
     position:'absolute',

@@ -34,26 +34,31 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     alignSelf: 'stretch',
     flexDirection: 'row',
-    height: 50
+    height: 50,
+    bottom:20,
+    justifyContent:'center',
+    alignItems:'center',
   },
   toolbarTitle: {
   	fontWeight: 'bold', 
   	fontSize: 18, 
   	flex: 1, 
-    color:'white',
+    color:'transparent',
   	textAlign: 'center'
   },
   disabledButton: {
-    width:width/2,
+    width:width/2-10,
     height:50,
     backgroundColor: '#ccc',
-   paddingTop:10,
-   paddingLeft:10,
+    paddingTop:10,
+    paddingLeft:10,
+    borderRadius:30,
   },
   iconButton: {
     marginRight:10,
     marginTop:2,
     fontSize:10,
+    color:'white',
     backgroundColor:'red',
   },
   backButtonIcon: {
@@ -64,20 +69,22 @@ var styles = StyleSheet.create({
   	color: 'white'
   },
   redButton: {
-    padding:0,
+    padding:10,
     height:50,
     backgroundColor: '#d667cd',
-    width:width/2, 
+    width:width/2-10, 
     justifyContent:'center',
+    borderRadius:30,
   },
   greenButton: {
-    padding:0,
+    padding:10,
     height:50,
     backgroundColor: '#d667cd',
     width: 100,
-    width:width/2,
+    width:width/2-10,
     alignItems: 'center',
     justifyContent:'center',
+    borderRadius:30,
   }
   
 });

@@ -10,7 +10,8 @@ import {
  Dimensions,
  TouchableOpacity,
  AsyncStorage,
- Image
+ Image,
+ NetInfo
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -34,31 +35,62 @@ class Profile extends Component {
             visibleHeight: Dimensions.get('window').height,
             scroll: false,
             user:null,
+            loaded: false,
+            isConnected: null,
+
         };
       }
   
   componentDidMount() {
-      // if (!this.state.user) {
-      // this.navigateToHome();
-      // }else{console.log('user-null')}
-      this.fetchData();
+
+     NetInfo.isConnected.addEventListener(
+     'change',
+     this._handleConnectivityChange
+     );
+      NetInfo.isConnected.fetch().done(
+        (isConnected) => { this.setState({isConnected}); }
+       );
+     
+      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+        stores.map((result, i, store) => {
+            let key = store[i][0];
+            let val = store[i][1];
+        });
+      })
+        if (this.state.isConnected === true) {
+          this.fetchData();
+       }
        GoogleSignin.configure({
        iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
        })
       .then((user) => {
          console.log('Token:'+user);
        });
-  }
-    // popRoute() {
-    //     this.props.popRoute();
-    // }
-   componentWillMount() {
-       
-       // this.fetchData();
      }
+    _handleConnectivityChange(isConnected) {
+      this.setState({
+        isConnected,
+      });
+    }
+    
 
 
-
+     GetCausesIfExist(){
+            AsyncStorage.multiGet([ 'cause1','cause2', 'cause3','cause4',], (err, stores) => {
+            var _this = this
+            stores.map((item) => {
+                let key = item[0];
+                let val = JSON.parse(item[1]);
+                let causesArr = _this.state.causes.slice()
+                causesArr.push(val)
+                _this.setState({causes: causesArr})
+                _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: val.cause_image})})
+            });
+             if (!this.state.causes) { this.fetchData();
+            };
+         
+        });
+     }
     fetchData(dataValue){
     fetch(REQUEST_URL)
       .then((response) => response.json())
@@ -69,7 +101,7 @@ class Profile extends Component {
             causesData.push(['cause'+i, JSON.stringify(item)])
           })
           AsyncStorage.multiSet(causesData, (err) => {
-            console.log('myErr'+err)
+            console.log('myCauseErr'+err)
           })
         })
       .done();
@@ -77,10 +109,10 @@ class Profile extends Component {
 
 
   _signInGoogle() {
-    this.navigateToHome();
+    
     GoogleSignin.signIn()
     .then((user) => {
-      this.setState({user:user});
+      this.setState({user:user,loaded:true,});
       var access_token = user.accessToken;
       fetch("http://139.59.243.245/api/users/", {
       method: "GET",
@@ -88,10 +120,10 @@ class Profile extends Component {
           'Authorization':"Bearer google-oauth2 "+ user.accessToken,
         }
       })
-  
       .then((response) => response.json())
       .then((userdata) => { 
-      
+       this.navigateToHome();
+       console.log('userdata',userdata);
           var userdata = userdata;
           let UID234_object = {
               first_name:userdata[0].first_name,
@@ -113,7 +145,7 @@ class Profile extends Component {
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
-         };
+           };
           // // second user, initial values
            let UID345_object = {
               first_name:userdata[0].first_name,
@@ -124,7 +156,7 @@ class Profile extends Component {
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
-          };
+           };
 
           // // second user, delta values
            let UID345_delta = {
@@ -171,10 +203,9 @@ class Profile extends Component {
       var _this = this;
       FBLoginManager.login(function(error, data){
         if (!error) {
-          _this.setState({ user : data});
+          _this.setState({ user : data,loaded:true,});
           console.log('userFbdata'+JSON.stringify(data.credentials.token));
           _this.props.onLogin && _this.props.onLogin();
-           _this.navigateToHome();
            var Fb_token = data.credentials.token;
             fetch("http://139.59.243.245/api/users/", {
             method: "GET",
@@ -184,7 +215,9 @@ class Profile extends Component {
             })
         
             .then((response) => response.json())
-            .then((userdata) => { 
+            .then((userdata) => {
+
+                _this.navigateToHome();
                 var userdata = userdata;
                 console.log('userDatafb'+JSON.stringify(userdata));
                 let UID234_object = {
@@ -284,13 +317,25 @@ class Profile extends Component {
    
 
      navigateToHome(){
-       this.props.navigator.push({
+       this.props.navigator.replace({
         title: 'Gps',
         id:'tab',
         navigator: this.props.navigator,
        })
      }
+      renderLoadingView() {
+    return (
+      <View style={styles.container}> 
+        <Text>
+          Loading profile...
+        </Text>
+      </View>
+    );
+  }
     render() {
+  if (this.state.loaded) {
+    return this.renderLoadingView();
+  };
       var _this = this;
       var user = this.state.user;
       var text = this.state.user ? "LOG OUT" : "LOG IN WITH FACEBOOK";

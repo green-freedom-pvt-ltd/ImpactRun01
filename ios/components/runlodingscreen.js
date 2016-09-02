@@ -22,16 +22,17 @@ class LodingRunScreen extends Component {
     constructor(props) {
           super(props);
           this.state = {
-              seconds: 5
+              seconds: 6
           };
       }
       componentDidMount() {
-        setTimeout(
+
+      this.timeout = setTimeout(
          () => { 
           this.navigateToRunScreen();
           console.log('I'); 
          },5000);
-         this.refs.circularProgress.performLinearAnimation(100, 5000);
+       this.refs.circularProgress.performLinearAnimation(100, 5000);
        this.interval = setInterval(this.tick.bind(this), 1000);
        } 
        componentWillUnmount() {
@@ -45,13 +46,14 @@ class LodingRunScreen extends Component {
 
        navigateToRunScreen(cause) {
           var cause = this.props.data;
-          this.props.navigator.push({
+          this.props.navigator.replace({
           title: 'Gps',
           id:'runscreen',
           index: 0,
           passProps:{data:cause},
           navigator: this.props.navigator,
           });
+          clearTimeout(this.timeout);
         }
 
 
@@ -62,16 +64,20 @@ class LodingRunScreen extends Component {
         var second = this.state.seconds;
              var _this = this;
     		     return (    
+               <View>
+
+              <TouchableOpacity style={styles.overlay} onPress={()=> this.navigateToRunScreen()}>
+                <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
                  <View style={styles.lodingWrap}>
-                 <Image source={{uri:data.sponsors[0].sponsor_logo}}></Image>
-                  <Image style={{height:70,width:70}} source={{uri:data.sponsors[0].sponsor_logo}}/>
-                 <Text>{data.sponsors[0].sponsor_company}</Text>
+                 <View style={styles.CompnyWrap}>
+                 <Image style={{height:40,marginBottom:10,backgroundColor:'transparent'}} source={{uri:data.sponsors[0].sponsor_logo}}/>
+                 <Text style={{marginBottom:10,}}>{data.sponsors[0].sponsor_company}</Text>
+                 </View>
                   <AnimatedCircularProgress
-                  style={{ justifyContent:'center',
-                         alignItems:'center',}}
+                    style={{ justifyContent:'center', alignItems:'center',}}
                     ref='circularProgress'
-                    size={200}
-                    width={10}
+                    size={150}
+                    width={5}
                     fill={100}
                     prefill={0}
                     tintColor="#00e0ff"
@@ -84,8 +90,13 @@ class LodingRunScreen extends Component {
                     )
                   }
                 </AnimatedCircularProgress>
-                <Text onPress={()=> this.navigateToRunScreen()} >TAP TO START</Text>
+                <Text style={styles.navigateToRunScreen} onPress={()=> this.navigateToRunScreen()} >TAP TO START</Text>
+               
                 </View>
+                 </Image>
+                 </TouchableOpacity>
+              </View>
+              
     				);
     	    }
        }
@@ -101,12 +112,40 @@ class LodingRunScreen extends Component {
           second:{
             color:'#ccc',
             position:'absolute',
-            fontSize:100,
+            fontSize:70,
           },
           secondWrap:{
-           top:-155,
-           left:-25,
+           top:-120,
+           left:-22,
           },
+          CompnyWrap:{
+            bottom:70,
+          },
+          navigateToRunScreen:{
+            fontSize:20,
+            top:70,
+          },
+          shadow: {
+          position:'absolute',
+          height:deviceHeight,
+          flex: 1,
+          width: deviceWidth,
+          backgroundColor: 'transparent',
+          justifyContent: 'center',      
+         },
+           overlay:{
+            position:'relative',
+            height:deviceHeight,
+            width: deviceWidth,
+            backgroundColor: 'transparent',
+            justifyContent: 'center', 
+           },
+         shadow: {
+            height:deviceHeight,
+            width: deviceWidth,
+            backgroundColor: 'transparent',
+            justifyContent: 'center',      
+         },
 
         })
 

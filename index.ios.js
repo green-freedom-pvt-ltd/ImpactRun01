@@ -11,7 +11,7 @@ import {
   Navigator,
   AsyncStorage
  } from 'react-native';
- 
+import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 
@@ -23,15 +23,17 @@ import Tab from './ios/components/tab';
 import CauseDetail from './ios/components/CauseDetail';
 import Setting from './ios/components/setting';
 import Runlogingscreen from './ios/components/runlodingscreen';
-
-
+import Rateus from './ios/components/Rating';
+import ShareScreen from './ios/components/ShareScreen';
 
 class Application extends Component{
+  mixins: [TimerMixin]
   constructor(props) {
     super(props);
     this.state = {
       drawer: undefined,
       timePassed: false,
+      Loding:false,
     };
   }
   componentWillMount() {
@@ -41,48 +43,61 @@ class Application extends Component{
         let val = store[i][1];
         this.setState({
            user:val,
+           loding:true,
           })
-         console.log("UserDatakeyinital:" + key, val);
-         console.log("UserDatakeyinital4:" + this.state.user);
-         
+         })
+        this.setState({
+          userLogin:this.state.user,
+          textState:(this.state.user) ? 'tab':'login', 
+        })
+        this.render();
       });
-    console.log('myDataLOgin'+ this.state.user);
-    this.setState({
-      userLogin:this.state.user,
-    })
-    });
-     
-  }
+    }
 
-  onClickMenu() {
-    this.refs.drawer.open();
-  }
-  getDrawer() {
-    return this.refs.drawer;
-  }
+    onClickMenu() {
+      this.refs.drawer.open();
+    }
+    getDrawer() {
+      return this.refs.drawer;
+      }
+    
+    LodingFunction(){
+     return(
+      <Text>Loding...</Text>
+     )
+    }
+
+
   render() {
-   console.log("UserDatakeyinitalLogin" + this.state.userLogin);
-   return (
-
-      <View style={{flex: 1}}>
+    console.log('setStateUser'+this.state.user);
+    if(!this.state.textState)
+    {
+      return this.LodingFunction();
+    }
+    return (
+      <View  style={{flex: 1}}>
         <Navigator
            ref={(ref) => this._navigator = ref}
+
             configureScene={(route) => {
-            return {
-                ...Navigator.SceneConfigs.FloatFromRight,
-                gestures: {}
-            };
+              if(route.id === 'causedetail') {
+            return Navigator.SceneConfigs.FloatFromBottom
+           }
+                if(route.id === 'setting') {
+            return Navigator.SceneConfigs.FloatFromLeft
+           }
+             return Navigator.SceneConfigs.PushFromRight;
             }}
-            initialRoute={{id:"text"}}
+            initialRoute={{id:this.state.textState}}
             renderScene={this.renderScene} />
-      </View>);
-   
-   
     
+      </View>);
+
   }
 
-    renderScene(route, navigator) {
-        switch (route.id) {
+    renderScene(route, navigator, user) {
+      
+       switch (route.id) {
             case 'home':
             return <Home navigator={navigator} {...route.passProps}/>;
             case 'tab':
@@ -97,10 +112,15 @@ class Application extends Component{
             return <Setting navigator={navigator} {...route.passProps}/>;
             case 'runlodingscreen':
             return <Runlogingscreen navigator={navigator} {...route.passProps}/>;
+            case 'rateus':
+            return <Rateus navigator={navigator} {...route.passProps}/>;
+            case 'sharescreen':
+            return <ShareScreen navigator={navigator} {...route.passProps}/>;            
             default :
-                return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>;
+             return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
         }
-  }
+
+   }
 }
 
 AppRegistry.registerComponent('Impactrun', () => Application);

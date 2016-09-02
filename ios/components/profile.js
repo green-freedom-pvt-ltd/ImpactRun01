@@ -22,9 +22,9 @@ class Profile extends Component {
 	render() {
 		return (
        <View>
-    	<ScrollableTabView
+      	<ScrollableTabView
               style={styles.scrollTabWrapper}
-              initialPage={0}
+              initialPage={1}
               renderTabBar={() => <ScrollableTabBar/>}>
           <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm/></View>
           <View style={styles.tabContent} tabLabel='RunHistory'><RunHistory/></View>

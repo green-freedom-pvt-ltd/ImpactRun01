@@ -14,7 +14,12 @@ import {
   AlertIOS,
   AsyncStorage,
   TouchableOpacity,
+  VibrationIOS,
+  Image,
  } from 'react-native';
+import TimeFormatter from 'minutes-seconds-milliseconds';
+import TimerMixin from 'react-timer-mixin';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import Mapbox from 'react-native-mapbox-gl';
 import BackgroundGeolocation from 'react-native-background-geolocation';
@@ -31,38 +36,46 @@ var styles = StyleSheet.create({
     left:-3,
     paddingLeft:10,
     bottom:0,
-    borderRadius:0,
-    flex:1,
     height:40,
-    width:deviceWidth/2,
-    backgroundColor:'#d667cd',
+    width:deviceWidth/2-10,
+    backgroundColor:'#673ab7',
     marginRight:-10,
     fontSize:30,
     color:'white',
-
-  
+    borderRadius:30,
   },
+  DistanceFill:{
+    backgroundColor:'transparent',
+  }, 
   distanceWrap:{
-      flexDirection: 'row',
-      justifyContent:'center',
-      width:deviceWidth,
-      height:50,
-  },
-  playpause:{
+    flexDirection: 'row',
     justifyContent:'center',
-    fontSize:25,
-    color:'white',
-
+    width:deviceWidth,
+    height:50,
   },
   EndRun:{
     justifyContent: 'center',      
     alignItems: 'center',
     height:50,
-    width:deviceWidth/2,
-    backgroundColor:'#00b9ff'
+    width:deviceWidth/2-20,
+    borderRadius:30,
+    backgroundColor:'#673ab7',
+    margin:10,
+  },
+  ResumePause:{
+    justifyContent: 'center',      
+    alignItems: 'center',
+    height:50,
+    width:deviceWidth/2-20,
+    borderRadius:30,
+    backgroundColor:'#d667cd',
+    margin:10,
   },
   workspace: {
-      flex: 1,
+    flex: 1,
+    justifyContent: 'center',      
+    alignItems: 'center',
+    top:-20,
   },
   map: {
     position:'absolute',
@@ -85,21 +98,39 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'flex-start',
     alignItems:'center',
-    backgroundColor:'#d667cd',
+    backgroundColor:'#00b9ff',
     borderBottomWidth:2,
-    borderBottomColor:'#00b9ff',
+    borderBottomColor:'#e03ed2',
   },
   menuTitle:{
     left:20,
     color:'white',
     fontSize:20,
   },
+  Impact:{
+    fontSize:30,
+    fontWeight:'500',
+  },
+  distance:{
+    fontSize:25,
+    fontWeight:'500',
+  },
+  WrapCompany:{
+    justifyContent: 'center',      
+    alignItems: 'center',
+    top:10,
+   },
+   timeDistanceWrap:{
+    justifyContent: 'center',      
+    alignItems: 'center',
+    width:deviceWidth/2,    
+   },
 });
 
 SettingsService.init('iOS');
 
   var Home = React.createClass({
-
+    mixins: [TimerMixin],
     mixins: [Mapbox.Mixin],
     annotations: [],
     locationIcon: 'green-circle.png',
@@ -110,16 +141,17 @@ SettingsService.init('iOS');
 
   getInitialState: function() {
     return {
+      isRunning:false,
+      mainTimer:null,
       speed:0,
       prevLatLng: {},
       distanceTravelled: 0,
       prevDistance:0,
-      textState:'',
-      Enbtn:'',
+      textState:'PAUSE',
+      Enbtn:'END RUN',
       enabled: true,
       isMoving: true,
-      paceButtonStyle: commonStyles.disabledButton,
-      paceButtonIcon: 'md-play',
+      paceButtonIcon: 'md-pause',
       navigateButtonIcon: 'md-locate',
       mapHeight: 280,
       mapWidth: 300,
@@ -133,24 +165,29 @@ SettingsService.init('iOS');
     };
   },
 
-
+  componentWillUnmount:function() {
+     this.setState({
+       enabled:true,
+       isMoving:true,
+     })
+   },
   componentWillMount: function() {
-       GoogleSignin.configure({
-       iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
-       })
-      .then((user) => {
-         console.log('Token:'+user);
-       });
-      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-          stores.map((result, i, store) => {
-              let key = store[i][0];
-              let val = store[i][1];
-              this.setState({
-                Storeduserdata:val
-              })
-              console.log("UserDatakey1 :" + key, val);
-          });
-      });
+   GoogleSignin.configure({
+   iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
+   })
+  .then((user) => {
+     console.log('Token:'+user);
+   });
+    AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+        stores.map((result, i, store) => {
+            let key = store[i][0];
+            let val = store[i][1];
+            this.setState({
+              Storeduserdata:val
+            })
+            console.log("UserDatakey1 :" + key, val);
+        });
+    });
 
     var me = this,
     gmap = this.refs.gmap;
@@ -227,7 +264,9 @@ SettingsService.init('iOS');
       });
 
       me.setState({
-        enabled: true
+        enabled: true,
+        isMoving:true,
+        isRunning:true,
       });
       if (state.enabled) {
         me.initializePolyline();
@@ -236,25 +275,72 @@ SettingsService.init('iOS');
 
     });
     });
-    
-
+  
+    this.setState({
+        enabled: true,
+        isMoving:true,
+        isRunning:true,
+      });
    
   },
    componentDidMount:function(){
-     this.setState({
-      enabled: true,
-      isMoving: true,
-      textState:'PAUSE',
-    });
-    this.locationManager.start();
-     
-    this.updatePaceButtonStyle();
-    },
+    console.log('mytest'+ this.state.textState);
    
-     _signIn:function() {
-    GoogleSignin.signIn()
-    .then((user) => {
-      console.log('usertoken:'+ JSON.stringify(user));
+    console.log('myComponentDta'+ this.state.isMoving +' and '+ this.state.enabled);
+    this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
+    this.locationManager.start();    
+    this.updatePaceButtonStyle();
+
+
+      var isMoving = this.state.isMoving;
+      this.locationManager.changePace(isMoving);
+      this.setState({
+        enabled:true,
+        isMoving:true,
+        textState:'PAUSE',
+        isRunning:true,
+      });
+      this.updatePaceButtonStyle();
+            
+
+
+            return;
+
+      
+    },
+   _handleStartStop:function(){
+          let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
+          if(this.state.textState === 'RESUME'){
+            console.log('mytest'+ this.state.textState);
+            clearInterval(this.interval);
+            this.setState({
+                isRunning:false
+            });
+            return;
+            
+          }else{ 
+            console.log('mytest'+ this.state.textState);
+            if (this.state.textState === 'PAUSE') {
+              this.setState({
+                mainTimerStart:new Date(),
+                lapTimerStart:new Date(),
+                 isRunning:true,
+            })
+             this.interval = setInterval(()=>{
+            this.setState({
+                mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
+                lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
+            })
+            },30);
+            };
+           
+         }
+        
+          },
+   _signIn:function() {
+     GoogleSignin.signIn()
+     .then((user) => {
+     console.log('usertoken:'+ JSON.stringify(user));
       // var user = JSON.parse(JSON.stringify(user));
       this.setState({user:user});
       var access_token = user.accessToken;
@@ -367,9 +453,10 @@ SettingsService.init('iOS');
             prevDistance: newDistance-distanceTravelled,
           })
     // If Location accuracy is less than 15
-      if (location.coords.accuracy <= 15){
+      if (location.coords.accuracy <=15){
+
         // IF Speed More than 35km/hr
-      if (location.coords.speed <= 15) {
+      if (location.coords.speed <= 35) {
       var me = this;
       this.addAnnotations(mapRef, [this.createMarker(location)]);
       if ( this.polyline) {
@@ -391,6 +478,7 @@ SettingsService.init('iOS');
             enabled: !this.state.enabled,    
           });
           this.updatePaceButtonStyle();
+          VibrationIOS.vibrate();
           AlertIOS.alert('Your speed is more than running speed it seems you are travelling in vehicle');
          }
       }else{
@@ -462,30 +550,17 @@ SettingsService.init('iOS');
       this.locationManager.start(function() {
         me.initializePolyline();
       });
-    } else {
+      } else {
       if (this.state.enabled) {
-        if (this.state.Storeduserdata != null) {
-         this.PostRun();
+      // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
+         this.navigateTOShareScreen()
         // var auth_token = JSON.stringify(this.state.userData.auth_token);
         // var user_id = this.state.userData.user_id
         // console.log('authTokrn:'+ auth_token);
         // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
-         
-       }else{
-         AlertIOS.alert(
-           'Login',
-             'Please Login to post run',
-            [
-            {text: 'Google Login', onPress: () => this._signIn() }
-             ],
-             );
-
-     }
-
-  
-  // }else{
-  //   AlertIOS.alert('You didnt even run 100m we dont save run less than 100 m.')
-  // }
+      // }else{
+      //   AlertIOS.alert('You didnt even run 100m we dont save run less than 100 m.')
+      // }
       };
      
       this.locationManager.removeGeofences();
@@ -502,23 +577,32 @@ SettingsService.init('iOS');
   },
 
    navigateTOHomeScreen:function(){
-    this.props.navigator.push({
+    this.props.navigator.replace({
             title: 'Gps',
             id:'tab',
+            navigator: this.props.navigator,
+           })
+    },
+     navigateTOShareScreen:function(){
+          var data = this.props.data;
+          var user = this.state.Storeduserdata;
+          this.props.navigator.push({
+            id:'sharescreen',
+            passProps:{data:this.state.Storeduserdata,distance:parseFloat(this.state.distanceTravelled).toFixed(1),impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)},isUserlogin:user,
             navigator: this.props.navigator,
            })
     },
     
     Confimation:function() {
       AlertIOS.alert(
-           'Go Back',
-           'Are you sure you want to go back ',
-            [
-              {text: 'Confirm', onPress: () => this.popRoute() },
-              {text: 'Cancel',},
-             ],
-             ); 
-    },
+          'Go Back',
+         'Are you sure you want to go back ',
+         [
+        {text: 'Confirm', onPress: () => this.popRoute() },
+        {text: 'Cancel',},
+       ],
+       ); 
+      },
     popRoute:function() {
       if (this.state.enabled) {    
       this.locationManager.removeGeofences();
@@ -529,17 +613,20 @@ SettingsService.init('iOS');
       this.locationManager.resetOdometer();
       this.removeAllAnnotations(mapRef);
       this.polyline = null;
-     this.setState({
-      enabled: !this.state.enabled, 
-     });
-    this.updatePaceButtonStyle();
-    
-    }else{
-      this.navigateTOHomeScreen();
-    }
-  },
+       this.setState({
+        enabled: !this.state.enabled, 
+       });
+      this.updatePaceButtonStyle();
+      
+      }else{
+        this.navigateTOHomeScreen();
+      }
+    },
     PostRun:function(){
-      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
+
+      // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
+
+
       var userdata = this.state.Storeduserdata;
       var UserDataParsed = JSON.parse(userdata);
       var user_id =JSON.stringify(UserDataParsed.user_id);
@@ -574,50 +661,76 @@ SettingsService.init('iOS');
         this.state.distanceTravelled = 0;
         this.state.prevDistance = 0;
       })
-    }else{
-        AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
-    }
+    // }else{
+    //     VibrationIOS.vibrate(); 
+    //     AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
+    // }
     },
-  onClickPace: function() {
-    if (!this.state.enabled)  { return; }
-    var isMoving = !this.state.isMoving;
-    this.locationManager.changePace(isMoving);
+    onClickPace: function() {
+      let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
+      if (!this.state.enabled)  {
+      VibrationIOS.vibrate()    
+        console.log('ismovingdata'+this.state.isMoving);
+       return; }else{
+         if (isRunning) {
+        console.log('mytest'+ this.state.textState);
+        clearInterval(this.interval);
+        this.setState({
+            isRunning:false
+        });
+      }
+     };
+     if (!isRunning) {
+        this.setState({
+            mainTimerStart:new Date(),
+            lapTimerStart:new Date(),
+            isRunning:true,
+            })
+            this.interval = setInterval(()=>{
+            this.setState({
+            mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
+            lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
+            })
+            },30);
+    };
+      var isMoving = !this.state.isMoving;
+      this.locationManager.changePace(isMoving);
 
-    this.setState({
-      isMoving: isMoving,
-      textState:'START'
-    });
-    this.updatePaceButtonStyle();
-    
+      this.setState({
+        isMoving: isMoving,
 
-  },
+      });
+      VibrationIOS.vibrate()
+      this.updatePaceButtonStyle();
+
+    },
  
-  onClickLocate: function() {
-    var me = this;
-    this.locationManager.getState(function(state) {
-      console.log('- state: ', state);
-    });
+    onClickLocate: function() {
+      var me = this;
+      this.locationManager.getState(function(state) {
+        console.log('- state: ', state);
+      });
 
-    this.locationManager.getCurrentPosition({
-      timeout: 10,
-      persist: false,
-      desiredAccuracy: 10,
-      samples: 5,
-      maximumAge: 5000
-    }, function(location) {
-      me.setCenter(location);
-      console.log('- current position: ', JSON.stringify(location));
-    }, function(error) {
-      console.error('ERROR: getCurrentPosition', error);
-      me.setState({navigateButtonIcon: 'navigate'});
-    });
-  },
-  onRegionChange: function() {
-    console.log('onRegionChange');
-  },
-  setCenter: function(location) {
-    this.setCenterCoordinateAnimated(mapRef, location.coords.latitude, location.coords.longitude)
-  },
+      this.locationManager.getCurrentPosition({
+        timeout: 10,
+        persist: false,
+        desiredAccuracy: 10,
+        samples: 5,
+        maximumAge: 5000
+      }, function(location) {
+        me.setCenter(location);
+        console.log('- current position: ', JSON.stringify(location));
+      }, function(error) {
+        console.error('ERROR: getCurrentPosition', error);
+        me.setState({navigateButtonIcon: 'navigate'});
+      });
+    },
+    onRegionChange: function() {
+      console.log('onRegionChange');
+    },
+    setCenter: function(location) {
+      this.setCenterCoordinateAnimated(mapRef, location.coords.latitude, location.coords.longitude)
+    },
   updatePaceButtonStyle: function() {
     var style = commonStyles.disabledButton;
     if (this.state.enabled) {
@@ -626,7 +739,7 @@ SettingsService.init('iOS');
     this.setState({
       paceButtonStyle: style,
       paceButtonIcon: (this.state.enabled && this.state.isMoving) ? 'md-pause' : 'md-play',
-      textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'PLAY', 
+      textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'RESUME', 
       EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
 
     });
@@ -650,17 +763,17 @@ SettingsService.init('iOS');
 
   render: function(location) {
     var data = this.props.data;
-    console.log('data'+ JSON.stringify(data));
     return (
       <View style={commonStyles.container}>
        <View style={styles.Navbar}>
-          <TouchableOpacity onPress={this.Confimation} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
+          <TouchableOpacity style={{height:50,width:50,justifyContent: 'center',alignItems: 'center',}} onPress={this.Confimation} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
             <Text style={styles.menuTitle}>RunScreen</Text>
         </View>
          <View ref="workspace" style={styles.workspace}>
-
-          <Text>{data.cause_title}</Text>
-            
+          <View style={styles.WrapCompany} >
+            <Image style={{height:40,width:70}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
+            <Text style={{marginTop:20}}>IMPACT</Text> 
+          </View>
           <Mapbox
             style={styles.map}
             direction={0}
@@ -681,17 +794,40 @@ SettingsService.init('iOS');
             onRightAnnotationTapped={this.onRightAnnotationTapped}
             onUpdateUserLocation={this.onUpdateUserLocation}>
            </Mapbox>
-    
-        <View style={styles.distanceWrap}>
-            <Text style={styles.bottomBarContent}>Distance {"\n"}{parseFloat(this.state.distanceTravelled).toFixed(1)}km</Text>
-            <Text style={styles.bottomBarContent}>Rupees{"\n"}{parseFloat(this.state.distanceTravelled*10).toFixed(0)}rs</Text>
-            <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
-            <Text style={styles.bottomBarContent}>Speed {this.state.speed}m/s</Text>
-        </View>
-        </View>
-
+           <AnimatedCircularProgress
+              style={{ top:50,justifyContent:'center',alignItems:'center',}}
+              ref='circularProgress'
+              size={130}
+              width={5}
+              fill={this.state.distanceTravelled*10/2}
+              prefill={100}
+              tintColor="#00e0ff"
+              backgroundColor="#ccc">                   
+            </AnimatedCircularProgress>
+             <View style={{top:-70,backgroundColor:'transparent',width:100,height:100,justifyContent:'center',alignItems:'center'}}>
+              <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
+              <Text>RUPEES</Text>
+            </View>
+            <View style={{width:deviceWidth,flexDirection:'row',}}>
+              <View style={styles.timeDistanceWrap}>
+                <Icon style={{color:'black',fontSize:30,}} name={'ios-walk-outline'}></Icon>
+                  <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
+                <Text>km</Text>
+              </View>
+              <View style={styles.timeDistanceWrap}>
+                <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
+                 <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
+                <Text>sec</Text>
+              </View>
+            </View>
+          </View>
         <View style={commonStyles.bottomToolbar}>
-          <Icon name={this.state.paceButtonIcon} onPress={this.onClickPace} iconStyle={commonStyles.iconButton} style={[this.state.paceButtonStyle,styles.stationaryButton]}><Text style={styles.playpause}>{this.state.textState}</Text></Icon>
+        <TouchableHighlight  onPress={this.onClickPace} style={styles.ResumePause}>
+         <View style={{flexDirection:'row'}}>
+          <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:20,marginTop:3,marginRight:5}}></Icon>
+          <Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
+          </View>
+          </TouchableHighlight>
           <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
         </View>
       </View>
@@ -700,6 +836,12 @@ SettingsService.init('iOS');
 });
           // <Icon.Button name={this.state.navigateButtonIcon} onPress={this.onClickLocate} size={30} color="#00b9ff" underlayColor="#ccc" backgroundColor="white" style={styles.btnNavigate} />
 
+        // <View style={styles.distanceWrap}>
+        //     <Text style={styles.bottomBarContent}>Distance {"\n"}{parseFloat(this.state.distanceTravelled).toFixed(1)}km</Text>
+        //     <Text style={styles.bottomBarContent}>Rupees{"\n"}{parseFloat(this.state.distanceTravelled*10).toFixed(0)}rs</Text>
+        //     <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
+        //     <Text style={styles.bottomBarContent}>Speed {this.state.speed}m/s</Text>
+        // </View>
 
 module.exports = Home;
 

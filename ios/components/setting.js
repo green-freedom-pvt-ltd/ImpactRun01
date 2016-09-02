@@ -12,8 +12,9 @@ import{
     AsyncStorage,
     Text,
   } from 'react-native';
-
+import SocialShare from './SocialShare';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Rating from './Rating';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var styles = StyleSheet.create({
@@ -36,6 +37,7 @@ var styles = StyleSheet.create({
     fontSize:20,
   },
 })
+var FBLoginManager = require('NativeModules').FBLoginManager;
 
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
@@ -47,6 +49,7 @@ class Setting extends Component {
      // GOOGLE_LOGOUT
        _signOut() {
          this.navigateToLogin();
+         this.handleFBLogout();
            GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
            this.setState({user: null});
              console.log('userLogout:');
@@ -68,17 +71,45 @@ class Setting extends Component {
             navigator: this.props.navigator,
            })
         }
-
+        navigateToRate(){
+           this.props.navigator.push({
+            title: 'Gps',
+            id:'rateus',
+            index: 0,
+            navigator: this.props.navigator,
+           })
+        }
+          handleFBLogout(){
+        var _this = this;
+        FBLoginManager.logout(function(error, data){
+          if (!error) {
+            _this.setState({ user : null});
+            _this.props.onLogout && _this.props.onLogout();
+          } else {
+            console.log(error, data);
+          }
+        });
+      }
     	render() {
     		return (
-                <View>
+              <View>
                 <View style={styles.Navbar}>
-                      <TouchableOpacity onPress={()=>this.popRoute()} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
-                      <Text style={styles.menuTitle}>Settings</Text>
-                 </View>
-    		         <TouchableOpacity onPress={()=>this._signOut()}><Icon style={{color:'black',fontSize:30,}}name={'md-text'}></Icon><Text>LOG OUT</Text></TouchableOpacity>
-
+                    <TouchableOpacity style={{height:50,width:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.popRoute()} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
+                    <Text style={styles.menuTitle}>Settings</Text>
                 </View>
+                <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
+                   <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-log-out'}></Icon>
+      		         <TouchableOpacity onPress={()=>this._signOut()}><Text >LOG OUT</Text></TouchableOpacity>
+                </View>
+                <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
+                   <Icon style={{color:'black',fontSize:25,margin:10}}name={'ios-star-half'}></Icon>
+                   <TouchableOpacity onPress={()=>this.navigateToRate()}><Text >RATE US</Text></TouchableOpacity>
+                </View>
+                <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
+                  <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-share'}></Icon>
+                  <SocialShare/>
+                </View>
+              </View>
     					);
     	    }
       }

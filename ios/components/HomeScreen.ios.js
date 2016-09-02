@@ -34,7 +34,7 @@ class Profile extends Component {
          album : {},
          causes : [],
          navigation: {
-           index: 1,
+           index: 0,
            routes: [],
 
          },
@@ -49,7 +49,7 @@ class Profile extends Component {
     };
 
 
-    componentWillMount() {
+    componentDidMount() {
         // this.fetchData();
         try {
         AsyncStorage.multiGet([ 'cause1','cause2', 'cause3','cause4',], (err, stores) => {
@@ -63,7 +63,7 @@ class Profile extends Component {
                 _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: val.cause_image})})
             });
           this.setState({navigation: Object.assign({}, this.state.navigation, {
-            index: 1,
+            index: 0,
             routes: Object.keys(this.state.album).map(key => ({ key })),
           })})
         });
@@ -135,20 +135,12 @@ class Profile extends Component {
       } else {
         cause = {}
       }
-      this.props.navigator.push({
+      this.props.navigator.replace({
       title: 'Gps',
       id:'runlodingscreen',
       index: 0,
       passProps:{data:cause},
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      navigator: this.props.navigator,
-      });
-    };
-    navigateToHomeScreen() {
-      this.props.navigator.push({
-      title: 'Gps',
-      id:'home',
-      index: 0,
       navigator: this.props.navigator,
       });
     };
@@ -273,9 +265,9 @@ class Profile extends Component {
       flexDirection: 'row',
       justifyContent:'flex-start',
       alignItems:'center',
-      backgroundColor:'#d667cd',
+      backgroundColor:'#00b9ff',
       borderBottomWidth:2,
-      borderBottomColor:'#00b9ff',
+      borderBottomColor:'#e03ed2',
     },
     homebgoverlay:{
       height:deviceheight,
@@ -321,7 +313,7 @@ class Profile extends Component {
      btnbegin:{
       width:60,
       height:60,
-      backgroundColor:'#673ab7',
+      backgroundColor:'#e03ed2',
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,

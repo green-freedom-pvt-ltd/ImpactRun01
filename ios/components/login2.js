@@ -7,7 +7,9 @@ var {
   Image,
   Text,
   View,
-  AsyncStorage
+  AsyncStorage,
+   VibrationIOS,
+   TouchableHighlight
 } = ReactNative;
 
 
@@ -19,7 +21,9 @@ var UserProfile = React.createClass({
     };
   },
 
-  componentWillMount: function(){
+  
+  componentDidMount: function(){
+    
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
           stores.map((result, i, store) => {
               let key = store[i][0];
@@ -31,16 +35,33 @@ var UserProfile = React.createClass({
               
               console.log("UserDataProfile :" + key, val);
           });
-          this.setState({
+          if (this.state.user != null) { this.setState({
             first_name:this.state.user.first_name,
             gender_user:this.state.user.gender_user,
             last_name:this.state.user.last_name,
             email:this.state.user.email,
             social_thumb:this.state.user.social_thumb,
             user_id:this.state.user.user_id,
-          })
+          })}
       });
   },
+
+   social_thumb:function(){
+    if (this.state.user != null) {
+      return( 
+      <TouchableHighlight onPress={() => VibrationIOS.vibrate()}>
+      <Image  onPress={() => VibrationIOS.vibrate()} style={styles.UserImage} source={{uri:this.state.user.social_thumb}}></Image>
+      </TouchableHighlight>
+      )
+     
+    };
+    return(
+      <View>
+      <Image style={styles.UserImage} source={require('../../images/profile_placeholder.jpg')}></Image>
+      </View>
+      )
+   },
+
 
   render: function() {
     var _this = this;
@@ -50,7 +71,7 @@ var UserProfile = React.createClass({
     return (
       <View style={styles.loginContainer}>
       <View style={styles.userimagwrap}>
-      <Image style={styles.UserImage} source={{uri:this.state.social_thumb}}></Image>
+      <View style={styles.UserImage}>{this.social_thumb()}</View>
       </View>
       <View style={styles.NameWraper}>
       <Text style={styles.profilename}>{this.state.first_name}</Text>
@@ -76,14 +97,13 @@ var styles = StyleSheet.create({
    height:80,
    width:80,
    borderRadius:40,
-   borderWidth:2,
-   borderColor:'#673AB7',
+
   },
   userimagwrap:{
    height:80,
    width:80,
    borderRadius:40,
-    shadowColor: '#673AB7',
+    shadowColor: '#000000',
       shadowOpacity: 1,
       shadowRadius: 4,
       shadowOffset: {
@@ -98,7 +118,7 @@ var styles = StyleSheet.create({
   },
   profilename:{
     marginRight:5,
-    color:'#673AB7',
+    color:'white',
     fontSize:20,
     fontWeight:'700',
   },

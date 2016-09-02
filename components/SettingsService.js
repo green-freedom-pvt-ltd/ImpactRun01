@@ -120,6 +120,8 @@ var SettingsService = (function() {
         if (value !== null){
           _values = JSON.parse(value);
           //callback.call(this, values);
+                    console.log('mydataSetting'+JSON.stringify(_values));
+
         } else {
           _values = _defaultValues;
           AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(_defaultValues));
