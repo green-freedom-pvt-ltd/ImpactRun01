@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
-
+import LodingScreen from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class Motion extends Component {
@@ -24,7 +24,6 @@ class Motion extends Component {
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       faqData: ds.cloneWithRows([]),
-        isConnected: null,
               loaded: false,
 
     };
@@ -38,13 +37,15 @@ class Motion extends Component {
   }
 
   componentDidMount() {
-  this.fetchFaqData();
-   NetInfo.isConnected.addEventListener(
-    'change',
-    this._handleConnectivityChange
-    );
+
+
     NetInfo.isConnected.fetch().done(
-        (isConnected) => { this.setState({isConnected}); }
+        (isConnected) => { this.setState({isConnected}); 
+        if (isConnected) {
+           this.fetchFaqData();
+        };
+         
+      }
     );
   }
   
@@ -61,11 +62,7 @@ class Motion extends Component {
     .catch( error => console.log('Error fetching: ' + error) );
   }
   
-   _handleConnectivityChange(isConnected) {
-    this.setState({
-      isConnected,
-    });
-  }
+  
   renderRow(rowData){
     return (
       <View style={{backgroundColor:'#e6e2e2',padding:10,marginBottom:5}}>
@@ -78,13 +75,8 @@ class Motion extends Component {
   }
  renderLoadingView() {
     return (
-      <View style={styles.container}>
-       <View style={styles.Navbar}>
-            <Text style={styles.menuTitle}>Faqs</Text>
-        </View>
-        <Text>
-          Loading faqs...
-        </Text>
+      <View style={{height:deviceHeight,top:-30}}>
+        <LodingScreen/>
       </View>
     );
   }

@@ -44,7 +44,7 @@ class CauseDetail extends Component {
                      <View style={styles.container}>
                      <Image source={{uri:data.cause_image}} style={styles.image}>
                      <View style={{top:0,left:0,height:100,width:100,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}> 
-                  <TouchableOpacity style={styles.closebtn} onPress={()=>this.popRoute()} ><Icon style={{color:'white',fontSize:60,}}name={'ios-close'}></Icon></TouchableOpacity>
+                  <TouchableOpacity style={styles.closebtn} onPress={()=>this.popRoute()} ><Icon style={{color:'black',fontSize:60,}}name={'ios-close'}></Icon></TouchableOpacity>
                 </View>
 
                        <View style={styles.overlaytext}>
@@ -123,7 +123,7 @@ class CauseDetail extends Component {
     height:50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'#d667cd'
+    backgroundColor:'#e03ed2'
   },
   Btntext:{
      backgroundColor:'transparent',

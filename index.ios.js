@@ -14,7 +14,7 @@ import {
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
-
+import LodingScreen from './components/LodingScreen';
 global.bgGeo = BackgroundGeolocation;
 import Home from './ios/components/HomeScreen.ios';
 import RunScreen from './ios/components/Home.ios';
@@ -25,7 +25,7 @@ import Setting from './ios/components/setting';
 import Runlogingscreen from './ios/components/runlodingscreen';
 import Rateus from './ios/components/Rating';
 import ShareScreen from './ios/components/ShareScreen';
-
+import ThankyouScreen from './ios/components/thankyouScreen';
 class Application extends Component{
   mixins: [TimerMixin]
   constructor(props) {
@@ -63,7 +63,7 @@ class Application extends Component{
     
     LodingFunction(){
      return(
-      <Text>Loding...</Text>
+      <LodingScreen/>
      )
     }
 
@@ -115,7 +115,9 @@ class Application extends Component{
             case 'rateus':
             return <Rateus navigator={navigator} {...route.passProps}/>;
             case 'sharescreen':
-            return <ShareScreen navigator={navigator} {...route.passProps}/>;            
+            return <ShareScreen navigator={navigator} {...route.passProps}/>;
+            case 'thankyouscreen':
+            return <ThankyouScreen navigator={navigator} {...route.passProps}/>;            
             default :
              return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
         }

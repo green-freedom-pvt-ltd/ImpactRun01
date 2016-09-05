@@ -52,9 +52,7 @@ var ProfileForm = React.createClass({
               let val = store[i][1];
               this.setState({
                 user:JSON.parse(val),
-               
               })
-              
               console.log("UserDataProfile :" + key, val);
           });
         })
@@ -63,7 +61,9 @@ var ProfileForm = React.createClass({
      },
      LoginView:function(){
      return (
+      <View style={{height:deviceHeight/2,width:deviceWidth,top:deviceHeight/2-50}}>
       <Login/>
+      </View>
       )
      },
      NavigatetoLoginScreen:function(){

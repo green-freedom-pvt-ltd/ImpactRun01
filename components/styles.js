@@ -50,9 +50,9 @@ var styles = StyleSheet.create({
     width:width/2-10,
     height:50,
     backgroundColor: '#ccc',
-    paddingTop:10,
-    paddingLeft:10,
     borderRadius:30,
+    justifyContent:'center',
+    alignItems: 'center',
   },
   iconButton: {
     marginRight:10,
@@ -74,6 +74,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#d667cd',
     width:width/2-10, 
     justifyContent:'center',
+    alignItems: 'center',
     borderRadius:30,
   },
   greenButton: {

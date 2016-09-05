@@ -21,7 +21,8 @@ var UserProfile = React.createClass({
     };
   },
 
-  
+
+
   componentDidMount: function(){
     
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
@@ -32,7 +33,26 @@ var UserProfile = React.createClass({
                 user:JSON.parse(val),
 
               })
-              
+            // if (this.state.user === null) {
+            // this.interval = setInterval(()=>{
+            // AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+            // stores.map((result, i, store) => {
+            //   let key = store[i][0];
+            //   let val = store[i][1];
+            //   this.setState({
+            //     user:JSON.parse(val),
+            //   })
+            //  })
+            //  })
+            //  },5000);
+            //  if (this.state.user) {
+            //      clearInterval(this.interval);
+            //      console.log('intervalCleared');
+            //   };
+            // }else{
+             
+
+            // }
               console.log("UserDataProfile :" + key, val);
           });
           if (this.state.user != null) { this.setState({
@@ -52,8 +72,7 @@ var UserProfile = React.createClass({
       <TouchableHighlight onPress={() => VibrationIOS.vibrate()}>
       <Image  onPress={() => VibrationIOS.vibrate()} style={styles.UserImage} source={{uri:this.state.user.social_thumb}}></Image>
       </TouchableHighlight>
-      )
-     
+      ) 
     };
     return(
       <View>

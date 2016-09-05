@@ -68,7 +68,7 @@ var styles = StyleSheet.create({
     height:50,
     width:deviceWidth/2-20,
     borderRadius:30,
-    backgroundColor:'#d667cd',
+    backgroundColor:'#e03ed2',
     margin:10,
   },
   workspace: {
@@ -150,7 +150,7 @@ SettingsService.init('iOS');
       textState:'PAUSE',
       Enbtn:'END RUN',
       enabled: true,
-      isMoving: true,
+      isMoving: false,
       paceButtonIcon: 'md-pause',
       navigateButtonIcon: 'md-locate',
       mapHeight: 280,
@@ -165,12 +165,7 @@ SettingsService.init('iOS');
     };
   },
 
-  componentWillUnmount:function() {
-     this.setState({
-       enabled:true,
-       isMoving:true,
-     })
-   },
+
   componentWillMount: function() {
    GoogleSignin.configure({
    iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
@@ -223,6 +218,8 @@ SettingsService.init('iOS');
       me.setState({
         isMoving: event.is_moving
       });
+     if (me.state.isMoving) {me._handleStartStop();};
+
       me.updatePaceButtonStyle()
     });
     // heartbeat event
@@ -237,6 +234,7 @@ SettingsService.init('iOS');
         enabled: state.enabled
       });
       me.updatePaceButtonStyle();
+
     });
     // activitychange event
     this.locationManager.on("activitychange", function(activityName) {
@@ -261,82 +259,63 @@ SettingsService.init('iOS');
 
       me.locationManager.startSchedule(function() {
         console.log('- Schedule start success');
-      });
 
-      me.setState({
-        enabled: true,
-        isMoving:true,
-        isRunning:true,
       });
-      if (state.enabled) {
-        me.initializePolyline();
-        me.updatePaceButtonStyle();
-      }
-
-    });
-    });
+      
   
-    this.setState({
-        enabled: true,
-        isMoving:true,
-        isRunning:true,
+
+    
+    });
+   
       });
    
   },
+  
    componentDidMount:function(){
+    if (this.state.isMoving) {this._handleStartStop();};
+    
+    this.StartGetLocation()
     console.log('mytest'+ this.state.textState);
-   
     console.log('myComponentDta'+ this.state.isMoving +' and '+ this.state.enabled);
     this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
     this.locationManager.start();    
     this.updatePaceButtonStyle();
-
-
-      var isMoving = this.state.isMoving;
-      this.locationManager.changePace(isMoving);
+      this.locationManager.changePace(!this.state.isMoving);
       this.setState({
         enabled:true,
-        isMoving:true,
         textState:'PAUSE',
         isRunning:true,
       });
       this.updatePaceButtonStyle();
-            
-
-
-            return;
-
-      
+      return;  
     },
    _handleStartStop:function(){
-          let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
-          if(this.state.textState === 'RESUME'){
-            console.log('mytest'+ this.state.textState);
-            clearInterval(this.interval);
-            this.setState({
-                isRunning:false
-            });
-            return;
-            
-          }else{ 
-            console.log('mytest'+ this.state.textState);
-            if (this.state.textState === 'PAUSE') {
-              this.setState({
-                mainTimerStart:new Date(),
-                lapTimerStart:new Date(),
-                 isRunning:true,
-            })
-             this.interval = setInterval(()=>{
-            this.setState({
-                mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
-                lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
-            })
-            },30);
-            };
-           
-         }
+      let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
+      if(!this.state.isMoving){
+        console.log('mytest'+ this.state.textState);
+        clearInterval(this.interval);
+        this.setState({
+            isRunning:false
+        });
+        return;
         
-          },
+      }else{ 
+        console.log('mytest'+ this.state.textState);
+        if (this.state.isMoving) {
+          this.setState({
+            mainTimerStart:new Date(),
+            lapTimerStart:new Date(),
+             isRunning:true,
+        })
+        this.interval = setInterval(()=>{
+        this.setState({
+            mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
+            lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
+        })
+        },30);
+        }; 
+     }
+   },
    _signIn:function() {
      GoogleSignin.signIn()
      .then((user) => {
@@ -444,8 +423,6 @@ SettingsService.init('iOS');
   
   // Add Marker if check clear
   addMarker :function(location) {
-    
-
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -456,7 +433,7 @@ SettingsService.init('iOS');
       if (location.coords.accuracy <=15){
 
         // IF Speed More than 35km/hr
-      if (location.coords.speed <= 35) {
+      if (location.coords.speed <= 11) {
       var me = this;
       this.addAnnotations(mapRef, [this.createMarker(location)]);
       if ( this.polyline) {
@@ -475,9 +452,11 @@ SettingsService.init('iOS');
           this.locationManager.removeGeofences();
           this.locationManager.stop();
              this.setState({
-            enabled: !this.state.enabled,    
+             enabled: false,
+             isMoving:false,    
           });
           this.updatePaceButtonStyle();
+          this._handleStartStop();
           VibrationIOS.vibrate();
           AlertIOS.alert('Your speed is more than running speed it seems you are travelling in vehicle');
          }
@@ -547,51 +526,46 @@ SettingsService.init('iOS');
    onClickEnable: function(location) {
     var me = this;
     if (!this.state.enabled) {
-      this.locationManager.start(function() {
+        this.locationManager.start(function() {
         me.initializePolyline();
       });
+     
       } else {
       if (this.state.enabled) {
-      // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
-         this.navigateTOShareScreen()
-        // var auth_token = JSON.stringify(this.state.userData.auth_token);
-        // var user_id = this.state.userData.user_id
-        // console.log('authTokrn:'+ auth_token);
-        // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
-      // }else{
-      //   AlertIOS.alert('You didnt even run 100m we dont save run less than 100 m.')
-      // }
-      };
-     
-      this.locationManager.removeGeofences();
-      this.locationManager.stop();
-      this.locationManager.resetOdometer();
-      this.removeAllAnnotations(mapRef);
-      this.polyline = null;
-    }
-    this.setState({
-      enabled: !this.state.enabled,
-      
-    });
-    this.updatePaceButtonStyle();
-  },
+      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
+        this.EndGetLocation();
+          this.locationManager.removeGeofences();
+          this.locationManager.stop();
+          this.locationManager.resetOdometer();
+          this.removeAllAnnotations(mapRef);
+          this.polyline = null;
+          this.setState({
+           enabled: !this.state.enabled,
+          });
+          this.updatePaceButtonStyle();
+          }else{
+            AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
+          }
+       };
+      }
+     },
 
-   navigateTOHomeScreen:function(){
-    this.props.navigator.replace({
-            title: 'Gps',
-            id:'tab',
-            navigator: this.props.navigator,
-           })
-    },
+     navigateTOHomeScreen:function(){
+        this.props.navigator.push({
+        title: 'Gps',
+        id:'tab',
+        navigator: this.props.navigator,
+       })
+      },
      navigateTOShareScreen:function(){
-          var data = this.props.data;
-          var user = this.state.Storeduserdata;
-          this.props.navigator.push({
-            id:'sharescreen',
-            passProps:{data:this.state.Storeduserdata,distance:parseFloat(this.state.distanceTravelled).toFixed(1),impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)},isUserlogin:user,
-            navigator: this.props.navigator,
-           })
-    },
+      var data = this.props.data;
+      var user = this.state.Storeduserdata;
+      this.props.navigator.push({
+        id:'sharescreen',
+        passProps:{data:data,user:this.state.Storeduserdata,distance:parseFloat(this.state.distanceTravelled).toFixed(1),impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0),speed:this.state.speed,isUserlogin:user,time:TimeFormatter(this.state.mainTimer),StartLocation:this.state.StartPosition,EndLocation:this.state.EndPosition},
+        navigator: this.props.navigator,
+       })
+     },
     
     Confimation:function() {
       AlertIOS.alert(
@@ -601,8 +575,8 @@ SettingsService.init('iOS');
         {text: 'Confirm', onPress: () => this.popRoute() },
         {text: 'Cancel',},
        ],
-       ); 
-      },
+      ); 
+    },
     popRoute:function() {
       if (this.state.enabled) {    
       this.locationManager.removeGeofences();
@@ -622,108 +596,48 @@ SettingsService.init('iOS');
         this.navigateTOHomeScreen();
       }
     },
-    PostRun:function(){
-
-      // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
 
 
-      var userdata = this.state.Storeduserdata;
-      var UserDataParsed = JSON.parse(userdata);
-      var user_id =JSON.stringify(UserDataParsed.user_id);
-      var token = JSON.stringify(UserDataParsed.auth_token);
-      var tokenparse = JSON.parse(token);
-      console.log('Tokenuser:' + token);
-      var speed = this.state.speed;
-      var cause = this.props.data;
-      fetch("http://139.59.243.245/api/runs/", {
-         method: "POST",
-         headers: {  
-            'Authorization':"Bearer "+ tokenparse,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            
-          },
-          body:JSON.stringify({
-          cause_run_title:cause.cause_title,
-          user_id:user_id,
-          start_time: "2016-05-27 16:50:00",
-          distance: parseFloat(this.state.distanceTravelled).toFixed(1),
-          peak_speed: 1,
-          avg_speed:speed,
-          run_amount: parseFloat(this.state.distanceTravelled*10).toFixed(0),
-          run_duration: "00:58:20"
-          })
-      })
-      .then((response) => response.json())
-      .then((userRunData) => { 
-        AlertIOS.alert('rundata'+JSON.stringify(userRunData))
-        this.navigateTOHomeScreen();
-        this.state.distanceTravelled = 0;
-        this.state.prevDistance = 0;
-      })
-    // }else{
-    //     VibrationIOS.vibrate(); 
-    //     AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
-    // }
-    },
     onClickPace: function() {
-      let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
       if (!this.state.enabled)  {
-      VibrationIOS.vibrate()    
         console.log('ismovingdata'+this.state.isMoving);
-       return; }else{
-         if (isRunning) {
-        console.log('mytest'+ this.state.textState);
-        clearInterval(this.interval);
-        this.setState({
-            isRunning:false
-        });
-      }
-     };
-     if (!isRunning) {
-        this.setState({
-            mainTimerStart:new Date(),
-            lapTimerStart:new Date(),
-            isRunning:true,
-            })
-            this.interval = setInterval(()=>{
-            this.setState({
-            mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
-            lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
-            })
-            },30);
-    };
+       return; }
       var isMoving = !this.state.isMoving;
       this.locationManager.changePace(isMoving);
-
       this.setState({
         isMoving: isMoving,
-
       });
-      VibrationIOS.vibrate()
       this.updatePaceButtonStyle();
-
+      if (!this.state.isMoving) {
+        this._handleStartStop();
+      };
     },
  
-    onClickLocate: function() {
-      var me = this;
-      this.locationManager.getState(function(state) {
-        console.log('- state: ', state);
-      });
 
-      this.locationManager.getCurrentPosition({
-        timeout: 10,
-        persist: false,
-        desiredAccuracy: 10,
-        samples: 5,
-        maximumAge: 5000
-      }, function(location) {
-        me.setCenter(location);
-        console.log('- current position: ', JSON.stringify(location));
-      }, function(error) {
-        console.error('ERROR: getCurrentPosition', error);
-        me.setState({navigateButtonIcon: 'navigate'});
-      });
+
+    StartGetLocation: function() { 
+       navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var StartPosition = position;
+        this.setState({StartPosition});
+        console.log('StartPosition',this.state.StartPosition)
+      },
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000}
+      )
+    },
+   
+    EndGetLocation: function() { 
+       navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var EndPosition = position;
+        this.setState({EndPosition})
+        this.navigateTOShareScreen();
+        console.log('EndPosition',this.state.StartPosition)
+      },
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000}
+      )
     },
     onRegionChange: function() {
       console.log('onRegionChange');
@@ -731,19 +645,19 @@ SettingsService.init('iOS');
     setCenter: function(location) {
       this.setCenterCoordinateAnimated(mapRef, location.coords.latitude, location.coords.longitude)
     },
-  updatePaceButtonStyle: function() {
-    var style = commonStyles.disabledButton;
-    if (this.state.enabled) {
-      style = (this.state.isMoving) ? commonStyles.redButton : commonStyles.greenButton;
-    }
-    this.setState({
-      paceButtonStyle: style,
-      paceButtonIcon: (this.state.enabled && this.state.isMoving) ? 'md-pause' : 'md-play',
-      textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'RESUME', 
-      EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
+    updatePaceButtonStyle: function() {
+      var style = commonStyles.disabledButton;
+      if (this.state.enabled) {
+        style = (this.state.isMoving) ? commonStyles.redButton : commonStyles.greenButton;
+      }
+      this.setState({
+        paceButtonStyle: style,
+        paceButtonIcon: (this.state.enabled && this.state.isRunning && this.state.isMoving) ? 'md-pause' : 'md-play',
+        textState:(this.state.enabled &&  this.state.isRunning && this.state.isMoving) ? 'PAUSE':'RESUME', 
+        EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
 
-    });
-  },
+      });
+    },
   // MapBox
   onRegionChange: function(location) {
     this.setState({ currentZoom: location.zoom });
@@ -822,7 +736,7 @@ SettingsService.init('iOS');
             </View>
           </View>
         <View style={commonStyles.bottomToolbar}>
-        <TouchableHighlight  onPress={this.onClickPace} style={styles.ResumePause}>
+        <TouchableHighlight   onPress={this.onClickPace} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
          <View style={{flexDirection:'row'}}>
           <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:20,marginTop:3,marginRight:5}}></Icon>
           <Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>

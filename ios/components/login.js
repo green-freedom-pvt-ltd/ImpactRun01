@@ -17,7 +17,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var FBLoginManager = require('NativeModules').FBLoginManager;
-
+import Lodingscreen from '../../components/LodingScreen';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 var deviceHeight = Dimensions.get('window').height;
 
@@ -36,30 +36,31 @@ class Profile extends Component {
             scroll: false,
             user:null,
             loaded: false,
-            isConnected: null,
+            
 
         };
       }
   
   componentDidMount() {
 
-     NetInfo.isConnected.addEventListener(
-     'change',
-     this._handleConnectivityChange
-     );
+   
       NetInfo.isConnected.fetch().done(
-        (isConnected) => { this.setState({isConnected}); }
+        (isConnected) => {  
+        console.log('isConnected3'+ this.state.isConnected);
+        if (isConnected) {
+          this.fetchData();
+          console.log('isConnected'+this.state.isConnected)
+         }
+        }
        );
-     
+      
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
             let key = store[i][0];
             let val = store[i][1];
         });
       })
-        if (this.state.isConnected === true) {
-          this.fetchData();
-       }
+        
        GoogleSignin.configure({
        iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
        })
@@ -67,12 +68,7 @@ class Profile extends Component {
          console.log('Token:'+user);
        });
      }
-    _handleConnectivityChange(isConnected) {
-      this.setState({
-        isConnected,
-      });
-    }
-    
+ 
 
 
      GetCausesIfExist(){
@@ -325,11 +321,7 @@ class Profile extends Component {
      }
       renderLoadingView() {
     return (
-      <View style={styles.container}> 
-        <Text>
-          Loading profile...
-        </Text>
-      </View>
+         <Lodingscreen/>
     );
   }
     render() {

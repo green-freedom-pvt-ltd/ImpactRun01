@@ -18,6 +18,7 @@ import React, { Component } from 'react';
 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import LodingScreen from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class RunHistroy extends Component {
@@ -28,45 +29,36 @@ class RunHistroy extends Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       loaded: false,
-      isConnected: null,
-
     };
   }
 
    componentDidMount() {
-     NetInfo.isConnected.addEventListener(
-    'change',
-    this._handleConnectivityChange
-    );
-    NetInfo.isConnected.fetch().done(
-        (isConnected) => { this.setState({isConnected}); }
-    );
+     
      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
             let key = store[i][0];
             let val = store[i][1];
             this.setState({
               Storeduserdata:val
-            })
-            console.log("UserDatakey2 :" + key, val);
 
-             if (this.state.isConnected === true && this.state.Storeduserdata != null) {
-              
-                this.fetchData();
-              
-              
+            })
+             NetInfo.isConnected.fetch().done(
+            (isConnected) => { this.setState({isConnected});
+             if (this.state.isConnected && this.state.Storeduserdata) {         
+              return this.fetchData();
+             }else{
+              console.log('notTrue'+this.state.isConnected);
              }
+             }
+            );  
+             
             
         });
 
     });
      
    }
-    _handleConnectivityChange(isConnected) {
-      this.setState({
-        isConnected,
-      });
-    }
+   
   fetchData() {
       var userdata = this.state.Storeduserdata;
       var UserDataParsed = JSON.parse(userdata);
@@ -107,7 +99,7 @@ class RunHistroy extends Component {
      
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={this.renderMovie}
+        renderRow={this.renderRundata}
         style={styles.listView}
       />
     );
@@ -115,15 +107,13 @@ class RunHistroy extends Component {
 
   renderLoadingView() {
     return (
-      <View style={styles.container}>
-        <Text>
-          Loading runs...
-        </Text>
+      <View style={{height:deviceHeight,top:-200,}}>
+       <LodingScreen/>
       </View>
     );
   }
 
-  renderMovie(data) {
+  renderRundata(data) {
     var data = data;
     console.log('mysecrun5'+data.cause_run_title);
     return (

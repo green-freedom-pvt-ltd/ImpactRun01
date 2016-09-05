@@ -248,7 +248,6 @@ class LoginBtns extends Component {
 var styles = StyleSheet.create({
     container:{
         flex:1,
-        top:200,
         alignItems:'center',
 
        },
