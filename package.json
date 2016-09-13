@@ -6,6 +6,7 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
+    "@remobile/react-native-refresh-infinite-listview": "^1.0.3",
     "haversine": "^1.0.0",
     "minutes-seconds-milliseconds": "^1.0.3",
     "react": "^0.14.5",
@@ -15,14 +16,15 @@
     "react-native-device-info": "^0.8.3",
     "react-native-drawer": "^2.2.2",
     "react-native-facebook-login": "^1.3.0",
+    "react-native-gifted-listview": "0.0.15",
     "react-native-gmaps": "git+ssh://git@github.com/transistorsoft/react-native-gmaps.git",
     "react-native-google-signin": "^0.8.0",
+    "react-native-infinite-scroll-view": "^0.4.2",
     "react-native-keyboard-spacer": "^0.3.0",
     "react-native-mapbox-gl": "^4.0.0",
     "react-native-modalbox": "^1.3.3",
     "react-native-scrollable-tab-view": "^0.5.3",
     "react-native-share": "^1.0.13",
-    "react-native-star-rating": "^1.0.6",
     "react-native-tab-view": "0.0.18",
     "react-native-vector-icons": "^2.0.2"
   }

@@ -14,8 +14,8 @@ import {
   AlertIOS,
   AsyncStorage,
   TouchableOpacity,
-  VibrationIOS,
   Image,
+  VibrationIOS,
  } from 'react-native';
 import TimeFormatter from 'minutes-seconds-milliseconds';
 import TimerMixin from 'react-timer-mixin';
@@ -76,12 +76,14 @@ var styles = StyleSheet.create({
     justifyContent: 'center',      
     alignItems: 'center',
     top:-20,
+
   },
   map: {
+    top:20,
     position:'absolute',
     height:deviceheight,
     width:deviceWidth,
-    opacity:0,
+    opacity:1,
   },
   bottomBarContent:{
     paddingLeft:10, 
@@ -98,9 +100,9 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'flex-start',
     alignItems:'center',
-    backgroundColor:'#00b9ff',
+    backgroundColor:'#e03ed2',
     borderBottomWidth:2,
-    borderBottomColor:'#e03ed2',
+    borderBottomColor:'#00b9ff',
   },
   menuTitle:{
     left:20,
@@ -110,20 +112,24 @@ var styles = StyleSheet.create({
   Impact:{
     fontSize:30,
     fontWeight:'500',
+    backgroundColor:'transparent',   
   },
   distance:{
     fontSize:25,
     fontWeight:'500',
+    backgroundColor:'transparent',   
   },
   WrapCompany:{
     justifyContent: 'center',      
     alignItems: 'center',
-    top:10,
+    top:15,
+    backgroundColor:'transparent',   
    },
    timeDistanceWrap:{
     justifyContent: 'center',      
     alignItems: 'center',
-    width:deviceWidth/2,    
+    width:deviceWidth/2, 
+    backgroundColor:'transparent',   
    },
 });
 
@@ -268,13 +274,20 @@ SettingsService.init('iOS');
     });
    
       });
+     this.setState({
+      enabled: true,
+    });
+     if (this.state.enabled) {
+      this.locationManager.start(function() {
+        me.initializePolyline();
+      });
+    }
    
   },
   
    componentDidMount:function(){
     if (this.state.isMoving) {this._handleStartStop();};
     
-    this.StartGetLocation()
     console.log('mytest'+ this.state.textState);
     console.log('myComponentDta'+ this.state.isMoving +' and '+ this.state.enabled);
     this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
@@ -286,6 +299,8 @@ SettingsService.init('iOS');
         textState:'PAUSE',
         isRunning:true,
       });
+          this.StartGetLocation()
+
       this.updatePaceButtonStyle();
       return;  
     },
@@ -423,6 +438,7 @@ SettingsService.init('iOS');
   
   // Add Marker if check clear
   addMarker :function(location) {
+    
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -532,23 +548,27 @@ SettingsService.init('iOS');
      
       } else {
       if (this.state.enabled) {
-      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
+      
+      // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
         this.EndGetLocation();
-          this.locationManager.removeGeofences();
-          this.locationManager.stop();
-          this.locationManager.resetOdometer();
-          this.removeAllAnnotations(mapRef);
-          this.polyline = null;
-          this.setState({
-           enabled: !this.state.enabled,
-          });
-          this.updatePaceButtonStyle();
-          }else{
-            AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
-          }
+       // }else{
+       //  this.EndRunConfimation();
+       // }
+    
        };
-      }
-     },
+       
+      this.locationManager.removeGeofences();
+      this.locationManager.stop();
+      this.locationManager.resetOdometer();
+      this.removeAllAnnotations(mapRef);
+      this.polyline = null;
+    }
+    this.setState({
+      enabled: !this.state.enabled,
+      
+    });
+    this.updatePaceButtonStyle();
+      },
 
      navigateTOHomeScreen:function(){
         this.props.navigator.push({
@@ -568,10 +588,22 @@ SettingsService.init('iOS');
      },
     
     Confimation:function() {
+      VibrationIOS.vibrate();
       AlertIOS.alert(
           'Go Back',
          'Are you sure you want to go back ',
          [
+        {text: 'Confirm', onPress: () => this.popRoute() },
+        {text: 'Cancel',},
+       ],
+      ); 
+    },
+   EndRunConfimation:function() {
+     VibrationIOS.vibrate();
+      AlertIOS.alert(
+          'End Run',
+         'Are you sure you want to end run because your run is less than 100 meters',
+      [
         {text: 'Confirm', onPress: () => this.popRoute() },
         {text: 'Cancel',},
        ],
@@ -599,6 +631,7 @@ SettingsService.init('iOS');
 
 
     onClickPace: function() {
+      VibrationIOS.vibrate();
       if (!this.state.enabled)  {
         console.log('ismovingdata'+this.state.isMoving);
        return; }
@@ -652,8 +685,8 @@ SettingsService.init('iOS');
       }
       this.setState({
         paceButtonStyle: style,
-        paceButtonIcon: (this.state.enabled && this.state.isRunning && this.state.isMoving) ? 'md-pause' : 'md-play',
-        textState:(this.state.enabled &&  this.state.isRunning && this.state.isMoving) ? 'PAUSE':'RESUME', 
+        paceButtonIcon: (this.state.enabled  && this.state.isMoving) ? 'md-pause' : 'md-play',
+        textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'RESUME', 
         EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
 
       });
@@ -684,10 +717,7 @@ SettingsService.init('iOS');
             <Text style={styles.menuTitle}>RunScreen</Text>
         </View>
          <View ref="workspace" style={styles.workspace}>
-          <View style={styles.WrapCompany} >
-            <Image style={{height:40,width:70}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
-            <Text style={{marginTop:20}}>IMPACT</Text> 
-          </View>
+         
           <Mapbox
             style={styles.map}
             direction={0}
@@ -708,8 +738,13 @@ SettingsService.init('iOS');
             onRightAnnotationTapped={this.onRightAnnotationTapped}
             onUpdateUserLocation={this.onUpdateUserLocation}>
            </Mapbox>
+           <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'rgba(255, 255, 255, 0.67)'}}></View>
+            <View style={styles.WrapCompany} >
+            <Image style={{height:40,width:70}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
+            <Text style={{marginTop:20}}>IMPACT</Text> 
+          </View>
            <AnimatedCircularProgress
-              style={{ top:50,justifyContent:'center',alignItems:'center',}}
+              style={{ top:50,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
               ref='circularProgress'
               size={130}
               width={5}
@@ -721,15 +756,16 @@ SettingsService.init('iOS');
              <View style={{top:-70,backgroundColor:'transparent',width:100,height:100,justifyContent:'center',alignItems:'center'}}>
               <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
               <Text>RUPEES</Text>
+              <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
             </View>
-            <View style={{width:deviceWidth,flexDirection:'row',}}>
+            <View style={{width:deviceWidth,flexDirection:'row',backgroundColor:'transparent'}}>
               <View style={styles.timeDistanceWrap}>
                 <Icon style={{color:'black',fontSize:30,}} name={'ios-walk-outline'}></Icon>
                   <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
                 <Text>km</Text>
               </View>
               <View style={styles.timeDistanceWrap}>
-                <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
+                <Icon style={{color:'black',fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                  <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
                 <Text>sec</Text>
               </View>

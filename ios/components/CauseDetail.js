@@ -39,21 +39,23 @@ class CauseDetail extends Component {
       var data = this.props.data
         return (
               <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,  backgroundColor: '#fff'}}>  
-                              <View style={{height:deviceHeight,width:deviceWidth}}>
+                  <View style={styles.Navbar}>
+                    <View style={{top:0,left:0,height:50,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}> 
+                    <TouchableOpacity onPress={this.popRoute.bind(this)} ><Icon style={{color:'white',fontSize:45,fontWeight:'900'}}name={'ios-close'}></Icon></TouchableOpacity>
+                    </View>
+                    <Text style={styles.menuTitle}>CauseDetail</Text>
+                  </View>
+                  <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
                      <View style={styles.container}>
                      <Image source={{uri:data.cause_image}} style={styles.image}>
-                     <View style={{top:0,left:0,height:100,width:100,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}> 
-                  <TouchableOpacity style={styles.closebtn} onPress={()=>this.popRoute()} ><Icon style={{color:'black',fontSize:60,}}name={'ios-close'}></Icon></TouchableOpacity>
-                </View>
-
                        <View style={styles.overlaytext}>
                          <Text style={styles.categorytext}>{data.cause_category}</Text>
                        </View>
                      </Image>
                       <View style={styles.textwraper}>
                           <Text style={styles.colortext}>{data.cause_title}</Text>
-                          <Text style={styles.slidesponser}>By {data.sponsors[0].sponsor_company} </Text>
+                          <Text style={styles.slidesponser}>Sponsored By {data.sponsors[0].sponsor_company} </Text>
                           <Text  style={styles.Disctext} >{data.cause_description}</Text>
                       </View>
                      </View>
@@ -98,7 +100,7 @@ class CauseDetail extends Component {
     backgroundColor:'transparent',
    },
   image:{
-    height:deviceWidth-100,
+    height:deviceHeight/2-20,
   },
   colortext:{
     height:25,
@@ -118,7 +120,7 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    bottom:0,
+    bottom:55,
     width:deviceWidth,
     height:50,
     justifyContent: 'center',
@@ -164,7 +166,7 @@ class CauseDetail extends Component {
     flexDirection: 'row',
     justifyContent:'flex-start',
     alignItems:'center',
-    backgroundColor:'#d667cd',
+    backgroundColor:'#e03ed2',
     borderBottomWidth:2,
     borderBottomColor:'#00b9ff',
   },

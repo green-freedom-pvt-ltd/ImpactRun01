@@ -11,17 +11,25 @@ var {
   TextInput,
   Dimensions,
   ScrollView,
+  DatePickerIOS,
   TouchableOpacity
 } = ReactNative;
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+
 import Login from '../../components/LoginBtns';
+import LodingView from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 
 var ProfileForm = React.createClass({
+ 
+  
   getInitialState: function(){
     return {
+      loaded:false,
     };
+  },
+   onDateChange:function(date) {
+    this.setState({date: date});
   },
 
    componentWillMount: function(){
@@ -31,6 +39,7 @@ var ProfileForm = React.createClass({
               let val = store[i][1];
               this.setState({
                 user:JSON.parse(val),
+                loaded:true,
                
               })
               
@@ -44,6 +53,8 @@ var ProfileForm = React.createClass({
             email:this.state.user.email,
             social_thumb:this.state.user.social_thumb,
             user_id:this.state.user.user_id,
+            BirthDate:this.state.user.Birth_day,
+            phone:this.state.user.phone,
           })
         }else{
           AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
@@ -66,95 +77,112 @@ var ProfileForm = React.createClass({
       </View>
       )
      },
-     NavigatetoLoginScreen:function(){
-     this.props.navigator.push({
-              title: 'Gps',
-              id:'login',
-              navigator: this.props.navigator,
-             });
+     LodingView:function(){
+      return(
+        <LodingView/>
+        )
+     },
+       NavigatetoLoginScreen:function(){
+       this.props.navigator.push({
+        title: 'Gps',
+        id:'login',
+        navigator: this.props.navigator,
+       });
       },
       render: function() {
         var _this = this;
         var user = this.state.user;
         var a = JSON.stringify(user);
         console.log('UserDataProfile2',a);
-        if (!this.state.user) {
-           return this.LoginView();
-        }
-       return (
-          <View style={styles.ProfileContainer}>
-          <View>
-          <Text>Name</Text>
-         <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          />
-          <Text>Email</Text>
-          <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          />
-          <Text>Phone_Number</Text>
-          <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          />
-          <Text>Birthdate</Text>
-          <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          />
-          <Text>Gender</Text>
-          <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          />
+        if (this.state.user != null) {
+          return (
+
+        <View style={styles.container}>
+        <View style={styles.FromWrap}>
+          <View style={styles.ProfileTextInput}>
+           <Text style={styles.ProfileTitle}>NAME</Text> 
+           <Text style={styles.userPoofileText}>{this.state.first_name} {this.state.last_name}</Text>         
           </View>
-            <KeyboardSpacer style={{backgroundColor:'#673AB7'}}/>
+          <View style={styles.ProfileTextInput}>
+           <Text style={styles.ProfileTitle}>EMAIL</Text>
+           <Text style={styles.userPoofileText}>{this.state.email}</Text>        
           </View>
+           <View style={styles.ProfileTextInput}>
+           <Text style={styles.ProfileTitle}>BIRTH DATE</Text>
+           <Text style={styles.userPoofileText}>{this.state.BirthDate}</Text>
+          </View>
+          <View style={styles.ProfileTextInput}>
+           <Text style={styles.ProfileTitle}>PHONE NUMBER</Text> 
+           <Text style={styles.userPoofileText}>{this.state.phone}</Text> 
+          </View>        
+          <View style={styles.ProfileTextInput}>
+           <Text style={styles.ProfileTitle}>GENDER</Text>
+           <Text style={styles.userPoofileText}>{this.state.gender_user}</Text>
+          </View>
+        </View> 
+        </View>
 
         );
+         
+        }else{
+          if (!this.state.loaded) {
+             return this.LodingView();
+          }else{
+             return this.LoginView();
+          }
+          
+
+        }
       }
 });
 
 
 var styles = StyleSheet.create({
-   container:{
-        height:deviceHeight,
-        width:deviceWidth,
-        top:200,
-        alignItems:'center',
-
-       },
-  ProfileContainer: {
-    marginTop: 150,
-    flex: 1,
-    alignItems: 'center',
+  container:{
+    position:'absolute',
+    height:deviceHeight-75,
+    width:deviceWidth,
+    top:65,
     justifyContent: 'center',
-    backgroundColor:'white',
+    alignItems: 'center',
   },
-  bottomBump: {
-    marginBottom: 15,
+  FromWrap:{
+   position:'absolute',
+   top:70,
+   left:5,
+   borderRadius:5,
+   justifyContent: 'center',
+   alignItems: 'center',
+   width:deviceWidth-10,
+   height:deviceHeight-260,
+   backgroundColor:'white',
   },
-   textEdit: {
-    marginLeft:-5,
-    height:48, 
-    borderColor: '#673AB7', 
-    backgroundColor: 'white',
-    borderWidth:2 ,
-    borderRadius:8,
-    width:deviceWidth-100,
-    color:'black',
-    padding:10,
-    top:4,
-    marginBottom:5,
+  ProfileTextInput:{
+    width:deviceWidth-30,
+    borderBottomWidth:2,
+    borderBottomColor:'#673ab7',
   },
- 
+  ProfileTitle:{
+   padding:10,
+   paddingLeft:0,
+   paddingBottom:0,
+   color:'#673ab7',
+   fontWeight:'600',
+   fontSize:16,
+  },
+  userdata:{
+  fontSize:15,
+  padding:10,
+  paddingLeft:0,
+  },
+  userPoofileText:{
+   padding:5,
+   paddingLeft:0,
+   fontSize:16,
+   fontWeight:'400',
+   color:'black'
+  },
+
 });
 
 module.exports = ProfileForm;

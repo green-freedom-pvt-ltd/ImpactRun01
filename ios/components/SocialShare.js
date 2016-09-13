@@ -10,6 +10,7 @@ import {
   Platform
 } from 'react-native';
 import Share, {ShareSheet, Button} from 'react-native-share';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class SocialShare extends Component {
   constructor(props) {
@@ -36,9 +37,10 @@ class SocialShare extends Component {
     };
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={()=>{
+        <TouchableOpacity style={{height:40,flexDirection:'row',alignItems: 'center',}} onPress={()=>{
           Share.open(shareOptions);
         }}>
+        <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-share'}></Icon>
           <View style={styles.instructions}>
             <Text>SHARE IMPACTRUN</Text>
           </View>

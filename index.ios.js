@@ -23,9 +23,15 @@ import Tab from './ios/components/tab';
 import CauseDetail from './ios/components/CauseDetail';
 import Setting from './ios/components/setting';
 import Runlogingscreen from './ios/components/runlodingscreen';
-import Rateus from './ios/components/Rating';
 import ShareScreen from './ios/components/ShareScreen';
 import ThankyouScreen from './ios/components/thankyouScreen';
+import Faqdata from './ios/components/faq';
+const NoBackSwipe ={
+  ...Navigator.SceneConfigs.FloatFromRight,
+    gestures: {
+      pop: {},
+    },
+};
 class Application extends Component{
   mixins: [TimerMixin]
   constructor(props) {
@@ -66,30 +72,41 @@ class Application extends Component{
       <LodingScreen/>
      )
     }
-
+  _configureScene(route){
+   switch (route.id){
+     case 'tab':
+       return NoBackSwipe
+       break;
+       case 'sharescreen':
+       return NoBackSwipe
+       break;
+       case 'causedetail':
+       return Navigator.SceneConfigs.FloatFromBottom
+       break;
+       case 'setting':
+       return Navigator.SceneConfigs.FloatFromLeft
+       break;
+   }
+};
 
   render() {
+
     console.log('setStateUser'+this.state.user);
     if(!this.state.textState)
     {
       return this.LodingFunction();
     }
+
     return (
       <View  style={{flex: 1}}>
         <Navigator
            ref={(ref) => this._navigator = ref}
 
-            configureScene={(route) => {
-              if(route.id === 'causedetail') {
-            return Navigator.SceneConfigs.FloatFromBottom
-           }
-                if(route.id === 'setting') {
-            return Navigator.SceneConfigs.FloatFromLeft
-           }
-             return Navigator.SceneConfigs.PushFromRight;
-            }}
+            configureScene={ this._configureScene }
             initialRoute={{id:this.state.textState}}
-            renderScene={this.renderScene} />
+            renderScene={this.renderScene}
+            
+            />
     
       </View>);
 
@@ -112,12 +129,12 @@ class Application extends Component{
             return <Setting navigator={navigator} {...route.passProps}/>;
             case 'runlodingscreen':
             return <Runlogingscreen navigator={navigator} {...route.passProps}/>;
-            case 'rateus':
-            return <Rateus navigator={navigator} {...route.passProps}/>;
             case 'sharescreen':
             return <ShareScreen navigator={navigator} {...route.passProps}/>;
             case 'thankyouscreen':
             return <ThankyouScreen navigator={navigator} {...route.passProps}/>;            
+            case 'faqdata':
+            return <Faqdata navigator={navigator} {...route.passProps}/>;            
             default :
              return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
         }

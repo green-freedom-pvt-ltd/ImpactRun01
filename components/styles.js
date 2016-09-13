@@ -31,13 +31,14 @@ var styles = StyleSheet.create({
     backgroundColor: '#00b9ff'
   },
   bottomToolbar: {
-    backgroundColor: 'white',
+    backgroundColor:'transparent',   
     alignSelf: 'stretch',
     flexDirection: 'row',
     height: 50,
     bottom:20,
     justifyContent:'center',
     alignItems:'center',
+    
   },
   toolbarTitle: {
   	fontWeight: 'bold', 
@@ -71,16 +72,17 @@ var styles = StyleSheet.create({
   redButton: {
     padding:10,
     height:50,
-    backgroundColor: '#d667cd',
+    backgroundColor: '#e03ed2',
     width:width/2-10, 
     justifyContent:'center',
     alignItems: 'center',
     borderRadius:30,
+
   },
   greenButton: {
     padding:10,
     height:50,
-    backgroundColor: '#d667cd',
+    backgroundColor: '#e03ed2',
     width: 100,
     width:width/2-10,
     alignItems: 'center',

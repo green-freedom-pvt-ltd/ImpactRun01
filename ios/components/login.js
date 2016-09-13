@@ -43,7 +43,12 @@ class Profile extends Component {
   
   componentDidMount() {
 
-   
+     GoogleSignin.configure({
+       iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
+       })
+      .then((user) => {
+         console.log('Token:'+user);
+       });
       NetInfo.isConnected.fetch().done(
         (isConnected) => {  
         console.log('isConnected3'+ this.state.isConnected);
@@ -61,12 +66,7 @@ class Profile extends Component {
         });
       })
         
-       GoogleSignin.configure({
-       iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
-       })
-      .then((user) => {
-         console.log('Token:'+user);
-       });
+       
      }
  
 
@@ -118,7 +118,7 @@ class Profile extends Component {
       })
       .then((response) => response.json())
       .then((userdata) => { 
-       this.navigateToHome();
+       this.navigateToHomeVaiGoogle();
        console.log('userdata',userdata);
           var userdata = userdata;
           let UID234_object = {
@@ -128,8 +128,12 @@ class Profile extends Component {
               gender_user:userdata[0].gender_user,
               email:userdata[0].email,
               phone_number:userdata[0].phone_number,
+              Birth_day:userdata[0].birthday,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+
           };
           // first user, delta values
           let UID234_delta = {
@@ -139,8 +143,12 @@ class Profile extends Component {
               gender_user:userdata[0].gender_user,
               email:userdata[0].email,
               phone_number:userdata[0].phone_number,
+              Birth_day:userdata[0].birthday,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+
            };
           // // second user, initial values
            let UID345_object = {
@@ -149,9 +157,13 @@ class Profile extends Component {
               last_name:userdata[0].last_name,
               gender_user:userdata[0].gender_user,
               email:userdata[0].email,
+              Birth_day:userdata[0].birthday,
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+
            };
 
           // // second user, delta values
@@ -161,9 +173,12 @@ class Profile extends Component {
               last_name:userdata[0].last_name,
               gender_user:userdata[0].gender_user,
               email:userdata[0].email,
+              Birth_day:userdata[0].birthday,
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
           };
 
           let multi_set_pairs = [
@@ -213,7 +228,7 @@ class Profile extends Component {
             .then((response) => response.json())
             .then((userdata) => {
 
-                _this.navigateToHome();
+                _this.navigateToHomeVaiFacebook();
                 var userdata = userdata;
                 console.log('userDatafb'+JSON.stringify(userdata));
                 let UID234_object = {
@@ -222,9 +237,12 @@ class Profile extends Component {
                     last_name:userdata[0].last_name,
                     gender_user:userdata[0].gender_user,
                     email:userdata[0].email,
+                    Birth_day:userdata[0].birthday,
                     phone_number:userdata[0].phone_number,
                     social_thumb:userdata[0].social_thumb,
                     auth_token:userdata[0].auth_token,
+                    total_amount:userdata[0].total_amount,
+                    total_distance:userdata[0].total_distance,
                 };
                 // first user, delta values
                 let UID234_delta = {
@@ -233,9 +251,12 @@ class Profile extends Component {
                     last_name:userdata[0].last_name,
                     gender_user:userdata[0].gender_user,
                     email:userdata[0].email,
+                    Birth_day:userdata[0].birthday,
                     phone_number:userdata[0].phone_number,
                     social_thumb:userdata[0].social_thumb,
                     auth_token:userdata[0].auth_token,
+                    total_amount:userdata[0].total_amount,
+                    total_distance:userdata[0].total_distance,
                };
                 // // second user, initial values
                  let UID345_object = {
@@ -244,9 +265,12 @@ class Profile extends Component {
                     last_name:userdata[0].last_name,
                     gender_user:userdata[0].gender_user,
                     email:userdata[0].email,
+                    Birth_day:userdata[0].birthday,
                     phone_number:userdata[0].phone_number,
                     social_thumb:userdata[0].social_thumb,
                     auth_token:userdata[0].auth_token,
+                    total_amount:userdata[0].total_amount,
+                    total_distance:userdata[0].total_distance,
                 };
 
                 // // second user, delta values
@@ -256,9 +280,12 @@ class Profile extends Component {
                     last_name:userdata[0].last_name,
                     gender_user:userdata[0].gender_user,
                     email:userdata[0].email,
+                    Birth_day:userdata[0].birthday,
                     phone_number:userdata[0].phone_number,
                     social_thumb:userdata[0].social_thumb,
                     auth_token:userdata[0].auth_token,
+                    total_amount:userdata[0].total_amount,
+                    total_distance:userdata[0].total_distance,
                 };
 
                 let multi_set_pairs = [
@@ -312,11 +339,28 @@ class Profile extends Component {
       }
    
 
-     navigateToHome(){
-       this.props.navigator.replace({
+     navigateToHomeVaiFacebook(){
+       this.props.navigator.push({
         title: 'Gps',
         id:'tab',
         navigator: this.props.navigator,
+        passProps:{provider:'facebook'},
+       })
+     }
+       navigateToHome(){
+       this.props.navigator.push({
+        title: 'Gps',
+        id:'tab',
+        navigator: this.props.navigator,
+        passProps:{provider:'skip'},
+       })
+     }
+      navigateToHomeVaiGoogle(){
+       this.props.navigator.push({
+        title: 'Gps',
+        id:'tab',
+        navigator: this.props.navigator,
+        passProps:{provider:'google'},
        })
      }
       renderLoadingView() {

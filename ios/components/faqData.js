@@ -12,6 +12,7 @@ import {
   AlertIOS,
   NetInfo,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import LodingScreen from '../../components/LodingScreen';
@@ -75,8 +76,8 @@ class Motion extends Component {
   }
  renderLoadingView() {
     return (
-      <View style={{height:deviceHeight,top:-30}}>
-        <LodingScreen/>
+      <View style={{height:deviceHeight}}>
+        <LodingScreen style={{height:deviceHeight-50}}/>
       </View>
     );
   }
@@ -118,11 +119,7 @@ class Motion extends Component {
     console.log(this.state.isConnected);
     return (
       <View style={{height:deviceHeight,width:deviceWidth}}>
-      <View style={{height:deviceHeight-50,width:deviceWidth}}>
-        <View style={styles.Navbar}>
-            <Text style={styles.menuTitle}>Faqs</Text>
-        </View>
-       
+      <View style={{height:deviceHeight-105,width:deviceWidth}}>
          <ListView
           dataSource={this.state.faqData}
           renderRow={this.renderRow}
@@ -150,8 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     height:deviceHeight,
     width:deviceWidth,
-    bottom:-45,
-    marginTop:-45,
+    paddingBottom:100,
   },
   thumb: {
     backgroundColor: '#5bb75b',
@@ -178,33 +174,17 @@ const styles = StyleSheet.create({
   flexDirection: 'row',
   justifyContent:'flex-start',
   alignItems:'center',
-  backgroundColor:'#673AB7',
+  backgroundColor:'#673ab7',
   borderBottomWidth:2,
-  borderBottomColor:'#673AB7',
+  borderBottomColor:'#673ab7',
 },
- Navbar:{
-  paddingLeft:10,
-  position:'relative',
-  height:55,
-  width:deviceWidth,
-  flexDirection: 'row',
-  justifyContent:'flex-start',
-  alignItems:'center',
-  backgroundColor:'#00b9ff',
-  borderBottomWidth:2,
-  borderBottomColor:'#e03ed2',
-},
-  menuTitle:{
-    left:20,
-    color:'white',
-    fontSize:20,
-  },
+
   textEdit: {
     marginLeft:-5,
     height:48, 
-    borderColor: '#673AB7', 
+    borderColor: '#673ab7', 
     backgroundColor: 'white',
-    borderWidth:4 ,
+    borderWidth:5 ,
     borderRadius:8,
     width:deviceWidth-100,
     color:'black',
@@ -218,7 +198,7 @@ const styles = StyleSheet.create({
    borderRadius:8,
    justifyContent:'center',
    alignItems:'center',
-   backgroundColor:'#d667cd', 
+   backgroundColor:'#e03ed2', 
   }
 });
 

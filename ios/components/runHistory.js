@@ -1,142 +1,100 @@
 
-'use strict';
-
 import React, { Component } from 'react';
-
- import{
-  ListView,
+import {
   StyleSheet,
   Text,
   View,
-   Image,
-  Dimensions,
-  AsyncStorage,
-  TouchableOpacity,
+  TouchableHighlight,
+  Image,
   ScrollView,
-  AlertIOS,
-  NetInfo
-
+  AppRegistry,
+  Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import LodingScreen from '../../components/LodingScreen';
+
+import GiftedListView from 'react-native-gifted-listview';
+import API from '../../components/RunPaginationApi';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+
 class RunHistroy extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
-      }),
-      loaded: false,
+      runCount: 0
     };
+    this.onFetch = this.onFetch.bind(this);
   }
-
-   componentDidMount() {
-     
-     AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-        stores.map((result, i, store) => {
-            let key = store[i][0];
-            let val = store[i][1];
-            this.setState({
-              Storeduserdata:val
-
-            })
-             NetInfo.isConnected.fetch().done(
-            (isConnected) => { this.setState({isConnected});
-             if (this.state.isConnected && this.state.Storeduserdata) {         
-              return this.fetchData();
-             }else{
-              console.log('notTrue'+this.state.isConnected);
-             }
-             }
-            );  
-             
-            
+ 
+  onFetch(page = 1, callback, options) {
+    let rowArray = [];
+    Promise.resolve(API.getAllRuns(page))
+    .then((response) => {
+      console.log('responseData',JSON.stringify(response.count));
+      this.setState({
+        runCount: response.count
+      });
+      response.results.map((object) => {
+        rowArray.push(object);
+      });
+    }).then(() => {
+      if (page === Math.round(this.state.runCount/5)) {
+        callback(rowArray, {
+          allLoaded: true,
         });
-
+      } else {
+        callback(rowArray);
+      }
     });
-     
-   }
-   
-  fetchData() {
-      var userdata = this.state.Storeduserdata;
-      var UserDataParsed = JSON.parse(userdata);
-      var user_id =JSON.stringify(UserDataParsed.user_id);
-      var token = JSON.stringify(UserDataParsed.auth_token);
-      var tokenparse = JSON.parse(token);
-      console.log('myRunData'+userdata);
-      var tokenparse = JSON.parse(token);
-        fetch("http://139.59.243.245/api/runs/?page=" + 1, {
-        method: "GET",
-         headers: {  
-            'Authorization':"Bearer "+tokenparse,
-          }
-        })
-      .then((response) => response.json())
-      .then((responseData) => {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.results),
-          loaded: true,
-          myPage:responseData.count,
-          next:responseData.next,
-
-        });
-        console.log('daatarunHistroy'+JSON.stringify(this.state.dataSource));
-                    console.log('myHistroryRunCount'+ this.state.myPage);
-                  
-      })
-      .done();
-    }
-
-  render(data) {
-   
-    if (!this.state.loaded) {
-      return this.renderLoadingView();
-    }
-
-    return (
-     
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRundata}
-        style={styles.listView}
-      />
-    );
+    setTimeout(() => {
+    }, 1000);
   }
 
-  renderLoadingView() {
+  renderRunsRow(rowData) {
     return (
-      <View style={{height:deviceHeight,top:-200,}}>
-       <LodingScreen/>
-      </View>
-    );
-  }
-
-  renderRundata(data) {
-    var data = data;
-    console.log('mysecrun5'+data.cause_run_title);
-    return (
-      <View style={styles.container}>
-        
-          <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} >
-             <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
-          </TouchableOpacity>
+      <TouchableHighlight
+        underlayColor="#dddddd"
+      >
+        <View style={styles.container}>
+        <View  style={styles.btnbegin} text={'BEGIN RUN'} >
+           <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
+        </View>
         <View style={styles.rightContainer}>
-          <Text style={styles.title}>{data.cause_run_title}</Text>
+          <Text style={styles.title}>{rowData.cause_run_title}</Text>
           <View style={styles.runDetail}>
-          <Text style={styles.year}>{data.distance}</Text>
-          <Text style={styles.year}>{data.run_amount}</Text>
-          <Text style={styles.year}>{data.run_duration}</Text>
+          <Text style={styles.year}>{rowData.distance} Km</Text>
+          <Text style={styles.year}>{rowData.run_amount} Rs</Text>
+          <Text style={styles.year}>{rowData.run_duration}</Text>
           </View>
         </View>
       </View>
+      </TouchableHighlight>
     );
   }
-}
 
-var styles = StyleSheet.create({
-  container: {
+  render() {
+    return (
+            <GiftedListView
+              rowView={this.renderRunsRow}
+              onFetch={this.onFetch}
+              firstLoader={true} // display a loader for the first fetching
+              pagination={true} // enable infinite scrolling using touch to load more
+              refreshable={true} // enable pull-to-refresh for iOS and touch-to-refresh for Android
+              withSections={false} // enable sections
+              customStyles={{
+                paginationView: {
+                  backgroundColor: '#eee',
+                },
+              }}
+
+              refreshableTintColor="blue"
+            />
+        
+    );
+  }
+};
+
+const styles = StyleSheet.create({
+   container: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -145,12 +103,11 @@ var styles = StyleSheet.create({
     borderRadius:3,
     margin:5,
     shadowColor: '#000000',
-      shadowOpacity: 0.8,
-      shadowRadius: 4,
-      shadowOffset: {
-        height: 3,
-      },
-
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: {
+     height: 3,
+    },
   },
   rightContainer: {
     flex: 1,
@@ -192,20 +149,24 @@ var styles = StyleSheet.create({
     paddingBottom:60,
   },
   btnbegin:{
-      margin:10,
-      width:50,
-      height:50,
-      backgroundColor:'#d667cd',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius:80,
-      shadowColor: '#000000',
-      shadowOpacity: 0.8,
-      shadowRadius: 4,
-      shadowOffset: {
-        height: 3,
-      },
-    }
+    margin:10,
+    width:50,
+    height:50,
+    backgroundColor:'#673ab7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:80,
+    shadowColor: '#000000',
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    shadowOffset: {
+      height: 3,
+    },
+  },
+  ListViewPage:{
+    height:deviceHeight,
+    width:deviceWidth,
+  },
 });
 
 export default RunHistroy;

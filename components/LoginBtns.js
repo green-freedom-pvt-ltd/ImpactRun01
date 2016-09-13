@@ -35,7 +35,7 @@ class LoginBtns extends Component {
     var _this = this;
     FBLoginManager.login(function(error, data){
       if (!error) {
-        _this.setState({ user : data,loaded:true,});
+        _this.setState({ user : data,loaded:true,provider:'facebook'});
         console.log('userFbdata'+JSON.stringify(data.credentials.token));
         _this.props.onLogin && _this.props.onLogin();
          var Fb_token = data.credentials.token;
@@ -57,8 +57,11 @@ class LoginBtns extends Component {
                 gender_user:userdata[0].gender_user,
                 email:userdata[0].email,
                 phone_number:userdata[0].phone_number,
+                Birth_day:userdata[0].birthday,
                 social_thumb:userdata[0].social_thumb,
                 auth_token:userdata[0].auth_token,
+                total_amount:userdata[0].total_amount,
+                total_distance:userdata[0].total_distance,
             };
             // first user, delta values
             let UID234_delta = {
@@ -67,9 +70,12 @@ class LoginBtns extends Component {
                 last_name:userdata[0].last_name,
                 gender_user:userdata[0].gender_user,
                 email:userdata[0].email,
+                Birth_day:userdata[0].birthday,
                 phone_number:userdata[0].phone_number,
                 social_thumb:userdata[0].social_thumb,
                 auth_token:userdata[0].auth_token,
+                total_amount:userdata[0].total_amount,
+                total_distance:userdata[0].total_distance,
            };
             // // second user, initial values
              let UID345_object = {
@@ -78,9 +84,12 @@ class LoginBtns extends Component {
                 last_name:userdata[0].last_name,
                 gender_user:userdata[0].gender_user,
                 email:userdata[0].email,
+                Birth_day:userdata[0].birthday,
                 phone_number:userdata[0].phone_number,
                 social_thumb:userdata[0].social_thumb,
                 auth_token:userdata[0].auth_token,
+                total_amount:userdata[0].total_amount,
+                total_distance:userdata[0].total_distance,
             };
 
             // // second user, delta values
@@ -90,9 +99,12 @@ class LoginBtns extends Component {
                 last_name:userdata[0].last_name,
                 gender_user:userdata[0].gender_user,
                 email:userdata[0].email,
+                Birth_day:userdata[0].birthday,
                 phone_number:userdata[0].phone_number,
                 social_thumb:userdata[0].social_thumb,
                 auth_token:userdata[0].auth_token,
+                total_amount:userdata[0].total_amount,
+                total_distance:userdata[0].total_distance,
             };
 
             let multi_set_pairs = [
@@ -130,7 +142,7 @@ class LoginBtns extends Component {
     
     GoogleSignin.signIn()
     .then((user) => {
-      this.setState({user:user,loaded:true,});
+      this.setState({user:user,loaded:true,provider:'google'});
       var access_token = user.accessToken;
       fetch("http://139.59.243.245/api/users/", {
       method: "GET",
@@ -151,6 +163,9 @@ class LoginBtns extends Component {
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+              Birth_day:userdata[0].birthday,
           };
           // first user, delta values
           let UID234_delta = {
@@ -162,6 +177,9 @@ class LoginBtns extends Component {
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+              Birth_day:userdata[0].birthday,
          };
           // // second user, initial values
            let UID345_object = {
@@ -173,6 +191,9 @@ class LoginBtns extends Component {
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+              Birth_day:userdata[0].birthday,
           };
 
           // // second user, delta values
@@ -185,6 +206,9 @@ class LoginBtns extends Component {
               phone_number:userdata[0].phone_number,
               social_thumb:userdata[0].social_thumb,
               auth_token:userdata[0].auth_token,
+              total_amount:userdata[0].total_amount,
+              total_distance:userdata[0].total_distance,
+              Birth_day:userdata[0].birthday,
           };
 
           let multi_set_pairs = [

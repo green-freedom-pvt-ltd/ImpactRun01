@@ -16,7 +16,8 @@ import {
   AlertIOS,
   LayoutAnimation,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  NetInfo,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -30,16 +31,13 @@ class Profile extends Component {
     constructor(props) {
       super(props);
       this.state = {
-         dataSource : null,
-         album : {},
-         causes : [],
-         navigation: {
-           index: 0,
-           routes: [],
-
-         },
-         
-
+       dataSource : null,
+       album : {},
+       causes : [],
+       navigation: {
+         index: 0,
+         routes: [],
+       },
       };
     }
  
@@ -47,12 +45,57 @@ class Profile extends Component {
         static propTypes = {
       style: View.propTypes.style,
     };
+     
+   componentWillMount() {
+  
+      AsyncStorage.multiGet(['RID1'], (err, stores) => {
+      stores.map((result, i, store) => {
+        let key = store[i][0];
+        let val = store[i][1];
+        this.setState({
+        Rundata:JSON.parse(val),  
+        loaded:true,             
+         })
+       })
+      })  
+      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+        stores.map((result, i, store) => {
+          let key = store[i][0];
+          let val = store[i][1];
+          this.setState({
+          user:JSON.parse(val),  
+          loaded:true,             
+          })              
+        });
 
 
+         if(this.state.user) {
+          this.setState({
+          first_name:this.state.user.first_name,
+          gender_user:this.state.user.gender_user,
+          last_name:this.state.user.last_name,
+          email:this.state.user.email,
+          social_thumb:this.state.user.social_thumb,
+          user_id:this.state.user.user_id,
+          })
+           NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+              if (isConnected && this.state.Rundata != null) {
+                  this.postPastRun();
+               }
+            }
+           );
+          
+        }
+      });
+   }
     componentDidMount() {
+      var provider = this.props.provider;
+      console.log('provider',provider);
+      var causeName = this.props.causeName;
         // this.fetchData();
         try {
-        AsyncStorage.multiGet([ 'cause1','cause2', 'cause3','cause4',], (err, stores) => {
+        AsyncStorage.multiGet(['cause1','cause2','cause3','cause4'], (err, stores) => {
             var _this = this
             stores.map((item) => {
                 let key = item[0];
@@ -60,7 +103,8 @@ class Profile extends Component {
                 let causesArr = _this.state.causes.slice()
                 causesArr.push(val)
                 _this.setState({causes: causesArr})
-                _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: val.cause_image})})
+                _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief]})})
+                _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
             });
           this.setState({navigation: Object.assign({}, this.state.navigation, {
             index: 0,
@@ -70,12 +114,70 @@ class Profile extends Component {
         } catch (err) {
         console.log(err)
         }
+       
+      }
+     postPastRun(){
+      var userdata = this.state.user;
+      var user_id =JSON.stringify(userdata.user_id);
+      var token = JSON.stringify(userdata.auth_token);
+      var tokenparse = JSON.parse(token);
+
+      AsyncStorage.multiGet(['RID1'], (err, stores) => {
+        stores.map((result, i, store) => {
+          let key = store[i][0];
+          let val = store[i][1];
+          this.setState({
+          MyRunVal:JSON.parse(val),  
+          loaded:true,             
+          }) 
+         var RunData = this.state.MyRunVal;
+         AlertIOS.alert('this',JSON.stringify(RunData));
+         console.log('myDataSomedata',this.state.MyRunVal);            
+         fetch("http://139.59.243.245/api/runs/", {
+         method: "POST",
+         headers: {  
+            'Authorization':"Bearer "+ tokenparse,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',    
+          },
+        body:JSON.stringify({
+        cause_run_title:RunData.cause_run_title,
+        user_id:RunData.user_id,
+        start_time: "2016-05-27 16:50:00",
+        distance:RunData.distance,
+        peak_speed: 1,
+        avg_speed:RunData.avg_speed,
+        run_amount:RunData.run_amount,
+        run_duration:RunData.run_duration,
+        start_location_lat:RunData.start_location_lat,
+        start_location_long:RunData.start_location_long,
+        end_location_lat:RunData.end_location_lat,
+        end_location_long:RunData.end_location_long,
+        })
+
+       })
+
+      .then((response) => response.json())
+      .then((userRunData) => { 
+        this.RemoveStoredRun();
+         AlertIOS.alert('rundataStored'+JSON.stringify(userRunData))
+         console.log('removedRun');
+
+       })
+        });
+      })
+    }
+    RemoveStoredRun(){
+      let keys = ['RID1', 'RID2'];
+        AsyncStorage.multiRemove(keys, (err) => {
+        console.log('keyremovedRun' + keys)
+      });
     }
      // SLIDER_COVERFLOW_STYLE
     _buildCoverFlowStyle = ({ layout, position, route, navigationState,data }) => {
       var data = data;
       const { width } = layout;
-      const { routes } = navigationState;
+      const { routes,SecondRoute } = navigationState;
       const currentIndex = routes.indexOf(route);
       const inputRange = routes.map((x, i) => i);
       const translateOutputRange = inputRange.map(i => {
@@ -152,6 +254,7 @@ class Profile extends Component {
       navigator: this.props.navigator,
       });
     };
+
     navigateToCauseDetail() {
       var cause;
       if (!!this.state.causes.length && this.state.navigation.index+1) {
@@ -192,13 +295,13 @@ class Profile extends Component {
       } else {
         cause = {}
       }
-   // console.log("PaasData:"+data);
       return (
         <View style={styles.page}>
           <TouchableOpacity  onPress={()=>this.navigateToCauseDetail()} style={styles.album}>
-            <Image source={{uri:this.state.album[route.key]}} style={styles.cover}/>
+            <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}/>
             <View style={styles.borderhide}></View>
-            <Text>{route.key}</Text>
+            <Text style={styles.causeTitle}>{route.key}</Text>
+            <Text style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
           </TouchableOpacity >
           <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
              <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
@@ -223,9 +326,10 @@ class Profile extends Component {
     // RENDER_FUNCTION
     render() { 
       return (
+        <View style={{height:deviceheight,width:deviceWidth,backgroundColor:'white'}}>
         <View>
           <View style={styles.Navbar}>
-           <TouchableOpacity onPress={()=>this.NavigateToSetting()} ><Icon style={{color:'white',fontSize:30,left:10}}name={'ios-cog'}></Icon></TouchableOpacity>
+           <TouchableOpacity style={{height:50,width:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.NavigateToSetting()} ><Icon style={{color:'white',fontSize:30,left:10}}name={'ios-cog'}></Icon></TouchableOpacity>
             <Text style={styles.menuTitle}>ImpactRun</Text>
           </View>
            <TabViewAnimated
@@ -233,6 +337,7 @@ class Profile extends Component {
              navigationState={this.state.navigation}
              renderScene={this._renderPage}
              onRequestChangeTab={this._handleChangeTab}/>
+             </View>
           </View>
       );
     }
@@ -241,9 +346,9 @@ class Profile extends Component {
 
   var styles = StyleSheet.create({
    container: {
-      flex: 1,
-      top:245,
-      backgroundColor: '#222',
+      height: deviceheight-55,
+      top:60,
+      backgroundColor: 'white',
       width:deviceWidth,
     },
     menuTitle:{
@@ -252,7 +357,6 @@ class Profile extends Component {
       fontSize:20,
     },
     page: {
-      top:-180,
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
@@ -265,9 +369,9 @@ class Profile extends Component {
       flexDirection: 'row',
       justifyContent:'flex-start',
       alignItems:'center',
-      backgroundColor:'#00b9ff',
+      backgroundColor:'#e03ed2',
       borderBottomWidth:2,
-      borderBottomColor:'#e03ed2',
+      borderBottomColor:'#00b9ff',
     },
     homebgoverlay:{
       height:deviceheight,
@@ -324,7 +428,19 @@ class Profile extends Component {
       shadowOffset: {
         height: 3,
       },
-    }
+    },
+    causeTitle:{
+      fontSize:20,
+      fontWeight:'500',
+      padding:10,
+      paddingTop:0,
+    },
+     causeBrief:{
+      fontSize:12,
+      fontWeight:'500',
+      padding:10,
+      paddingTop:0,
+    },
   });
   export default Profile;
 

@@ -25,6 +25,7 @@ class Profile extends Component {
       	<ScrollableTabView
               style={styles.scrollTabWrapper}
               initialPage={1}
+              vertical={false}
               renderTabBar={() => <ScrollableTabBar/>}>
           <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm/></View>
           <View style={styles.tabContent} tabLabel='RunHistory'><RunHistory/></View>

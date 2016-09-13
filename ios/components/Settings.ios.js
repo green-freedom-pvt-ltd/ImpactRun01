@@ -60,6 +60,7 @@ var SettingsContainer = React.createClass({
   onClickSettingDone: function() {
     this.refs.drawer.close();
   },
+  
   onSelectSetting: function(setting) {
     // TODO find a better way to disable & hide a button.
     this.setState({
@@ -67,7 +68,7 @@ var SettingsContainer = React.createClass({
         opacity: (setting.inputType === 'text') ? 1 : 0
       }
     });
-
+    
     this.setState({
       setting: setting,
       settingDetailView: (

@@ -22,27 +22,27 @@ import{
   import Icon from 'react-native-vector-icons/Ionicons';
 
     class devdactic_tabs extends Component {
-    	constructor(props) {
-		    super(props);
-		    this.state = {
-		      selectedTab: 'welcome',
+      constructor(props) {
+        super(props);
+        this.state = {
+          selectedTab: 'welcome',
           notifCount: 0,
           presses: 0,
-		    };
-	  }
+        };
+    }
 
     FunctionIcon(){
       return(
         <Icon style={{fontSize:30,color:'red'}} name={'md-arrow-back'}></Icon>
         )
     }
-    	render() {
-    		return (
+      render() {
+        return (
       <TabBarIOS 
         style={{height:100,padding:10}}
         unselectedTintColor="white"
         tintColor="white"
-        barTintColor="#3c1e71" 
+        barTintColor="#490F9D" 
         selectedTab={this.state.selectedTab} 
         navigator={this.props.navigator}>
 
@@ -80,9 +80,9 @@ import{
          <Profile/>
         </TabBarIOS.Item>
       </TabBarIOS>
-    		);
-    	}
-	  
+        );
+      }
+    
      }
 
 
@@ -92,7 +92,6 @@ var styles = StyleSheet.create({
 
   },
   tab:{
-    backgroundColor:'black',
     height:50,
     width:50,
   },

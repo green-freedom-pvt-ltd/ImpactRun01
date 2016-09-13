@@ -33,7 +33,7 @@
    * on the same Wi-Fi network.
    */
   if(RCT_DEBUG == 1) {
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.103:8081/index.ios.bundle?platform=ios&dev=true"];
+    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.105:8081/index.ios.bundle?platform=ios&dev=true"];
   } else {
     jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   }
