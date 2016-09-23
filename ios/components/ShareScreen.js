@@ -19,7 +19,7 @@ import{
   import Icon from 'react-native-vector-icons/Ionicons';
   var deviceWidth = Dimensions.get('window').width;
   var deviceHeight = Dimensions.get('window').height;
-  import LoginBtns from '../../components/LoginBtns';
+  import LoginBtns from '../../components/loginBtns';
   import Share, {ShareSheet, Button} from 'react-native-share';
   class ShareScreen extends Component {
     mixins: [TimerMixin]
@@ -101,6 +101,7 @@ import{
      var distance = this.props.distance;
      var impact =this.props.impact;
      var time = this.props.time;
+     var date = this.props.StartRunTime
      var RunNumber = this.state.RunNumber;
      var userdata = this.state.user;
      var user_id =JSON.stringify(userdata.user_id);
@@ -111,7 +112,7 @@ import{
        let RID1  = {
         cause_run_title:cause.cause_title,
         user_id:user_id,
-        start_time: "2016-05-27 16:50:00",
+        start_time: date,
         distance: distance,
         peak_speed: 1,
         avg_speed:speed,
@@ -161,9 +162,9 @@ import{
       var RID2 = {
         cause_run_title:cause.cause_title,
         user_id:user_id,
-        start_time: "2016-05-27 16:50:00",
+        start_time: StartTime,
         distance: distance,
-        peak_speed: 1,
+        peak_speed: speed,
         avg_speed:speed,
         run_amount:impact,
         run_duration: time,
@@ -285,25 +286,25 @@ import{
       var speed = this.props.speed;
       var impact = this.props.impact;
       var time = this.props.time;
-      // if (distance >= 0.1) {
+      var date = this.props.StartRunTime;
+      console.log('MyRunDate:' + date);
       var userdata = this.state.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       console.log('Tokenuser:' + token);
       var cause = this.props.data;
-      fetch("http://139.59.243.245/api/runs/", {
+      fetch("http://dev.impactrun.com/api/runs/", {
          method: "POST",
          headers: {  
             'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            
+            'Content-Type': 'application/json',           
           },
           body:JSON.stringify({
           cause_run_title:cause.cause_title,
           user_id:user_id,
-          start_time: "2016-05-27 16:50:00",
+          start_time:date,
           distance: distance,
           peak_speed: 1,
           avg_speed:speed,
@@ -319,10 +320,6 @@ import{
       .then((userRunData) => { 
         AlertIOS.alert('rundata'+JSON.stringify(userRunData))
       })
-      // }else{
-      //     VibrationIOS.vibrate(); 
-      //     AlertIOS.alert('your run is less than 100 meters you didnt even raised 1 rupee.')
-      // }
     }
 
     DiscardRunfunction(){
@@ -444,13 +441,13 @@ import{
                 <Text>with your friends</Text>
               </View>
               <View style={{width:deviceWidth,justifyContent: 'center',alignItems: 'center',flexDirection:'column'}}>
-                <TouchableOpacity onPress={()=>Share.open(shareOptions)} style={styles.shareButton}>
-                 <Icon style={{color:'white',fontSize:20,margin:10,}} name={'md-share'}></Icon>
-                 <Text style={{color:'white'}}>SHARE IMPACT</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{top:50,width:deviceWidth,height:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=> this.navigateToThankyou()}>
-                  <Text>Skip</Text>
-                </TouchableOpacity>
+              <TouchableOpacity onPress={()=>Share.open(shareOptions)} style={styles.shareButton}>
+               <Icon style={{color:'white',fontSize:20,margin:10,}} name={'md-share'}></Icon>
+               <Text style={{color:'white'}}>SHARE IMPACT</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{top:50,width:deviceWidth,height:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=> this.navigateToThankyou()}>
+                <Text>Skip</Text>
+              </TouchableOpacity>
               </View>
             </View>
           </Image>

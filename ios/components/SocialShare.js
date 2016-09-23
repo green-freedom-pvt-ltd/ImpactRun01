@@ -20,11 +20,9 @@ class SocialShare extends Component {
     }
   }
   onCancel() {
-    console.log("CANCEL")
     this.setState({visible:false});
   }
   onOpen() {
-    console.log("OPEN")
     this.setState({visible:true});
   }
   render() {
@@ -37,12 +35,12 @@ class SocialShare extends Component {
     };
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={{height:40,flexDirection:'row',alignItems: 'center',}} onPress={()=>{
+        <TouchableOpacity style={{marginLeft:3,height:40,flexDirection:'row',alignItems: 'center',}} onPress={()=>{
           Share.open(shareOptions);
         }}>
-        <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-share'}></Icon>
+        <Icon style={{color:'black',fontSize:17,margin:10}}name={'md-share'}></Icon>
           <View style={styles.instructions}>
-            <Text>SHARE IMPACTRUN</Text>
+            <Text style={{color:'#4a4a4a'}}>Share Impactrun</Text>
           </View>
         </TouchableOpacity>
       

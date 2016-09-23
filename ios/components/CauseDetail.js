@@ -11,10 +11,11 @@ import{
     TouchableOpacity,
     Text,
   } from 'react-native';
+import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-var RunScreen = require('./Home.ios');
+var RunScreen = require('./home.ios');
 
 class CauseDetail extends Component {
 
@@ -38,32 +39,32 @@ class CauseDetail extends Component {
     render() {
       var data = this.props.data
         return (
-              <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,  backgroundColor: '#fff'}}>  
-                  <View style={styles.Navbar}>
-                    <View style={{top:0,left:0,height:50,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}> 
-                    <TouchableOpacity onPress={this.popRoute.bind(this)} ><Icon style={{color:'white',fontSize:45,fontWeight:'900'}}name={'ios-close'}></Icon></TouchableOpacity>
-                    </View>
-                    <Text style={styles.menuTitle}>CauseDetail</Text>
+              <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}>  
+                  <View style={commonStyles.Navbar}>
+                    <TouchableOpacity style={{top:10,left:0,position:'absolute',height:50,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
+                     <Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-close'}></Icon>
+                    </TouchableOpacity>
+                    <Text style={commonStyles.menuTitle}>Causedetail</Text>
                   </View>
                   <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
-                     <View style={styles.container}>
-                     <Image source={{uri:data.cause_image}} style={styles.image}>
+                      <View style={styles.container}>
+                      <Image source={{uri:data.cause_image}} style={styles.image}>
                        <View style={styles.overlaytext}>
                          <Text style={styles.categorytext}>{data.cause_category}</Text>
                        </View>
-                     </Image>
+                      </Image>
                       <View style={styles.textwraper}>
-                          <Text style={styles.colortext}>{data.cause_title}</Text>
-                          <Text style={styles.slidesponser}>Sponsored By {data.sponsors[0].sponsor_company} </Text>
-                          <Text  style={styles.Disctext} >{data.cause_description}</Text>
+                        <Text style={styles.colortext}>{data.cause_title}</Text>
+                        <Text style={styles.slidesponser}>Sponsored By {data.sponsors[0].sponsor_company} </Text>
+                        <Text  style={styles.Disctext} >{data.cause_description}</Text>
                       </View>
-                     </View>
+                  </View>
                   </ScrollView>
                   <TouchableOpacity style={styles.btnBeginRun} text={'BEGIN RUN'}onPress={() => this.NavigateToRunScreen()}>
                   <Text style={styles.Btntext}>BEGIN RUN</Text></TouchableOpacity>
                 </View>
-            </View>
+              </View>
         )
     }
 }
@@ -89,7 +90,8 @@ class CauseDetail extends Component {
     paddingTop:5,
     paddingBottom:5,
     fontSize:15,
-    color:'#c0c'
+    color:'#ffcd4d',
+    fontFamily: 'Montserrat-Regular'
   },
    backbtn:{
     paddingLeft:10,
@@ -100,19 +102,21 @@ class CauseDetail extends Component {
     backgroundColor:'transparent',
    },
   image:{
-    height:deviceHeight/2-20,
+    height:deviceHeight/2-50,
   },
   colortext:{
     height:25,
     fontSize:20,
-    fontWeight:'500',
+    fontWeight:'300',
     letterSpacing:1,
+    fontFamily: 'Montserrat-Regular',
   },
   Disctext:{
-   fontSize:15,
-   letterSpacing:1,
-   marginBottom:100,
-     },
+    fontSize:15,
+    letterSpacing:1,
+    marginBottom:100,
+    fontFamily: 'Montserrat-Regular',
+  },
   bytext:{
     paddingBottom:10,
   },
@@ -125,7 +129,7 @@ class CauseDetail extends Component {
     height:50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'#e03ed2'
+    backgroundColor:'#ffcd4d'
   },
   Btntext:{
      backgroundColor:'transparent',
@@ -152,29 +156,16 @@ class CauseDetail extends Component {
     color:'white',
     fontSize:16,
     left:5,
-    fontWeight:'500',
+    fontWeight:'300',
   },
   textwraper:{
     padding:10,
   },
-  Navbar:{
-    paddingLeft:10,
-    position:'relative',
-    top:0,
-    height:55,
-    width:deviceWidth,
-    flexDirection: 'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
-    backgroundColor:'#e03ed2',
-    borderBottomWidth:2,
-    borderBottomColor:'#00b9ff',
-  },
-  menuTitle:{
-    left:20,
-    color:'white',
-    fontSize:20,
-  },
+
+
+
+
+
 });
 export default CauseDetail;
 

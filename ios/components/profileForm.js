@@ -15,172 +15,135 @@ var {
   TouchableOpacity
 } = ReactNative;
 
-import Login from '../../components/LoginBtns';
-import LodingView from '../../components/LodingScreen';
+import Login from '../../components/loginBtns';
+import LodingView from '../../components/lodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 
 var ProfileForm = React.createClass({
- 
-  
-  getInitialState: function(){
-    return {
-      loaded:false,
-    };
-  },
-   onDateChange:function(date) {
-    this.setState({date: date});
-  },
 
-   componentWillMount: function(){
-      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-          stores.map((result, i, store) => {
-              let key = store[i][0];
-              let val = store[i][1];
-              this.setState({
-                user:JSON.parse(val),
-                loaded:true,
-               
-              })
-              
-              console.log("UserDataProfile :" + key, val);
-          });
-         if(this.state.user) {
-          this.setState({
-            first_name:this.state.user.first_name,
-            gender_user:this.state.user.gender_user,
-            last_name:this.state.user.last_name,
-            email:this.state.user.email,
-            social_thumb:this.state.user.social_thumb,
-            user_id:this.state.user.user_id,
-            BirthDate:this.state.user.Birth_day,
-            phone:this.state.user.phone,
-          })
-        }else{
-          AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-          stores.map((result, i, store) => {
-              let key = store[i][0];
-              let val = store[i][1];
-              this.setState({
-                user:JSON.parse(val),
-              })
-              console.log("UserDataProfile :" + key, val);
-          });
-        })
-        }
-      });
-     },
-     LoginView:function(){
-     return (
-      <View style={{height:deviceHeight/2,width:deviceWidth,top:deviceHeight/2-50}}>
-      <Login/>
-      </View>
-      )
-     },
-     LodingView:function(){
+    getInitialState: function(){
+      return {
+        loaded:false,
+        user:this.props.user,
+      };
+    },
+
+    onDateChange:function(date) {
+      this.setState({date: date});
+    },
+
+    LoginView:function(){
+      if(this.props.user && Object.keys(this.props.user).length > 0 ){
+        this.setState({loaded:true});
+      }else{
+        return (
+          <View style={{height:deviceHeight/2,width:deviceWidth,top:100,}}>
+            <Login getUserData={this.props.getUserData}/>
+          </View>
+        ) 
+      }
+    },
+
+    LodingView:function(){
       return(
         <LodingView/>
-        )
-     },
-       NavigatetoLoginScreen:function(){
-       this.props.navigator.push({
+      )
+    },
+
+    NavigatetoLoginScreen:function(){
+      this.props.navigator.push({
         title: 'Gps',
         id:'login',
         navigator: this.props.navigator,
-       });
-      },
-      render: function() {
-        var _this = this;
-        var user = this.state.user;
-        var a = JSON.stringify(user);
-        console.log('UserDataProfile2',a);
-        if (this.state.user != null) {
-          return (
+      });
+    },
 
-        <View style={styles.container}>
-        <View style={styles.FromWrap}>
-          <View style={styles.ProfileTextInput}>
-           <Text style={styles.ProfileTitle}>NAME</Text> 
-           <Text style={styles.userPoofileText}>{this.state.first_name} {this.state.last_name}</Text>         
+    render: function() {
+      var user = this.props.user;
+      if (this.props.user != null) {
+        return (
+          <View style={styles.container}>
+            <View style={styles.FromWrap}>
+              <View style={styles.ProfileTextInput}>
+                <Text style={styles.ProfileTitle}>Name</Text> 
+                <Text style={styles.userProfileText}>{user.first_name} {user.last_name}</Text>         
+              </View>
+              <View style={styles.ProfileTextInput}>
+                <Text style={styles.ProfileTitle}>Email</Text>
+                <Text style={styles.userProfileText}>{user.email}</Text>        
+              </View>
+              <View style={styles.ProfileTextInput}>
+                <Text style={styles.ProfileTitle}>Phone Number</Text> 
+                <Text style={styles.userProfileText}>{user.phone}</Text> 
+              </View>    
+              <View style={styles.ProfileTextInput}>
+                <Text style={styles.ProfileTitle}>Birthday</Text>
+                <Text style={styles.userProfileText}>{user.BirthDate}</Text>
+              </View>    
+              <View style={styles.ProfileTextInput}>
+                <Text style={styles.ProfileTitle}>Gender</Text>
+                <Text style={styles.userProfileText}>{user.gender_user}</Text>
+              </View>
+            </View> 
           </View>
-          <View style={styles.ProfileTextInput}>
-           <Text style={styles.ProfileTitle}>EMAIL</Text>
-           <Text style={styles.userPoofileText}>{this.state.email}</Text>        
-          </View>
-           <View style={styles.ProfileTextInput}>
-           <Text style={styles.ProfileTitle}>BIRTH DATE</Text>
-           <Text style={styles.userPoofileText}>{this.state.BirthDate}</Text>
-          </View>
-          <View style={styles.ProfileTextInput}>
-           <Text style={styles.ProfileTitle}>PHONE NUMBER</Text> 
-           <Text style={styles.userPoofileText}>{this.state.phone}</Text> 
-          </View>        
-          <View style={styles.ProfileTextInput}>
-           <Text style={styles.ProfileTitle}>GENDER</Text>
-           <Text style={styles.userPoofileText}>{this.state.gender_user}</Text>
-          </View>
-        </View> 
-        </View>
-
         );
-         
+      }else{
+        if (this.state.loaded) {
+          return this.LodingView();
         }else{
-          if (!this.state.loaded) {
-             return this.LodingView();
-          }else{
-             return this.LoginView();
-          }
-          
-
+          return this.LoginView();
         }
       }
+    }
+
 });
 
 
 var styles = StyleSheet.create({
   container:{
+    top:10,
     position:'absolute',
-    height:deviceHeight-75,
     width:deviceWidth,
-    top:65,
+    backgroundColor:'#f4f4f4',
     justifyContent: 'center',
     alignItems: 'center',
   },
   FromWrap:{
-   position:'absolute',
-   top:70,
-   left:5,
-   borderRadius:5,
-   justifyContent: 'center',
-   alignItems: 'center',
-   width:deviceWidth-10,
-   height:deviceHeight-260,
-   backgroundColor:'white',
+    left:5,
+    borderRadius:5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:deviceWidth-10,
+    backgroundColor:'#f4f4f4',
   },
   ProfileTextInput:{
     width:deviceWidth-30,
-    borderBottomWidth:2,
-    borderBottomColor:'#673ab7',
+    borderBottomWidth:1,
+    padding:5,
+    borderBottomColor:'rgba(29, 29, 38, 0.10)',
   },
   ProfileTitle:{
-   padding:10,
-   paddingLeft:0,
-   paddingBottom:0,
-   color:'#673ab7',
-   fontWeight:'600',
-   fontSize:16,
+    padding:10,
+    paddingLeft:0,
+    paddingBottom:0,
+    color:'rgba(29, 29, 38, 0.52)',
+    fontWeight:'400',
+    fontSize:12,
+    fontFamily: 'Montserrat-Regular',
   },
   userdata:{
-  fontSize:15,
-  padding:10,
-  paddingLeft:0,
+    fontSize:15,
+    padding:10,
+    paddingLeft:0,
   },
-  userPoofileText:{
-   padding:5,
-   paddingLeft:0,
-   fontSize:16,
-   fontWeight:'400',
-   color:'black'
+  userProfileText:{
+    padding:5,
+    paddingLeft:0,
+    fontSize:13,
+    fontWeight:'400',
+    color:'#4a4a4a',
+    fontFamily: 'Montserrat-Regular',
   },
 
 });

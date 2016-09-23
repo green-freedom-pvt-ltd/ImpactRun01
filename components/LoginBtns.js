@@ -11,6 +11,7 @@ import{
     TouchableOpacity,
     Text,
     AsyncStorage,
+    AlertIOS,
   } from 'react-native';
 var FBLoginManager = require('NativeModules').FBLoginManager;
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -39,15 +40,15 @@ class LoginBtns extends Component {
         console.log('userFbdata'+JSON.stringify(data.credentials.token));
         _this.props.onLogin && _this.props.onLogin();
          var Fb_token = data.credentials.token;
-          fetch("http://139.59.243.245/api/users/", {
+          fetch("http://dev.impactrun.com/api/users/", {
           method: "GET",
            headers: {  
               'Authorization':"Bearer facebook "+ Fb_token,
             }
           })
-      
         .then((response) => response.json())
         .then((userdata) => {
+            AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
             var userdata = userdata;
             console.log('userDatafb'+JSON.stringify(userdata));
             let UID234_object = {
@@ -144,7 +145,7 @@ class LoginBtns extends Component {
     .then((user) => {
       this.setState({user:user,loaded:true,provider:'google'});
       var access_token = user.accessToken;
-      fetch("http://139.59.243.245/api/users/", {
+      fetch("http://dev.impactrun.com/api/users/", {
       method: "GET",
        headers: {  
           'Authorization':"Bearer google-oauth2 "+ user.accessToken,
@@ -152,6 +153,7 @@ class LoginBtns extends Component {
       })
       .then((response) => response.json())
       .then((userdata) => { 
+       AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
        console.log('userdata',userdata);
           var userdata = userdata;
           let UID234_object = {
@@ -230,7 +232,7 @@ class LoginBtns extends Component {
                   });
               });
            });
-  
+          this.props.getUserData();
           })
         .done();
        })
@@ -261,7 +263,7 @@ class LoginBtns extends Component {
 		render() {
 		return (
           <View style={styles.container}>
-            <TouchableOpacity onPress={() => this.onPress()} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>LOGIN WITH FACEBOOK </Text><Image source={require('../images/facebook.png')} style={styles.facebook}/>
+            <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>LOGIN WITH FACEBOOK </Text><Image source={require('../images/facebook.png')} style={styles.facebook}/>
             </TouchableOpacity>
              <TouchableOpacity onPress={() => this._signInGoogle()} style={styles.Loginbtngg}><Text style={{color:'#db3236',textAlign:'left',marginLeft:3,}}>LOGIN WITH GOOGLE</Text><Image source={require('../images/google_plus.png')} style={styles.google}/>
             </TouchableOpacity>

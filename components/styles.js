@@ -72,7 +72,7 @@ var styles = StyleSheet.create({
   redButton: {
     padding:10,
     height:50,
-    backgroundColor: '#e03ed2',
+    backgroundColor: '#ffcd4d',
     width:width/2-10, 
     justifyContent:'center',
     alignItems: 'center',
@@ -82,13 +82,29 @@ var styles = StyleSheet.create({
   greenButton: {
     padding:10,
     height:50,
-    backgroundColor: '#e03ed2',
+    backgroundColor: '#ffcd4d',
     width: 100,
     width:width/2-10,
     alignItems: 'center',
     justifyContent:'center',
     borderRadius:30,
-  }
+  },
+  menuTitle:{
+    fontWeight:'400',
+    color:'white',
+    fontSize:20,
+    fontFamily: 'Montserrat-Regular',
+  },
+   Navbar:{
+    position:'relative',
+    height:55,
+    paddingTop:10,
+    width:width,
+    flexDirection: 'row',
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'#00b9ff',
+ },
   
 });
 

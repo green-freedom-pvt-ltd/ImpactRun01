@@ -11,13 +11,16 @@ import{
     TouchableOpacity,
     AsyncStorage,
     Text,
-    Linking
+    Linking,
+    SegmentedControlIOS,
   } from 'react-native';
-import SocialShare from './SocialShare';
-import Icon from 'react-native-vector-icons/Ionicons';
+import SocialShare from './socialShare';
+import IconSec from 'react-native-vector-icons/Ionicons';
+import commonStyles from '../../components/styles';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-  class OpenURLButton extends React.Component {
+class OpenURLButton extends React.Component {
   static propTypes = {
     url: React.PropTypes.string,
   };
@@ -34,38 +37,17 @@ var deviceHeight = Dimensions.get('window').height;
 
   render() {
     return (
-      <TouchableOpacity style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}
+      <TouchableOpacity style={{marginLeft:0,justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}
         onPress={this.handleClick}>
-         <Icon style={{color:'black',fontSize:25,margin:10}}name={'ios-star-half'}></Icon>
-         <View><Text >RATE US</Text></View>   
+         <Icon style={{color:'black',fontSize:20,margin:10}}name={'grade'}></Icon>
+         <View><Text style={{color:'#4a4a4a'}}>Rate us</Text></View>   
       </TouchableOpacity>
     );
   }
 }
-var styles = StyleSheet.create({
-  Navbar:{
-    paddingLeft:10,
-    position:'relative',
-    top:0,
-    height:55,
-    width:deviceWidth,
-    flexDirection: 'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
-    backgroundColor:'#e03ed2',
-    borderBottomWidth:2,
-    borderBottomColor:'#00b9ff',
-  },
-  menuTitle:{
-    left:20,
-    color:'white',
-    fontSize:20,
-  },
-})
+
 var FBLoginManager = require('NativeModules').FBLoginManager;
-
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
-
 class Setting extends Component {
      constructor(props) {
         super(props);
@@ -73,7 +55,8 @@ class Setting extends Component {
             visibleHeight: Dimensions.get('window').height,
             user:null,
             loaded: false,
-            text:'LOGIN',
+            text:'Login',
+            IconText:'md-log-in'
 
         };
       }
@@ -106,14 +89,6 @@ class Setting extends Component {
             navigator: this.props.navigator,
            })
         }
-        navigateToRate(){
-           this.props.navigator.push({
-            title: 'Gps',
-            id:'rateus',
-            index: 0,
-            navigator: this.props.navigator,
-           })
-        }
       handleFBLogout(){
         var _this = this;
         FBLoginManager.logout(function(error, data){
@@ -141,33 +116,36 @@ class Setting extends Component {
             })
             if (this.state.user) {
               this.setState({
-                text:(this.state.user) ? 'LOGOUT':'LOGIN', 
+                text:(this.state.user) ? 'Logout':'Login',
+                IconText: (this.state.user) ? 'md-log-out':'md-log-in'
               })
             };
         });
       })  
       }
+      removeItem(){
+        let keys = 'Feedcount';
+       AsyncStorage.removeItem(keys, (err) => {
+        console.log('removed key Feedcount');
+       }); 
+      }
       render() {
-        if (!this.state.loaded) {
-         return(
-          <Text>Loding...</Text>
-          )
-        };
          return (
               <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
-                <View style={styles.Navbar}>
-                    <TouchableOpacity style={{height:50,width:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.popRoute()} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
-                    <Text style={styles.menuTitle}>Settings</Text>
+                <View style={commonStyles.Navbar}>
+                    <Text style={commonStyles.menuTitle}>Settings</Text>
                 </View>
                 <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
                   <SocialShare/>
                 </View>
-                <OpenURLButton  url={'https://play.google.com/store/apps/details?id=com.sharesmile.share&hl=en'}/>        
-                <TouchableOpacity onPress={()=>this._signOut()} style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
-                   <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-log-out'}></Icon>
-                   <View><Text>{this.state.text}</Text></View>
+                <OpenURLButton  url={'https://play.google.com/store/apps/details?id=com.sharesmile.share&hl=en'}/>       
+                <TouchableOpacity onPress={()=>this._signOut()} style={{marginLeft:1,justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
+                    <IconSec style={{color:'black',fontSize:19,margin:10}}name={this.state.IconText}></IconSec>
+                    <View>
+                     <Text style={{color:'#4a4a4a'}}>{this.state.text}</Text>
+                    </View>
                 </TouchableOpacity>
-              </View>
+               </View>
               );
           }
       }

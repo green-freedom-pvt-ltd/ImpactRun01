@@ -11,22 +11,31 @@ import{
     TouchableOpacity,
     Text,
   } from 'react-native';
-  import FaqData from './faqData';
+import FaqData from './faqData';
+import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class Faq extends Component {
+  
+      navigateTOhome(){
+        this.props.navigator.push({
+          title: 'Gps',
+          id:'tab',
+          navigator: this.props.navigator,
+        })
+      }
 
-		render() {
-		return (
+  		render() {
+  		  return (
           <View>
-            <View style={styles.Navbar}>
-              <Text style={styles.menuTitle}>Faqs</Text>
+            <View style={commonStyles.Navbar}>
+              <Text style={commonStyles.menuTitle}>Faqs</Text>
             </View>
-			      <FaqData/>
+  			    <FaqData/>
           </View>
-					);
-	    }
+  			);
+  	  }
 }
 
 const styles = StyleSheet.create({
@@ -52,46 +61,19 @@ const styles = StyleSheet.create({
     textAlign: 'left'
   },
   txtSec:{
-   padding:10,
-   fontSize:15
+    padding:10,
+    fontSize:15
   },
   FaqSubmitWrap:{
-  paddingLeft:10,
-  height:55,
-  width:deviceWidth,
-  flexDirection: 'row',
-  justifyContent:'flex-start',
-  alignItems:'center',
-  backgroundColor:'#673ab7',
-  borderBottomWidth:2,
-  borderBottomColor:'#673ab7',
-},
- Navbar:{
-  position:'relative',
-  height:55,
-  width:deviceWidth,
-  flexDirection: 'row',
-  justifyContent:'flex-start',
-  alignItems:'center',
-  backgroundColor:'#e03ed2',
-  borderBottomWidth:2,
-  borderBottomColor:'#00b9ff',
-},
- Navbar2:{
-  position:'relative',
-  height:55,
-  width:deviceWidth,
-  flexDirection: 'row',
-  justifyContent:'flex-start',
-  alignItems:'center',
-  backgroundColor:'#e03ed2',
-  borderBottomWidth:2,
-  borderBottomColor:'#00b9ff',
-},
-  menuTitle:{
-    marginLeft:30,
-    color:'white',
-    fontSize:20,
+    paddingLeft:10,
+    height:55,
+    width:deviceWidth,
+    flexDirection: 'row',
+    justifyContent:'flex-start',
+    alignItems:'center',
+    backgroundColor:'#673ab7',
+    borderBottomWidth:2,
+    borderBottomColor:'#673ab7',
   },
   textEdit: {
     marginLeft:-5,
@@ -106,13 +88,13 @@ const styles = StyleSheet.create({
     top:4,
   },
   submitFaqbtn:{
-   height:42, 
-   width:85,
-   right:-4,
-   borderRadius:8,
-   justifyContent:'center',
-   alignItems:'center',
-   backgroundColor:'#e03ed2', 
+    height:42, 
+    width:85,
+    right:-4,
+    borderRadius:8,
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'#e03ed2', 
   }
 });
  export default Faq;

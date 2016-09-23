@@ -1,8 +1,5 @@
 'use strict';
-
-
 import SettingDetail from '../../components/SettingDetail';
-
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -59,7 +56,7 @@ var styles = StyleSheet.create({
     height:50,
     width:deviceWidth/2-20,
     borderRadius:30,
-    backgroundColor:'#673ab7',
+    backgroundColor:'#00b9ff',
     margin:10,
   },
   ResumePause:{
@@ -90,24 +87,6 @@ var styles = StyleSheet.create({
     width:deviceWidth/4,
     justifyContent: 'center',      
     alignItems: 'center',
-  },
-  Navbar:{
-    paddingLeft:10,
-    position:'relative',
-    top:0,
-    height:55,
-    width:deviceWidth,
-    flexDirection: 'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
-    backgroundColor:'#e03ed2',
-    borderBottomWidth:2,
-    borderBottomColor:'#00b9ff',
-  },
-  menuTitle:{
-    left:20,
-    color:'white',
-    fontSize:20,
   },
   Impact:{
     fontSize:30,
@@ -173,12 +152,6 @@ SettingsService.init('iOS');
 
 
   componentWillMount: function() {
-   GoogleSignin.configure({
-   iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
-   })
-  .then((user) => {
-     console.log('Token:'+user);
-   });
     AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
             let key = store[i][0];
@@ -255,186 +228,80 @@ SettingsService.init('iOS');
     });
 
     // Fetch settings and configure.
-     SettingsService.getValues(function(values) {
+    SettingsService.getValues(function(values) {
 
     //values.schedule = SettingsService.generateSchedule(24, 1, 1, 1);
       
       // Configure BackgroundGeolocaiton!
-    me.locationManager.configure(values, function(state) {
-      console.log('- configure, current state: ', state);
-
-      me.locationManager.startSchedule(function() {
-        console.log('- Schedule start success');
-
+      me.locationManager.configure(values, function(state) {
+        console.log('- configure, current state: ', state);
+        me.locationManager.startSchedule(function() {
+          console.log('- Schedule start success');
+        });   
       });
-      
-  
-
-    
     });
-   
-      });
-     this.setState({
+    this.setState({
       enabled: true,
     });
-     if (this.state.enabled) {
-      this.locationManager.start(function() {
-        me.initializePolyline();
-      });
+    if (this.state.enabled) {
+    this.locationManager.start(function() {
+      me.initializePolyline();
+    });
+     var d = new Date();
+     var mynewDateStart = d.toISOString().substring(0, 10);
+     this.setState({
+     myrundate: mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
+    });
     }
-   
   },
   
-   componentDidMount:function(){
-    if (this.state.isMoving) {this._handleStartStop();};
-    
-    console.log('mytest'+ this.state.textState);
-    console.log('myComponentDta'+ this.state.isMoving +' and '+ this.state.enabled);
-    this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
-    this.locationManager.start();    
-    this.updatePaceButtonStyle();
+  componentDidMount:function(){     
+    var date = this.state.myrundate;
+    console.log('myDate',this.state.myrundate);
+    if (this.state.isMoving) {
+      this._handleStartStop();}; 
+      console.log('mytest'+ this.state.textState);
+      console.log('myComponentDta'+ this.state.isMoving +' and '+ this.state.enabled);
+      this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
+      this.locationManager.start();    
+      this.updatePaceButtonStyle();
       this.locationManager.changePace(!this.state.isMoving);
       this.setState({
         enabled:true,
         textState:'PAUSE',
         isRunning:true,
       });
-          this.StartGetLocation()
-
+      this.StartGetLocation()
       this.updatePaceButtonStyle();
       return;  
-    },
-   _handleStartStop:function(){
-      let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
-      if(!this.state.isMoving){
-        console.log('mytest'+ this.state.textState);
-        clearInterval(this.interval);
-        this.setState({
-            isRunning:false
-        });
-        return;
-        
+  },
+  _handleStartStop:function(){
+    let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
+    if(!this.state.isMoving){
+      console.log('mytest'+ this.state.textState);
+      clearInterval(this.interval);
+      this.setState({
+          isRunning:false
+      });
+      return;
       }else{ 
         console.log('mytest'+ this.state.textState);
         if (this.state.isMoving) {
           this.setState({
             mainTimerStart:new Date(),
             lapTimerStart:new Date(),
-             isRunning:true,
-        })
+            isRunning:true,
+          })
         this.interval = setInterval(()=>{
         this.setState({
             mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
             lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
         })
         },30);
-        }; 
-     }
-   },
-   _signIn:function() {
-     GoogleSignin.signIn()
-     .then((user) => {
-     console.log('usertoken:'+ JSON.stringify(user));
-      // var user = JSON.parse(JSON.stringify(user));
-      this.setState({user:user});
-      var access_token = user.accessToken;
-      console.log('MY accessToken:'+ access_token);
-      fetch("http://139.59.243.245/api/users/", {
-      method: "GET",
-       headers: {  
-          'Authorization':"Bearer google-oauth2 "+ user.accessToken,
-        }
-      })
-  
-      .then((response) => response.json())
-      .then((userdata) => { 
-      this.props.navigator.push({
-              title: 'Gps',
-              id:'tab',
-              index: 0,
-              navigator: this.props.navigator,
-             });
-          console.log('MY data:'+ JSON.stringify(userdata));
-          var userdata = userdata;
-          console.log('MY userdata:' + userdata[0].first_name);
-
-          let UID234_object = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-          };
-          // first user, delta values
-          let UID234_delta = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-         };
-          // // second user, initial values
-           let UID345_object = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-          };
-
-          // // second user, delta values
-           let UID345_delta = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-          };
-
-          let multi_set_pairs = [
-              ['UID234', JSON.stringify(UID234_object)],
-              ['UID345', JSON.stringify(UID345_object)]
-          ]
-          let multi_merge_pairs = [
-              ['UID234', JSON.stringify(UID234_delta)],
-              ['UID345', JSON.stringify(UID345_delta)]
-          ]
-
-          AsyncStorage.multiSet(multi_set_pairs, (err) => {
-              AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-                  AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-                      stores.map((result, i, store) => {
-                          let key = store[i][0];
-                          let val = store[i][1];
-                          this.setState({
-                            Storeduserdata:val
-                          })
-                          console.log("UserDatakey145:" + key, val);
-                      });
-                  });
-              });
-           });
-          
-          })
-        .done();
-       })
-   .catch((err) => {
-      console.log('WRONG SIGNIN', err);
-    })
-    .done();
+      }; 
+    }
   },
+  
   
   // Add Marker if check clear
   addMarker :function(location) {
@@ -467,7 +334,7 @@ SettingsService.init('iOS');
         }else{
           this.locationManager.removeGeofences();
           this.locationManager.stop();
-             this.setState({
+          this.setState({
              enabled: false,
              isMoving:false,    
           });
@@ -549,12 +416,11 @@ SettingsService.init('iOS');
       } else {
       if (this.state.enabled) {
       
-      // if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
+      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
         this.EndGetLocation();
-       // }else{
-       //  this.EndRunConfimation();
-       // }
-    
+       }else{
+        this.EndRunConfimation();
+       }  
        };
        
       this.locationManager.removeGeofences();
@@ -582,7 +448,18 @@ SettingsService.init('iOS');
       var user = this.state.Storeduserdata;
       this.props.navigator.push({
         id:'sharescreen',
-        passProps:{data:data,user:this.state.Storeduserdata,distance:parseFloat(this.state.distanceTravelled).toFixed(1),impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0),speed:this.state.speed,isUserlogin:user,time:TimeFormatter(this.state.mainTimer),StartLocation:this.state.StartPosition,EndLocation:this.state.EndPosition},
+        passProps:{
+          data:data,
+          user:this.state.Storeduserdata,
+          distance:parseFloat(this.state.distanceTravelled).toFixed(1),
+          impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0),
+          speed:this.state.speed,
+          isUserlogin:user,
+          time:TimeFormatter(this.state.mainTimer),
+          StartLocation:this.state.StartPosition,
+          EndLocation:this.state.EndPosition,
+          StartRunTime:this.state.myrundate
+          },
         navigator: this.props.navigator,
        })
      },
@@ -603,10 +480,10 @@ SettingsService.init('iOS');
       AlertIOS.alert(
           'End Run',
          'Are you sure you want to end run because your run is less than 100 meters',
-      [
+        [
         {text: 'Confirm', onPress: () => this.popRoute() },
         {text: 'Cancel',},
-       ],
+        ],
       ); 
     },
     popRoute:function() {
@@ -622,14 +499,11 @@ SettingsService.init('iOS');
        this.setState({
         enabled: !this.state.enabled, 
        });
-      this.updatePaceButtonStyle();
-      
+      this.updatePaceButtonStyle();    
       }else{
         this.navigateTOHomeScreen();
       }
     },
-
-
     onClickPace: function() {
       VibrationIOS.vibrate();
       if (!this.state.enabled)  {
@@ -645,21 +519,18 @@ SettingsService.init('iOS');
         this._handleStartStop();
       };
     },
- 
-
-
     StartGetLocation: function() { 
        navigator.geolocation.getCurrentPosition(
       (position) => {
         var StartPosition = position;
+        console.log('mypositoion',position);
         this.setState({StartPosition});
         console.log('StartPosition',this.state.StartPosition)
       },
       (error) => alert(error.message),
       {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000}
       )
-    },
-   
+    }, 
     EndGetLocation: function() { 
        navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -691,107 +562,93 @@ SettingsService.init('iOS');
 
       });
     },
-  // MapBox
-  onRegionChange: function(location) {
-    this.setState({ currentZoom: location.zoom });
-  },
-  onRegionWillChange:function(location) {
-    console.log('regionChange :'+JSON.stringify(location));
-  },
-  onUpdateUserLocation:function(location) {
-    console.log('UpdateLocation :'+location);
-  },
-  onOpenAnnotation:function(annotation) {
-    console.log('annotation:'+annotation);
-  },
-  onRightAnnotationTapped:function(e) {
-    console.log(e);
-  },
-
-  render: function(location) {
-    var data = this.props.data;
-    return (
-      <View style={commonStyles.container}>
-       <View style={styles.Navbar}>
-          <TouchableOpacity style={{height:50,width:50,justifyContent: 'center',alignItems: 'center',}} onPress={this.Confimation} ><Icon style={{color:'white',fontSize:30,}}name={'md-arrow-back'}></Icon></TouchableOpacity>
-            <Text style={styles.menuTitle}>RunScreen</Text>
-        </View>
-         <View ref="workspace" style={styles.workspace}>
-         
-          <Mapbox
-            style={styles.map}
-            direction={0}
-            rotateEnabled={true}
-            scrollEnabled={true}
-            zoomEnabled={true}
-            showsUserLocation={false}
-            ref={mapRef}
-            accessToken={'pk.eyJ1IjoiY2hyaXN0b2NyYWN5IiwiYSI6ImVmM2Y2MDA1NzIyMjg1NTdhZGFlYmZiY2QyODVjNzI2In0.htaacx3ZhE5uAWN86-YNAQ'}
-            styleURL={this.mapStyles.emerald}
-            userTrackingMode={this.userTrackingMode.none}
-            centerCoordinate={this.state.center}
-            zoomLevel={this.state.zoom}
-            onRegionChange={this.onRegionChange}
-            onRegionWillChange={this.onRegionWillChange}
-            annotations={this.state.annotations}
-            onOpenAnnotation={this.onOpenAnnotation}
-            onRightAnnotationTapped={this.onRightAnnotationTapped}
-            onUpdateUserLocation={this.onUpdateUserLocation}>
-           </Mapbox>
-           <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'rgba(255, 255, 255, 0.67)'}}></View>
-            <View style={styles.WrapCompany} >
-            <Image style={{height:40,width:70}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
-            <Text style={{marginTop:20}}>IMPACT</Text> 
-          </View>
-           <AnimatedCircularProgress
-              style={{ top:50,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
-              ref='circularProgress'
-              size={130}
-              width={5}
-              fill={this.state.distanceTravelled*10/2}
-              prefill={100}
-              tintColor="#00e0ff"
-              backgroundColor="#ccc">                   
-            </AnimatedCircularProgress>
-             <View style={{top:-70,backgroundColor:'transparent',width:100,height:100,justifyContent:'center',alignItems:'center'}}>
-              <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
-              <Text>RUPEES</Text>
-              <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
+    // MapBox
+    onRegionChange: function(location) {
+      this.setState({ currentZoom: location.zoom });
+    },
+    onRegionWillChange:function(location) {
+      console.log('regionChange :'+JSON.stringify(location));
+    },
+    onUpdateUserLocation:function(location) {
+      console.log('UpdateLocation :'+location);
+    },
+    onOpenAnnotation:function(annotation) {
+      console.log('annotation:'+annotation);
+    },
+    onRightAnnotationTapped:function(e) {
+      console.log(e);
+    },
+    render: function(location) {
+      var data = this.props.data;
+      return (
+        <View style={commonStyles.container}>
+           <View ref="workspace" style={styles.workspace}>
+           
+            <Mapbox
+              style={styles.map}
+              direction={0}
+              rotateEnabled={true}
+              scrollEnabled={true}
+              zoomEnabled={true}
+              showsUserLocation={false}
+              ref={mapRef}
+              accessToken={'pk.eyJ1IjoiY2hyaXN0b2NyYWN5IiwiYSI6ImVmM2Y2MDA1NzIyMjg1NTdhZGFlYmZiY2QyODVjNzI2In0.htaacx3ZhE5uAWN86-YNAQ'}
+              styleURL={this.mapStyles.emerald}
+              userTrackingMode={this.userTrackingMode.none}
+              centerCoordinate={this.state.center}
+              zoomLevel={this.state.zoom}
+              onRegionChange={this.onRegionChange}
+              onRegionWillChange={this.onRegionWillChange}
+              annotations={this.state.annotations}
+              onOpenAnnotation={this.onOpenAnnotation}
+              onRightAnnotationTapped={this.onRightAnnotationTapped}
+              onUpdateUserLocation={this.onUpdateUserLocation}>
+             </Mapbox>
+             <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'rgba(255, 255, 255, 0.67)'}}></View>
+              <View style={styles.WrapCompany} >
+              <Image style={{resizeMode: 'contain',height:100,width:100}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
+              <Text style={{marginTop:20}}>IMPACT</Text> 
             </View>
-            <View style={{width:deviceWidth,flexDirection:'row',backgroundColor:'transparent'}}>
-              <View style={styles.timeDistanceWrap}>
-                <Icon style={{color:'black',fontSize:30,}} name={'ios-walk-outline'}></Icon>
-                  <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
-                <Text>km</Text>
+             <AnimatedCircularProgress
+                style={{ top:50,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
+                ref='circularProgress'
+                size={130}
+                width={5}
+                fill={this.state.distanceTravelled*10/2}
+                prefill={100}
+                tintColor="#00e0ff"
+                backgroundColor="#ccc">                   
+              </AnimatedCircularProgress>
+               <View style={{top:-70,backgroundColor:'transparent',width:100,height:100,justifyContent:'center',alignItems:'center'}}>
+                <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
+                <Text>RUPEES</Text>
               </View>
-              <View style={styles.timeDistanceWrap}>
-                <Icon style={{color:'black',fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
-                 <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
-                <Text>sec</Text>
+              <View style={{width:deviceWidth,flexDirection:'row',backgroundColor:'transparent'}}>
+                <View style={styles.timeDistanceWrap}>
+                  <Icon style={{color:'black',fontSize:30,}} name={'ios-walk-outline'}></Icon>
+                    <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
+                  <Text>km</Text>
+                </View>
+                <View style={styles.timeDistanceWrap}>
+                  <Icon style={{color:'black',fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
+                   <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
+                  <Text>sec</Text>
+                </View>
               </View>
             </View>
+          <View style={commonStyles.bottomToolbar}>
+          <TouchableHighlight   onPress={this.onClickPace} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
+           <View style={{flexDirection:'row'}}>
+            <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:20,marginTop:3,marginRight:5}}></Icon>
+            <Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
+            </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
           </View>
-        <View style={commonStyles.bottomToolbar}>
-        <TouchableHighlight   onPress={this.onClickPace} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
-         <View style={{flexDirection:'row'}}>
-          <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:20,marginTop:3,marginRight:5}}></Icon>
-          <Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
-          </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
         </View>
-      </View>
-    );
-  }
+      );
+    }
 });
-          // <Icon.Button name={this.state.navigateButtonIcon} onPress={this.onClickLocate} size={30} color="#00b9ff" underlayColor="#ccc" backgroundColor="white" style={styles.btnNavigate} />
-
-        // <View style={styles.distanceWrap}>
-        //     <Text style={styles.bottomBarContent}>Distance {"\n"}{parseFloat(this.state.distanceTravelled).toFixed(1)}km</Text>
-        //     <Text style={styles.bottomBarContent}>Rupees{"\n"}{parseFloat(this.state.distanceTravelled*10).toFixed(0)}rs</Text>
-        //     <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
-        //     <Text style={styles.bottomBarContent}>Speed {this.state.speed}m/s</Text>
-        // </View>
-
 module.exports = Home;
+// <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
 

@@ -29,7 +29,6 @@
 		38B00AD41D377D8F00863FF0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38B00AD01D377D6900863FF0 /* AppDelegate.m */; };
 		38B00AD61D377DD200863FF0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38B00AD51D377DD200863FF0 /* Images.xcassets */; };
 		38B00AD91D377E2800863FF0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 38B00AD71D377E2800863FF0 /* LaunchScreen.xib */; };
-		38B00ADB1D377E9600863FF0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38B00ADA1D377E9600863FF0 /* Info.plist */; };
 		38C19AAB1D55BA3300E5F990 /* GoogleAppUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C19AA41D55BA3300E5F990 /* GoogleAppUtilities.framework */; };
 		38C19AAC1D55BA3300E5F990 /* GoogleAuthUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C19AA51D55BA3300E5F990 /* GoogleAuthUtilities.framework */; };
 		38C19AAD1D55BA3300E5F990 /* GoogleNetworkingUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C19AA61D55BA3300E5F990 /* GoogleNetworkingUtilities.framework */; };
@@ -37,6 +36,9 @@
 		38C19AAF1D55BA3300E5F990 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C19AA81D55BA3300E5F990 /* GoogleSignIn.framework */; };
 		38C19AB01D55BA3300E5F990 /* GoogleSymbolUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C19AA91D55BA3300E5F990 /* GoogleSymbolUtilities.framework */; };
 		38C19AB11D55BA3300E5F990 /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38C19AAA1D55BA3300E5F990 /* GoogleUtilities.framework */; };
+		38D5C75D1D915E9800AB528B /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38D5C75C1D915E9700AB528B /* Montserrat-Bold.ttf */; };
+		38D5C75F1D915F6800AB528B /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38D5C75E1D915F6800AB528B /* Montserrat-Regular.ttf */; };
+		38D5C7611D915F7F00AB528B /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38D5C7601D915F7F00AB528B /* Montserrat-Regular.ttf */; };
 		583CC830C90E44E0BB8989A5 /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */; };
 		5B2DAD3A5B854327A411E96F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9D25947B431419BB2CEFF8B /* Zocial.ttf */; };
 		5B60DF2E2BE54B0292982577 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC7B40852745BAB761C6FA /* SafariServices.framework */; };
@@ -260,6 +262,9 @@
 		38C19AA81D55BA3300E5F990 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
 		38C19AA91D55BA3300E5F990 /* GoogleSymbolUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSymbolUtilities.framework; sourceTree = "<group>"; };
 		38C19AAA1D55BA3300E5F990 /* GoogleUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleUtilities.framework; sourceTree = "<group>"; };
+		38D5C75C1D915E9700AB528B /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
+		38D5C75E1D915F6800AB528B /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		38D5C7601D915F7F00AB528B /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		3DCB2538134749B6888AD41A /* RNShare.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
 		54885F245294403CBAD6B5A5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		5EDC7B40852745BAB761C6FA /* SafariServices.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
@@ -577,7 +582,10 @@
 		E4CE12272E164253BDFFAFB6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				38D5C75E1D915F6800AB528B /* Montserrat-Regular.ttf */,
+				38D5C7601D915F7F00AB528B /* Montserrat-Regular.ttf */,
 				D08051B8B9CB49E2BE0ADF94 /* Entypo.ttf */,
+				38D5C75C1D915E9700AB528B /* Montserrat-Bold.ttf */,
 				783FD0DC84B24580B0848643 /* EvilIcons.ttf */,
 				A46DD3FC37DF420381A94676 /* FontAwesome.ttf */,
 				6AC090B146004D6AB3DF3CC8 /* Foundation.ttf */,
@@ -637,7 +645,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -906,12 +914,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38D5C7611D915F7F00AB528B /* Montserrat-Regular.ttf in Resources */,
 				38B00AD91D377E2800863FF0 /* LaunchScreen.xib in Resources */,
 				38B00AD61D377DD200863FF0 /* Images.xcassets in Resources */,
 				8350374E1C961801000DE4BA /* Fonts in Resources */,
+				38D5C75F1D915F6800AB528B /* Montserrat-Regular.ttf in Resources */,
 				FDDC4DF7C8064048B5DA9D4F /* Entypo.ttf in Resources */,
 				CF4BA4422FF24907B6497A9E /* EvilIcons.ttf in Resources */,
 				38B00AB11D37765500863FF0 /* Default-568h@2x.png in Resources */,
+				38D5C75D1D915E9800AB528B /* Montserrat-Bold.ttf in Resources */,
 				384508DA00184A359FF87CC8 /* FontAwesome.ttf in Resources */,
 				8914D9C23501431C9CF7259F /* Foundation.ttf in Resources */,
 				F6CF81A70F0B43FA9AA03779 /* Ionicons.ttf in Resources */,
@@ -919,7 +930,6 @@
 				D39696302E3E4EA285FF66AF /* Octicons.ttf in Resources */,
 				5B2DAD3A5B854327A411E96F /* Zocial.ttf in Resources */,
 				38C19AAE1D55BA3300E5F990 /* GoogleSignIn.bundle in Resources */,
-				38B00ADB1D377E9600863FF0 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1078,6 +1088,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = SMK2PD2433;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1100,6 +1111,7 @@
 					"\"$(SRCROOT)/Impactrun\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.impactrun.app$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Impactrun;
 				PROVISIONING_PROFILE = "";
 			};
@@ -1112,6 +1124,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = SMK2PD2433;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1134,6 +1147,7 @@
 					"\"$(SRCROOT)/Impactrun\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.impactrun.app$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Impactrun;
 				PROVISIONING_PROFILE = "";
 			};
@@ -1152,8 +1166,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1162,6 +1178,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1181,7 +1198,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1201,8 +1218,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1210,6 +1229,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1223,7 +1243,7 @@
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

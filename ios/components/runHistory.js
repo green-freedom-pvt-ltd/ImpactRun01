@@ -9,104 +9,98 @@ import {
   ScrollView,
   AppRegistry,
   Dimensions,
+  ActivityIndicatorIOS
 } from 'react-native';
 
 import GiftedListView from 'react-native-gifted-listview';
-import API from '../../components/RunPaginationApi';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 
 class RunHistroy extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      runCount: 0
-    };
-    this.onFetch = this.onFetch.bind(this);
-  }
- 
-  onFetch(page = 1, callback, options) {
-    let rowArray = [];
-    Promise.resolve(API.getAllRuns(page))
-    .then((response) => {
-      console.log('responseData',JSON.stringify(response.count));
-      this.setState({
-        runCount: response.count
-      });
-      response.results.map((object) => {
-        rowArray.push(object);
-      });
-    }).then(() => {
-      if (page === Math.round(this.state.runCount/5)) {
-        callback(rowArray, {
-          allLoaded: true,
-        });
-      } else {
-        callback(rowArray);
+
+      renderRunsRow(rowData) {
+        var RunAmount=parseFloat(rowData.run_amount).toFixed(0);
+        var RunDistance = parseFloat(rowData.distance).toFixed(1);
+        var RunDate = rowData.start_time;
+        var day = RunDate.split("-")[2];
+        var time = rowData.run_duration;
+        var minutes = time.split(":")[1];
+        return (
+          <TouchableHighlight underlayColor="#dddddd">
+            <View style={styles.container}>
+              <View  style={styles.btnbegin}>
+                <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
+              </View>
+              <View style={styles.rightContainer}>
+                <Text style={styles.title}>{rowData.cause_run_title}</Text>
+                 <Text style={styles.StartTime}>{RunDate}</Text>
+                <View style={styles.runDetail}>
+                  <Text style={styles.runContent}>{RunDistance} Km</Text>
+                  <Text style={styles.runContent}>{RunAmount} Rs</Text>
+                  <Text style={styles.runContent}>{minutes} mins</Text>
+                </View>
+              </View>
+            </View>
+          </TouchableHighlight>
+        );
       }
-    });
-    setTimeout(() => {
-    }, 1000);
-  }
-
-  renderRunsRow(rowData) {
-    return (
-      <TouchableHighlight
-        underlayColor="#dddddd"
-      >
-        <View style={styles.container}>
-        <View  style={styles.btnbegin} text={'BEGIN RUN'} >
-           <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
-        </View>
-        <View style={styles.rightContainer}>
-          <Text style={styles.title}>{rowData.cause_run_title}</Text>
-          <View style={styles.runDetail}>
-          <Text style={styles.year}>{rowData.distance} Km</Text>
-          <Text style={styles.year}>{rowData.run_amount} Rs</Text>
-          <Text style={styles.year}>{rowData.run_duration}</Text>
-          </View>
-        </View>
-      </View>
-      </TouchableHighlight>
-    );
-  }
-
-  render() {
-    return (
+      NotLoginView(){
+        if(this.props.user && Object.keys(this.props.user).length === 0 ){
+        }else{
+          return (
+            <View>
+              <Text style={{fontFamily: 'Montserrat-Regular',}}>Please Login To See your Run</Text>
+            </View>
+          ) 
+        }
+      }
+      render() {
+        var fetchingRun = this.props.fetchRunData;
+        var user = this.props.user || 0;
+        if (Object.keys(user).length) {
+          return (
             <GiftedListView
               rowView={this.renderRunsRow}
-              onFetch={this.onFetch}
+              onFetch={fetchingRun}
               firstLoader={true} // display a loader for the first fetching
               pagination={true} // enable infinite scrolling using touch to load more
               refreshable={true} // enable pull-to-refresh for iOS and touch-to-refresh for Android
               withSections={false} // enable sections
               customStyles={{
                 paginationView: {
-                  backgroundColor: '#eee',
+                  backgroundColor: '#f4f4f4',
                 },
               }}
-
-              refreshableTintColor="blue"
+              refreshableTintColor="#00b9ff"
             />
-        
-    );
-  }
-};
+          )
+        }else {
+            return (
+            <View style={{paddingTop:10,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+               {this.NotLoginView()}
+            </View>    
+          )
+          
+         };
+        } 
+
+    };
 
 const styles = StyleSheet.create({
-   container: {
+  container: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-    borderRadius:3,
+    backgroundColor: 'white',
+    borderRadius:5,
     margin:5,
+    marginBottom:0,
     shadowColor: '#000000',
     shadowOpacity: 0.2,
     shadowRadius: 4,
     shadowOffset: {
-     height: 3,
+      height: 3,
     },
   },
   rightContainer: {
@@ -114,12 +108,21 @@ const styles = StyleSheet.create({
   },
   title: {
     width:deviceWidth-100,
-    fontSize: 18,
-    marginBottom: 8,
-    marginLeft:20,
-    color:'#673AB7',
+    fontSize: 16,
+    marginLeft:3,
+    color:'black',
     fontWeight:'600',
     backgroundColor:'transparent',
+    fontFamily: 'Montserrat-Regular',
+  },
+   StartTime: {
+    width:deviceWidth-100,
+    fontSize: 14,
+    marginLeft:3,
+    color:'black',
+    fontWeight:'300',
+    backgroundColor:'transparent',
+    fontFamily: 'Montserrat-Regular',
   },
   runDetail:{
     flexDirection: 'row',
@@ -131,13 +134,14 @@ const styles = StyleSheet.create({
     right:0,
     marginLeft:40,
   },
-  year: {
+  runContent: {
     height:20,
     width:deviceWidth/4,
     justifyContent: 'center',
     alignItems: 'center',
-    color:'#673AB7',
-    fontWeight:'700',
+    color:'black',
+    fontWeight:'400',
+    fontFamily: 'Montserrat-Regular',
   },
   thumbnail: {
     width: 53,
@@ -152,12 +156,12 @@ const styles = StyleSheet.create({
     margin:10,
     width:50,
     height:50,
-    backgroundColor:'#673ab7',
+    backgroundColor:'#00b9ff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:80,
     shadowColor: '#000000',
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     shadowOffset: {
       height: 3,

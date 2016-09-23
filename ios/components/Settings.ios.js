@@ -68,7 +68,6 @@ var SettingsContainer = React.createClass({
         opacity: (setting.inputType === 'text') ? 1 : 0
       }
     });
-    
     this.setState({
       setting: setting,
       settingDetailView: (
@@ -99,20 +98,14 @@ var SettingsContainer = React.createClass({
   },
   onClickSync: function() {
     var me = this,
-        locationManager = this.locationManager;
-
-    /*
-    this.setState({
-      syncButtonIcon: this.icons.spinner
-    });
-    */
-    locationManager.sync(function(rs) {
+     locationManager = this.locationManager;
+      locationManager.sync(function(rs) {
       console.log('- sync success');
       me.setState({
         syncButtonIcon: me.icons.syncButton
       });
       locationManager.playSound(config.sounds.MESSAGE_SENT_IOS);
-    }, function(error) {
+      },function(error) {
       console.log('- sync error: ', error);
       me.setState({
         syncButtonIcon: me.icons.syncButton
