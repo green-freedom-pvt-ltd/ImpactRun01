@@ -41,7 +41,7 @@ class Profile extends Component {
         };
       }
   
-      componentDidMount() {
+      componentWillMount() {
         GoogleSignin.configure({
           iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
         })
@@ -56,10 +56,8 @@ class Profile extends Component {
         }) 
         NetInfo.isConnected.fetch().done(
           (isConnected) => {  
-          console.log('isConnected3'+ this.state.isConnected);
           if (isConnected) {
             this.fetchData();
-            console.log('isConnected'+this.state.isConnected)
            }
           }
         );   
@@ -70,24 +68,22 @@ class Profile extends Component {
         fetch(REQUEST_URL)
         .then((response) => response.json())
         .then((causes) => { 
-          console.log('mycauseLength',causes);
           var causes = causes;
           let causesData = []
-          causes.results.forEach ((item,i)=> {
-            causesData.push(['cause'+i, JSON.stringify(item)])
-          })
           let newData  =[]
           causes.results.forEach ((item,i)=> {
+          if (item.is_active) {
+            causesData.push(['cause'+i, JSON.stringify(item)])
             newData.push('cause'+i);
+          };
           })
-          var causeNum = JSON.stringify(newData);
-          console.log('somCusecount',causeNum);
           this.setState({
-            myCauseNum:JSON.stringify(newData),
+            myCauseNum: newData,
           })
+
           AsyncStorage.multiSet(causesData, (err) => {
             console.log('myCauseErr'+err)
-            })
+          })
         })
         .done();
       }
@@ -105,9 +101,7 @@ class Profile extends Component {
           })
           .then((response) => response.json())
           .then((userdata) => { 
-           this.navigateToHomeVaiGoogle();
             AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
-           console.log('userdata',userdata);
               var userdata = userdata;
               let UID234_object = {
                   first_name:userdata[0].first_name,
@@ -187,7 +181,7 @@ class Profile extends Component {
                       });
                   });
                });
-      
+              this.navigateToHomeVaiGoogle();
               })
             .done();
            })
@@ -202,7 +196,6 @@ class Profile extends Component {
         FBLoginManager.login(function(error, data){
           if (!error) {
             _this.setState({ user : data,loaded:true,});
-            console.log('userFbdata'+JSON.stringify(data.credentials.token));
             _this.props.onLogin && _this.props.onLogin();
              var Fb_token = data.credentials.token;
               fetch("http://dev.impactrun.com/api/users/", {
@@ -215,10 +208,8 @@ class Profile extends Component {
               .then((response) => response.json())
               .then((userdata) => {
 
-                  _this.navigateToHomeVaiFacebook();
                   AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
                   var userdata = userdata;
-                  console.log('userDatafb'+JSON.stringify(userdata));
                   let UID234_object = {
                       first_name:userdata[0].first_name,
                       user_id:userdata[0].user_id,
@@ -294,8 +285,9 @@ class Profile extends Component {
                               });
                           });
                       });
+                      _this.navigateToHomeVaiFacebook();
                    });
-          
+                   
                   })
     
            .catch((err) => {
@@ -311,7 +303,7 @@ class Profile extends Component {
           title: 'Gps',
           id:'tab',
           navigator: this.props.navigator,
-          passProps:{provider:'facebook'},
+          passProps:{dataCauseCount:this.state.mycauseDataCount,dataCauseNum:this.state.myCauseNum},
          })
       }
       navigateToHome(){
@@ -328,7 +320,7 @@ class Profile extends Component {
           title: 'Gps',
           id:'tab',
           navigator: this.props.navigator,
-          passProps:{provider:'google'},
+          passProps:{dataCauseCount:this.state.mycauseDataCount,dataCauseNum:this.state.myCauseNum},
         })
       }
 

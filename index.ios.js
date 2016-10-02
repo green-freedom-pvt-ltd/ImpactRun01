@@ -12,7 +12,6 @@ import {
   AsyncStorage,
   NetInfo
  } from 'react-native';
-var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
@@ -33,103 +32,52 @@ import MessageDetail from './ios/components/messageDetail';
 const NoBackSwipe ={
   ...Navigator.SceneConfigs.FloatFromRight,
     gestures: {
-      pop: {},
-    },
+      pop: {}
+    }
 };
 class Application extends Component{
   mixins: [TimerMixin]
   constructor(props) {
     super(props);
     this.state = {
-      mycauseDataCount:null,
       drawer: undefined,
       timePassed: false,
       Loding:false,
       textState:null,
     };
   }
-  componentWillMount() {
+  componentWillMount(){
     AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-    stores.map((result, i, store) => {
+      stores.map((result, i, store) => {
         let key = store[i][0];
         let val = store[i][1];
         this.setState({
-           user:val,
-           loding:true,
-          })
-         })
-        this.setState({
-          userLogin:this.state.user,
-          textState:(this.state.user) ? 'tab':'login', 
+          user:val,
+          loding:true,
         })
-        this.render();
-      });
-    var causeno = ["cause0","cause2","cause3","cause4",]
-    AsyncStorage.multiGet(causeno, (err, stores) => {
-      var _this = this
-      stores.map((item) => {
-          let key = item[0];
-          let val = JSON.parse(item[1]);
-          this.setState({
-           mycauseDataCount:val,
-         })
-          NetInfo.isConnected.fetch().done(
-        (isConnected) => {  
-        console.log('isConnected3'+ this.state.isConnected);
-        if (isConnected) {
-         if (!this.state.mycauseDataCount) {
-          this.fetchData();
-          console.log('fetchedData');
-          };
-          console.log('isConnected'+this.state.isConnected)
-         }
-        }
-        ); 
       })
-    })
-    
-    
-      
-    }
-    
-      fetchData(dataValue){
-        fetch(REQUEST_URL)
-        .then((response) => response.json())
-        .then((causes) => { 
-          console.log('mycauseLength',causes.count);
-          var causes = causes;
-          let causesData = []
-          causes.results.forEach ((item,i)=> {
-            causesData.push(['cause'+i, JSON.stringify(item)])
-          })
-          AsyncStorage.multiSet(causesData, (err) => {
-            console.log('myCauseErr'+err)
-            console.log('myDatatCOunt'+ causesData.length);
-            this.setState({
-              mycauseDataCount:causesData.length,
-            })
-          })
-        })
-        .done();
-      }
+      this.setState({
+        userLogin:this.state.user,
+        textState:(this.state.user) ? 'tab':'login', 
+      })
+    });  
+  }
 
-
-
-    onClickMenu() {
-      this.refs.drawer.open();
-    }
-    getDrawer() {
-      return this.refs.drawer;
-      }
-    
-    LodingFunction(){
-     return(
-      <LodingScreen/>
-     )
-    }
+  onClickMenu() {
+    this.refs.drawer.open();
+  }
+  getDrawer() {
+    return this.refs.drawer;
+  }
+  
+  LodingFunction(){
+   return(
+    <LodingScreen/>
+   )
+  }
   _configureScene(route){
    switch (route.id){
-      case 'tab':
+       case 'tab':
        return NoBackSwipe
        break;
        case 'sharescreen':
@@ -150,7 +98,6 @@ class Application extends Component{
   render() {
     if(this.state.textState != null)
     {
-    if (this.state.mycauseDataCount != null) {
     var mycausecount = this.state.mycauseDataCount;
     console.log('mysomedatacount',mycausecount);
     return (
@@ -163,10 +110,6 @@ class Application extends Component{
             passProps={this.state.mycauseDataCount}
             /> 
        </View>);
-      }else{
-        return this.LodingFunction();
-      }
-      
     }
     return this.LodingFunction();
     }

@@ -457,6 +457,7 @@
 		75A8F9D7F9684DC9A4842A15 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8356DDC21CC922F000FCCEFB /* Mapbox.framework */,
 				38C19AA41D55BA3300E5F990 /* GoogleAppUtilities.framework */,
 				38C19AA51D55BA3300E5F990 /* GoogleAuthUtilities.framework */,
 				38C19AA61D55BA3300E5F990 /* GoogleNetworkingUtilities.framework */,
@@ -555,7 +556,6 @@
 				3830D5EF1D6C61660028922A /* FBSDKCoreKit.framework */,
 				3830D5F01D6C61660028922A /* FBSDKLoginKit.framework */,
 				3830D5F11D6C61660028922A /* FBSDKShareKit.framework */,
-				8356DDC21CC922F000FCCEFB /* Mapbox.framework */,
 				8359A6E51CA58BA6008F13B7 /* SystemConfiguration.framework */,
 				833770A51C9DA17A00347777 /* TSLocationManager.framework */,
 				8350375C1C962ECA000DE4BA /* libsqlite3.tbd */,
@@ -626,9 +626,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				8350384F1C9C9B98000DE4BA /* Run Script */,
 				8356DDC51CC922F100FCCEFB /* Embed Frameworks */,
-				38CCD14E1D5D223D00834010 /* ShellScript */,
+				3895E1D21D96CE5D00FA7B11 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -950,32 +949,18 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
 		};
-		38CCD14E1D5D223D00834010 /* ShellScript */ = {
+		3895E1D21D96CE5D00FA7B11 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"";
-		};
-		8350384F1C9C9B98000DE4BA /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -48,7 +48,7 @@ class Loding extends Component {
   LodingBackgroundImg:{
    height:deviceHeight,
    width:deviceWidth,
-    justifyContent: 'center',
+   justifyContent: 'center',
    alignItems: 'center',
   },
 

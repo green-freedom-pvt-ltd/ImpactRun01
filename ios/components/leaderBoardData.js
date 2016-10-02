@@ -112,16 +112,16 @@ class LeaderboardData extends Component {
           }
         ];
         return (
-          <TouchableOpacity  style={styles.cardLeaderBoard}>
+          <View  style={styles.cardLeaderBoard}>
             <View style={style}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'300',fontSize:15,}}>{rowID}</Text>
+              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'300',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
             </View>
             <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             <View>
               <Text style={styles.txt}>{rowData.first_name} {rowData.last_name}</Text>
             </View>
             <Text style={styles.txtSec}>{parseFloat(rowData.last_week_distance.last_week_distance).toFixed(1)} Km</Text>
-          </TouchableOpacity>
+          </View>
         );
       }
 
@@ -183,15 +183,15 @@ const styles = StyleSheet.create({
   },
   txt: {
     width:deviceWidth-200,
-    color:'black',
-    fontSize: 16,
-    fontWeight:'300',
+    color:'#4a4a4a',
+    fontSize: 14,
+    fontWeight:'100',
     textAlign: 'left',
     marginLeft:10,
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{
-   color:'black',
+   color:'#4a4a4a',
    fontSize:14,
    fontWeight:'300',
    position:'absolute',

@@ -12,12 +12,13 @@ import {
   ActivityIndicatorIOS
 } from 'react-native';
 
-import GiftedListView from 'react-native-gifted-listview';
+import RunHistroyListView from '../../components/ListviewRunHistory';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import PTRView from 'react-native-pull-to-refresh';
 
 class RunHistroy extends Component {
-
+   
       renderRunsRow(rowData) {
         var RunAmount=parseFloat(rowData.run_amount).toFixed(0);
         var RunDistance = parseFloat(rowData.distance).toFixed(1);
@@ -25,19 +26,31 @@ class RunHistroy extends Component {
         var day = RunDate.split("-")[2];
         var time = rowData.run_duration;
         var minutes = time.split(":")[1];
+        var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1]; 
+        var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
+        console.log('myRunDay2',MyRunMonth);
         return (
+
           <TouchableHighlight underlayColor="#dddddd">
             <View style={styles.container}>
-              <View  style={styles.btnbegin}>
-                <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
-              </View>
-              <View style={styles.rightContainer}>
-                <Text style={styles.title}>{rowData.cause_run_title}</Text>
-                 <Text style={styles.StartTime}>{RunDate}</Text>
-                <View style={styles.runDetail}>
-                  <Text style={styles.runContent}>{RunDistance} Km</Text>
-                  <Text style={styles.runContent}>{RunAmount} Rs</Text>
-                  <Text style={styles.runContent}>{minutes} mins</Text>
+              <View style={styles.rightContainer}>          
+              <View style={styles.runDetail}>
+                <View style={styles.cause_run_titleWrap}>
+                 <Text style={styles.StartTime}>{day}</Text>
+                  <Text style={styles.title}>{rowData.cause_run_title}</Text>
+                </View>
+                <View style={{flexDirection:'row',flex:1}}>
+                  <View style={styles.runContent}>
+                    <Text style={styles.runContentText}>{RunDistance} Km</Text>
+                  </View>
+                  <View style={styles.runContent}>
+                    <Text style={styles.runContentText}>{RunAmount} Rs</Text>
+                  </View>
+                  <View style={styles.runContent}> 
+                    <Text style={styles.runContentText}>{minutes} mins</Text>
+                  </View>
+               </View>
                 </View>
               </View>
             </View>
@@ -54,12 +67,12 @@ class RunHistroy extends Component {
           ) 
         }
       }
-      render() {
+      render(rowData) {
         var fetchingRun = this.props.fetchRunData;
         var user = this.props.user || 0;
         if (Object.keys(user).length) {
           return (
-            <GiftedListView
+            <RunHistroyListView
               rowView={this.renderRunsRow}
               onFetch={fetchingRun}
               firstLoader={true} // display a loader for the first fetching
@@ -71,6 +84,7 @@ class RunHistroy extends Component {
                   backgroundColor: '#f4f4f4',
                 },
               }}
+              mydata={rowData}
               refreshableTintColor="#00b9ff"
             />
           )
@@ -88,14 +102,15 @@ class RunHistroy extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width:deviceWidth,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     backgroundColor: 'white',
-    borderRadius:5,
-    margin:5,
-    marginBottom:0,
+    padding:10,
+    paddingTop:0,
+    paddingBottom:0,
+    marginBottom:5,
     shadowColor: '#000000',
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -107,40 +122,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    width:deviceWidth-100,
     fontSize: 16,
     marginLeft:3,
-    color:'black',
-    fontWeight:'600',
+    color:'#4a4a4a',
+    fontWeight:'400',
     backgroundColor:'transparent',
     fontFamily: 'Montserrat-Regular',
   },
    StartTime: {
-    width:deviceWidth-100,
     fontSize: 14,
-    marginLeft:3,
-    color:'black',
-    fontWeight:'300',
+    marginLeft:4,
+    color:'#6a6a6a',
+    fontWeight:'400',
     backgroundColor:'transparent',
     fontFamily: 'Montserrat-Regular',
   },
   runDetail:{
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    height:30,
-    width:deviceWidth-150,
-    right:0,
-    marginLeft:40,
+    flexDirection: 'column',
+    width:deviceWidth,
+    padding:5,
+    paddingRight:0
   },
   runContent: {
-    height:20,
-    width:deviceWidth/4,
+    flex:1,
     justifyContent: 'center',
-    alignItems: 'center',
-    color:'black',
-    fontWeight:'400',
+    alignItems: 'flex-start',
+    padding:5,
+  },
+  runContentText: {
+    color:'#4a4a4a',
+    fontWeight:'500',
+    fontSize:16,
+    left:-1,
     fontFamily: 'Montserrat-Regular',
   },
   thumbnail: {
@@ -152,24 +165,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom:60,
   },
-  btnbegin:{
-    margin:10,
-    width:50,
-    height:50,
-    backgroundColor:'#00b9ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius:80,
-    shadowColor: '#000000',
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 3,
-    },
-  },
   ListViewPage:{
     height:deviceHeight,
     width:deviceWidth,
+  },
+  cause_run_titleWrap:{
+    flex:2,
   },
 });
 

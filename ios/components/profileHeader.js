@@ -88,9 +88,6 @@ var UserProfile = React.createClass({
     render: function() {
       var _this = this;
       var user = this.props.user;
-      var TotalDistance = parseFloat(user.total_distance.total_distance).toFixed(1);
-      var StrTotalDistance = this.props.RunCount;
-      console.log('myrunCOunt6',StrTotalDistance);
       if (this.props.user != null) {
         return (
           <View style={styles.loginContainer}>

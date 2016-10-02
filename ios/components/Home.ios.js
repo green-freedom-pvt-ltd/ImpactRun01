@@ -96,6 +96,7 @@ var styles = StyleSheet.create({
   distance:{
     fontSize:25,
     fontWeight:'500',
+    color:'#4a4a4a',
     backgroundColor:'transparent',   
   },
   WrapCompany:{
@@ -126,7 +127,7 @@ SettingsService.init('iOS');
 
   getInitialState: function() {
     return {
-      isRunning:false,
+      isRunning:true,
       mainTimer:null,
       speed:0,
       prevLatLng: {},
@@ -159,7 +160,6 @@ SettingsService.init('iOS');
             this.setState({
               Storeduserdata:val
             })
-            console.log("UserDatakey1 :" + key, val);
         });
     });
 
@@ -195,10 +195,11 @@ SettingsService.init('iOS');
     this.locationManager.on("motionchange", function(event) {
       console.log("- motionchange", JSON.stringify(event, null, 2));
       me.setState({
-        isMoving: event.is_moving
+        isMoving: event.is_moving,
+       
       });
-     if (me.state.isMoving) {me._handleStartStop();};
-
+     if (me.state.isMoving) {};
+      
       me.updatePaceButtonStyle()
     });
     // heartbeat event
@@ -217,14 +218,11 @@ SettingsService.init('iOS');
     });
     // activitychange event
     this.locationManager.on("activitychange", function(activityName) {
-      console.log("- activitychange fired: ", activityName);
     });
 
     // getGeofences
     this.locationManager.getGeofences(function(rs) {
-      console.log('- getGeofences: ', JSON.stringify(rs));
     }, function(error) {
-      console.log("- getGeofences ERROR", error);
     });
 
     // Fetch settings and configure.
@@ -234,9 +232,7 @@ SettingsService.init('iOS');
       
       // Configure BackgroundGeolocaiton!
       me.locationManager.configure(values, function(state) {
-        console.log('- configure, current state: ', state);
         me.locationManager.startSchedule(function() {
-          console.log('- Schedule start success');
         });   
       });
     });
@@ -257,11 +253,9 @@ SettingsService.init('iOS');
   
   componentDidMount:function(){     
     var date = this.state.myrundate;
-    console.log('myDate',this.state.myrundate);
+    this._handleStartStop();
     if (this.state.isMoving) {
       this._handleStartStop();}; 
-      console.log('mytest'+ this.state.textState);
-      console.log('myComponentDta'+ this.state.isMoving +' and '+ this.state.enabled);
       this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
       this.locationManager.start();    
       this.updatePaceButtonStyle();
@@ -277,16 +271,14 @@ SettingsService.init('iOS');
   },
   _handleStartStop:function(){
     let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
-    if(!this.state.isMoving){
-      console.log('mytest'+ this.state.textState);
+    if(!this.state.isRunning){
       clearInterval(this.interval);
       this.setState({
           isRunning:false
       });
       return;
       }else{ 
-        console.log('mytest'+ this.state.textState);
-        if (this.state.isMoving) {
+        if (this.state.isRunning) {
           this.setState({
             mainTimerStart:new Date(),
             lapTimerStart:new Date(),
@@ -305,7 +297,6 @@ SettingsService.init('iOS');
   
   // Add Marker if check clear
   addMarker :function(location) {
-    
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -335,13 +326,13 @@ SettingsService.init('iOS');
           this.locationManager.removeGeofences();
           this.locationManager.stop();
           this.setState({
-             enabled: false,
-             isMoving:false,    
+             isMoving:false,
+             isRunning:false,    
           });
           this.updatePaceButtonStyle();
           this._handleStartStop();
           VibrationIOS.vibrate();
-          AlertIOS.alert('Your speed is more than running speed it seems you are travelling in vehicle');
+          AlertIOS.alert('Too fast','Your speed is more than running speed it seems you are travelling in vehicle');
          }
       }else{
           // else to our algo part
@@ -418,23 +409,21 @@ SettingsService.init('iOS');
       
       if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
         this.EndGetLocation();
+         this.locationManager.removeGeofences();
+          this.locationManager.stop();
+          this.locationManager.resetOdometer();
+          this.removeAllAnnotations(mapRef);
+          this.polyline = null;
+          this.setState({
+          enabled: !this.state.enabled,     
+          });
+          this.updatePaceButtonStyle();
        }else{
         this.EndRunConfimation();
-       }  
-       };
-       
-      this.locationManager.removeGeofences();
-      this.locationManager.stop();
-      this.locationManager.resetOdometer();
-      this.removeAllAnnotations(mapRef);
-      this.polyline = null;
-    }
-    this.setState({
-      enabled: !this.state.enabled,
-      
-    });
-    this.updatePaceButtonStyle();
-      },
+        }  
+       };      
+      } 
+    },
 
      navigateTOHomeScreen:function(){
         this.props.navigator.push({
@@ -478,11 +467,11 @@ SettingsService.init('iOS');
    EndRunConfimation:function() {
      VibrationIOS.vibrate();
       AlertIOS.alert(
-          'End Run',
-         'Are you sure you want to end run because your run is less than 100 meters',
+         'Too short',
+         'You need to run a minimum of 100m to convert the distance into impact.',
         [
-        {text: 'Confirm', onPress: () => this.popRoute() },
-        {text: 'Cancel',},
+          {text: 'End', onPress: () => this.popRoute() },
+          {text: 'Continue',},
         ],
       ); 
     },
@@ -507,25 +496,21 @@ SettingsService.init('iOS');
     onClickPace: function() {
       VibrationIOS.vibrate();
       if (!this.state.enabled)  {
-        console.log('ismovingdata'+this.state.isMoving);
        return; }
       var isMoving = !this.state.isMoving;
       this.locationManager.changePace(isMoving);
       this.setState({
         isMoving: isMoving,
+        isRunning:!this.state.isRunning
       });
       this.updatePaceButtonStyle();
-      if (!this.state.isMoving) {
-        this._handleStartStop();
-      };
+      this._handleStartStop();
     },
     StartGetLocation: function() { 
        navigator.geolocation.getCurrentPosition(
       (position) => {
         var StartPosition = position;
-        console.log('mypositoion',position);
         this.setState({StartPosition});
-        console.log('StartPosition',this.state.StartPosition)
       },
       (error) => alert(error.message),
       {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000}
@@ -537,14 +522,12 @@ SettingsService.init('iOS');
         var EndPosition = position;
         this.setState({EndPosition})
         this.navigateTOShareScreen();
-        console.log('EndPosition',this.state.StartPosition)
       },
       (error) => alert(error.message),
       {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000}
       )
     },
     onRegionChange: function() {
-      console.log('onRegionChange');
     },
     setCenter: function(location) {
       this.setCenterCoordinateAnimated(mapRef, location.coords.latitude, location.coords.longitude)
@@ -556,10 +539,9 @@ SettingsService.init('iOS');
       }
       this.setState({
         paceButtonStyle: style,
-        paceButtonIcon: (this.state.enabled  && this.state.isMoving) ? 'md-pause' : 'md-play',
-        textState:(this.state.enabled && this.state.isMoving) ? 'PAUSE':'RESUME', 
+        paceButtonIcon: (this.state.enabled  && this.state.isRunning) ? 'md-pause' : 'md-play',
+        textState:(this.state.enabled && this.state.isRunning) ? 'PAUSE':'RESUME', 
         EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
-
       });
     },
     // MapBox
@@ -607,7 +589,7 @@ SettingsService.init('iOS');
              <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'rgba(255, 255, 255, 0.67)'}}></View>
               <View style={styles.WrapCompany} >
               <Image style={{resizeMode: 'contain',height:100,width:100}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
-              <Text style={{marginTop:20}}>IMPACT</Text> 
+              <Text style={{fontFamily: 'Montserrat-Regular',marginTop:20,color:'#4a4a4a'}}>IMPACT</Text> 
             </View>
              <AnimatedCircularProgress
                 style={{ top:50,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
@@ -621,18 +603,18 @@ SettingsService.init('iOS');
               </AnimatedCircularProgress>
                <View style={{top:-70,backgroundColor:'transparent',width:100,height:100,justifyContent:'center',alignItems:'center'}}>
                 <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
-                <Text>RUPEES</Text>
+                <Text style={{fontFamily: 'Montserrat-Regular',color:'#4a4a4a'}}>RUPEES</Text>
               </View>
               <View style={{width:deviceWidth,flexDirection:'row',backgroundColor:'transparent'}}>
                 <View style={styles.timeDistanceWrap}>
-                  <Icon style={{color:'black',fontSize:30,}} name={'ios-walk-outline'}></Icon>
+                  <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'ios-walk-outline'}></Icon>
                     <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
-                  <Text>km</Text>
+                  <Text style={{fontFamily: 'Montserrat-Regular',color:'#4a4a4a'}}>km</Text>
                 </View>
                 <View style={styles.timeDistanceWrap}>
-                  <Icon style={{color:'black',fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
+                  <Icon style={{color:'#4a4a4a',fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                    <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
-                  <Text>sec</Text>
+                  <Text style={{fontFamily: 'Montserrat-Regular',color:'#4a4a4a'}}>Time</Text>
                 </View>
               </View>
             </View>

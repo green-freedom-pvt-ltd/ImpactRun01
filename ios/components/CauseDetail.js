@@ -44,7 +44,7 @@ class CauseDetail extends Component {
                     <TouchableOpacity style={{top:10,left:0,position:'absolute',height:50,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
                      <Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-close'}></Icon>
                     </TouchableOpacity>
-                    <Text style={commonStyles.menuTitle}>Causedetail</Text>
+                    <Text style={commonStyles.menuTitle}>Overview</Text>
                   </View>
                   <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
@@ -56,7 +56,7 @@ class CauseDetail extends Component {
                       </Image>
                       <View style={styles.textwraper}>
                         <Text style={styles.colortext}>{data.cause_title}</Text>
-                        <Text style={styles.slidesponser}>Sponsored By {data.sponsors[0].sponsor_company} </Text>
+                        <Text style={styles.slidesponser}>By {data.sponsors[0].sponsor_company} </Text>
                         <Text  style={styles.Disctext} >{data.cause_description}</Text>
                       </View>
                   </View>
@@ -83,14 +83,14 @@ class CauseDetail extends Component {
     position:"absolute",
     width:deviceWidth,
     height:30,
-    backgroundColor:"rgba(51, 35, 80, 0.64)",
+    backgroundColor:'rgba(255, 255, 255, 0.75)',
     bottom:0,
   },
   slidesponser:{
-    paddingTop:5,
+    paddingTop:0,
     paddingBottom:5,
-    fontSize:15,
-    color:'#ffcd4d',
+    fontSize:12,
+    color:'#262626',
     fontFamily: 'Montserrat-Regular'
   },
    backbtn:{
@@ -109,12 +109,15 @@ class CauseDetail extends Component {
     fontSize:20,
     fontWeight:'300',
     letterSpacing:1,
+    color:'#4a4a4a',
     fontFamily: 'Montserrat-Regular',
   },
   Disctext:{
-    fontSize:15,
-    letterSpacing:1,
+    fontSize:14,
+    letterSpacing:0.5,
     marginBottom:100,
+    color:'#262626',
+    top:10,
     fontFamily: 'Montserrat-Regular',
   },
   bytext:{
@@ -134,8 +137,8 @@ class CauseDetail extends Component {
   Btntext:{
      backgroundColor:'transparent',
      color:'white',
-     fontWeight:'500',
      fontSize:20,
+     fontFamily:'Montserrat-Regular',
   },
   closebtn:{
     left:10,
@@ -150,16 +153,17 @@ class CauseDetail extends Component {
   },
   categorytext:{
     position:'absolute',
-    bottom:-3,
     padding:10,
+    paddingBottom:20,
     backgroundColor:'transparent',
-    color:'white',
-    fontSize:16,
+    fontWeight:'300',
+    fontFamily:'Montserrat-Regular',
     left:5,
     fontWeight:'300',
   },
   textwraper:{
     padding:10,
+    paddingBottom:20,
   },
 
 

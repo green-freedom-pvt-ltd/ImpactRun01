@@ -70,10 +70,8 @@ class Setting extends Component {
          this.handleFBLogout();
            GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
            this.setState({user: null});
-             console.log('userLogout:');
              let keys = ['UID234', 'UID345'];
               AsyncStorage.multiRemove(keys, (err) => {
-                console.log('keyremoved' + keys)
               });
 
              })
@@ -97,7 +95,6 @@ class Setting extends Component {
             _this.props.onLogout && _this.props.onLogout();
             let keys = ['UID234', 'UID345'];
               AsyncStorage.multiRemove(keys, (err) => {
-                console.log('keyremoved' + keys)
               });
 
           } else {
@@ -125,9 +122,8 @@ class Setting extends Component {
       }
       removeItem(){
         let keys = 'Feedcount';
-       AsyncStorage.removeItem(keys, (err) => {
-        console.log('removed key Feedcount');
-       }); 
+        AsyncStorage.removeItem(keys, (err) => {
+        }); 
       }
       render() {
          return (

@@ -19,7 +19,7 @@ import Login from '../../components/loginBtns';
 import LodingView from '../../components/lodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-
+import PTRView from 'react-native-pull-to-refresh';
 var ProfileForm = React.createClass({
 
     getInitialState: function(){
@@ -28,7 +28,11 @@ var ProfileForm = React.createClass({
         user:this.props.user,
       };
     },
-
+    _refresh: function() {
+      return new Promise((resolve) => {
+        setTimeout(()=>{resolve()}, 2000)
+      });
+    },
     onDateChange:function(date) {
       this.setState({date: date});
     },
@@ -38,7 +42,7 @@ var ProfileForm = React.createClass({
         this.setState({loaded:true});
       }else{
         return (
-          <View style={{height:deviceHeight/2,width:deviceWidth,top:100,}}>
+          <View style={{height:deviceHeight/2,width:deviceWidth,top:(deviceHeight/2)-200,}}>
             <Login getUserData={this.props.getUserData}/>
           </View>
         ) 
@@ -63,7 +67,7 @@ var ProfileForm = React.createClass({
       var user = this.props.user;
       if (this.props.user != null) {
         return (
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <View style={styles.FromWrap}>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Name</Text> 
@@ -86,7 +90,7 @@ var ProfileForm = React.createClass({
                 <Text style={styles.userProfileText}>{user.gender_user}</Text>
               </View>
             </View> 
-          </View>
+          </ScrollView>
         );
       }else{
         if (this.state.loaded) {
@@ -103,18 +107,13 @@ var ProfileForm = React.createClass({
 var styles = StyleSheet.create({
   container:{
     top:10,
-    position:'absolute',
-    width:deviceWidth,
     backgroundColor:'#f4f4f4',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   FromWrap:{
     left:5,
     borderRadius:5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width:deviceWidth-10,
+    flex:1,
+    marginBottom:70,
     backgroundColor:'#f4f4f4',
   },
   ProfileTextInput:{

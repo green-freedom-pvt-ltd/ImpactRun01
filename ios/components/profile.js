@@ -22,6 +22,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import API from '../../components/runPaginationApi';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import PTRView from 'react-native-pull-to-refresh';
+
 class Profile extends Component {
     constructor(props) {
       super(props);
@@ -36,6 +38,7 @@ class Profile extends Component {
       this.getUserData = this.getUserData.bind(this);
       this.getRunCount = this.getRunCount.bind(this);
     }
+    
     getUserData(){
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
@@ -48,28 +51,23 @@ class Profile extends Component {
           this.getAmountCount();
           NetInfo.isConnected.fetch().done(
             (isConnected) => {  
-            console.log('isConnected3'+ this.state.isConnected);
             if (isConnected) {
               this.fetchRunAmount();
-              console.log('isConnected'+this.state.isConnected)
               }else{
                 AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
                   this.setState({
                     RunTotalAmount2:JSON.parse(result),
                   })
-                  console.log('myTotalRupeesCount',this.state.RunTotalAmount2);
                })
               }
              }
             );     
-            console.log('mytotalAmountt',this.state.userTotalAmount);
           })
         })
       }
 
       fetchRunAmount(){
         if (this.state.user != null) {
-          console.log('myauthtoke',this.state.user.auth_token);
             fetch("http://dev.impactrun.com/api/users/", {
             method: "GET",
              headers: {  
@@ -78,11 +76,9 @@ class Profile extends Component {
             })
             .then((response) => response.json())
             .then((userdata) => {
-              console.log('mydatauser',userdata);
               this.setState({
                 userTotalAmount:userdata[0].total_amount.total_amount,
               })
-              console.log('myTotalRupeesCount2',this.state.userTotalAmount);
               let TotalRupees = {
                 TotalRupeesCount:this.state.userTotalAmount,               
               }      
@@ -92,7 +88,6 @@ class Profile extends Component {
                   this.setState({
                     RunTotalAmount2:JSON.parse(result),
                   })
-                  console.log('myTotalRupeesCount',this.state.RunTotalAmount2);
                 })
               })
           })
@@ -103,20 +98,20 @@ class Profile extends Component {
 
         onFetch(page = 1, callback, options) {     
         let rowArray = [];
+         this.setState({
+          myHistoryData:rowArray
+         })
           Promise.resolve(API.getAllRuns(page,this.state.user))
           .then((response) => {
             NetInfo.isConnected.fetch().done(
             (isConnected) => {  
-            console.log('isConnected3'+ this.state.isConnected);
             if (isConnected) {
               this.fetchRunAmount();
-              console.log('isConnected'+this.state.isConnected)
               }else{
                 AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
                   this.setState({
                     RunTotalAmount2:JSON.parse(result),
                   })
-                  console.log('myTotalRupeesCount',this.state.RunTotalAmount2);
                })
               }
              }
@@ -132,7 +127,6 @@ class Profile extends Component {
               this.setState({
                 RunCountTotal:JSON.parse(result),
               })
-             console.log('myuserRuncount',this.state.RunCountTotal);
               })
               })
             response.results.map((object) => {
@@ -154,7 +148,6 @@ class Profile extends Component {
           this.setState({
             RunTotalAmount2:JSON.parse(result),
           })
-          console.log('myTotalRupeesCount',this.state.RunTotalAmount2);
         })
       }
       getRunCount(){
@@ -162,7 +155,6 @@ class Profile extends Component {
           this.setState({
             RunCountTotal:JSON.parse(result),
           })
-          console.log('MyrunCountdata2',this.state.RunCountTotal);
         })
       }
       componentWillMount(){ 
@@ -184,7 +176,9 @@ class Profile extends Component {
             vertical={false}
             renderTabBar={() => <ScrollableTabBar userTotalAmount={this.state.RunTotalAmount2 || 0} RunCount={this.state.RunCountTotal || 0} getUserData={this.getUserData} user={this.state.user} />}>
             <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm getUserData={this.getUserData} user={this.state.user}/></View>
-            <View style={styles.tabContent} tabLabel='RunHistory'><RunHistory fetchRunData={this.onFetch} user={this.state.user}/></View>
+            <View style={styles.tabContent} tabLabel='History'>
+                <RunHistory fetchRunData={this.onFetch} user={this.state.user}/>
+            </View>
           </ScrollableTabView>
         </View>
   		);

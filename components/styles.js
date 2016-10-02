@@ -6,10 +6,13 @@ import {
   Dimensions
  } from 'react-native';
 const width = Dimensions.get('window').width
-
 const height = Dimensions.get('window').height
+export default {
+    navColor:'#00b9ff' 
+  }
 
 var styles = StyleSheet.create({
+
   container: {
     flex: 1,
     flexDirection: 'column',

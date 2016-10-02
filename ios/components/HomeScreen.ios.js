@@ -18,7 +18,10 @@ import {
   TouchableOpacity,
   AsyncStorage,
   NetInfo,
+  PanResponder,
+  TouchableWithoutFeedback
 } from 'react-native';
+import Lodingscreen from '../../components/lodingScreen';
 import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -32,6 +35,10 @@ class Profile extends Component {
       constructor(props) {
         super(props);
         this.state = {
+          MyButtonClick:true,
+          _panResponder: {},
+          _previousLeft: 0,
+          _previousTop: 0,
           dataSource : null,
           album : {},
           causes : [],
@@ -47,7 +54,14 @@ class Profile extends Component {
       };
      
       componentWillMount() {
-        console.log('mypropsdata',this.props.myCauseCount);  
+         this._panResponder = PanResponder.create({
+          onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
+          onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
+          onPanResponderGrant: this._handlePanResponderGrant,
+          onPanResponderMove: this._handlePanResponderMove,
+          onPanResponderRelease: this._handlePanResponderEnd,
+          onPanResponderTerminate: this._handlePanResponderEnd,
+        });
         AsyncStorage.multiGet(['RID1'], (err, stores) => {
         stores.map((result, i, store) => {
           let key = store[i][0];
@@ -86,18 +100,26 @@ class Profile extends Component {
          }
         });
       }
+      _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
+        // Should we become active when the user presses down on the circle?
+      
+        console.log('myparesesponced');
+        return false;
+      }
+
+      _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
+        // Should we become active when the user moves a touch over the circle?\
+        
+        console.log('myparesesponced');
+        return true;
+      }
+
 
       componentDidMount() {
-        console.log('mucauseCountData2',this.props.mydataCount);
         var provider = this.props.provider;
-        var causeName = this.props.causeName;
- 
-       var causeno = ["cause0","cause2","cause3","cause4",]
         var causeNum = this.props.myCauseNum;
-        var mynamecause=causeNum;
-          // this.fetchData();
           try {
-            AsyncStorage.multiGet(causeno, (err, stores) => {
+            AsyncStorage.multiGet(causeNum, (err, stores) => {
                 var _this = this
                 stores.map((item) => {
                     let key = item[0];
@@ -105,7 +127,7 @@ class Profile extends Component {
                     let causesArr = _this.state.causes.slice()
                     causesArr.push(val)
                     _this.setState({causes: causesArr})
-                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo]})})
+                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
                 });
               this.setState({navigation: Object.assign({}, this.state.navigation, {
@@ -133,27 +155,26 @@ class Profile extends Component {
           }) 
          var RunData = this.state.MyRunVal;
          AlertIOS.alert('this',JSON.stringify(RunData));
-         console.log('myDataSomedata',this.state.MyRunVal);            
          fetch("http://dev.impactrun.com/api/runs/", {
          method: "POST",
-         headers: {  
+          headers: {  
             'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
             'Content-Type': 'application/json',    
           },
-        body:JSON.stringify({
-        cause_run_title:RunData.cause_run_title,
-        user_id:RunData.user_id,
-        start_time:RunData.start_time,
-        distance:RunData.distance,
-        peak_speed: 1,
-        avg_speed:RunData.avg_speed,
-        run_amount:RunData.run_amount,
-        run_duration:RunData.run_duration,
-        start_location_lat:RunData.start_location_lat,
-        start_location_long:RunData.start_location_long,
-        end_location_lat:RunData.end_location_lat,
-        end_location_long:RunData.end_location_long,
+          body:JSON.stringify({
+          cause_run_title:RunData.cause_run_title,
+          user_id:RunData.user_id,
+          start_time:RunData.start_time,
+          distance:RunData.distance,
+          peak_speed: 1,
+          avg_speed:RunData.avg_speed,
+          run_amount:RunData.run_amount,
+          run_duration:RunData.run_duration,
+          start_location_lat:RunData.start_location_lat,
+          start_location_long:RunData.start_location_long,
+          end_location_lat:RunData.end_location_lat,
+          end_location_long:RunData.end_location_long,
         })
        })
 
@@ -161,7 +182,6 @@ class Profile extends Component {
       .then((userRunData) => { 
         this.RemoveStoredRun();
          AlertIOS.alert('rundataStored'+JSON.stringify(userRunData))
-         console.log('removedRun');
 
        })
         });
@@ -170,7 +190,6 @@ class Profile extends Component {
     RemoveStoredRun(){
       let keys = ['RID1', 'RID2'];
         AsyncStorage.multiRemove(keys, (err) => {
-        console.log('keyremovedRun' + keys)
       });
     }
      // SLIDER_COVERFLOW_STYLE
@@ -287,45 +306,49 @@ class Profile extends Component {
       } else {
         cause = {}
       }
-      return (
-        <View style={styles.page}>
-          <View style={styles.album}>
-            <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
-            <View style={{position:'absolute',bottom:10,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
-             <Text style={{fontWeight:'400',fontFamily:'Montserrat-Regular',}}>
-              {this.state.album[route.key][2]}
-             </Text>
-            </View>
-            </Image>
-            <View style={styles.borderhide}></View>
-            <Text style={styles.causeTitle}>{route.key}</Text>
-            <Text style={{color:'#262626',fontFamily:'Montserrat-Regular',fontSize:14,fontWeight:'300',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
-            <TouchableOpacity  onPress={()=>this.navigateToCauseDetail()}>
-            <Text  numberOfLines={3} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
-            </TouchableOpacity>
-           </View>
-           <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-             <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
-           </TouchableOpacity>
-        </View>
-      );
+        return (
+          <View {...this._panResponder.panHandlers}  style={styles.page}>
+            <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
+            <View style={styles.album}>
+              <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
+              <View style={{position:'absolute',bottom:10,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
+               <Text style={{fontWeight:'400',fontFamily:'Montserrat-Regular',}}>
+                {this.state.album[route.key][2]}
+               </Text>
+              </View>
+              </Image>
+              <View style={styles.borderhide}></View>
+              <Text style={styles.causeTitle}>{route.key}</Text>
+              <Text style={{color:'#262626',fontFamily:'Montserrat-Regular',fontSize:14,fontWeight:'300',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
+              <View  onPress={()=>this.navigateToCauseDetail()}>
+              <Text  numberOfLines={5} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+              </View>
+             </View>
+             </TouchableWithoutFeedback>
+             <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
+               <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
+             </TouchableOpacity>
+          </View>
+        );
+      
     };
    
 
      // RENDER_PAGE
-    _renderPage = (props,data) => {
-       // console.log('REnderPage:'+JSON.stringify(this.state.dataSource));
+    _renderPage = (props,data,route) => {
       return (
         <TabViewPage
           {...props}
           style={this._buildCoverFlowStyle(props)}
           renderScene={this._renderScene}/>
       );
+    
     };
     
 
     // RENDER_FUNCTION
-    render() { 
+    render(route) { 
+      if (this.props.myCauseNum != null ) {
       return (
         <View style={{height:deviceheight,width:deviceWidth,backgroundColor:'white'}}>
         <View>
@@ -340,7 +363,14 @@ class Profile extends Component {
              </View>
           </View>
       );
+    }else{
+      return(
+        <Lodingscreen/>
+        )
     }
+    }
+  
+  
 
   }
 

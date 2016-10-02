@@ -158,8 +158,8 @@ import{
       AlertIOS.alert('mytitle'+TotalRunLegth);
       console.log()
       var Runno = 2;
-     
-      var RID2 = {
+      var RunID = 'RID'+Runno;
+      var RunID = {
         cause_run_title:cause.cause_title,
         user_id:user_id,
         start_time: StartTime,
@@ -175,10 +175,10 @@ import{
       };
 
       let multi_set_pairs = [
-          ['RID'+Runno, JSON.stringify(RID2)],
+          ['RID'+Runno, JSON.stringify(RunID)],
       ]
        let multi_merge_pairs = [
-          ['RID'+Runno, JSON.stringify(RID2)],
+          ['RID'+Runno, JSON.stringify(RunID)],
       ]
 
     

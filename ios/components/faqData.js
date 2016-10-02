@@ -93,10 +93,8 @@ class Faqdata extends Component {
           .then((response) => response.json())
           .then((response) => { 
             AlertIOS.alert('Thankyou for submitting your question');
-            console.log('faqdata'+JSON.stringify(response));     
           })    
           .catch((err) => {
-            console.log('ErrFaq', err);
           })
         }else{
           AlertIOS.alert('No Internet Connection');
@@ -155,15 +153,17 @@ const styles = StyleSheet.create({
   },
   txt: {
     marginLeft:10,
-    color:'black',
-    fontWeight:'900',
+    color:'#4a4a4a',
+    fontWeight:'500',
     fontSize: 16,
     textAlign: 'left',
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{
    padding:10,
+   paddingTop:0,
    fontSize:15,
+   color:'#4a4a4a',
   },
   FaqSubmitWrap:{
     paddingLeft:10,
