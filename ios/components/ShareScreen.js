@@ -28,8 +28,22 @@ import{
     this.state = {
       loaded:false,
       visible: false,
+      user:null,
      };
+     this.getUserData = this.getUserData.bind(this);
     }
+    getUserData(){
+      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+        stores.map((result, i, store) => {
+          let key = store[i][0];
+          let val = store[i][1];
+          let user = JSON.parse(val);
+            this.setState({
+              user:user,
+            })
+          })
+        })
+      }
     onCancel() {
       console.log("CANCEL")
       this.setState({visible:false});
@@ -40,7 +54,6 @@ import{
     }
 
     componentDidMount(){
-
       var StartLocation = this.props.StartLocation;
       console.log('Sharestart',StartLocation);
        AsyncStorage.multiGet(['RID1'], (err, stores) => {
@@ -73,21 +86,23 @@ import{
           social_thumb:this.state.user.social_thumb,
           user_id:this.state.user.user_id,
           })
-           NetInfo.isConnected.fetch().done(
-            (isConnected) => { 
-              if (isConnected) {
-                 this.PostRun();
-               }else{
-                 console.log('isConnected'+this.state.isConnected)
-                 this.SaveRunLocally();
-               }
-            }
-           );
+           
           
         }
       });
     } 
-    
+    ifConnectTonetPost(){
+      NetInfo.isConnected.fetch().done(
+      (isConnected) => { 
+        if (isConnected) {
+           this.PostRun();
+         }else{
+           console.log('isConnected'+this.state.isConnected)
+           this.SaveRunLocally();
+         }
+      }
+     );
+    }
   
     SaveRunLocally(){
      var StartLocationLat = this.props.StartLocation.coords.latitude;
@@ -145,10 +160,10 @@ import{
                   
                   console.log('myRunSomeData',this.state.userRunData);
               })
-             .then((userRunData) => { 
-              AlertIOS.alert('yourDataStored'+JSON.stringify(this.state.userRunData))
-              })
-             .done();
+            .then((userRunData) => { 
+              this.navigateToThankyou();
+            })
+            .done();
           })
           
        });
@@ -196,7 +211,7 @@ import{
                   console.log('myRunSomeData',this.state.userRunData);
               })
              .then((userRunData) => { 
-              AlertIOS.alert('yourDataStored'+JSON.stringify(this.state.userRunData))
+              this.navigateToThankyou();
               })
              .done();
           })
@@ -277,6 +292,7 @@ import{
       //  });
     }
     PostRun(){
+      if (this.props.distance >= 0.1) {
       var StartLocationLat = this.props.StartLocation.coords.latitude;
       var StartLocationLong = this.props.StartLocation.coords.longitude;
       var EndLocationLat = this.props.EndLocation.coords.latitude;
@@ -318,9 +334,12 @@ import{
        })
       .then((response) => response.json())
       .then((userRunData) => { 
-        AlertIOS.alert('rundata'+JSON.stringify(userRunData))
+        this.navigateToThankyou();
       })
+    }else{
+     AlertIOS.alert('rundata','not more than 100');
     }
+  }
 
     DiscardRunfunction(){
       return this.navigateTOhome();
@@ -358,16 +377,19 @@ import{
      ); 
     }
 
-    IfnotLogin(){
+
+    render() {
+      var data = this.props.data;
       var cause = this.props.data;
       var CauseShareMessage = cause.cause_share_message_template;
-      console.log('causeMessage'+CauseShareMessage);
+
+      console.log('causeMessage'+CauseShareMessage.split("")[1]);
       var distance = this.props.distance;
       var impact =this.props.impact;
       var time = this.props.time;
       let shareOptions = {
         title: "ImpactRun",
-        message:"I ran"+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+        message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
         url: "http://www.impactrun.com/#",
         subject: "Download ImpactRun Now " //  for email
       };
@@ -376,9 +398,8 @@ import{
          <Text>loding sharescreen</Text>
         )
       }
-      if (!this.state.user) {
-        var distance = this.props.distance;
-        var impact= this.props.impact;
+      if (this.state.user === null) {
+       
         return(
         <View style={{height:deviceHeight,width:deviceWidth,}}>
           <View style={styles.container}>
@@ -386,83 +407,73 @@ import{
               <View style={{flexDirection:'row',flex:1}}>
                 <View style={styles.wrapperRunContent}>
                   <Icon style={{color:'black',fontSize:35,}} name={'ios-walk-outline'}></Icon>
-                  <Text>{distance}</Text>
-                  <Text> DISTANCE</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
                 </View>
                 <View style={styles.wrapperRunContentImpact}>
-                  <Text>IMPACT</Text>
-                  <Text>{impact}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
                 </View>
                 <View style={styles.wrapperRunContent}>
                   <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
-                  <Text>{time}</Text>
-                  <Text>Min</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
                 </View>
               </View>
               <View style={{ flexDirection:'column',flex:1,justifyContent: 'center',alignItems: 'center',}}>
                 <View style={{bottom:20, justifyContent: 'center',alignItems: 'center',}}>
-                  <Text> Please login to </Text>
-                  <Text>unlease your impact</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Please login to </Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>unlease your impact</Text>
                 </View>
-                <LoginBtns/>
+                <LoginBtns getUserData={this.getUserData}/>
                 <TouchableOpacity style={{bottom:50,width:deviceWidth,height:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=> this.PopForRunNOtSubmit()}>
-                  <Text>Skip</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Skip</Text>
                 </TouchableOpacity>
               </View>
             </Image>
           </View>
         </View>
        )
-      }
-      var distance = this.props.distance;
-      var impact= this.props.impact;
+      }else{
+     
       return(
         <View style={styles.container}>
           <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
             <View style={{flexDirection:'row',flex:1}}>
               <View style={styles.wrapperRunContent}>
-                <Icon style={{color:'black',fontSize:35,}} name={'ios-walk-outline'}></Icon>
-                <Text>{distance}</Text>
-                <Text> Kms</Text>
+                <Icon style={{color:'#4a4a4a',fontSize:35,}} name={'ios-walk-outline'}></Icon>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
               </View>
               <View style={styles.wrapperRunContentImpact}>
-                <Text>IMPACT</Text>
-                <Text>{impact}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
               </View>
               <View style={styles.wrapperRunContent}>
-                <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
-                <Text>{time}</Text>
-                <Text>Min</Text>
+                <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'md-stopwatch'}></Icon>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
               </View>
             </View>
             <View style={{flex:1}}>
               <View style={{bottom:20, justifyContent: 'center',alignItems: 'center',}}>
-                <Text> Share your impact</Text>
-                <Text>with your friends</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:18,}}> Tell your friends about it.</Text>
               </View>
               <View style={{width:deviceWidth,justifyContent: 'center',alignItems: 'center',flexDirection:'column'}}>
               <TouchableOpacity onPress={()=>Share.open(shareOptions)} style={styles.shareButton}>
-               <Icon style={{color:'white',fontSize:20,margin:10,}} name={'md-share'}></Icon>
-               <Text style={{color:'white'}}>SHARE IMPACT</Text>
+               <Icon style={{color:'white',fontSize:18,padding:5,fontWeight:'600'}} name={'md-share'}></Icon>
+               <Text style={{color:'white',fontFamily: 'Montserrat-Regular',fontSize:18,}}>SHARE</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{top:50,width:deviceWidth,height:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=> this.navigateToThankyou()}>
-                <Text>Skip</Text>
+              <TouchableOpacity style={{flexDirection: 'row',top:50,flex:1,justifyContent: 'center',alignItems: 'center',}} onPress={() => this.ifConnectTonetPost()}>
+                <Text style={{color:'#4a4a4a',opacity:0.5,fontFamily: 'Montserrat-Regular',}}>DON’T WANT TO SHARE?</Text>
+                <Text style={{left:6,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>
               </TouchableOpacity>
               </View>
             </View>
           </Image>
         </View>  
       )
-    }
-
-    render() {
-      var data = this.props.data;
-      console.log('dataCause',data);
-      return(
-         <View style={styles.container}>
-          {this.IfnotLogin()}
-        </View>
-      )  
+     }
     }
 
   }
@@ -485,21 +496,21 @@ import{
       width:deviceWidth/4,
       top:-70,
     },
-      shadow: {
-        flex:1,
-        backgroundColor: 'transparent',
-        justifyContent: 'center', 
-       alignItems: 'center',     
-      },
-      shareButton:{
-        flexDirection:'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height:50,
-        width:deviceWidth-150,
-        backgroundColor:'#e03ed2',
-        borderRadius:30,
-      },
+    shadow: {
+      flex:1,
+      backgroundColor: 'transparent',
+      justifyContent: 'center', 
+     alignItems: 'center',     
+    },
+    shareButton:{
+      flexDirection:'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height:50,
+      width:deviceWidth-150,
+      backgroundColor:'#ffcd4d',
+      borderRadius:30,
+    },
   })
 
  export default ShareScreen;

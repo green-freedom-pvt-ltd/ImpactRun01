@@ -38,10 +38,13 @@ class devdactic_tabs extends Component {
         feedCount:0,
         loaded:false,
         myCusesDataExist:null,
+        user:{},
       };
+      this.getUserData = this.getUserData.bind(this);
     }
 
     componentWillMount() {
+      this.getUserData();
       NetInfo.isConnected.fetch().done(
           (isConnected) => {  
           if (isConnected) {
@@ -118,7 +121,18 @@ class devdactic_tabs extends Component {
       })
       .done();  
     }
-
+     getUserData(){
+      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+        stores.map((result, i, store) => {
+          let key = store[i][0];
+          let val = store[i][1];
+          let user = JSON.parse(val);
+            this.setState({
+              user:user,
+            })
+          })
+        })
+      }
    
     render() {
       if (this.state.myCauseNum != null) {
@@ -151,7 +165,7 @@ class devdactic_tabs extends Component {
                     selectedTab: 'profile',
                 });
           }}>
-         <Profile/>
+         <Profile user={this.state.user} getUserData={this.getUserData} />
         </TabBarIOS.Item>
         
         <TabBarIOS.Item
@@ -163,7 +177,7 @@ class devdactic_tabs extends Component {
                   selectedTab: 'welcome',
               });
           }}>
-        <Welcome myCauseCount={this.props.dataCauseCount} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>
+        <Welcome locationManager={this.props.locationManager} myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>
         </TabBarIOS.Item>
 
         <TabBarIOS.Item
@@ -175,7 +189,7 @@ class devdactic_tabs extends Component {
                     selectedTab: 'Leaderboard',
                 });
           }}>
-         <Leaderboard navigator={this.props.navigator}/>
+         <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
             navigator={this.props.navigator}

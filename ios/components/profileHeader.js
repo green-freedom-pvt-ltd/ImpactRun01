@@ -15,6 +15,7 @@ var {
 
 
 var FB_PHOTO_WIDTH = 200;
+import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 var deviceHeight = Dimensions.get('window').height;
@@ -25,20 +26,18 @@ var UserProfile = React.createClass({
       return {
         user:null,
         Circlefill:0,
-        Runcount:this.props.RunCount.TotalRunCount,
-        Moneycount:this.props.userTotalAmount.TotalRupeesCount,
+       
       };
     },
     componentWillMount:function() {
-      setState:({
-        Circlefill:parseFloat(this.props.user.total_amount.total_amount).toFixed(0),
-        TotalAmount:parseFloat(this.props.userTotalAmount.TotalRupeesCount).toFixed(0),
-        TotalRun:this.props.RunCount.TotalRunCount,
-      })
+   
+    },
+    componentDidMount:function() {
+      console.log('imarendered');
     },
  
     social_thumb:function(){
-      if (this.props.user.first_name != 'your') {
+      if (this.props.user.first_name != '') {
         return( 
           <Image  onPress={() => VibrationIOS.vibrate()} style={styles.UserImage} source={{uri:this.props.user.social_thumb}}></Image>
         ) 
@@ -49,25 +48,27 @@ var UserProfile = React.createClass({
         </View>
       )
     },
+    
     fullname:function(){
       if (this.props.user != null) {
         return( 
-        <View style={{flexDirection:'row'}}>
-          <Text style={styles.profilename}>{this.props.user.first_name}</Text>
-          <Text style={styles.profilename}>{this.props.user.last_name}</Text>
+        <View>
+          <Text style={styles.profilename}>{this.props.user.first_name} {this.props.user.last_name}</Text>
         </View>    
         ) 
       };
       return(
-        <Text>Your name</Text>
+        <Text></Text>
       )
     },
     TotalAmount:function(){
-      if (this.state.Moneycount) {
+      if (this.props.userTotalAmount != null) {
+        console.log('myrupees',this.props.userTotalAmount);
         return(
-           <Text style={styles.totalcontentText}>parseFloat(this.props.userTotalAmount.TotalRupeesCount).toFixed(0)</Text>
+           <Text style={styles.totalcontentText}>{parseFloat(this.props.userTotalAmount).toFixed(0)}</Text>
           )
       }else{
+        console.log('myrupees',this.props.userTotalAmount);
         return(
             <Text style={styles.totalcontentText}>0</Text>
           )
@@ -75,38 +76,39 @@ var UserProfile = React.createClass({
     },
 
     TotalRuns:function(){
-     if (!this.state.Runcount) {
+      if (this.props.RunCount != null) {
         return(
-          <Text style={styles.totalcontentText}>0</Text>
-          )
+          <Text style={styles.totalcontentText}>{this.props.RunCount}</Text>
+        )
       }else{
-
-        return;
+        console.log('myruns',this.props.RunCount);
+        return(
+            <Text style={styles.totalcontentText}>0</Text>
+        )
       }
     },
 
     render: function() {
-      var _this = this;
-      var user = this.props.user;
       if (this.props.user != null) {
         return (
           <View style={styles.loginContainer}>
             <View style={styles.userContentwrap}>
               <View style={{width:deviceWidth/3-20}}> 
-                <View style={{top:20,right:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.totalcontentTextSec}>Runs</Text>
-                  <Text style={styles.totalcontentText}>{parseFloat(this.props.RunCount.TotalRunCount).toFixed(0)}</Text>
-                </View>
-                <AnimatedCircularProgress
-                  style={{top:10,right:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
-                  ref='circularProgress1'
-                  size={70}
-                  width={2}
-                  fill={100}
-                  prefill={0}
-                  tintColor="#00b9ff"
-                  backgroundColor="#ccc">                   
-                </AnimatedCircularProgress>
+              <View style={{top:20,right:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
+                <Text style={styles.totalcontentTextSec}>Runs</Text>
+                <Text style={styles.totalcontentText}>{this.TotalRuns()}</Text>
+              </View>
+              <AnimatedCircularProgress
+                style={{top:10,right:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
+                ref='circularProgress1'
+                size={70}
+                width={2}
+                fill={100}
+                prefill={0}
+                tintColor="#00b9ff"
+                backgroundColor="#fafafa"
+              >                   
+              </AnimatedCircularProgress>
               </View>
               <View style={styles.userimagwrap}>
                 <View style={styles.UserImage}>{this.social_thumb()}</View>
@@ -114,7 +116,7 @@ var UserProfile = React.createClass({
               <View style={{width:deviceWidth/3-20}}> 
                 <View style={{top:20,left:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
                   <Text style={styles.totalcontentTextSec}>Rupees</Text>
-                  <Text style={styles.totalcontentText}>{parseFloat(this.props.userTotalAmount.TotalRupeesCount).toFixed(0)}</Text>
+                  <Text style={styles.totalcontentText}>{this.TotalAmount()}</Text>
                 </View>
                 <AnimatedCircularProgress
                   style={{top:10,left:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
@@ -124,7 +126,7 @@ var UserProfile = React.createClass({
                   fill={100}
                   prefill={0}
                   tintColor="#00b9ff"
-                  backgroundColor="#ccc">                   
+                  backgroundColor="#fafafa">                   
                 </AnimatedCircularProgress>
               </View>
             </View>
@@ -182,23 +184,23 @@ var styles = StyleSheet.create({
   },
   profilename:{
     marginRight:5,
-    color:'#4a4a4a',
+    color:styleConfig.greyish_brown_two,
     fontSize:18,
-    fontWeight:'300',
-    fontFamily: 'Montserrat-Regular',
+    fontWeight:'600',
+    fontFamily:styleConfig.FontFamily,
   },
   totalcontentText:{
     left:0,
     fontSize:16,
     fontWeight:'500',
-    color:'#4a4a4a',
-    fontFamily: 'Montserrat-Regular',
+    color:styleConfig.greyish_brown_two,
+    fontFamily:styleConfig.FontFamily,
   },
   totalcontentTextSec:{
     fontSize:12,
     fontWeight:'500',
-    color:'#4a4a4a',
-    fontFamily: 'Montserrat-Regular',
+    color:styleConfig.greyish_brown_two,
+    fontFamily:styleConfig.FontFamily,
   },
 });
 

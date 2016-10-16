@@ -49,30 +49,6 @@ class LeaderboardData extends Component {
         );
       }
       
-      // fetchFaqData(rowID) {
-      //   fetch("http://dev.impactrun.com/api/leaderBoard/", {
-      //     method: "GET",
-      //     headers: {  
-      //       'Authorization':"Bearer 1e9eec1f16e1d16bd10e4e853605e949358445b5"
-      //     }
-
-      //   })
-      //   .then((response) => response.json())
-      //   .then( jsonData => {
-      //     this.setState({
-      //       myalldata:jsonData,
-      //       leaderboardData: this.state.leaderboardData.cloneWithRows(jsonData.results),
-      //       myrows:this.state.leaderboardData.getRowCount(jsonData.results.last_name),
-      //       loaded: true,
-      //     });
-      //     var data = this.state.myrows;
-      //     var me = this;
-      //     })
-      //     .catch((err) => {
-      //       console.log('WRONGDATALEaderBoard', err);
-      //   })
-      // }
-      
       onFetch(page = 1, callback, options) {
         let rowArray = [];
         var user = this.props.user;
@@ -97,7 +73,7 @@ class LeaderboardData extends Component {
 
       renderRow(rowData, index,rowID){
         rowID++
-        let colors = ['#FFD700', '#C0C0C0', '#CD7F32', 'white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white'];
+        let colors = ['#ffcd4d', '#ffcd4d', '#ffcd4d', 'white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white'];
         let style = [
           styles.row, 
           {'backgroundColor': colors[rowID % colors.length-1],
@@ -114,13 +90,13 @@ class LeaderboardData extends Component {
         return (
           <View  style={styles.cardLeaderBoard}>
             <View style={style}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'300',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
+              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
             </View>
             <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             <View>
               <Text style={styles.txt}>{rowData.first_name} {rowData.last_name}</Text>
             </View>
-            <Text style={styles.txtSec}>{parseFloat(rowData.last_week_distance.last_week_distance).toFixed(1)} Km</Text>
+            <Text style={styles.txtSec}>{parseFloat(rowData.last_week_distance.last_week_distance).toFixed(2)} Km</Text>
           </View>
         );
       }
@@ -150,7 +126,7 @@ class LeaderboardData extends Component {
                   },
                 }}
                 refreshableTintColor="#00b9ff"
-              />
+                renderSeparator = {(sectionId, rowId) => <View key={rowId} style={styles.separator}/> }/>
              </View>
           </View> 
         );
@@ -165,6 +141,10 @@ const styles = StyleSheet.create({
     backgroundColor:'#5bb75b',
     marginBottom: 5,
   },
+  separator: {
+      height: 1,
+      backgroundColor: '#CCC'
+    },
   cardLeaderBoard:{
     backgroundColor:'white',
     alignItems: 'center',
@@ -172,20 +152,13 @@ const styles = StyleSheet.create({
     padding:10,
     marginTop:5,
     left:5,
-    borderRadius:5,
     width:deviceWidth-10,
-    shadowColor: '#000000',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 3,
-    },
   },
   txt: {
     width:deviceWidth-200,
     color:'#4a4a4a',
     fontSize: 14,
-    fontWeight:'100',
+    fontWeight:'400',
     textAlign: 'left',
     marginLeft:10,
     fontFamily: 'Montserrat-Regular',
@@ -193,7 +166,7 @@ const styles = StyleSheet.create({
   txtSec:{
    color:'#4a4a4a',
    fontSize:14,
-   fontWeight:'300',
+   fontWeight:'400',
    position:'absolute',
    right:15,
    top:30,

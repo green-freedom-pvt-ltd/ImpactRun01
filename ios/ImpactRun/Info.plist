@@ -52,7 +52,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>40</string>
+	<string>43</string>
 	<key>FacebookAppID</key>
 	<string>167918020276053</string>
 	<key>FacebookDisplayName</key>
@@ -71,14 +71,16 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSLocationAlwaysUsageDescription</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Background location tracking required.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Background motion tracking required.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Montserrat-Regular.ttf</string>
-		<string>Montserrat-Bold.ttf</string>
+		<string>Fonts/Montserrat-Thin.ttf</string>
+		<string>Fonts/Montserrat-Light.otf</string>
+		<string>Fonts/Montserrat-Regular.ttf</string>
+		<string>Fonts/Montserrat-Bold.ttf</string>
 		<string>Fonts/Ionicons.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
@@ -94,8 +96,6 @@
 		<string>audio</string>
 		<string>location</string>
 	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

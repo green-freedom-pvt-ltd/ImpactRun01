@@ -17,6 +17,7 @@ import{
 import SocialShare from './socialShare';
 import IconSec from 'react-native-vector-icons/Ionicons';
 import commonStyles from '../../components/styles';
+import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;

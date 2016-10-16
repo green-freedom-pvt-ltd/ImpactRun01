@@ -23,6 +23,7 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SettingsService from '../../components/SettingsService';
 import commonStyles from '../../components/styles';
+import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
 var mapRef = 'mapRef';
 var deviceWidth = Dimensions.get('window').width;
@@ -56,7 +57,7 @@ var styles = StyleSheet.create({
     height:50,
     width:deviceWidth/2-20,
     borderRadius:30,
-    backgroundColor:'#00b9ff',
+    backgroundColor:styleConfig.light_gold,
     margin:10,
   },
   ResumePause:{
@@ -91,18 +92,19 @@ var styles = StyleSheet.create({
   Impact:{
     fontSize:30,
     fontWeight:'500',
+    color:styleConfig.greyish_brown_two,
     backgroundColor:'transparent',   
   },
   distance:{
     fontSize:25,
     fontWeight:'500',
-    color:'#4a4a4a',
+    color:styleConfig.greyish_brown_two,
     backgroundColor:'transparent',   
   },
   WrapCompany:{
+    flex:1,
     justifyContent: 'center',      
     alignItems: 'center',
-    top:15,
     backgroundColor:'transparent',   
    },
    timeDistanceWrap:{
@@ -307,7 +309,7 @@ SettingsService.init('iOS');
       if (location.coords.accuracy <=15){
 
         // IF Speed More than 35km/hr
-      if (location.coords.speed <= 11) {
+      if (location.coords.speed <= 9) {
       var me = this;
       this.addAnnotations(mapRef, [this.createMarker(location)]);
       if ( this.polyline) {
@@ -407,7 +409,7 @@ SettingsService.init('iOS');
       } else {
       if (this.state.enabled) {
       
-      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1 ) {
+      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
         this.EndGetLocation();
          this.locationManager.removeGeofences();
           this.locationManager.stop();
@@ -439,7 +441,8 @@ SettingsService.init('iOS');
         id:'sharescreen',
         passProps:{
           data:data,
-          user:this.state.Storeduserdata,
+          getUserData:this.props.getUserData,
+          user:this.props.user,
           distance:parseFloat(this.state.distanceTravelled).toFixed(1),
           impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0),
           speed:this.state.speed,
@@ -470,8 +473,8 @@ SettingsService.init('iOS');
          'Too short',
          'You need to run a minimum of 100m to convert the distance into impact.',
         [
-          {text: 'End', onPress: () => this.popRoute() },
           {text: 'Continue',},
+          {text: 'End', onPress: () => this.popRoute()},
         ],
       ); 
     },
@@ -564,8 +567,7 @@ SettingsService.init('iOS');
       var data = this.props.data;
       return (
         <View style={commonStyles.container}>
-           <View ref="workspace" style={styles.workspace}>
-           
+           <View ref="workspace" style={styles.workspace}>           
             <Mapbox
               style={styles.map}
               direction={0}
@@ -585,47 +587,51 @@ SettingsService.init('iOS');
               onOpenAnnotation={this.onOpenAnnotation}
               onRightAnnotationTapped={this.onRightAnnotationTapped}
               onUpdateUserLocation={this.onUpdateUserLocation}>
-             </Mapbox>
-             <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'rgba(255, 255, 255, 0.67)'}}></View>
-              <View style={styles.WrapCompany} >
-              <Image style={{resizeMode: 'contain',height:100,width:100}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
-              <Text style={{fontFamily: 'Montserrat-Regular',marginTop:20,color:'#4a4a4a'}}>IMPACT</Text> 
+            </Mapbox>
+            <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'white'}}></View>
+            <View style={styles.WrapCompany}>
+              <Image style={{resizeMode: 'contain',height:100,width:200,}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
+              <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>
             </View>
+            <View style={{justifyContent: 'center',alignItems: 'center', flex:1}}>
+            <Text style={{fontSize:20,marginTop:30,marginBottom:20,color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,backgroundColor:'transparent',}}>IMPACT</Text> 
              <AnimatedCircularProgress
-                style={{ top:50,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
+                style={{justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
                 ref='circularProgress'
                 size={130}
                 width={5}
                 fill={this.state.distanceTravelled*10/2}
                 prefill={100}
                 tintColor="#00e0ff"
-                backgroundColor="#ccc">                   
+                backgroundColor="#fafafa">                   
               </AnimatedCircularProgress>
-               <View style={{top:-70,backgroundColor:'transparent',width:100,height:100,justifyContent:'center',alignItems:'center'}}>
+               <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
                 <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
-                <Text style={{fontFamily: 'Montserrat-Regular',color:'#4a4a4a'}}>RUPEES</Text>
+                <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>RUPEES</Text>
               </View>
-              <View style={{width:deviceWidth,flexDirection:'row',backgroundColor:'transparent'}}>
+              </View>
+              <View style={{flex:1,flexDirection:'row',backgroundColor:'transparent'}}>
                 <View style={styles.timeDistanceWrap}>
-                  <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'ios-walk-outline'}></Icon>
+                  <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,}} name={'ios-walk-outline'}></Icon>
                     <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
-                  <Text style={{fontFamily: 'Montserrat-Regular',color:'#4a4a4a'}}>km</Text>
+                  <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
                 </View>
                 <View style={styles.timeDistanceWrap}>
-                  <Icon style={{color:'#4a4a4a',fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
+                  <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                    <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
-                  <Text style={{fontFamily: 'Montserrat-Regular',color:'#4a4a4a'}}>Time</Text>
+                  <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>MIN:SEC</Text>
                 </View>
               </View>
             </View>
+
           <View style={commonStyles.bottomToolbar}>
-          <TouchableHighlight   onPress={this.onClickPace} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
+          <TouchableOpacity   onPress={this.onClickPace} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
            <View style={{flexDirection:'row'}}>
-            <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:20,marginTop:3,marginRight:5}}></Icon>
-            <Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
+            <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:18,marginTop:2,marginRight:5}}></Icon>
+            <Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
             </View>
-            </TouchableHighlight>
-            <TouchableHighlight onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontSize:20,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableHighlight>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableOpacity>
           </View>
         </View>
       );

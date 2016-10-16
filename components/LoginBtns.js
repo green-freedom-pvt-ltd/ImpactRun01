@@ -19,11 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LoginBtns extends Component {
-    propTypes: {
-    onPress: React.PropTypes.func,
-    onLogin: React.PropTypes.func,
-    onLogout: React.PropTypes.func,
-  }
+    
   constructor(props) {
       super(props);
       this.state = {
@@ -38,7 +34,6 @@ class LoginBtns extends Component {
       if (!error) {
         _this.setState({ user : data,loaded:true,provider:'facebook'});
         console.log('userFbdata'+JSON.stringify(data.credentials.token));
-        _this.props.onLogin && _this.props.onLogin();
          var Fb_token = data.credentials.token;
           fetch("http://dev.impactrun.com/api/users/", {
           method: "GET",
@@ -127,16 +122,14 @@ class LoginBtns extends Component {
                 });
             });
          });
-
+        _this.props.getUserData();
         })
-
-       .catch((err) => {
-          console.log('WRONG SIGNIN FB', err);
-        })
+       .done();
+       
       } else {
         console.log(error, data);
       }
-    });
+    })
   }
 
    _signInGoogle() {

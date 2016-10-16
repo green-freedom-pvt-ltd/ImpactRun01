@@ -14,7 +14,7 @@ var {
   DatePickerIOS,
   TouchableOpacity
 } = ReactNative;
-
+import styleConfig from '../../components/styleConfig';
 import Login from '../../components/loginBtns';
 import LodingView from '../../components/lodingScreen';
 var deviceWidth = Dimensions.get('window').width;
@@ -129,7 +129,7 @@ var styles = StyleSheet.create({
     color:'rgba(29, 29, 38, 0.52)',
     fontWeight:'400',
     fontSize:12,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily:styleConfig.FontFamily,
   },
   userdata:{
     fontSize:15,
@@ -142,7 +142,7 @@ var styles = StyleSheet.create({
     fontSize:13,
     fontWeight:'400',
     color:'#4a4a4a',
-    fontFamily: 'Montserrat-Regular',
+    fontFamily:styleConfig.FontFamily,
   },
 
 });

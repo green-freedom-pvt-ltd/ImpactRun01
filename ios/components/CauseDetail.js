@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var RunScreen = require('./home.ios');
-
+import styleConfig from '../../components/styleConfig';
 class CauseDetail extends Component {
 
     // Go_Back
@@ -41,7 +41,7 @@ class CauseDetail extends Component {
         return (
               <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}>  
                   <View style={commonStyles.Navbar}>
-                    <TouchableOpacity style={{top:10,left:0,position:'absolute',height:50,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
+                    <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
                      <Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-close'}></Icon>
                     </TouchableOpacity>
                     <Text style={commonStyles.menuTitle}>Overview</Text>
@@ -55,7 +55,7 @@ class CauseDetail extends Component {
                        </View>
                       </Image>
                       <View style={styles.textwraper}>
-                        <Text style={styles.colortext}>{data.cause_title}</Text>
+                        <Text style={styles.causeTitle}>{data.cause_title}</Text>
                         <Text style={styles.slidesponser}>By {data.sponsors[0].sponsor_company} </Text>
                         <Text  style={styles.Disctext} >{data.cause_description}</Text>
                       </View>
@@ -76,6 +76,7 @@ class CauseDetail extends Component {
   =============================== */
   var styles = StyleSheet.create({
   container:{
+    top:1,
     backgroundColor:'white',
   },
 
@@ -90,35 +91,35 @@ class CauseDetail extends Component {
     paddingTop:0,
     paddingBottom:5,
     fontSize:12,
-    color:'#262626',
-    fontFamily: 'Montserrat-Regular'
+    color:styleConfig.black_two,
+    fontFamily:styleConfig.FontFamily,
   },
    backbtn:{
     paddingLeft:10,
     paddingTop:10,
-    height:50,
-    width:50,
+    height:70,
+    width:70,
     fontSize:30,
     backgroundColor:'transparent',
    },
   image:{
     height:deviceHeight/2-50,
   },
-  colortext:{
+  causeTitle:{
     height:25,
     fontSize:20,
-    fontWeight:'300',
+    fontWeight:'400',
     letterSpacing:1,
-    color:'#4a4a4a',
-    fontFamily: 'Montserrat-Regular',
+    color:styleConfig.greyish_brown_two,
+    fontFamily:styleConfig.FontFamily,
   },
   Disctext:{
     fontSize:14,
     letterSpacing:0.5,
     marginBottom:100,
-    color:'#262626',
+    color:styleConfig.black_two,
     top:10,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily:styleConfig.FontFamily,
   },
   bytext:{
     paddingBottom:10,
@@ -127,7 +128,7 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    bottom:55,
+    bottom:styleConfig.navBarHeight,
     width:deviceWidth,
     height:50,
     justifyContent: 'center',
@@ -138,7 +139,7 @@ class CauseDetail extends Component {
      backgroundColor:'transparent',
      color:'white',
      fontSize:20,
-     fontFamily:'Montserrat-Regular',
+     fontFamily:styleConfig.FontFamily,
   },
   closebtn:{
     left:10,
@@ -157,13 +158,14 @@ class CauseDetail extends Component {
     paddingBottom:20,
     backgroundColor:'transparent',
     fontWeight:'300',
-    fontFamily:'Montserrat-Regular',
+    fontFamily:styleConfig.FontFamily,
     left:5,
-    fontWeight:'300',
+    color:styleConfig.greyish_brown_two,
+    fontWeight:'400',
   },
   textwraper:{
     padding:10,
-    paddingBottom:20,
+    paddingBottom:40,
   },
 
 

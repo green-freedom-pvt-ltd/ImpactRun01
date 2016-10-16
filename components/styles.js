@@ -7,10 +7,7 @@ import {
  } from 'react-native';
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
-export default {
-    navColor:'#00b9ff' 
-  }
-
+import styleConfig from './styleConfig';
 var styles = StyleSheet.create({
 
   container: {
@@ -20,7 +17,7 @@ var styles = StyleSheet.create({
   },
   topToolbar: {
     //paddingLeft: 10,
-    backgroundColor: '#00b9ff',  //ff d7 00
+    backgroundColor: styleConfig.bright_sky_blue,  //ff d7 00
     borderBottomColor: 'white',
     borderBottomWidth: 1,
     paddingRight: 5,
@@ -63,7 +60,6 @@ var styles = StyleSheet.create({
     marginTop:2,
     fontSize:10,
     color:'white',
-    backgroundColor:'red',
   },
   backButtonIcon: {
   	//marginRight: 
@@ -75,7 +71,7 @@ var styles = StyleSheet.create({
   redButton: {
     padding:10,
     height:50,
-    backgroundColor: '#ffcd4d',
+    backgroundColor:styleConfig.bright_sky_blue,
     width:width/2-10, 
     justifyContent:'center',
     alignItems: 'center',
@@ -85,7 +81,7 @@ var styles = StyleSheet.create({
   greenButton: {
     padding:10,
     height:50,
-    backgroundColor: '#ffcd4d',
+    backgroundColor:styleConfig.bright_sky_blue,
     width: 100,
     width:width/2-10,
     alignItems: 'center',
@@ -96,17 +92,23 @@ var styles = StyleSheet.create({
     fontWeight:'400',
     color:'white',
     fontSize:20,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily:styleConfig.FontFamily,
   },
    Navbar:{
     position:'relative',
-    height:55,
+    height:styleConfig.navBarHeight,
     paddingTop:10,
     width:width,
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#00b9ff',
+    backgroundColor:styleConfig.bright_sky_blue,
+     shadowColor: '#000000',
+      shadowOpacity: 0.8,
+      shadowRadius: 1,
+      shadowOffset: {
+        height: 0,
+      },
  },
   
 });

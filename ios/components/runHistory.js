@@ -11,14 +11,14 @@ import {
   Dimensions,
   ActivityIndicatorIOS
 } from 'react-native';
-
+import styleConfig from '../../components/styleConfig';
 import RunHistroyListView from '../../components/ListviewRunHistory';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import LoginBtns from '../../components/loginBtns';
 import PTRView from 'react-native-pull-to-refresh';
 
-class RunHistroy extends Component {
-   
+class RunHistroy extends Component {  
       renderRunsRow(rowData) {
         var RunAmount=parseFloat(rowData.run_amount).toFixed(0);
         var RunDistance = parseFloat(rowData.distance).toFixed(1);
@@ -31,13 +31,13 @@ class RunHistroy extends Component {
         var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
         console.log('myRunDay2',MyRunMonth);
         return (
-
           <TouchableHighlight underlayColor="#dddddd">
             <View style={styles.container}>
               <View style={styles.rightContainer}>          
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
                  <Text style={styles.StartTime}>{day}</Text>
+                 <Text style={styles.StartTime}>index {rowData.index}</Text>
                   <Text style={styles.title}>{rowData.cause_run_title}</Text>
                 </View>
                 <View style={{flexDirection:'row',flex:1}}>
@@ -61,8 +61,8 @@ class RunHistroy extends Component {
         if(this.props.user && Object.keys(this.props.user).length === 0 ){
         }else{
           return (
-            <View>
-              <Text style={{fontFamily: 'Montserrat-Regular',}}>Please Login To See your Run</Text>
+            <View style={{height:deviceHeight/2,width:deviceWidth,top:(deviceHeight/2)-210,}}>
+              <LoginBtns getUserData={this.props.getUserData}/>
             </View>
           ) 
         }
@@ -97,8 +97,7 @@ class RunHistroy extends Component {
           
          };
         } 
-
-    };
+      };
 
 const styles = StyleSheet.create({
   container: {
@@ -110,13 +109,8 @@ const styles = StyleSheet.create({
     padding:10,
     paddingTop:0,
     paddingBottom:0,
-    marginBottom:5,
-    shadowColor: '#000000',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: {
-      height: 3,
-    },
+    borderBottomWidth:1,
+    borderColor:'#e1e1e8',
   },
   rightContainer: {
     flex: 1,
@@ -124,18 +118,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     marginLeft:3,
-    color:'#4a4a4a',
+    color:styleConfig.greyish_brown_two,
     fontWeight:'400',
     backgroundColor:'transparent',
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: styleConfig.FontFamily,
   },
    StartTime: {
     fontSize: 14,
     marginLeft:4,
-    color:'#6a6a6a',
+    color:styleConfig.brownish_grey,
     fontWeight:'400',
     backgroundColor:'transparent',
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: styleConfig.FontFamily,
   },
   runDetail:{
     flexDirection: 'column',
@@ -150,11 +144,11 @@ const styles = StyleSheet.create({
     padding:5,
   },
   runContentText: {
-    color:'#4a4a4a',
+    color:styleConfig.greyish_brown_two,
     fontWeight:'500',
     fontSize:16,
     left:-1,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily:styleConfig.FontFamily,
   },
   thumbnail: {
     width: 53,

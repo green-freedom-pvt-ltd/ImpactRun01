@@ -5,10 +5,11 @@ export default {
     if (page === null) {
       page = 1;
     }  
+    const MyUserToken = user.auth_token;
     return fetch(url,{
       method: "GET",
        headers: {  
-          'Authorization':"Bearer 1e9eec1f16e1d16bd10e4e853605e949358445b5",
+          'Authorization':"Bearer " + MyUserToken,
         }
       })
      .catch((err) => {

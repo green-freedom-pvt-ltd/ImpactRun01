@@ -21,6 +21,7 @@ import {
   PanResponder,
   TouchableWithoutFeedback
 } from 'react-native';
+import styleConfig from '../../components/styleConfig';
 import Lodingscreen from '../../components/lodingScreen';
 import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -32,6 +33,7 @@ var deviceheight = Dimensions.get('window').height;
 
 
 class Profile extends Component {
+  locationManager: undefined
       constructor(props) {
         super(props);
         this.state = {
@@ -181,10 +183,8 @@ class Profile extends Component {
       .then((response) => response.json())
       .then((userRunData) => { 
         this.RemoveStoredRun();
-         AlertIOS.alert('rundataStored'+JSON.stringify(userRunData))
-
        })
-        });
+      });
       })
     }
     RemoveStoredRun(){
@@ -250,6 +250,14 @@ class Profile extends Component {
 
     // NAVIGATION
     navigateToRunScreen(cause) {
+      this.locationManager = this.props.locationManager;
+      this.locationManager.on("location", function(location) {
+      console.log('- location: ', JSON.stringify(location, null, 2));
+      if (location.sample) {
+        console.log('<sample location>');
+        return;
+      }
+      });
       var cause;
       if (!!this.state.causes.length && this.state.navigation.index+1) {
         cause = this.state.causes[this.state.navigation.index]
@@ -260,7 +268,7 @@ class Profile extends Component {
       title: 'Gps',
       id:'runlodingscreen',
       index: 0,
-      passProps:{data:cause},
+      passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       navigator: this.props.navigator,
       });
@@ -277,7 +285,7 @@ class Profile extends Component {
       title: 'Gps',
       id:'causedetail',
       index: 0,
-      passProps:{data:cause},
+      passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
       navigator: this.props.navigator,
       });
     };
@@ -312,16 +320,16 @@ class Profile extends Component {
             <View style={styles.album}>
               <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
               <View style={{position:'absolute',bottom:10,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
-               <Text style={{fontWeight:'400',fontFamily:'Montserrat-Regular',}}>
+               <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                 {this.state.album[route.key][2]}
                </Text>
               </View>
               </Image>
               <View style={styles.borderhide}></View>
-              <Text style={styles.causeTitle}>{route.key}</Text>
-              <Text style={{color:'#262626',fontFamily:'Montserrat-Regular',fontSize:14,fontWeight:'300',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
+              <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
+              <Text style={{color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
               <View  onPress={()=>this.navigateToCauseDetail()}>
-              <Text  numberOfLines={5} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+              <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
               </View>
              </View>
              </TouchableWithoutFeedback>
@@ -376,9 +384,9 @@ class Profile extends Component {
 
   var styles = StyleSheet.create({
    container: {
-      height: deviceheight-55,
-      top:5,
+      height: deviceheight-70,
       backgroundColor: 'white',
+      top:5,
       width:deviceWidth,
     },
     page: {
@@ -400,10 +408,10 @@ class Profile extends Component {
      album: {
       backgroundColor: '#fff',
       width: deviceWidth-52,
-      height: deviceheight-160,
+      height: deviceheight-180,
       elevation: 12,
       shadowColor: '#000000',
-      shadowOpacity: 0.6,
+      shadowOpacity: 0.2,
       shadowRadius: 3,
       shadowOffset: {
         height: 4,
@@ -412,9 +420,9 @@ class Profile extends Component {
      },
      cover: {
       width: deviceWidth-52,
-      height:deviceheight/2-80,
+      height:deviceheight/2-90,
       borderRadius:5,
-      resizeMode: 'stretch',
+      resizeMode: 'cover',
      },
      borderhide:{
       width: deviceWidth-52,
@@ -428,13 +436,13 @@ class Profile extends Component {
       left:deviceWidth/2-60,
      },
      btnbegin:{
-      width:60,
-      height:60,
+      width:styleConfig.beginRunBtnWidth,
+      height:styleConfig.beginRunBtnHeight,
       backgroundColor:'#ffcd4d',
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,
-      top:-70,
+      top:-styleConfig.beginRunBtnHeight-10,
       shadowColor: '#000000',
       shadowOpacity: 0.2,
       shadowRadius: 4,
@@ -443,21 +451,21 @@ class Profile extends Component {
       },
     },
     causeTitle:{
-      color:'#4a4a4a',
-      fontSize:18,
-      fontWeight:'300',
+      color:styleConfig.greyish_brown_two,
+      fontSize:styleConfig.FontSizeTitle,
+      fontWeight:'400',
       paddingLeft:10,
       top:-10,
-      fontFamily: 'Montserrat-Regular'
+      fontFamily:styleConfig.FontFamily,
     },
      causeBrief:{
-      color:'#4a4a4a',
-      fontSize:14,
-      fontWeight:'200',
+      color:styleConfig.greyish_brown_two,
+      fontSize:styleConfig.FontSizeDisc,
+      fontWeight:'400',
       padding:10,
       paddingTop:0,
       width:deviceWidth-70,
-      fontFamily: 'Montserrat-Regular'
+      fontFamily:styleConfig.FontFamily3,
     },
   });
   export default Profile;

@@ -17,6 +17,8 @@ var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 import Icon from 'react-native-vector-icons/Ionicons';
 var FBLoginManager = require('NativeModules').FBLoginManager;
 import Lodingscreen from '../../components/lodingScreen';
+import styleConfig from '../../components/styleConfig';
+
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 var deviceHeight = Dimensions.get('window').height;
 
@@ -37,11 +39,18 @@ class Profile extends Component {
             user:null,
             loaded: false,
             mycauseDatatCount:null,
+            LoginCount:0,
 
         };
       }
-  
+      
       componentWillMount() {
+       
+        AsyncStorage.getItem('LoginCount', (err, result) => { 
+          this.setState({
+            RunCountTotal:JSON.parse(result),
+          })
+        })
         GoogleSignin.configure({
           iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
         })
@@ -91,6 +100,7 @@ class Profile extends Component {
       _signInGoogle() { 
         GoogleSignin.signIn()
         .then((user) => {
+          console.log('userdata',user.accessToken);
           this.setState({user:user,loaded:true,});
           var access_token = user.accessToken;
           fetch("http://dev.impactrun.com/api/users/", {
@@ -101,6 +111,7 @@ class Profile extends Component {
           })
           .then((response) => response.json())
           .then((userdata) => { 
+            console.log('responsedata',userdata);
             AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
               var userdata = userdata;
               let UID234_object = {
@@ -178,6 +189,7 @@ class Profile extends Component {
                               let key = store[i][0];
                               let val = store[i][1];
                           });
+                          this.LoginCountFunction();
                       });
                   });
                });
@@ -207,7 +219,6 @@ class Profile extends Component {
           
               .then((response) => response.json())
               .then((userdata) => {
-
                   AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
                   var userdata = userdata;
                   let UID234_object = {
@@ -283,6 +294,7 @@ class Profile extends Component {
                                   let key = store[i][0];
                                   let val = store[i][1];
                               });
+                              _this.LoginCountFunction();
                           });
                       });
                       _this.navigateToHomeVaiFacebook();
@@ -305,6 +317,38 @@ class Profile extends Component {
           navigator: this.props.navigator,
           passProps:{dataCauseCount:this.state.mycauseDataCount,dataCauseNum:this.state.myCauseNum},
          })
+          
+      }
+      LoginCountFunction(){
+        var clicks = 0;
+         function increment(){
+          return clicks++;
+        }
+        console.log('myRundata',increment());
+        let TotalLogin = {
+          TotalLoginCount:1,  
+        }
+        AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
+          AsyncStorage.getItem('LoginCount', (err, result) => { 
+            var Logincount = JSON.parse(result);
+            this.setState({
+              LoginCountTotal:Logincount,
+            })
+             console.log('myLoginCOunt1',Logincount.TotalLoginCount);
+            let TotalLogin = {
+              TotalLoginCount :this.state.LoginCountTotal.TotalLoginCount++, 
+            }
+            AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
+              AsyncStorage.getItem('LoginCount', (err, result) => { 
+              var LogincountInner = JSON.parse(result)
+                this.setState({
+                  LoginNumber:LogincountInner,
+                })
+                console.log('myLoginCount4',this.state.LoginNumber.TotalLoginCount);
+              })
+            })
+          })
+        })
       }
       navigateToHome(){
         this.props.navigator.push({
@@ -344,19 +388,18 @@ class Profile extends Component {
             </View>
             <View style={styles.container}>
               <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}>
-                <Text style={{color:'#3b5998',textAlign:'left'}}>{text}</Text>
+                <Text style={{color:'#3b5998',textAlign:'left',fontFamily: styleConfig.FontFamily,}}>{text}</Text>
                 <Image source={require('../../images/facebook.png')} style={styles.facebook}/>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this._signInGoogle()} style={styles.Loginbtngg}>
-                <Text style={{color:'#db3236',textAlign:'left',marginLeft:3,}}>LOGIN WITH GOOGLE</Text>
+                <Text style={{color:'#db3236',textAlign:'left',marginLeft:3,fontFamily: styleConfig.FontFamily,}}>LOGIN WITH GOOGLE</Text>
                 <Image source={require('../../images/google_plus.png')} style={styles.google}/>
               </TouchableOpacity>
               <TouchableOpacity 
                style={styles.skip}
                onPress={() => this.navigateToHome()}>
-                <View style={{marginTop: 10,backgroundColor:'transparent'}}>
-                  <Text style={{color:'white'}}>SKIP</Text>
-                </View>
+                  <Text style={{color:styleConfig.black_50,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
+                  <Text style={{marginLeft:5,color:styleConfig.fade_White,fontFamily: styleConfig.FontFamily,}}>SKIP</Text>
               </TouchableOpacity>
             </View>
           </Image>    
@@ -409,6 +452,9 @@ class Profile extends Component {
       justifyContent: 'center',      
     },
     skip:{
+      top:30,
+      flex:1,
+      flexDirection:'row',
       justifyContent: 'center',      
     },
     logo:{

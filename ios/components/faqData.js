@@ -12,6 +12,7 @@ import {
   AlertIOS,
   NetInfo,
 } from 'react-native';
+import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
@@ -62,7 +63,7 @@ class Faqdata extends Component {
 
       renderRow(rowData){
         return (
-          <View style={{backgroundColor:'white',padding:10,marginBottom:5}}>
+          <View style={{backgroundColor:'white',padding:10,marginBottom:1}}>
             <View style={styles.thumb}>
               <Text style={styles.txt}>{rowData.question}</Text>
             </View>
@@ -126,7 +127,7 @@ class Faqdata extends Component {
                   <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
               </View>
-              <KeyboardSpacer style={{backgroundColor:'#00b9ff'}}/>
+              <KeyboardSpacer style={{backgroundColor:'#e1e1e8'}}/>
             </View>
           </View> 
         );
@@ -167,35 +168,36 @@ const styles = StyleSheet.create({
   },
   FaqSubmitWrap:{
     paddingLeft:10,
-    height:55,
+    height:styleConfig.navBarHeight,
     width:deviceWidth,
     flexDirection: 'row',
     justifyContent:'flex-start',
     alignItems:'center',
-    backgroundColor:'#00b9ff',
+    backgroundColor:'#e1e1e8',
     borderBottomWidth:2,
-    borderBottomColor:'#00b9ff',
+    borderBottomColor:'#e1e1e8',
   },
   textEdit: {
     marginLeft:-5,
     height:48, 
-    borderColor: '#00b9ff', 
+    borderColor: '#e1e1e8', 
     backgroundColor: 'white',
     borderWidth:5 ,
     borderRadius:8,
     width:deviceWidth-100,
-    color:'black',
+    color:'#4a4a4a',
     padding:10,
     top:4,
   },
   submitFaqbtn:{
-    height:42, 
+    height:40, 
     width:85,
     right:-4,
+    top:-6,
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#ffcd4d', 
+    backgroundColor:'#00b9ff', 
   }
 });
 

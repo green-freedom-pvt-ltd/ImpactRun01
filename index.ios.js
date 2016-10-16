@@ -122,7 +122,7 @@ class Application extends Component{
             case 'messagecenter':
             return <MessageCenter navigator={navigator} {...route.passProps}/>;
             case 'tab':
-            return <Tab  navigator={navigator} {...route.passProps} />;
+            return <Tab  navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>;
             case 'causedetail':
             return <CauseDetail navigator={navigator} {...route.passProps}/>;
             case 'messagedetail':
