@@ -25,20 +25,21 @@ function BtnHight () {
     return 70;
   }else {
   if(Devicewidth <= 320){
-    return 60;
+    return 55;
   }else { 
-    return 60;
+    return 50;
   }
 }
 }
+
 function BtnWidth () {
   if(Devicewidth > 320){
     return 70;
   }else {
   if(Devicewidth <= 320){
-    return 60;
+    return 55;
   }else { 
-    return 60;
+    return 50;
   }
 }
 }
@@ -75,12 +76,36 @@ function fontSizer3 () {
   }
 }
 }
+function LogoHeight () {
+  if(Devicewidth > 320){
+    return 100;
+  }else {
+  if(Devicewidth <= 320){
+    return 70;
+  }else { 
+    return 70;
+  }
+}
+}
+function LogoWidth () {
+  if(Devicewidth > 320){
+    return 200;
+  }else {
+  if(Devicewidth <= 320){
+    return 100;
+  }else { 
+    return 100;
+  }
+}
+}
 export default {
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),
   beginRunBtnHeight:BtnHight(),
   beginRunBtnWidth:BtnWidth(),
+  LogoHeight:LogoHeight(),
+  LogoWidth:LogoWidth(),
   // navHight
   navBarHeight:70,
   // fontColors
@@ -89,6 +114,7 @@ export default {
   warm_grey:'#979797',
   greyish_brown:'#454545',
   black_50:'rgba(0,0,0,0.50)',
+  grey_70:'#9e9c9c',
   brownish_grey:'#6a6a6a',
   warm_grey_two:'#777777',
   black_three:'#212121',

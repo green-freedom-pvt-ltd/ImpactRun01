@@ -19,19 +19,41 @@ import{
   import Icon from 'react-native-vector-icons/Ionicons';
   var deviceWidth = Dimensions.get('window').width;
   var deviceHeight = Dimensions.get('window').height;
-  import LoginBtns from '../../components/loginBtns';
+  import LoginBtns from '../../components/LoginBtns';
   import Share, {ShareSheet, Button} from 'react-native-share';
+  const FBSDK = require('react-native-fbsdk');
+  const {
+    ShareDialog,
+  } = FBSDK;
+
+
   class ShareScreen extends Component {
+
     mixins: [TimerMixin]
     constructor(props) {
-    super(props);
-    this.state = {
-      loaded:false,
-      visible: false,
-      user:null,
-     };
-     this.getUserData = this.getUserData.bind(this);
+      super(props);
+      var cause = this.props.data;
+      var distance = this.props.distance;
+      var impact =this.props.impact;
+      var time = this.props.time;
+      const shareLinkContent = {
+          contentType: 'link',
+          contentUrl: "http://impactrun.com/",
+          contentDescription: "I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+          contentTitle:cause.cause_title,
+          imageUrl:cause.cause_image,
+      };
+
+      this.state = {
+        shareLinkContent: shareLinkContent,
+        loaded:false,
+        visible: false,
+        user:null,
+       };
+      
+      this.getUserData = this.getUserData.bind(this);
     }
+
     getUserData(){
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
@@ -43,7 +65,30 @@ import{
             })
           })
         })
-      }
+    }
+    
+    shareLinkWithShareDialog() {
+      var tmp = this;
+      ShareDialog.canShow(this.state.shareLinkContent).then(
+        function(canShow) {
+          if (canShow) {
+            return ShareDialog.show(tmp.state.shareLinkContent);
+          }
+        }
+      ).then(
+        function(result) {
+          if (result.isCancelled) {
+            alert('Share cancelled');
+          } else {
+           return;
+          }
+        },
+        function(error) {
+          alert('Share fail with error: ' + error);
+        }
+      );
+    }
+
     onCancel() {
       console.log("CANCEL")
       this.setState({visible:false});
@@ -95,9 +140,11 @@ import{
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
+           this.navigateToThankyou();
            this.PostRun();
          }else{
            console.log('isConnected'+this.state.isConnected)
+           this.navigateToThankyou();
            this.SaveRunLocally();
          }
       }
@@ -105,10 +152,7 @@ import{
     }
   
     SaveRunLocally(){
-     var StartLocationLat = this.props.StartLocation.coords.latitude;
-     var StartLocationLong = this.props.StartLocation.coords.longitude;
-     var EndLocationLat = this.props.EndLocation.coords.latitude;
-     var EndLocationLong = this.props.EndLocation.coords.longitude;
+     
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
      console.log('causeMessage'+CauseShareMessage);
@@ -133,10 +177,7 @@ import{
         avg_speed:speed,
         run_amount:impact,
         run_duration: time,
-        start_location_lat:StartLocationLat,
-        start_location_long:StartLocationLong,
-        end_location_lat:EndLocationLat,
-        end_location_long:EndLocationLong,
+       
       };
 
       let multi_set_pairs = [
@@ -161,7 +202,7 @@ import{
                   console.log('myRunSomeData',this.state.userRunData);
               })
             .then((userRunData) => { 
-              this.navigateToThankyou();
+              
             })
             .done();
           })
@@ -293,22 +334,15 @@ import{
     }
     PostRun(){
       if (this.props.distance >= 0.1) {
-      var StartLocationLat = this.props.StartLocation.coords.latitude;
-      var StartLocationLong = this.props.StartLocation.coords.longitude;
-      var EndLocationLat = this.props.EndLocation.coords.latitude;
-      var EndLocationLong = this.props.EndLocation.coords.longitude;
-      console.log('somedatalat'+StartLocationLat);
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
       var time = this.props.time;
       var date = this.props.StartRunTime;
-      console.log('MyRunDate:' + date);
       var userdata = this.state.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
-      console.log('Tokenuser:' + token);
       var cause = this.props.data;
       fetch("http://dev.impactrun.com/api/runs/", {
          method: "POST",
@@ -326,10 +360,7 @@ import{
           avg_speed:speed,
           run_amount:impact,
           run_duration: time,
-          start_location_lat:StartLocationLat,
-          start_location_long:StartLocationLong,
-          end_location_lat:EndLocationLat,
-          end_location_long:EndLocationLong,
+         
           })
        })
       .then((response) => response.json())
@@ -346,7 +377,7 @@ import{
     }
 
     navigateTOhome(){
-      this.props.navigator.replace({
+      this.props.navigator.push({
       title: 'Gps',
       id:'tab',
       navigator: this.props.navigator,
@@ -460,14 +491,20 @@ import{
                 <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:18,}}> Tell your friends about it.</Text>
               </View>
               <View style={{width:deviceWidth,justifyContent: 'center',alignItems: 'center',flexDirection:'column'}}>
-              <TouchableOpacity onPress={()=>Share.open(shareOptions)} style={styles.shareButton}>
-               <Icon style={{color:'white',fontSize:18,padding:5,fontWeight:'600'}} name={'md-share'}></Icon>
-               <Text style={{color:'white',fontFamily: 'Montserrat-Regular',fontSize:18,}}>SHARE</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={{flexDirection: 'row',top:50,flex:1,justifyContent: 'center',alignItems: 'center',}} onPress={() => this.ifConnectTonetPost()}>
+              <View style={{width:110,height:50,flexDirection:'row'}}>
+                <TouchableOpacity onPress={() => this.shareLinkWithShareDialog()} style={{height:50,width:50,marginRight:5,}}>
+                 <Image style={{height:50,width:50}} source={require('../../images/facebook.png')}></Image>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>Share.open(shareOptions)} style={{flex:1,marginLeft:5,justifyContent: 'center',alignItems: 'center',borderRadius:10,borderWidth:1,}}>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>More</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{flexDirection: 'row',top:50,flex:1,justifyContent: 'center',alignItems: 'center',}}>
                 <Text style={{color:'#4a4a4a',opacity:0.5,fontFamily: 'Montserrat-Regular',}}>DON’T WANT TO SHARE?</Text>
-                <Text style={{left:6,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>
-              </TouchableOpacity>
+                <TouchableOpacity  onPress={() => this.ifConnectTonetPost()}>
+                  <Text style={{left:6,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>
+                </TouchableOpacity>
+              </View>
               </View>
             </View>
           </Image>

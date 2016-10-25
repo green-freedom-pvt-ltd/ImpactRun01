@@ -590,7 +590,7 @@ SettingsService.init('iOS');
             </Mapbox>
             <View style={{top:20,position:'absolute',height:deviceheight,width:deviceWidth,backgroundColor:'white'}}></View>
             <View style={styles.WrapCompany}>
-              <Image style={{resizeMode: 'contain',height:100,width:200,}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
+              <Image style={{resizeMode: 'contain',height:styleConfig.LogoHeight,width:styleConfig.LogoWidth,}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
               <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>
             </View>
             <View style={{justifyContent: 'center',alignItems: 'center', flex:1}}>

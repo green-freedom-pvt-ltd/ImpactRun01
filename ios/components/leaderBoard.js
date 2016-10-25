@@ -16,7 +16,7 @@ import{
 import Icon from 'react-native-vector-icons/Ionicons';
 import commonStyles from '../../components/styles';
 var deviceWidth = Dimensions.get('window').width;
-import LoginBtn from '../../components/loginBtns';
+import LoginBtn from '../../components/LoginBtns';
 var deviceHeight = Dimensions.get('window').height;
 import LeaderBoard from './leaderBoardData';
 

@@ -62,7 +62,7 @@ class LodingRunScreen extends Component {
       var data = this.props.data;
       var second = this.state.seconds;
       var _this = this;
-  	    return (    
+        return (    
           <View class={styles.container}>
             <TouchableOpacity style={styles.overlay} onPress={()=> this.navigateToRunScreen()}>
               <View style={styles.LoadingWrap}>
@@ -93,12 +93,12 @@ class LodingRunScreen extends Component {
                   </View>
                   </View>
                   <View style={styles.loadingFlex}>
-                  <Text style={styles.navigateToRunScreen} onPress={()=> this.navigateToRunScreen()} >TAP TO START NOW</Text>
+                  <Text style={styles.navigateToRunScreen} onPress={()=> this.navigateToRunScreen()}>TAP TO START NOW</Text>
                   </View>
               </View>
             </TouchableOpacity>
           </View>
-    	  );
+        );
     }
 
   }
@@ -117,8 +117,8 @@ class LodingRunScreen extends Component {
    },
     sponsorLogo:{
       resizeMode: 'contain',
-      height:100,
-      width:200,
+      height:styleConfig.LogoHeight,
+      width:styleConfig.LogoWidth,
     },
     sponsorText:{
       height:20,

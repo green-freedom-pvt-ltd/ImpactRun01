@@ -15,7 +15,7 @@ import styleConfig from '../../components/styleConfig';
 import RunHistroyListView from '../../components/ListviewRunHistory';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-import LoginBtns from '../../components/loginBtns';
+import LoginBtns from '../../components/LoginBtns';
 import PTRView from 'react-native-pull-to-refresh';
 
 class RunHistroy extends Component {  
@@ -37,7 +37,6 @@ class RunHistroy extends Component {
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
                  <Text style={styles.StartTime}>{day}</Text>
-                 <Text style={styles.StartTime}>index {rowData.index}</Text>
                   <Text style={styles.title}>{rowData.cause_run_title}</Text>
                 </View>
                 <View style={{flexDirection:'row',flex:1}}>

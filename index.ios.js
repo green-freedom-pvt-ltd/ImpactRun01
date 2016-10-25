@@ -15,13 +15,13 @@ import {
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
-import LodingScreen from './components/lodingScreen';
+import LodingScreen from './components/LodingScreen';
 global.bgGeo = BackgroundGeolocation;
-import Home from './ios/components/homeScreen.ios';
+import Home from './ios/components/HomeScreen.ios';
 import RunScreen from './ios/components/home.ios';
 import Login from './ios/components/login';
 import Tab from './ios/components/tab';
-import CauseDetail from './ios/components/causeDetail';
+import CauseDetail from './ios/components/CauseDetail';
 import Setting from './ios/components/setting';
 import Runlogingscreen from './ios/components/runlodingscreen';
 import ShareScreen from './ios/components/shareScreen';

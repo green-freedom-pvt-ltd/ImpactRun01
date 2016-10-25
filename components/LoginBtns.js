@@ -20,17 +20,28 @@ var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LoginBtns extends Component {
     
-  constructor(props) {
+    constructor(props) {
       super(props);
       this.state = {
           visibleHeight: Dimensions.get('window').height,
           scroll: false,
           loaded: false,
+          LoginCountTotal:null,
       };
-   }
-  handleFBLogin(){
-    var _this = this;
-    FBLoginManager.login(function(error, data){
+    }
+
+    componentDidMount() {
+      AsyncStorage.getItem('LoginCount', (err, result) => { 
+        var Logincount = JSON.parse(result);
+        console.log('Logincount',Logincount);
+        this.setState({
+          LoginCountTotal:Logincount,
+        })        
+      })
+    } 
+    handleFBLogin(){
+     var _this = this;
+     FBLoginManager.login(function(error, data){
       if (!error) {
         _this.setState({ user : data,loaded:true,provider:'facebook'});
         console.log('userFbdata'+JSON.stringify(data.credentials.token));
@@ -43,7 +54,6 @@ class LoginBtns extends Component {
           })
         .then((response) => response.json())
         .then((userdata) => {
-            AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
             var userdata = userdata;
             console.log('userDatafb'+JSON.stringify(userdata));
             let UID234_object = {
@@ -121,16 +131,37 @@ class LoginBtns extends Component {
                     });
                 });
             });
+             _this.LoginCountFunction();
          });
-        _this.props.getUserData();
-        })
-       .done();
-       
-      } else {
+          _this.props.getUserData();
+          })
+         .done(); 
+         } else {
         console.log(error, data);
-      }
-    })
-  }
+       }
+     })
+    }
+    
+    LoginCountFunction(){
+        let TotalLogin = {
+          TotalLoginCount:1,  
+        }
+        if (this.state.LoginCountTotal === null ) {
+          AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
+            AsyncStorage.getItem('LoginCount', (err, result) => { 
+              var Logincount = JSON.parse(result);
+              this.setState({
+                LoginCountTotal:Logincount,
+              })  
+            AlertIOS.alert('Thankyou for login', 'Zomato have donated a meal on your behalf to a hungery kid through FeedingIndia.');   
+          })
+        })
+        }else{
+            if (this.state.LoginCountTotal.TotalLoginCount ) {
+             AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
+          };
+        }
+    }
 
    _signInGoogle() {
     
@@ -146,7 +177,6 @@ class LoginBtns extends Component {
       })
       .then((response) => response.json())
       .then((userdata) => { 
-       AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
        console.log('userdata',userdata);
           var userdata = userdata;
           let UID234_object = {
@@ -222,8 +252,10 @@ class LoginBtns extends Component {
                           let key = store[i][0];
                           let val = store[i][1];
                       });
+
                   });
               });
+               this.LoginCountFunction();
            });
           this.props.getUserData();
           })

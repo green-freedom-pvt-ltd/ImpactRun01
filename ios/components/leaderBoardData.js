@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
-import LodingScreen from '../../components/lodingScreen';
+import LodingScreen from '../../components/LodingScreen';
 import API from '../../components/LeaderBoardApi';
 import GiftedListView from 'react-native-gifted-listview';
 
@@ -26,7 +26,7 @@ class LeaderboardData extends Component {
       constructor(props) {
         super(props);
         this.state = {
-          runCount: 0
+          userCount: 0
         };
         this.onFetch = this.onFetch.bind(this);
       }
@@ -55,13 +55,13 @@ class LeaderboardData extends Component {
         Promise.resolve(API.getAllUser(page,user))
         .then((response) => {
           this.setState({
-            runCount: response.count
+            userCount: response.count
           });
           response.results.map((object) => {
             rowArray.push(object);
           });
         }).then(() => {
-          if (page === Math.round((this.state.runCount/20))) {
+          if (page === Math.round((this.state.userCount))) {
             callback(rowArray, {
               allLoaded: true,
             });
@@ -117,7 +117,7 @@ class LeaderboardData extends Component {
                 rowView={this.renderRow}
                 onFetch={this.onFetch}
                 firstLoader={true} // display a loader for the first fetching
-                pagination={true} // enable infinite scrolling using touch to load more
+                pagination={false} // enable infinite scrolling using touch to load more
                 refreshable={true} // enable pull-to-refresh for iOS and touch-to-refresh for Android
                 withSections={false} // enable sections
                 customStyles={{

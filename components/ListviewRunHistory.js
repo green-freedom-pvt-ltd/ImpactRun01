@@ -147,7 +147,7 @@ var RunHostoryListView = React.createClass({
     return (
       <View style={[this.defaultStyles.defaultView, this.props.customStyles.defaultView]}>
         <Text style={[this.defaultStyles.defaultViewTitle, this.props.customStyles.defaultViewTitle]}>
-          Sorry, there is no runs to display
+          Press the reload button.
         </Text>
 
         <TouchableHighlight

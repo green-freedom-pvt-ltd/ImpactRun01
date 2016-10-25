@@ -15,8 +15,8 @@ var {
   TouchableOpacity
 } = ReactNative;
 import styleConfig from '../../components/styleConfig';
-import Login from '../../components/loginBtns';
-import LodingView from '../../components/lodingScreen';
+import Login from '../../components/LoginBtns';
+import LodingView from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import PTRView from 'react-native-pull-to-refresh';

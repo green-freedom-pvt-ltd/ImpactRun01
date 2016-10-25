@@ -16,7 +16,7 @@ import {
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 import Icon from 'react-native-vector-icons/Ionicons';
 var FBLoginManager = require('NativeModules').FBLoginManager;
-import Lodingscreen from '../../components/lodingScreen';
+import Lodingscreen from '../../components/LodingScreen';
 import styleConfig from '../../components/styleConfig';
 
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -39,17 +39,40 @@ class Profile extends Component {
             user:null,
             loaded: false,
             mycauseDatatCount:null,
-            LoginCount:0,
+            LoginCountTotal:null,
 
         };
       }
       
-      componentWillMount() {
-       
-        AsyncStorage.getItem('LoginCount', (err, result) => { 
-          this.setState({
-            RunCountTotal:JSON.parse(result),
+     LoginCountFunction(){
+        let TotalLogin = {
+          TotalLoginCount:1,  
+        }
+        if (this.state.LoginCountTotal === null ) {
+          AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
+            AsyncStorage.getItem('LoginCount', (err, result) => { 
+              var Logincount = JSON.parse(result);
+              this.setState({
+                LoginCountTotal:Logincount,
+              })  
+             AlertIOS.alert('Thankyou for login', 'Zomato have donated a meal on your behalf to a hungery kid through FeedingIndia.'); 
           })
+        })
+
+        }else{
+            if (this.state.LoginCountTotal.TotalLoginCount ) {
+             AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
+          };
+        }
+      }
+
+      componentWillMount() {
+        AsyncStorage.getItem('LoginCount', (err, result) => { 
+          var Logincount = JSON.parse(result);
+          console.log('Logincount',Logincount);
+          this.setState({
+            LoginCountTotal:Logincount,
+          })        
         })
         GoogleSignin.configure({
           iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
@@ -112,7 +135,6 @@ class Profile extends Component {
           .then((response) => response.json())
           .then((userdata) => { 
             console.log('responsedata',userdata);
-            AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
               var userdata = userdata;
               let UID234_object = {
                   first_name:userdata[0].first_name,
@@ -189,11 +211,12 @@ class Profile extends Component {
                               let key = store[i][0];
                               let val = store[i][1];
                           });
-                          this.LoginCountFunction();
+                         this.navigateToHomeVaiGoogle();
                       });
                   });
                });
-              this.navigateToHomeVaiGoogle();
+               this.LoginCountFunction();
+              
               })
             .done();
            })
@@ -219,7 +242,6 @@ class Profile extends Component {
           
               .then((response) => response.json())
               .then((userdata) => {
-                  AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
                   var userdata = userdata;
                   let UID234_object = {
                       first_name:userdata[0].first_name,
@@ -294,10 +316,11 @@ class Profile extends Component {
                                   let key = store[i][0];
                                   let val = store[i][1];
                               });
-                              _this.LoginCountFunction();
+                              _this.navigateToHomeVaiFacebook();
+                              
                           });
                       });
-                      _this.navigateToHomeVaiFacebook();
+                      _this.LoginCountFunction();
                    });
                    
                   })
@@ -319,37 +342,7 @@ class Profile extends Component {
          })
           
       }
-      LoginCountFunction(){
-        var clicks = 0;
-         function increment(){
-          return clicks++;
-        }
-        console.log('myRundata',increment());
-        let TotalLogin = {
-          TotalLoginCount:1,  
-        }
-        AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
-          AsyncStorage.getItem('LoginCount', (err, result) => { 
-            var Logincount = JSON.parse(result);
-            this.setState({
-              LoginCountTotal:Logincount,
-            })
-             console.log('myLoginCOunt1',Logincount.TotalLoginCount);
-            let TotalLogin = {
-              TotalLoginCount :this.state.LoginCountTotal.TotalLoginCount++, 
-            }
-            AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
-              AsyncStorage.getItem('LoginCount', (err, result) => { 
-              var LogincountInner = JSON.parse(result)
-                this.setState({
-                  LoginNumber:LogincountInner,
-                })
-                console.log('myLoginCount4',this.state.LoginNumber.TotalLoginCount);
-              })
-            })
-          })
-        })
-      }
+
       navigateToHome(){
         this.props.navigator.push({
         title: 'Gps',

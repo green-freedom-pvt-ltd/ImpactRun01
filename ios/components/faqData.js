@@ -16,7 +16,7 @@ import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
-import LodingScreen from '../../components/lodingScreen';
+import LodingScreen from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class Faqdata extends Component {

@@ -17,7 +17,7 @@ import{
     AsyncStorage,
   } from 'react-native';
 import messageCenter from './messageCenter';
-import LodingScreen from '../../components/lodingScreen';
+import LodingScreen from '../../components/LodingScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;

@@ -22,7 +22,7 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import styleConfig from '../../components/styleConfig';
-import Lodingscreen from '../../components/lodingScreen';
+import Lodingscreen from '../../components/LodingScreen';
 import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';

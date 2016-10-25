@@ -16,10 +16,10 @@ import{
 var {FBLoginManager} = require('react-native-facebook-login');
 import ProfileForm from './profileForm';
 import RunHistory from './runHistory';
-import LodingView from '../../components/lodingScreen';
+import LodingView from '../../components/LodingScreen';
 import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
 import Icon from 'react-native-vector-icons/Ionicons';
-import API from '../../components/runPaginationApi';
+import API from '../../components/RunPaginationApi';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import PTRView from 'react-native-pull-to-refresh';
@@ -147,10 +147,7 @@ class Profile extends Component {
         })
       }
       componentWillMount(){ 
-        if (this.props.user != null) {
-          this.getRunCount();
-        };
-        this.getUserData();
+        
       }
     LodingView(){
       return(

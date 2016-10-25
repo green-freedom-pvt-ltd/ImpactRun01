@@ -52,7 +52,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>43</string>
+	<string>47</string>
 	<key>FacebookAppID</key>
 	<string>167918020276053</string>
 	<key>FacebookDisplayName</key>
@@ -90,6 +90,9 @@
 		<string>MaterialIcons.ttf</string>
 		<string>Octicons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>Montserrat-Bold.ttf</string>
+		<string>Montserrat-Light.otf</string>
+		<string>Montserrat-Thin.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
