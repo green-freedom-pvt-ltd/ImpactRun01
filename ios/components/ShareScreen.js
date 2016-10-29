@@ -17,6 +17,7 @@ import{
   } from 'react-native';
   import TimerMixin from 'react-timer-mixin';
   import Icon from 'react-native-vector-icons/Ionicons';
+  import styleConfig from '../../components/styleConfig';
   var deviceWidth = Dimensions.get('window').width;
   var deviceHeight = Dimensions.get('window').height;
   import LoginBtns from '../../components/LoginBtns';
@@ -38,7 +39,7 @@ import{
       var time = this.props.time;
       const shareLinkContent = {
           contentType: 'link',
-          contentUrl: "http://impactrun.com/",
+          contentUrl: "http://impactrun.com/#/",
           contentDescription: "I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
           contentTitle:cause.cause_title,
           imageUrl:cause.cause_image,
@@ -80,7 +81,8 @@ import{
           if (result.isCancelled) {
             alert('Share cancelled');
           } else {
-           return;
+            alert('Share success with postId: '
+              + result.postId);
           }
         },
         function(error) {
@@ -260,77 +262,6 @@ import{
        });
       };
      }
-     
-     //  let RID2  = {
-     //    cause_run_title:cause.cause_title,
-     //    user_id:user_id,
-     //    start_time: "2016-05-27 16:50:00",
-     //    distance: distance,
-     //    peak_speed: 1,
-     //    avg_speed:speed,
-     //    run_amount:impact,
-     //    run_duration: time,
-     //    start_location_lat:StartLocationLat,
-     //    start_location_long:StartLocationLong,
-     //    end_location_lat:EndLocationLat,
-     //    end_location_long:EndLocationLong,
-     //  };
-   
-     // let RID3  = {
-     //    cause_run_title:cause.cause_title,
-     //    user_id:user_id,
-     //    start_time: "2016-05-27 16:50:00",
-     //    distance: distance,
-     //    peak_speed: 1,
-     //    avg_speed:speed,
-     //    run_amount:impact,
-     //    run_duration: time,
-     //    start_location_lat:StartLocationLat,
-     //    start_location_long:StartLocationLong,
-     //    end_location_lat:EndLocationLat,
-     //    end_location_long:EndLocationLong,
-     //  };
-     //  let RID4  = {
-     //    cause_run_title:cause.cause_title,
-     //    user_id:user_id,
-     //    start_time: "2016-05-27 16:50:00",
-     //    distance: distance,
-     //    peak_speed: 1,
-     //    avg_speed:speed,
-     //    run_amount:impact,
-     //    run_duration: time,
-     //    start_location_lat:StartLocationLat,
-     //    start_location_long:StartLocationLong,
-     //    end_location_lat:EndLocationLat,
-     //    end_location_long:EndLocationLong,
-     //  };
-   
-      // let multi_merge_pairs = [
-      //     ['RID1', JSON.stringify(RID1)],
-      //     ['RID2', JSON.stringify(RID2)],
-      // ]
-
-    
-      // AsyncStorage.multiSet(multi_set_pairs, (err) => {
-      //     AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-      //         AsyncStorage.multiGet(['RID1', 'RID2'], (err, stores) => {
-      //             stores.map((result, i, store) => {
-      //                 let key = store[i][0];
-      //                 let val = store[i][1];
-      //                 this.setState({
-      //                  userRunData:val,
-      //                 })
-      //             });
-                  
-      //             console.log('myRunSomeData',this.state.userRunData);
-      //         })
-      //        .then((userRunData) => { 
-      //         AlertIOS.alert('yourDataStored'+JSON.stringify(this.state.userRunData))
-      //         })
-      //        .done();
-      //     })
-          
-      //  });
     }
     PostRun(){
       if (this.props.distance >= 0.1) {
@@ -365,7 +296,6 @@ import{
        })
       .then((response) => response.json())
       .then((userRunData) => { 
-        this.navigateToThankyou();
       })
     }else{
      AlertIOS.alert('rundata','not more than 100');
@@ -451,15 +381,20 @@ import{
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
                 </View>
               </View>
-              <View style={{ flexDirection:'column',flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                <View style={{bottom:20, justifyContent: 'center',alignItems: 'center',}}>
+              <View style={{top:-30, flexDirection:'column',flex:1,alignItems: 'center',}}>
+                <View style={{justifyContent: 'center',alignItems: 'center',}}>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Please login to </Text>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>unlease your impact</Text>
                 </View>
-                <LoginBtns getUserData={this.getUserData}/>
-                <TouchableOpacity style={{bottom:50,width:deviceWidth,height:50,justifyContent: 'center',alignItems: 'center',}} onPress={()=> this.PopForRunNOtSubmit()}>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Skip</Text>
-                </TouchableOpacity>
+                <View style={{top:10}}>
+                  <LoginBtns getUserData={this.getUserData}/>
+                </View>
+                <View style={styles.skip}>
+                  <Text style={{color:styleConfig.grey_70,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
+                  <TouchableOpacity onPress={()=> this.PopForRunNOtSubmit()}>
+                    <Text style={{left:5,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </Image>
           </View>
@@ -538,6 +473,11 @@ import{
       backgroundColor: 'transparent',
       justifyContent: 'center', 
      alignItems: 'center',     
+    },
+    skip:{
+      top:20,
+      flexDirection:'row',
+      justifyContent: 'center',      
     },
     shareButton:{
       flexDirection:'row',

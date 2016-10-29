@@ -177,7 +177,7 @@ class devdactic_tabs extends Component {
                   selectedTab: 'welcome',
               });
           }}>
-        <Welcome locationManager={this.props.locationManager} myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>
+        <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>
         </TabBarIOS.Item>
 
         <TabBarIOS.Item

@@ -73,7 +73,7 @@ class LeaderboardData extends Component {
 
       renderRow(rowData, index,rowID){
         rowID++
-        let colors = ['#ffcd4d', '#ffcd4d', '#ffcd4d', 'white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white'];
+        let colors = ['#ffcd4d', '#ffcd4d', '#ffcd4d', 'white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white'];
         let style = [
           styles.row, 
           {'backgroundColor': colors[rowID % colors.length-1],
@@ -112,7 +112,7 @@ class LeaderboardData extends Component {
       render() {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-95,width:deviceWidth}}>
+            <View style={{height:deviceHeight-95,width:deviceWidth,paddingBottom:15,}}>
                <GiftedListView
                 rowView={this.renderRow}
                 onFetch={this.onFetch}

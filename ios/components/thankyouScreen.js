@@ -10,14 +10,14 @@ import{
     TouchableOpacity,
     Text,
   } from 'react-native';
-  import FaqData from './faqData';
+import FaqData from './faqData';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ThankyouScreen extends Component {
 
     navigateToHomeScreen(){
-      this.props.navigator.replace({
+      this.props.navigator.push({
       id:'tab',
       navigator: this.props.navigator,
       })
@@ -27,7 +27,7 @@ class ThankyouScreen extends Component {
 	    return (
 		    <View>
           <TouchableOpacity onPress={()=> this.navigateToHomeScreen()}>
-            <Image  style={{height:deviceHeight,width:deviceWidth}} source={{uri:data.cause_thank_you_image}}></Image>
+            <Image  style={{resizeMode: 'stretch',height:deviceHeight,width:deviceWidth}} source={{uri:data.cause_thank_you_image}}></Image>
           </TouchableOpacity>
         </View>
 		  );

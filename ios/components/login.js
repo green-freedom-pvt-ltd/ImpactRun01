@@ -380,6 +380,7 @@ class Profile extends Component {
               <Image source={require('../../images/Logo.png')} style={styles.logo}/>
             </View>
             <View style={styles.container}>
+             <View>
               <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}>
                 <Text style={{color:'#3b5998',textAlign:'left',fontFamily: styleConfig.FontFamily,}}>{text}</Text>
                 <Image source={require('../../images/facebook.png')} style={styles.facebook}/>
@@ -388,12 +389,14 @@ class Profile extends Component {
                 <Text style={{color:'#db3236',textAlign:'left',marginLeft:3,fontFamily: styleConfig.FontFamily,}}>LOGIN WITH GOOGLE</Text>
                 <Image source={require('../../images/google_plus.png')} style={styles.google}/>
               </TouchableOpacity>
-              <TouchableOpacity 
-               style={styles.skip}
-               onPress={() => this.navigateToHome()}>
-                  <Text style={{color:styleConfig.black_50,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
-                  <Text style={{marginLeft:5,color:styleConfig.fade_White,fontFamily: styleConfig.FontFamily,}}>SKIP</Text>
-              </TouchableOpacity>
+              <View style={styles.skip}>
+                <Text style={{color:styleConfig.grey_70,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
+                <TouchableOpacity       
+                 onPress={() => this.navigateToHome()}>
+                    <Text style={{marginLeft:5,color:styleConfig.fade_White,fontFamily: styleConfig.FontFamily,}}>SKIP</Text>
+                </TouchableOpacity>
+              </View>
+             </View>
             </View>
           </Image>    
         )
@@ -404,13 +407,13 @@ class Profile extends Component {
   var styles = StyleSheet.create({
     container:{
       flex:1,
-      top:60,
+      justifyContent: 'center',
       alignItems:'center',
     },
     center:{
       flex:1,
+      justifyContent: 'center',
       alignItems: 'center',
-      top:10,
     },
     Loginbtnfb:{
       flexDirection: 'row',
@@ -445,13 +448,12 @@ class Profile extends Component {
       justifyContent: 'center',      
     },
     skip:{
-      top:30,
       flex:1,
+      top:20,
       flexDirection:'row',
       justifyContent: 'center',      
     },
     logo:{
-      top:100,
       width:200,
       height:40,
       justifyContent: 'center',

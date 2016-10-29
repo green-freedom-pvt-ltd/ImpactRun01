@@ -33,7 +33,6 @@ var deviceheight = Dimensions.get('window').height;
 
 
 class Profile extends Component {
-  locationManager: undefined
       constructor(props) {
         super(props);
         this.state = {
@@ -250,14 +249,6 @@ class Profile extends Component {
 
     // NAVIGATION
     navigateToRunScreen(cause) {
-      this.locationManager = this.props.locationManager;
-      this.locationManager.on("location", function(location) {
-      console.log('- location: ', JSON.stringify(location, null, 2));
-      if (location.sample) {
-        console.log('<sample location>');
-        return;
-      }
-      });
       var cause;
       if (!!this.state.causes.length && this.state.navigation.index+1) {
         cause = this.state.causes[this.state.navigation.index]
@@ -386,7 +377,7 @@ class Profile extends Component {
    container: {
       height: deviceheight-70,
       backgroundColor: 'white',
-      top:5,
+      top:styleConfig.CardTop,
       width:deviceWidth,
     },
     page: {
@@ -408,7 +399,7 @@ class Profile extends Component {
      album: {
       backgroundColor: '#fff',
       width: deviceWidth-52,
-      height: deviceheight-180,
+      height: styleConfig.CardHeight,
       elevation: 12,
       shadowColor: '#000000',
       shadowOpacity: 0.2,

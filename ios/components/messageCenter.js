@@ -14,20 +14,21 @@ var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../../components/styles';
 import MessageCenterData from './messageCenterData';
 class MessageCenter extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-       NavigateToDetail(rowData){
-        this.props.navigator.push({
-          title: 'Gps',
-          id:'messagedetail',
-          index:0,
-          navigator: this.props.navigator,
-          passProps:{data:rowData},
-        })
-       }
+    constructor(props) {
+      super(props);
+      this.state = {
+      };
+    }
+    
+    NavigateToDetail(rowData){
+      this.props.navigator.push({
+        title: 'Gps',
+        id:'messagedetail',
+        index:0,
+        navigator: this.props.navigator,
+        passProps:{data:rowData},
+      })
+    }
 
   render() {
     return (

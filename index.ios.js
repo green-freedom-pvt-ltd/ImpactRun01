@@ -92,6 +92,8 @@ class Application extends Component{
        case 'setting':
        return Navigator.SceneConfigs.FloatFromLeft
        break;
+       case 'thankyouscreen':
+       return Navigator.SceneConfigs.FloatFromRight
    }
 };
 
@@ -122,7 +124,7 @@ class Application extends Component{
             case 'messagecenter':
             return <MessageCenter navigator={navigator} {...route.passProps}/>;
             case 'tab':
-            return <Tab  navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>;
+            return <Tab  navigator={navigator} {...route.passProps}/>;
             case 'causedetail':
             return <CauseDetail navigator={navigator} {...route.passProps}/>;
             case 'messagedetail':

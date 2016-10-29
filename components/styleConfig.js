@@ -2,6 +2,7 @@
 var React = require('react-native');
 var {StyleSheet, PixelRatio,Dimensions} = React;
 const Devicewidth = Dimensions.get('window').width
+const Deviceheight = Dimensions.get('window').height
 
 import { Platform } from 'react-native';
 var FONT_LABEL1   = 18;
@@ -98,6 +99,31 @@ function LogoWidth () {
   }
 }
 }
+function CardHeight () {
+  if(Deviceheight > 568){
+    return Deviceheight-180;
+  }else {
+  if(Deviceheight <= 480){
+    return Deviceheight-150;
+  }else { 
+    return Deviceheight-140;
+  }
+}
+}
+function CardTop () {
+  if(Deviceheight > 568){
+    return 7;
+  }else {
+  if(Deviceheight <= 480){
+    return 3;
+  }else { 
+    return 2;
+  }
+}
+}
+
+
+
 export default {
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
@@ -106,6 +132,8 @@ export default {
   beginRunBtnWidth:BtnWidth(),
   LogoHeight:LogoHeight(),
   LogoWidth:LogoWidth(),
+  CardHeight:CardHeight(),
+  CardTop:CardTop(),
   // navHight
   navBarHeight:70,
   // fontColors
