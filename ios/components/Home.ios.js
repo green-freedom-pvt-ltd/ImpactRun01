@@ -409,7 +409,7 @@ SettingsService.init('iOS');
       } else {
       if (this.state.enabled) {
       
-      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0) {
+      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
         this.EndGetLocation();
          this.locationManager.removeGeofences();
           this.locationManager.stop();
