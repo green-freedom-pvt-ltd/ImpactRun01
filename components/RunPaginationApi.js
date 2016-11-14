@@ -1,3 +1,4 @@
+import apis from './apis';
 export default {
    getAllRuns(pageID,user) {
     console.log('userDataapi',user);

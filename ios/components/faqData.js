@@ -12,6 +12,7 @@ import {
   AlertIOS,
   NetInfo,
 } from 'react-native';
+import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -49,7 +50,7 @@ class Faqdata extends Component {
       }
 
       fetchFaqData() {
-        var url = 'http://dev.impactrun.com/api/faq/';
+        var url = apis.faqsApi;
         fetch(url)
           .then( response => response.json() )
           .then( jsonData => {

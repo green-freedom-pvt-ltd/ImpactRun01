@@ -14,6 +14,7 @@ import{
     AlertIOS,
   } from 'react-native';
 var FBLoginManager = require('NativeModules').FBLoginManager;
+import styleConfig from './styleConfig';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
@@ -54,64 +55,69 @@ class LoginBtns extends Component {
           })
         .then((response) => response.json())
         .then((userdata) => {
-            var userdata = userdata;
-            console.log('userDatafb'+JSON.stringify(userdata));
-            let UID234_object = {
-                first_name:userdata[0].first_name,
-                user_id:userdata[0].user_id,
-                last_name:userdata[0].last_name,
-                gender_user:userdata[0].gender_user,
-                email:userdata[0].email,
-                phone_number:userdata[0].phone_number,
-                Birth_day:userdata[0].birthday,
-                social_thumb:userdata[0].social_thumb,
-                auth_token:userdata[0].auth_token,
-                total_amount:userdata[0].total_amount,
-                total_distance:userdata[0].total_distance,
-            };
-            // first user, delta values
-            let UID234_delta = {
-                first_name:userdata[0].first_name,
-                user_id:userdata[0].user_id,
-                last_name:userdata[0].last_name,
-                gender_user:userdata[0].gender_user,
-                email:userdata[0].email,
-                Birth_day:userdata[0].birthday,
-                phone_number:userdata[0].phone_number,
-                social_thumb:userdata[0].social_thumb,
-                auth_token:userdata[0].auth_token,
-                total_amount:userdata[0].total_amount,
-                total_distance:userdata[0].total_distance,
-           };
-            // // second user, initial values
-             let UID345_object = {
-                first_name:userdata[0].first_name,
-                user_id:userdata[0].user_id,
-                last_name:userdata[0].last_name,
-                gender_user:userdata[0].gender_user,
-                email:userdata[0].email,
-                Birth_day:userdata[0].birthday,
-                phone_number:userdata[0].phone_number,
-                social_thumb:userdata[0].social_thumb,
-                auth_token:userdata[0].auth_token,
-                total_amount:userdata[0].total_amount,
-                total_distance:userdata[0].total_distance,
-            };
+              var userdata = userdata[0];
+              let UID234_object = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
+              };
+              // first user, delta values
+              let UID234_delta = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
 
-            // // second user, delta values
-             let UID345_delta = {
-                first_name:userdata[0].first_name,
-                user_id:userdata[0].user_id,
-                last_name:userdata[0].last_name,
-                gender_user:userdata[0].gender_user,
-                email:userdata[0].email,
-                Birth_day:userdata[0].birthday,
-                phone_number:userdata[0].phone_number,
-                social_thumb:userdata[0].social_thumb,
-                auth_token:userdata[0].auth_token,
-                total_amount:userdata[0].total_amount,
-                total_distance:userdata[0].total_distance,
-            };
+               };
+              // // second user, initial values
+               let UID345_object = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
+               };
+
+              // // second user, delta values
+               let UID345_delta = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
+              };
+
 
             let multi_set_pairs = [
                 ['UID234', JSON.stringify(UID234_object)],
@@ -144,7 +150,7 @@ class LoginBtns extends Component {
     
     LoginCountFunction(){
         let TotalLogin = {
-          TotalLoginCount:1,  
+          TotalLoginCount:'1',  
         }
         if (this.state.LoginCountTotal === null ) {
           AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
@@ -153,7 +159,7 @@ class LoginBtns extends Component {
               this.setState({
                 LoginCountTotal:Logincount,
               })  
-            AlertIOS.alert('Thankyou for login', 'Zomato have donated a meal on your behalf to a hungery kid through FeedingIndia.');   
+             AlertIOS.alert('Congrats!', "You've Helped solve hunger.'Zomato' and 'Feeding India' are proud to share a meal with a hungry street kid in Delhi.");
           })
         })
         }else{
@@ -178,63 +184,69 @@ class LoginBtns extends Component {
       .then((response) => response.json())
       .then((userdata) => { 
        console.log('userdata',userdata);
-          var userdata = userdata;
-          let UID234_object = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-              total_amount:userdata[0].total_amount,
-              total_distance:userdata[0].total_distance,
-              Birth_day:userdata[0].birthday,
-          };
-          // first user, delta values
-          let UID234_delta = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-              total_amount:userdata[0].total_amount,
-              total_distance:userdata[0].total_distance,
-              Birth_day:userdata[0].birthday,
-         };
-          // // second user, initial values
-           let UID345_object = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-              total_amount:userdata[0].total_amount,
-              total_distance:userdata[0].total_distance,
-              Birth_day:userdata[0].birthday,
-          };
+         var userdata = userdata[0];
+              let UID234_object = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
+              };
+              // first user, delta values
+              let UID234_delta = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
 
-          // // second user, delta values
-           let UID345_delta = {
-              first_name:userdata[0].first_name,
-              user_id:userdata[0].user_id,
-              last_name:userdata[0].last_name,
-              gender_user:userdata[0].gender_user,
-              email:userdata[0].email,
-              phone_number:userdata[0].phone_number,
-              social_thumb:userdata[0].social_thumb,
-              auth_token:userdata[0].auth_token,
-              total_amount:userdata[0].total_amount,
-              total_distance:userdata[0].total_distance,
-              Birth_day:userdata[0].birthday,
-          };
+               };
+              // // second user, initial values
+               let UID345_object = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
+               };
+
+              // // second user, delta values
+               let UID345_delta = {
+                  first_name:userdata.first_name,
+                  user_id:userdata.user_id,
+                  last_name:userdata.last_name,
+                  gender_user:userdata.gender_user,
+                  email:userdata.email,
+                  phone_number:userdata.phone_number,
+                  Birth_day:userdata.birthday,
+                  social_thumb:userdata.social_thumb,
+                  auth_token:userdata.auth_token,
+                  total_amount:userdata.total_amount,
+                  is_signup:userdata.sign_up,
+                  total_distance:userdata.total_distance,
+              };
+
 
           let multi_set_pairs = [
               ['UID234', JSON.stringify(UID234_object)],
@@ -288,9 +300,17 @@ class LoginBtns extends Component {
 		render() {
 		return (
           <View style={styles.container}>
-            <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}><Text style={{color:'#3b5998',textAlign:'left'}}>LOGIN WITH FACEBOOK </Text><Image source={require('../images/facebook.png')} style={styles.facebook}/>
+            <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}>
+              <View style={{width:deviceWidth-150}}>
+                <Text style={{color:'#3b5998',textAlign:'center' ,fontSize:styleConfig.FontSizeLogin}}>LOGIN WITH FACEBOOK </Text>
+              </View>
+              <Image source={require('../images/facebook.png')} style={styles.facebook}/>
             </TouchableOpacity>
-             <TouchableOpacity onPress={() => this._signInGoogle()} style={styles.Loginbtngg}><Text style={{color:'#db3236',textAlign:'left',marginLeft:3,}}>LOGIN WITH GOOGLE</Text><Image source={require('../images/google_plus.png')} style={styles.google}/>
+            <TouchableOpacity onPress={() => this._signInGoogle()} style={styles.Loginbtngg}>
+              <View style={{width:deviceWidth-150,}}>
+                <Text style={{color:'#db3236',textAlign:'center',marginLeft:3,fontSize:styleConfig.FontSizeLogin}}>LOGIN WITH GOOGLE</Text>
+              </View>
+              <Image source={require('../images/google_plus.png')} style={styles.google}/>
             </TouchableOpacity>
            </View>
 					);
@@ -314,8 +334,6 @@ var styles = StyleSheet.create({
         borderRadius:5,
         marginTop:15,
         height:53,
-        paddingLeft:5,
-        paddingRight:10,
         bottom:10,
         alignItems:'center',
         borderWidth:2,
@@ -330,8 +348,6 @@ var styles = StyleSheet.create({
         borderRadius:5,
         marginTop:15,
         height:53,
-        paddingLeft:5,
-        paddingRight:10,
         bottom:0,
         alignItems:'center',
         borderWidth:2,

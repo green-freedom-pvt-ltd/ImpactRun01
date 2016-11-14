@@ -29,16 +29,16 @@ class SocialShare extends Component {
 
     let shareOptions = {
       title: "ImpactRun",
-      message: "Download ImpactRun it helps you get fit and help ngo to feed and educate poor childeren",
+      message: "I use ImpactRun to track my daily runs and 'do good' for socitry with every step. Check it out. It's amazing!",
       url: "http://www.impactrun.com/#",
       subject: "Download ImpactRun Now " //  for email
     };
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={{marginLeft:3,height:40,flexDirection:'row',alignItems: 'center',}} onPress={()=>{
+        <TouchableOpacity style={{height:40,flexDirection:'row',alignItems: 'center',}} onPress={()=>{
           Share.open(shareOptions);
         }}>
-        <Icon style={{color:'black',fontSize:17,margin:10}}name={'md-share'}></Icon>
+        <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-share'}></Icon>
           <View style={styles.instructions}>
             <Text style={{color:'#4a4a4a'}}>Share Impactrun</Text>
           </View>
@@ -51,6 +51,7 @@ class SocialShare extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex:1,
     justifyContent: 'center',
     alignItems: 'flex-start',
   },

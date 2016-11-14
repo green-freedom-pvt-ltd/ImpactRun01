@@ -96,12 +96,7 @@ class Profile extends Component {
             if (isConnected) {
               this.fetchAmount();
               }else{
-                AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
-                  var TotalAmount = JSON.parse(result);
-                  this.setState({
-                    RunTotalAmount2:TotalAmount.TotalRupeesCount,
-                  })
-               })
+                
               }
              }
             );
@@ -118,7 +113,10 @@ class Profile extends Component {
             rowArray.push(object);
           });
         })
-        .catch((error) => {this.getRunCount();})
+        .catch((error) => {
+          this.getRunCount();
+          this.getAmountCount();
+        })
         .then(() => {
           if (page === Math.round((this.state.runCount+2)/5)) {
             callback(rowArray, {
@@ -129,6 +127,7 @@ class Profile extends Component {
           }
         });   
       }
+
       getAmountCount(){
         AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
           var TotalAmount = JSON.parse(result);
@@ -137,6 +136,7 @@ class Profile extends Component {
             })
         })
       }
+
       getRunCount(){
         AsyncStorage.getItem('RunCount', (err, result) => { 
           var TotalRun = JSON.parse(result);
@@ -146,34 +146,32 @@ class Profile extends Component {
           console.log('RUNCOUNT12',this.state.RunCountTotal);
         })
       }
-      componentWillMount(){ 
-        
+
+      LodingView(){
+        return(
+          <LodingView/>
+        )
       }
-    LodingView(){
-      return(
-        <LodingView/>
-      )
-    }
 
-	  render() {
+  	  render() {
 
-  		return (
-        <View>
-        	<ScrollableTabView
-            style={styles.scrollTabWrapper}
-            initialPage={1}
-            vertical={false}
-            renderTabBar={() => <ScrollableTabBar userTotalAmount={this.state.RunTotalAmount2} RunCount={this.state.RunCountTotal} getUserData={this.props.getUserData} user={this.props.user} />}>
-            <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm getUserData={this.props.getUserData} user={this.props.user}/></View>
-            <View style={styles.tabContent} tabLabel='History'>
-                <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} user={this.props.user}/>
-            </View>
-          </ScrollableTabView>
-        </View>
-  		);
-	  }
+    		return (
+          <View>
+          	<ScrollableTabView
+              style={styles.scrollTabWrapper}
+              initialPage={1}
+              vertical={false}
+              renderTabBar={() => <ScrollableTabBar userTotalAmount={this.state.RunTotalAmount2} RunCount={this.state.RunCountTotal} getUserData={this.props.getUserData} user={this.props.user} />}>
+              <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm getUserData={this.props.getUserData} user={this.props.user}/></View>
+              <View style={styles.tabContent} tabLabel='History'>
+                  <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} user={this.props.user}/>
+              </View>
+            </ScrollableTabView>
+          </View>
+    		);
+  	  }
 
- }
+   }
 // userTotalAmount={this.state.RunTotalAmount.TotalRupeesCount}
 
  

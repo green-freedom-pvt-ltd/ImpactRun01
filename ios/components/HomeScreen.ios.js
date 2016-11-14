@@ -21,6 +21,7 @@ import {
   PanResponder,
   TouchableWithoutFeedback
 } from 'react-native';
+import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Lodingscreen from '../../components/LodingScreen';
 import commonStyles from '../../components/styles';
@@ -101,18 +102,14 @@ class Profile extends Component {
          }
         });
       }
-      _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-        // Should we become active when the user presses down on the circle?
-      
+      _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {      
         console.log('myparesesponced');
-        return false;
+          return false;
       }
 
-      _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-        // Should we become active when the user moves a touch over the circle?\
-        
+      _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {        
         console.log('myparesesponced');
-        return true;
+          return true;
       }
 
 
@@ -155,9 +152,8 @@ class Profile extends Component {
           loaded:true,             
           }) 
          var RunData = this.state.MyRunVal;
-         AlertIOS.alert('this',JSON.stringify(RunData));
-         fetch("http://dev.impactrun.com/api/runs/", {
-         method: "POST",
+         fetch(apis.runApi, {
+          method: "POST",
           headers: {  
             'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
@@ -296,7 +292,18 @@ class Profile extends Component {
           });
         })
     };
-
+    
+    functionForIphone4Brief(route){
+      if (deviceheight <= 480) {
+      return(
+        <Text  numberOfLines={3} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+        )
+      }else{
+        return(
+          <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+          )
+      }
+    };
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
       var cause;
@@ -320,7 +327,7 @@ class Profile extends Component {
               <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
               <Text style={{color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
               <View  onPress={()=>this.navigateToCauseDetail()}>
-              <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+                {this.functionForIphone4Brief(route)}
               </View>
              </View>
              </TouchableWithoutFeedback>

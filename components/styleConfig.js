@@ -106,7 +106,9 @@ function CardHeight () {
   if(Deviceheight <= 480){
     return Deviceheight-150;
   }else { 
-    return Deviceheight-140;
+    if (Deviceheight >= 480) {
+    return Deviceheight-170;
+  }
   }
 }
 }
@@ -122,12 +124,24 @@ function CardTop () {
 }
 }
 
+function FontSizeLogin(){
+   if(Devicewidth > 320){
+    return 16;
+  }else {
+  if(Devicewidth <= 320){
+    return 12;
+  }else { 
+    return 8;
+  }
+}
+}
 
 
 export default {
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),
+  FontSizeLogin:FontSizeLogin(),
   beginRunBtnHeight:BtnHight(),
   beginRunBtnWidth:BtnWidth(),
   LogoHeight:LogoHeight(),

@@ -38,9 +38,9 @@ class OpenURLButton extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity style={{marginLeft:0,justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}
+      <TouchableOpacity style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:1}}
         onPress={this.handleClick}>
-         <Icon style={{color:'black',fontSize:20,margin:10}}name={'grade'}></Icon>
+         <Icon style={{color:'black',fontSize:22,margin:7.5}}name={'grade'}></Icon>
          <View><Text style={{color:'#4a4a4a'}}>Rate us</Text></View>   
       </TouchableOpacity>
     );
@@ -128,20 +128,25 @@ class Setting extends Component {
       }
       render() {
          return (
-              <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
+              <View style={{height:deviceHeight,width:deviceWidth}}>
                 <View style={commonStyles.Navbar}>
                     <Text style={commonStyles.menuTitle}>Settings</Text>
                 </View>
-                <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
+                <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:0.2,}}>
                   <SocialShare/>
                 </View>
-                <OpenURLButton  url={'https://play.google.com/store/apps/details?id=com.sharesmile.share&hl=en'}/>       
-                <TouchableOpacity onPress={()=>this._signOut()} style={{marginLeft:1,justifyContent:'flex-start',alignItems:'center',flexDirection:'row',width:deviceWidth}}>
-                    <IconSec style={{color:'black',fontSize:19,margin:10}}name={this.state.IconText}></IconSec>
-                    <View>
-                     <Text style={{color:'#4a4a4a'}}>{this.state.text}</Text>
-                    </View>
+                <View style={{flex:0.2}}>
+                  <OpenURLButton  url={'https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8'}/> 
+                </View> 
+                <View style={{justifyContent:'flex-start',flex:0.2}}>      
+                <TouchableOpacity onPress={()=>this._signOut()} style={{marginLeft:1,alignItems:'center',flexDirection:'row',flex:1}}>
+                  <IconSec style={{color:'black',fontSize:20,margin:10}}name={this.state.IconText}></IconSec>
+                  <View>
+                    <Text style={{color:'#4a4a4a'}}>{this.state.text}</Text>
+                  </View>
                 </TouchableOpacity>
+                </View>
+                <View style={{flex:1}}></View>
                </View>
               );
           }

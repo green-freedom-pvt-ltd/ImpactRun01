@@ -1,7 +1,10 @@
+import apis from './apis';
+
 export default {
    getAllUser(pageID,user) {
     let page = pageID;
-    const url = `http://dev.impactrun.com/api/leaderBoard/?page=${page}`;
+    const url = apis.leaderBoardapi+`?page=${page}`;
+    console.log('url',url);
     if (page === null) {
       page = 1;
     }  

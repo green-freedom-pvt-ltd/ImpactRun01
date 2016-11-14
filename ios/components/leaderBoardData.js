@@ -60,7 +60,13 @@ class LeaderboardData extends Component {
           response.results.map((object) => {
             rowArray.push(object);
           });
-        }).then(() => {
+          })
+        .catch((error) => {
+         
+            AlertIOS.alert('No internet connection');
+           
+        })
+        .then(() => {
           if (page === Math.round((this.state.userCount))) {
             callback(rowArray, {
               allLoaded: true,
@@ -126,7 +132,7 @@ class LeaderboardData extends Component {
                   },
                 }}
                 refreshableTintColor="#00b9ff"
-                renderSeparator = {(sectionId, rowId) => <View key={rowId} style={styles.separator}/> }/>
+                renderSeparator = {(sectionId, rowId) => <View key={rowId} style={styles.separator}/>}/>
              </View>
           </View> 
         );
@@ -138,7 +144,7 @@ const styles = StyleSheet.create({
     height:50,
     width:50,
     borderRadius:25,
-    backgroundColor:'#5bb75b',
+    backgroundColor:'#ffcd4d',
     marginBottom: 5,
   },
   separator: {

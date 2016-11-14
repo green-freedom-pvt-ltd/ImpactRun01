@@ -29,6 +29,7 @@ import ThankyouScreen from './ios/components/thankyouScreen';
 import Faq from './ios/components/faq';
 import MessageCenter from './ios/components/messageCenterData';
 import MessageDetail from './ios/components/messageDetail';
+import DownloadShareMeal from './components/downloadShareMeal'
 const NoBackSwipe ={
   ...Navigator.SceneConfigs.FloatFromRight,
     gestures: {
@@ -104,6 +105,7 @@ class Application extends Component{
     console.log('mysomedatacount',mycausecount);
     return (
       <View  style={{flex: 1}} >
+    
         <Navigator  
             ref={(ref) => this._navigator = ref}
             configureScene={ this._configureScene }
@@ -142,7 +144,8 @@ class Application extends Component{
             case 'thankyouscreen':
             return <ThankyouScreen navigator={navigator} {...route.passProps}/>;            
             case 'faq':
-            return <Faq navigator={navigator} {...route.passProps}/>;            
+            return <Faq navigator={navigator} {...route.passProps}/>;   
+      
             default :
              return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
         }

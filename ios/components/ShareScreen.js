@@ -15,6 +15,7 @@ import{
     VibrationIOS,
     NetInfo
   } from 'react-native';
+  import apis from '../../components/apis';
   import TimerMixin from 'react-timer-mixin';
   import Icon from 'react-native-vector-icons/Ionicons';
   import styleConfig from '../../components/styleConfig';
@@ -275,7 +276,7 @@ import{
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       var cause = this.props.data;
-      fetch("http://dev.impactrun.com/api/runs/", {
+      fetch(apis.runApi, {
          method: "POST",
          headers: {  
             'Authorization':"Bearer "+ tokenparse,
