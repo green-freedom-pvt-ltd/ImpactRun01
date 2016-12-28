@@ -1,8 +1,8 @@
 
 'use strict';
 
-import React, { Component } from 'react';
-import{
+  import React, { Component } from 'react';
+  import{
     StyleSheet,
     View,
     Image,
@@ -11,14 +11,14 @@ import{
     TouchableOpacity,
     Text,
   } from 'react-native';
-import commonStyles from './styles';
-import Icon from 'react-native-vector-icons/Ionicons';
-var deviceWidth = Dimensions.get('window').width;
-var deviceHeight = Dimensions.get('window').height;
-import styleConfig from './styleConfig';
-import SubmitBtn from './submitbtn';
-import ImpactLeagueDropDown from './dropDownComponent'
-class ImpactLeagueForm2 extends Component {
+  import commonStyles from './styles';
+  import Icon from 'react-native-vector-icons/Ionicons';
+  var deviceWidth = Dimensions.get('window').width;
+  var deviceHeight = Dimensions.get('window').height;
+  import styleConfig from './styleConfig';
+  import SubmitBtn from './submitbtn';
+  import ImpactLeagueDropDown from './dropDownComponent'
+  class ImpactLeagueForm2 extends Component {
   
       navigateTOhome(){
         this.props.navigator.push({
@@ -50,7 +50,7 @@ class ImpactLeagueForm2 extends Component {
           </View>
   			);
   	  }
-}
+  }
 
 const styles = StyleSheet.create({
   container: {
