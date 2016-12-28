@@ -22,9 +22,7 @@ import{
   var deviceHeight = Dimensions.get('window').height;
   import LeaderBoard from './leaderBoardData';
 
-class Leaderboard extends Component {
-      
-
+  class Leaderboard extends Component {
       renderLeaderboadScreen(){
         if (this.props.user != null) {
          return(
@@ -52,7 +50,7 @@ class Leaderboard extends Component {
               renderTabBar={() => <ScrollableTabBarLeaderBoard />}>
               <View tabLabel='All'>{this.renderLeaderboadScreen()}</View>
               <View tabLabel='Team'>
-               <ImpactLeagueCode/>
+               <ImpactLeagueCode navigator={this.props.navigator}/>
               </View>
               </ScrollableTabView>
           </View>

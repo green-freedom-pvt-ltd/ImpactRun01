@@ -26,10 +26,14 @@ import Setting from './ios/components/setting';
 import Runlogingscreen from './ios/components/runlodingscreen';
 import ShareScreen from './ios/components/shareScreen';
 import ThankyouScreen from './ios/components/thankyouScreen';
+import ImpactLeagueForm2 from './components/ImpactLeagueForm2';
+import ImpactLeagueCode from './components/ImpactLeagueCode';
 import Faq from './ios/components/faq';
 import MessageCenter from './ios/components/messageCenterData';
 import MessageDetail from './ios/components/messageDetail';
-import DownloadShareMeal from './components/downloadShareMeal'
+import DownloadShareMeal from './components/downloadShareMeal';
+import Leaderboard  from'./ios/components/leaderBoard';
+
 const NoBackSwipe ={
   ...Navigator.SceneConfigs.FloatFromRight,
     gestures: {
@@ -145,6 +149,12 @@ class Application extends Component{
             return <ThankyouScreen navigator={navigator} {...route.passProps}/>;            
             case 'faq':
             return <Faq navigator={navigator} {...route.passProps}/>;   
+            case 'leaderboard':
+            return <Leaderboard navigator={navigator} {...route.passProps}/>;   
+            case 'impactleagueform2':
+            return <ImpactLeagueForm2 navigator={navigator} {...route.passProps}/>;
+            case 'impactleaguecode':
+            return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>; 
       
             default :
              return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>

@@ -48,7 +48,6 @@ class Profile extends Component {
         let TotalLogin = {
           TotalLoginCount:1,  
         }
-        if (this.state.LoginCountTotal === null ) {
           AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
             AsyncStorage.getItem('LoginCount', (err, result) => { 
               var Logincount = JSON.parse(result);
@@ -59,11 +58,7 @@ class Profile extends Component {
           })
         })
 
-        }else{
-            if (this.state.LoginCountTotal.TotalLoginCount ) {
-             AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
-          };
-        }
+       
       }
 
       componentWillMount() {
@@ -343,6 +338,7 @@ class Profile extends Component {
       }
   
       navigateToHome(){
+        this.LoginCountFunction();
         this.props.navigator.push({
         title: 'Gps',
         id:'tab',

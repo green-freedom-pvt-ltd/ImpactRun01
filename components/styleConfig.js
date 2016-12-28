@@ -164,6 +164,7 @@ export default {
   white_two:'#f5f5f5',
   light_gold:'#ffcd4d',
   fade_White:'#eeeeee',
+  purplish_brown:'#453640',
   //FontFamily
   FontFamily:'Montserrat-Regular',
   FontFamily2:'Montserrat-Thin',

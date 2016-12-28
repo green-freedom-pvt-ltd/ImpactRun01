@@ -137,8 +137,11 @@ class devdactic_tabs extends Component {
           })
         })
       }
-   
-    render() {
+      showModel(){
+       AlertIOS.alert('myalert',this.props.show);
+      }
+
+  render() {
       if (this.state.myCauseNum != null) {
         return (
         <View style={{flex:1}}>

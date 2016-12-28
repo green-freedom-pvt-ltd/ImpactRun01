@@ -58,9 +58,11 @@ class Feed extends Component {
           }
         );
       }
+      
       componentWillUnmount() {
         console.log('myFucckingComponent')    
       }
+
       fetchFeedData() {
         var url = 'http://139.59.243.245/api/messageCenter/';
         fetch(url)
