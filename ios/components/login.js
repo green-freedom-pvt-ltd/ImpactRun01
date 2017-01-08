@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 import apis from '../../components/apis';
 import Icon from 'react-native-vector-icons/Ionicons';
-var FBLoginManager = require('NativeModules').FBLoginManager;
+var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
 
 import Lodingscreen from '../../components/LodingScreen';
 import styleConfig from '../../components/styleConfig';
@@ -43,31 +43,31 @@ class Profile extends Component {
 
         };
       }
-      
+
      LoginCountFunction(){
         let TotalLogin = {
-          TotalLoginCount:1,  
+          TotalLoginCount:1,
         }
           AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
-            AsyncStorage.getItem('LoginCount', (err, result) => { 
+            AsyncStorage.getItem('LoginCount', (err, result) => {
               var Logincount = JSON.parse(result);
               this.setState({
                 LoginCountTotal:Logincount,
                 openModel:true,
-              })  
+              })
           })
         })
 
-       
+
       }
 
       componentWillMount() {
-        AsyncStorage.getItem('LoginCount', (err, result) => { 
+        AsyncStorage.getItem('LoginCount', (err, result) => {
           var Logincount = JSON.parse(result);
           console.log('Logincount',Logincount);
           this.setState({
             LoginCountTotal:Logincount,
-          })        
+          })
         })
         GoogleSignin.configure({
           iosClientId:"437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
@@ -80,21 +80,21 @@ class Profile extends Component {
             let key = store[i][0];
             let val = store[i][1];
           });
-        }) 
+        })
         NetInfo.isConnected.fetch().done(
-          (isConnected) => {  
+          (isConnected) => {
           if (isConnected) {
             this.fetchData();
            }
           }
-        );   
+        );
       }
 
 
     fetchData(dataValue){
         fetch(apis.causeListapi)
         .then((response) => response.json())
-        .then((causes) => { 
+        .then((causes) => {
           var causes = causes;
           let causesData = []
           let newData  =[]
@@ -115,7 +115,7 @@ class Profile extends Component {
         .done();
       }
 
-      _signInGoogle() { 
+      _signInGoogle() {
         GoogleSignin.signIn()
         .then((user) => {
           AlertIOS.alert('myuserdata',JSON.stringify(user));
@@ -124,12 +124,12 @@ class Profile extends Component {
           var access_token = user.accessToken;
           fetch("http://dev.impactrun.com/api/users/", {
             method: "GET",
-            headers: {  
+            headers: {
               'Authorization':"Bearer google-oauth2 "+ user.accessToken,
             }
           })
           .then((response) => response.json())
-          .then((userdata) => { 
+          .then((userdata) => {
             console.log('responsedata',userdata);
               var userdata = userdata[0];
               let UID234_object = {
@@ -215,7 +215,7 @@ class Profile extends Component {
                   });
                });
                this.LoginCountFunction();
-              
+
               })
             .done();
            })
@@ -234,11 +234,11 @@ class Profile extends Component {
              var Fb_token = data.credentials.token;
               fetch("http://dev.impactrun.com/api/users/", {
               method: "GET",
-               headers: {  
+               headers: {
                   'Authorization':"Bearer facebook "+ Fb_token,
                 }
               })
-          
+
               .then((response) => response.json())
               .then((userdata) => {
                   var userdata = userdata[0];
@@ -320,14 +320,14 @@ class Profile extends Component {
                                   let val = store[i][1];
                               });
                               _this.navigateToHome();
-                              
+
                           });
                       });
                       _this.LoginCountFunction();
                    });
-                   
+
                   })
-    
+
            .catch((err) => {
               console.log('WRONG SIGNIN FB', err);
             })
@@ -336,7 +336,7 @@ class Profile extends Component {
           }
         });
       }
-  
+
       navigateToHome(){
         this.LoginCountFunction();
         this.props.navigator.push({
@@ -346,8 +346,8 @@ class Profile extends Component {
         navigator: this.props.navigator,
         })
       }
-      
-  
+
+
 
       renderLoadingView() {
         return (
@@ -365,8 +365,8 @@ class Profile extends Component {
         var text = this.state.user ? "LOG OUT" : "LOGIN WITH FACEBOOK";
         return  (
           <View>
-          <Image source={require('../../images/login_background.png')} style={styles.shadow}>         
-            <View style={styles.center}>         
+          <Image source={require('../../images/login_background.png')} style={styles.shadow}>
+            <View style={styles.center}>
             <Image source={require('../../images/Logo.png')} style={styles.logo}/>
             </View>
              <View style={styles.container}>
@@ -385,15 +385,15 @@ class Profile extends Component {
               </TouchableOpacity>
               <View style={styles.skip}>
                 <Text style={{color:styleConfig.grey_70,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
-                <TouchableOpacity       
+                <TouchableOpacity
                  onPress={() => this.navigateToHome()}>
                     <Text style={{marginLeft:5,color:styleConfig.fade_White,fontFamily: styleConfig.FontFamily,}}>SKIP</Text>
                 </TouchableOpacity>
               </View>
              </View>
             </View>
-          </Image> 
-          </View>   
+          </Image>
+          </View>
         )
       }
 
@@ -436,32 +436,32 @@ class Profile extends Component {
       flex: 1,
       width: deviceWidth,
       backgroundColor: 'transparent',
-      justifyContent: 'center',      
+      justifyContent: 'center',
     },
     skip:{
       flex:1,
       top:20,
       flexDirection:'row',
-      justifyContent: 'center',      
+      justifyContent: 'center',
     },
     logo:{
       width:200,
       height:40,
       justifyContent: 'center',
-      alignItems: 'center',          
+      alignItems: 'center',
     },
     facebook:{
       position:'absolute',
       width:45,
       height:45,
-      right:2, 
-      marginTop:2,    
+      right:2,
+      marginTop:2,
     },
     google:{
       position:'absolute',
       width:45,
       height:45,
-      right:2, 
+      right:2,
       marginTop:2,
     }
    })

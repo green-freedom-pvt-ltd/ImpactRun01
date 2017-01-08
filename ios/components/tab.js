@@ -42,20 +42,26 @@ class devdactic_tabs extends Component {
         loaded:false,
         myCusesDataExist:null,
         user:{},
+        open:false,
+        userSignup:false,
+        countCampaign:0,
       };
       this.getUserData = this.getUserData.bind(this);
+      this.render = this.render.bind(this);
+      this.ChangeCampaignCount = this.ChangeCampaignCount.bind(this);
     }
 
     componentWillMount() {
-      console.log('rrrrrrrrrrrrrrr',this.props.show);
       this.getUserData();
+      this.fetchModelData();
+
       NetInfo.isConnected.fetch().done(
-          (isConnected) => {  
+          (isConnected) => {
           if (isConnected) {
           this.fetchData();
           }else{
             AsyncStorage.getItem('CAUSESDATA', (err, result) => {
-          
+
             this.setState({
               myCauseNum: JSON.parse(result),
               loaded:true,
@@ -69,20 +75,22 @@ class devdactic_tabs extends Component {
                   this.setState({
                     myCusesDataExist:val,
                   })
-               })  
+               })
             });
             } catch (err) {
               console.log(err)
-            } 
+            }
             });
             }
            }
-        ); 
+        );
     }
+
+
     fetchData(dataValue){
       fetch(REQUEST_URL)
       .then((response) => response.json())
-      .then((causes) => { 
+      .then((causes) => {
         var causes = causes;
         let causesData = []
         let newData  =[]
@@ -98,7 +106,7 @@ class devdactic_tabs extends Component {
         })
         let numberOfCauses = this.state.myCauseNum;
         AsyncStorage.setItem('CAUSESDATA', JSON.stringify(numberOfCauses), () => {
-          AsyncStorage.getItem('CAUSESDATA', (err, result) => {          
+          AsyncStorage.getItem('CAUSESDATA', (err, result) => {
             this.setState({
               myCauseNum: JSON.parse(result),
               loaded:true,
@@ -112,18 +120,18 @@ class devdactic_tabs extends Component {
                   this.setState({
                     myCusesDataExist:val,
                   })
-               })  
+               })
             });
             } catch (err) {
               console.log(err)
-            } 
+            }
           });
         })
 
         AsyncStorage.multiSet(causesData, (err) => {
         })
       })
-      .done();  
+      .done();
     }
      getUserData(){
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
@@ -133,25 +141,76 @@ class devdactic_tabs extends Component {
           let user = JSON.parse(val);
             this.setState({
               user:user,
+              userSignup: (user != null) ? user.is_signup : false,
             })
+            // this.fetchModelData();
+           this.ModelCheks();
+
+
           })
         })
       }
-      showModel(){
-       AlertIOS.alert('myalert',this.props.show);
-      }
 
-  render() {
+
+
+     fetchModelData() {
+      var url = apis.DownshareMealapi;
+      fetch(url)
+        .then( response => response.json() )
+        .then( jsonData => {
+          this.setState({
+             ModelData:jsonData.results[0],
+          });
+        this.ModelCheks();
+        })
+      .catch( error => console.log('Error fetching: ' + error) );
+     }
+
+     ModelCheks(){
+      if (this.state.countCampaign == 0){
+      if (this.state.ModelData){
+         if(this.state.ModelData.is_active == true){
+          if(this.state.user != null && this.state.ModelData.is_always == true){
+            this.setState({
+              open:this.state.ModelData.is_always,
+            })
+           }else {
+            if (this.state.user != null && this.state.ModelData.show_on_sign_up == true) {
+             this.setState({
+                open:(this.state.user.is_signup && this.state.ModelData.show_on_sign_up ) ? true:false,
+              })
+            }else{
+              return;
+            }
+          }
+        }
+      }
+      }
+      else{
+        this.setState({
+              open:false,
+            })
+      }
+    }
+
+    ChangeCampaignCount(){
+      this.setState({
+        countCampaign: 1,
+      })
+    }
+
+    render() {
+    var StylePositionC = (this.state.open == true) ? 'absolute' : 'relative';
       if (this.state.myCauseNum != null) {
         return (
-        <View style={{flex:1}}>
-        
-      <TabBarIOS 
+        <View ref = "tab" style={{flex:1}}>
+
+      <TabBarIOS
         style={{height:100,padding:10}}
         unselectedTintColor="white"
         tintColor="#00b9ff"
-        barTintColor="white" 
-        selectedTab={this.state.selectedTab} 
+        barTintColor="white"
+        selectedTab={this.state.selectedTab}
         navigator={this.props.navigator}>
 
         <TabBarIOS.Item
@@ -176,7 +235,7 @@ class devdactic_tabs extends Component {
           }}>
          <Profile user={this.state.user} getUserData={this.getUserData} />
         </TabBarIOS.Item>
-        
+
         <TabBarIOS.Item
           selected={this.state.selectedTab === 'welcome'}
           title="Home"
@@ -188,7 +247,8 @@ class devdactic_tabs extends Component {
           }}>
           <View>
             <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>
-             <View style={{top:0,position:'absolute'}}>
+             <View style={{top:0, position:StylePositionC}}>
+             <DownloadShareMeal ChangeCampaignCount={this.ChangeCampaignCount} open={this.state.open} ModelData = {this.state.ModelData} user={this.state.user} getUserData={this.getUserData} />
             </View>
          </View>
         </TabBarIOS.Item>

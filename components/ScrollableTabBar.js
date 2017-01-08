@@ -11,8 +11,8 @@ const {
   Dimensions,
   AsyncStorage,
 } = ReactNative;
-const Button = require('./Button');
-import UserProfile from '../../ios/components/profileHeader';
+const Button = require('react-native-scrollable-tab-view/Button');
+import UserProfile from '../ios/components/profileHeader';
 const WINDOW_WIDTH = Dimensions.get('window').width;
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
@@ -65,7 +65,7 @@ const ScrollableTabBar = React.createClass({
       },
     };
   },
- 
+
   getInitialState() {
     this._tabsMeasurements = [];
     return {
@@ -158,7 +158,7 @@ const ScrollableTabBar = React.createClass({
       accessibilityTraits='button'
       onPress={() => this.props.goToPage(page)}
       onLayout={this.measureTab.bind(this, page)}
-    > 
+    >
     <View style={styles.tabBtnWrap}>
       <View style={[styles.tab, this.props.tabStyle,{backgroundColor:TabActiveBackground}]}>
         <Text style={[{color: textColor,fontFamily: 'Montserrat-Regular',fontWeight, }, textStyle, ]}>
@@ -215,7 +215,7 @@ const ScrollableTabBar = React.createClass({
       style={[styles.container, {backgroundColor: this.props.backgroundColor, }, this.props.style]}
       onLayout={this.onContainerLayout}
     ><View style={{top:-150}}>
-    <UserProfile userTotalAmount={this.props.userTotalAmount} RunCount={this.props.RunCount} getRunCount={this.props.getRunCount} getUserData={this.props.getUserData} user={user}></UserProfile> 
+    <UserProfile userTotalAmount={this.props.userTotalAmount} RunCount={this.props.RunCount} getRunCount={this.props.getRunCount} getUserData={this.props.getUserData} user={user}></UserProfile>
     </View>
       <ScrollView
         ref={(scrollView) => { this._scrollView = scrollView; }}

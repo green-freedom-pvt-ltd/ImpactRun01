@@ -27,7 +27,7 @@ function BtnHight () {
   }else {
   if(Devicewidth <= 320){
     return 55;
-  }else { 
+  }else {
     return 50;
   }
 }
@@ -39,7 +39,7 @@ function BtnWidth () {
   }else {
   if(Devicewidth <= 320){
     return 55;
-  }else { 
+  }else {
     return 50;
   }
 }
@@ -50,7 +50,7 @@ function fontSizer1 () {
   }else {
   if(Devicewidth <= 320){
     return 20;
-  }else { 
+  }else {
     return 14;
   }
 }
@@ -61,19 +61,30 @@ function fontSizer2 () {
   }else {
   if(Devicewidth <= 320){
     return 15;
-  }else { 
+  }else {
     return 10;
   }
 }
 }
 function fontSizer3 () {
   if(Devicewidth > 320){
-    return 16;
+    return 17;
   }else {
   if(Devicewidth <= 320){
+    return 15;
+  }else {
+    return 11;
+  }
+}
+}
+function fontSizer4 () {
+  if(Devicewidth > 320){
     return 14;
-  }else { 
-    return 10;
+  }else {
+  if(Devicewidth <= 320){
+    return 12;
+  }else {
+    return 8;
   }
 }
 }
@@ -83,7 +94,7 @@ function LogoHeight () {
   }else {
   if(Devicewidth <= 320){
     return 70;
-  }else { 
+  }else {
     return 70;
   }
 }
@@ -94,7 +105,7 @@ function LogoWidth () {
   }else {
   if(Devicewidth <= 320){
     return 100;
-  }else { 
+  }else {
     return 100;
   }
 }
@@ -105,7 +116,7 @@ function CardHeight () {
   }else {
   if(Deviceheight <= 480){
     return Deviceheight-150;
-  }else { 
+  }else {
     if (Deviceheight >= 480) {
     return Deviceheight-170;
   }
@@ -118,7 +129,7 @@ function CardTop () {
   }else {
   if(Deviceheight <= 480){
     return 3;
-  }else { 
+  }else {
     return 2;
   }
 }
@@ -130,7 +141,7 @@ function FontSizeLogin(){
   }else {
   if(Devicewidth <= 320){
     return 12;
-  }else { 
+  }else {
     return 8;
   }
 }
@@ -141,6 +152,7 @@ export default {
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),
+  FontSize4:fontSizer4(),
   FontSizeLogin:FontSizeLogin(),
   beginRunBtnHeight:BtnHight(),
   beginRunBtnWidth:BtnWidth(),

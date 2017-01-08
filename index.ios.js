@@ -10,7 +10,7 @@ import {
   Text,
   Navigator,
   AsyncStorage,
-  NetInfo
+  // NetInfo
  } from 'react-native';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -63,9 +63,9 @@ class Application extends Component{
       })
       this.setState({
         userLogin:this.state.user,
-        textState:(this.state.user) ? 'tab':'login', 
+        textState:(this.state.user) ? 'tab':'login',
       })
-    });  
+    });
   }
 
   onClickMenu() {
@@ -74,7 +74,7 @@ class Application extends Component{
   getDrawer() {
     return this.refs.drawer;
   }
-  
+
   LodingFunction(){
    return(
     <LodingScreen/>
@@ -109,20 +109,20 @@ class Application extends Component{
     console.log('mysomedatacount',mycausecount);
     return (
       <View  style={{flex: 1}} >
-    
-        <Navigator  
+
+        <Navigator
             ref={(ref) => this._navigator = ref}
             configureScene={ this._configureScene }
             initialRoute={{id:this.state.textState}}
             renderScene={this.renderScene.bind(this)}
             passProps={this.state.mycauseDataCount}
-            /> 
+            />
        </View>);
     }
     return this.LodingFunction();
     }
 
-    renderScene(route, navigator, user,causeLength) {  
+    renderScene(route, navigator, user,causeLength) {
       console.log('mycauseLengthData',user);
        switch (route.id) {
             case 'home':
@@ -146,16 +146,16 @@ class Application extends Component{
             case 'sharescreen':
             return <ShareScreen navigator={navigator} {...route.passProps}/>;
             case 'thankyouscreen':
-            return <ThankyouScreen navigator={navigator} {...route.passProps}/>;            
+            return <ThankyouScreen navigator={navigator} {...route.passProps}/>;
             case 'faq':
-            return <Faq navigator={navigator} {...route.passProps}/>;   
+            return <Faq navigator={navigator} {...route.passProps}/>;
             case 'leaderboard':
-            return <Leaderboard navigator={navigator} {...route.passProps}/>;   
+            return <Leaderboard navigator={navigator} {...route.passProps}/>;
             case 'impactleagueform2':
             return <ImpactLeagueForm2 navigator={navigator} {...route.passProps}/>;
             case 'impactleaguecode':
-            return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>; 
-      
+            return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>;
+
             default :
              return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
         }

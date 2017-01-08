@@ -41,13 +41,13 @@ class OpenURLButton extends React.Component {
       <TouchableOpacity style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:1}}
         onPress={this.handleClick}>
          <Icon style={{color:'black',fontSize:22,margin:7.5}}name={'grade'}></Icon>
-         <View><Text style={{color:'#4a4a4a'}}>Rate us</Text></View>   
+         <View><Text style={{color:'#4a4a4a'}}>Rate us</Text></View>
       </TouchableOpacity>
     );
   }
 }
 
-var FBLoginManager = require('NativeModules').FBLoginManager;
+var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 class Setting extends Component {
      constructor(props) {
@@ -119,12 +119,12 @@ class Setting extends Component {
               })
             };
         });
-      })  
+      })
       }
       removeItem(){
         let keys = 'Feedcount';
         AsyncStorage.removeItem(keys, (err) => {
-        }); 
+        });
       }
       render() {
          return (
@@ -136,9 +136,9 @@ class Setting extends Component {
                   <SocialShare/>
                 </View>
                 <View style={{flex:0.2}}>
-                  <OpenURLButton  url={'https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8'}/> 
-                </View> 
-                <View style={{justifyContent:'flex-start',flex:0.2}}>      
+                  <OpenURLButton  url={'https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8'}/>
+                </View>
+                <View style={{justifyContent:'flex-start',flex:0.2}}>
                 <TouchableOpacity onPress={()=>this._signOut()} style={{marginLeft:1,alignItems:'center',flexDirection:'row',flex:1}}>
                   <IconSec style={{color:'black',fontSize:20,margin:10}}name={this.state.IconText}></IconSec>
                   <View>
