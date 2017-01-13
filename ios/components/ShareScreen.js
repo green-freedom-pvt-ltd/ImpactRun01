@@ -52,7 +52,7 @@ import{
         visible: false,
         user:null,
        };
-      
+
       this.getUserData = this.getUserData.bind(this);
     }
 
@@ -68,7 +68,7 @@ import{
           })
         })
     }
-    
+
     shareLinkWithShareDialog() {
       var tmp = this;
       ShareDialog.canShow(this.state.shareLinkContent).then(
@@ -109,11 +109,11 @@ import{
           let key = store[i][0];
           let val = store[i][1];
           this.setState({
-          rundata:JSON.parse(val),  
-          loaded:true,             
-          })  
+          rundata:JSON.parse(val),
+          loaded:true,
+          })
           if (this.state.rundata != null) {};
-                  
+
          });
       });
       AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
@@ -121,9 +121,9 @@ import{
           let key = store[i][0];
           let val = store[i][1];
           this.setState({
-          user:JSON.parse(val),  
-          loaded:true,             
-          })              
+          user:JSON.parse(val),
+          loaded:true,
+          })
          });
          if(this.state.user) {
           this.setState({
@@ -134,14 +134,14 @@ import{
           social_thumb:this.state.user.social_thumb,
           user_id:this.state.user.user_id,
           })
-           
-          
+
+
         }
       });
-    } 
+    }
     ifConnectTonetPost(){
       NetInfo.isConnected.fetch().done(
-      (isConnected) => { 
+      (isConnected) => {
         if (isConnected) {
            this.navigateToThankyou();
            this.PostRun();
@@ -153,9 +153,9 @@ import{
       }
      );
     }
-  
+
     SaveRunLocally(){
-     
+
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
      console.log('causeMessage'+CauseShareMessage);
@@ -180,7 +180,7 @@ import{
         avg_speed:speed,
         run_amount:impact,
         run_duration: time,
-       
+
       };
 
       let multi_set_pairs = [
@@ -190,7 +190,7 @@ import{
           ['RID1', JSON.stringify(RID1)],
       ]
 
-    
+
       AsyncStorage.multiSet(multi_set_pairs, (err) => {
           AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
               AsyncStorage.multiGet(['RID1'], (err, stores) => {
@@ -201,20 +201,19 @@ import{
                        userRunData:val,
                       })
                   });
-                  
+
                   console.log('myRunSomeData',this.state.userRunData);
               })
-            .then((userRunData) => { 
-              
+            .then((userRunData) => {
+
             })
             .done();
           })
-          
+
        });
      }else{
       if (this.state.rundata != null) {
       var TotalRunLegth = this.state.rundata;
-      AlertIOS.alert('mytitle'+TotalRunLegth);
       console.log()
       var Runno = 2;
       var RunID = 'RID'+Runno;
@@ -240,7 +239,7 @@ import{
           ['RID'+Runno, JSON.stringify(RunID)],
       ]
 
-    
+
       AsyncStorage.multiSet(multi_set_pairs, (err) => {
           AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
               AsyncStorage.multiGet(['RID'+Runno], (err, stores) => {
@@ -251,15 +250,15 @@ import{
                        userRunData:val,
                       })
                   });
-                  
+
                   console.log('myRunSomeData',this.state.userRunData);
               })
-             .then((userRunData) => { 
+             .then((userRunData) => {
               this.navigateToThankyou();
               })
              .done();
           })
-          
+
        });
       };
      }
@@ -278,10 +277,10 @@ import{
       var cause = this.props.data;
       fetch(apis.runApi, {
          method: "POST",
-         headers: {  
+         headers: {
             'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
-            'Content-Type': 'application/json',           
+            'Content-Type': 'application/json',
           },
           body:JSON.stringify({
           cause_run_title:cause.cause_title,
@@ -292,11 +291,11 @@ import{
           avg_speed:speed,
           run_amount:impact,
           run_duration: time,
-         
+
           })
        })
       .then((response) => response.json())
-      .then((userRunData) => { 
+      .then((userRunData) => {
       })
     }else{
      AlertIOS.alert('rundata','not more than 100');
@@ -314,7 +313,7 @@ import{
       navigator: this.props.navigator,
       })
      }
-     
+
     navigateToThankyou(){
       return this.ThankyouScreen();
     }
@@ -336,7 +335,7 @@ import{
       {text: 'Confirm', onPress: () => this.DiscardRunfunction() },
       {text: 'Cancel',},
       ],
-     ); 
+     );
     }
 
 
@@ -361,7 +360,7 @@ import{
         )
       }
       if (this.state.user === null) {
-       
+
         return(
         <View style={{height:deviceHeight,width:deviceWidth,}}>
           <View style={styles.container}>
@@ -402,7 +401,7 @@ import{
         </View>
        )
       }else{
-     
+
       return(
         <View style={styles.container}>
           <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
@@ -444,7 +443,7 @@ import{
               </View>
             </View>
           </Image>
-        </View>  
+        </View>
       )
      }
     }
@@ -472,13 +471,13 @@ import{
     shadow: {
       flex:1,
       backgroundColor: 'transparent',
-      justifyContent: 'center', 
-     alignItems: 'center',     
+      justifyContent: 'center',
+     alignItems: 'center',
     },
     skip:{
       top:20,
       flexDirection:'row',
-      justifyContent: 'center',      
+      justifyContent: 'center',
     },
     shareButton:{
       flexDirection:'row',

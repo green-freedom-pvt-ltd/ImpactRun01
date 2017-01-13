@@ -20,7 +20,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LoginBtns extends Component {
-    
+
     constructor(props) {
       super(props);
       this.state = {
@@ -32,14 +32,14 @@ class LoginBtns extends Component {
     }
 
     componentDidMount() {
-      AsyncStorage.getItem('LoginCount', (err, result) => { 
+      AsyncStorage.getItem('LoginCount', (err, result) => {
         var Logincount = JSON.parse(result);
         console.log('Logincount',Logincount);
         this.setState({
           LoginCountTotal:Logincount,
-        })        
+        })
       })
-    } 
+    }
     handleFBLogin(){
      var _this = this;
      FBLoginManager.login(function(error, data){
@@ -49,7 +49,7 @@ class LoginBtns extends Component {
          var Fb_token = data.credentials.token;
           fetch("http://dev.impactrun.com/api/users/", {
           method: "GET",
-           headers: {  
+           headers: {
               'Authorization':"Bearer facebook "+ Fb_token,
             }
           })
@@ -141,25 +141,24 @@ class LoginBtns extends Component {
          });
           _this.props.getUserData();
           })
-         .done(); 
+         .done();
          } else {
         console.log(error, data);
        }
      })
     }
-    
+
     LoginCountFunction(){
         let TotalLogin = {
-          TotalLoginCount:'1',  
+          TotalLoginCount:'1',
         }
         if (this.state.LoginCountTotal === null ) {
           AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
-            AsyncStorage.getItem('LoginCount', (err, result) => { 
+            AsyncStorage.getItem('LoginCount', (err, result) => {
               var Logincount = JSON.parse(result);
               this.setState({
                 LoginCountTotal:Logincount,
-              })  
-             AlertIOS.alert('Congrats!', "You've Helped solve hunger.'Zomato' and 'Feeding India' are proud to share a meal with a hungry street kid in Delhi.");
+              })
           })
         })
         }else{
@@ -170,19 +169,19 @@ class LoginBtns extends Component {
     }
 
    _signInGoogle() {
-    
+
     GoogleSignin.signIn()
     .then((user) => {
       this.setState({user:user,loaded:true,provider:'google'});
       var access_token = user.accessToken;
       fetch("http://dev.impactrun.com/api/users/", {
       method: "GET",
-       headers: {  
+       headers: {
           'Authorization':"Bearer google-oauth2 "+ user.accessToken,
         }
       })
       .then((response) => response.json())
-      .then((userdata) => { 
+      .then((userdata) => {
        console.log('userdata',userdata);
          var userdata = userdata[0];
               let UID234_object = {
@@ -360,10 +359,10 @@ var styles = StyleSheet.create({
         flex: 1,
         width: deviceWidth,
         backgroundColor: 'transparent',
-        justifyContent: 'center',      
+        justifyContent: 'center',
       },
      skip:{
-       justifyContent: 'center',      
+       justifyContent: 'center',
       },
     logo:{
         top:100,
@@ -371,20 +370,20 @@ var styles = StyleSheet.create({
         height:40,
         justifyContent: 'center',
         alignItems: 'center',
-             
+
       },
       facebook:{
         position:'absolute',
         width:45,
         height:45,
-        right:5, 
-        marginTop:2,    
+        right:5,
+        marginTop:2,
       },
        google:{
         position:'absolute',
         width:45,
         height:45,
-        right:5, 
+        right:5,
         marginTop:2,
       }
    })

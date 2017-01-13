@@ -118,7 +118,6 @@ class Profile extends Component {
       _signInGoogle() {
         GoogleSignin.signIn()
         .then((user) => {
-          AlertIOS.alert('myuserdata',JSON.stringify(user));
           console.log('userdata',user.accessToken);
           this.setState({user:user,loaded:true,});
           var access_token = user.accessToken;
