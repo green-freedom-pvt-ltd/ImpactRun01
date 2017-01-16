@@ -57,8 +57,6 @@ class Profile extends Component {
               })  
           })
         })
-
-       
       }
 
       componentWillMount() {

@@ -11,8 +11,8 @@ const {
   Dimensions,
   AsyncStorage,
 } = ReactNative;
-const Button = require('./Button');
-import UserProfile from '../../ios/components/profileHeader';
+const Button = require('../node_modules/react-native-scrollable-tab-view/Button');
+import UserProfile from '../ios/components/profileHeader';
 const WINDOW_WIDTH = Dimensions.get('window').width;
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
