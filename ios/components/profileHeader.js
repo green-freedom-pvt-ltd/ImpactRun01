@@ -9,8 +9,8 @@ var {
   View,
   AsyncStorage,
   Dimensions,
-   VibrationIOS,
-   TouchableHighlight
+  VibrationIOS,
+  TouchableHighlight
 } = ReactNative;
 
 
@@ -33,7 +33,6 @@ var UserProfile = React.createClass({
    
     },
     componentDidMount:function() {
-      console.log('imarendered');
     },
  
     social_thumb:function(){
@@ -63,12 +62,10 @@ var UserProfile = React.createClass({
     },
     TotalAmount:function(){
       if (this.props.userTotalAmount != null) {
-        console.log('myrupees',this.props.userTotalAmount);
         return(
            <Text style={styles.totalcontentText}>{parseFloat(this.props.userTotalAmount).toFixed(0)}</Text>
           )
       }else{
-        console.log('myrupees',this.props.userTotalAmount);
         return(
             <Text style={styles.totalcontentText}>0</Text>
           )
@@ -81,7 +78,6 @@ var UserProfile = React.createClass({
           <Text style={styles.totalcontentText}>{this.props.RunCount}</Text>
         )
       }else{
-        console.log('myruns',this.props.RunCount);
         return(
             <Text style={styles.totalcontentText}>0</Text>
         )

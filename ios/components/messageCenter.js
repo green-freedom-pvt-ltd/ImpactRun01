@@ -32,11 +32,11 @@ class MessageCenter extends Component {
 
   render() {
     return (
-    <View navigator={this.props.navigator}>
+    <View >
       <View style={commonStyles.Navbar}>
         <Text style={commonStyles.menuTitle}>Feeds</Text>
       </View>
-      <MessageCenterData navigator={this.props.navigator}/>
+      <MessageCenterData navigator={this.props.navigator} />
     </View>
     );
   }

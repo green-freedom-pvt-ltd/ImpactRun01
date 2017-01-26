@@ -22,7 +22,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import API from '../../components/RunPaginationApi';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-import PTRView from 'react-native-pull-to-refresh';
 
 class Profile extends Component {
     constructor(props) {
@@ -143,7 +142,6 @@ class Profile extends Component {
           this.setState({
             RunCountTotal:TotalRun.TotalRunCount,
           })
-          console.log('RUNCOUNT12',this.state.RunCountTotal);
         })
       }
 

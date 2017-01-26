@@ -26,10 +26,13 @@ import Setting from './ios/components/setting';
 import Runlogingscreen from './ios/components/runlodingscreen';
 import ShareScreen from './ios/components/shareScreen';
 import ThankyouScreen from './ios/components/thankyouScreen';
-import ImpactLeagueForm2 from './components/ImpactLeagueForm2';
-import ImpactLeagueCode from './components/ImpactLeagueCode';
+import ImpactLeagueForm2 from './components/ImpactLeague/ImpactLeagueForm2';
+import ImpactLeagueCode from './components/ImpactLeague/ImpactLeagueCode';
+import ImpactLeagueHome from './components/ImpactLeague/ImpactLeagueHome';
+import ImpactLeagueLeaderBoard from './components/ImpactLeague/ImpactLeagueLeaderboard';
 import Faq from './ios/components/faq';
-import MessageCenter from './ios/components/messageCenterData';
+import MessageCenter from './ios/components/messageCenter';
+import MessageCenterData from './ios/components/messageCenterData';
 import MessageDetail from './ios/components/messageDetail';
 import DownloadShareMeal from './components/downloadShareMeal';
 import Leaderboard  from'./ios/components/leaderBoard';
@@ -52,7 +55,7 @@ class Application extends Component{
     };
   }
   componentWillMount(){
-    AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+    AsyncStorage.multiGet(['UID234'], (err, stores) => {
       stores.map((result, i, store) => {
         let key = store[i][0];
         let val = store[i][1];
@@ -99,6 +102,12 @@ class Application extends Component{
        break;
        case 'thankyouscreen':
        return Navigator.SceneConfigs.FloatFromRight
+       break;
+       case 'impactleaguehome':
+       return Navigator.SceneConfigs.FloatFromRight
+       break;
+       case 'impactleagueform2':
+       return Navigator.SceneConfigs.FloatFromRight
    }
 };
 
@@ -129,6 +138,8 @@ class Application extends Component{
             return <Home navigator={navigator} {...route.passProps}/>;
             case 'messagecenter':
             return <MessageCenter navigator={navigator} {...route.passProps}/>;
+            case 'messagecenterdata':
+            return <MessageCenterData navigator={navigator} {...route.passProps}/>;
             case 'tab':
             return <Tab  navigator={navigator} {...route.passProps}/>;
             case 'causedetail':
@@ -154,7 +165,11 @@ class Application extends Component{
             case 'impactleagueform2':
             return <ImpactLeagueForm2 navigator={navigator} {...route.passProps}/>;
             case 'impactleaguecode':
-            return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>; 
+            return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>;     
+            case 'impactleaguehome':
+            return <ImpactLeagueHome navigator={navigator} {...route.passProps}/>; 
+            case 'impactleagueleaderboard':
+            return <ImpactLeagueLeaderBoard navigator={navigator} {...route.passProps}/>; 
       
             default :
              return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>

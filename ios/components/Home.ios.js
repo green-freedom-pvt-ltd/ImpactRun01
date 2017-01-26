@@ -15,7 +15,6 @@ import {
   VibrationIOS,
  } from 'react-native';
 import TimeFormatter from 'minutes-seconds-milliseconds';
-import StopWatch from './StopWatch'
 import TimerMixin from 'react-timer-mixin';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -621,7 +620,6 @@ SettingsService.init('iOS');
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                    <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
-                  <StopWatch/>
                 </View>
               </View>
             </View>

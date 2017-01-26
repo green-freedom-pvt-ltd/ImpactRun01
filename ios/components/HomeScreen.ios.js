@@ -74,24 +74,7 @@ class Profile extends Component {
            })
          })
         })  
-        AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let val = store[i][1];
-          this.setState({
-          user:JSON.parse(val),  
-          loaded:true,             
-          })              
-        });
-        if(this.state.user) {
-          this.setState({
-          first_name:this.state.user.first_name,
-          gender_user:this.state.user.gender_user,
-          last_name:this.state.user.last_name,
-          email:this.state.user.email,
-          social_thumb:this.state.user.social_thumb,
-          user_id:this.state.user.user_id,
-          })
+        if(this.props.user) {
            NetInfo.isConnected.fetch().done(
             (isConnected) => {
               if (isConnected && this.state.Rundata != null) {
@@ -100,15 +83,12 @@ class Profile extends Component {
             }
            );  
          }
-        });
       }
       _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {      
-        console.log('myparesesponced');
           return false;
       }
 
       _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {        
-        console.log('myparesesponced');
           return true;
       }
 
@@ -138,7 +118,7 @@ class Profile extends Component {
           } 
       }
      postPastRun(){
-      var userdata = this.state.user;
+      var userdata = this.props.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
@@ -195,7 +175,7 @@ class Profile extends Component {
       const currentIndex = routes.indexOf(route);
       const inputRange = routes.map((x, i) => i);
       const translateOutputRange = inputRange.map(i => {
-        return width * (currentIndex - i) - ((width-deviceWidth+55) * (currentIndex - i));
+        return width * (currentIndex - i) - ((width-deviceWidth+70) * (currentIndex - i));
       });
       const scaleOutputRange = inputRange.map(i => {
         if (currentIndex === i) {
@@ -277,22 +257,6 @@ class Profile extends Component {
       });
     };
 
-    // GOOGLE_LOGOUT
-    _signOut() {
-        GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
-       this.setState({user: null});
-        this.props.navigator.push({
-          title: 'Gps',
-          id:'login',
-          index: 0,
-          navigator: this.props.navigator,
-        });
-        let keys = ['UID234', 'UID345'];
-          AsyncStorage.multiRemove(keys, (err) => {
-          });
-        })
-    };
-    
     functionForIphone4Brief(route){
       if (deviceheight <= 480) {
       return(
@@ -325,7 +289,7 @@ class Profile extends Component {
               </Image>
               <View style={styles.borderhide}></View>
               <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-              <Text style={{color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
+              <Text numberOfLines={1} style={{color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
               <View  onPress={()=>this.navigateToCauseDetail()}>
                 {this.functionForIphone4Brief(route)}
               </View>
@@ -405,7 +369,7 @@ class Profile extends Component {
      },
      album: {
       backgroundColor: '#fff',
-      width: deviceWidth-52,
+      width: deviceWidth-65,
       height: styleConfig.CardHeight,
       elevation: 12,
       shadowColor: '#000000',
@@ -417,13 +381,13 @@ class Profile extends Component {
       borderRadius:5,
      },
      cover: {
-      width: deviceWidth-52,
+      width: deviceWidth-65,
       height:deviceheight/2-90,
       borderRadius:5,
       resizeMode: 'cover',
      },
      borderhide:{
-      width: deviceWidth-52,
+      width: deviceWidth-65,
       height:10,
       top:-10,
       backgroundColor:'white',
@@ -442,7 +406,7 @@ class Profile extends Component {
       borderRadius:80,
       top:-styleConfig.beginRunBtnHeight-10,
       shadowColor: '#000000',
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.4,
       shadowRadius: 4,
       shadowOffset: {
         height: 3,

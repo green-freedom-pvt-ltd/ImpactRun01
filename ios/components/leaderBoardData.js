@@ -29,6 +29,7 @@ class LeaderboardData extends Component {
           userCount: 0
         };
         this.onFetch = this.onFetch.bind(this);
+        this.renderRow = this.renderRow.bind(this);
       }
      
 
@@ -79,7 +80,9 @@ class LeaderboardData extends Component {
 
       renderRow(rowData, index,rowID){
         rowID++
-        let colors = ['#ffcd4d', '#ffcd4d', '#ffcd4d', 'white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white'];
+        console.log('rodatacount',rowData.count);
+        var backgroundcolor=(this.props.user.user_id === rowData.user_id)?'#ffcd4d':"white";
+        let colors = ['#ffcd4d', '#ffcd4d', '#ffcd4d', 'white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white','white'];
         let style = [
           styles.row, 
           {'backgroundColor': colors[rowID % colors.length-1],
@@ -93,14 +96,15 @@ class LeaderboardData extends Component {
             'width':25,
           }
         ];
+        console.log('reowdataleaderboard',rowData);
         return (
-          <View  style={styles.cardLeaderBoard}>
+          <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor,}]}>
             <View style={style}>
               <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
             </View>
             <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             <View>
-              <Text style={styles.txt}>{rowData.first_name} {rowData.last_name}</Text>
+            <Text style={styles.txt}>{rowData.first_name} {rowData.last_name}</Text>
             </View>
             <Text style={styles.txtSec}>{parseFloat(rowData.last_week_distance.last_week_distance).toFixed(2)} Km</Text>
           </View>
@@ -118,8 +122,9 @@ class LeaderboardData extends Component {
       render() {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-95,width:deviceWidth,paddingBottom:15,}}>
+            <View style={{backgroungColor:'red',height:deviceHeight-95,width:deviceWidth,paddingBottom:15,}}>
                <GiftedListView
+               style={styles.container}
                 rowView={this.renderRow}
                 onFetch={this.onFetch}
                 firstLoader={true} // display a loader for the first fetching
@@ -140,25 +145,29 @@ class LeaderboardData extends Component {
 }
 
 const styles = StyleSheet.create({
+
   thumb: {
     height:50,
     width:50,
     borderRadius:25,
     backgroundColor:'#ffcd4d',
     marginBottom: 5,
+    borderColor:'#ccc',
+    borderWidth:2,
   },
   separator: {
       height: 1,
       backgroundColor: '#CCC'
     },
   cardLeaderBoard:{
-    backgroundColor:'white',
     alignItems: 'center',
     flexDirection:'row',
     padding:10,
     marginTop:5,
     left:5,
     width:deviceWidth-10,
+    marginBottom:5,
+    borderRadius:5,
   },
   txt: {
     width:deviceWidth-200,

@@ -13,7 +13,7 @@ import{
     AsyncStorage,
     AlertIOS,
   } from 'react-native';
-var FBLoginManager = require('NativeModules').FBLoginManager;
+var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
 import styleConfig from './styleConfig';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -34,7 +34,6 @@ class LoginBtns extends Component {
     componentDidMount() {
       AsyncStorage.getItem('LoginCount', (err, result) => { 
         var Logincount = JSON.parse(result);
-        console.log('Logincount',Logincount);
         this.setState({
           LoginCountTotal:Logincount,
         })        
@@ -45,7 +44,6 @@ class LoginBtns extends Component {
      FBLoginManager.login(function(error, data){
       if (!error) {
         _this.setState({ user : data,loaded:true,provider:'facebook'});
-        console.log('userFbdata'+JSON.stringify(data.credentials.token));
          var Fb_token = data.credentials.token;
           fetch("http://dev.impactrun.com/api/users/", {
           method: "GET",
@@ -69,6 +67,7 @@ class LoginBtns extends Component {
                   total_amount:userdata.total_amount,
                   is_signup:userdata.sign_up,
                   total_distance:userdata.total_distance,
+                  team_code:userdata.team_code,
               };
               // first user, delta values
               let UID234_delta = {
@@ -84,48 +83,19 @@ class LoginBtns extends Component {
                   total_amount:userdata.total_amount,
                   is_signup:userdata.sign_up,
                   total_distance:userdata.total_distance,
+                  team_code:userdata.team_code,
 
                };
-              // // second user, initial values
-               let UID345_object = {
-                  first_name:userdata.first_name,
-                  user_id:userdata.user_id,
-                  last_name:userdata.last_name,
-                  gender_user:userdata.gender_user,
-                  email:userdata.email,
-                  phone_number:userdata.phone_number,
-                  Birth_day:userdata.birthday,
-                  social_thumb:userdata.social_thumb,
-                  auth_token:userdata.auth_token,
-                  total_amount:userdata.total_amount,
-                  is_signup:userdata.sign_up,
-                  total_distance:userdata.total_distance,
-               };
-
-              // // second user, delta values
-               let UID345_delta = {
-                  first_name:userdata.first_name,
-                  user_id:userdata.user_id,
-                  last_name:userdata.last_name,
-                  gender_user:userdata.gender_user,
-                  email:userdata.email,
-                  phone_number:userdata.phone_number,
-                  Birth_day:userdata.birthday,
-                  social_thumb:userdata.social_thumb,
-                  auth_token:userdata.auth_token,
-                  total_amount:userdata.total_amount,
-                  is_signup:userdata.sign_up,
-                  total_distance:userdata.total_distance,
-              };
+    
 
 
             let multi_set_pairs = [
                 ['UID234', JSON.stringify(UID234_object)],
-                ['UID345', JSON.stringify(UID345_object)]
+             
             ]
             let multi_merge_pairs = [
                 ['UID234', JSON.stringify(UID234_delta)],
-                ['UID345', JSON.stringify(UID345_delta)]
+             
             ]
 
         AsyncStorage.multiSet(multi_set_pairs, (err) => {
@@ -198,6 +168,7 @@ class LoginBtns extends Component {
                   total_amount:userdata.total_amount,
                   is_signup:userdata.sign_up,
                   total_distance:userdata.total_distance,
+                  team_code:userdata.team_code,
               };
               // first user, delta values
               let UID234_delta = {
@@ -213,48 +184,18 @@ class LoginBtns extends Component {
                   total_amount:userdata.total_amount,
                   is_signup:userdata.sign_up,
                   total_distance:userdata.total_distance,
+                  team_code:userdata.team_code,
 
                };
-              // // second user, initial values
-               let UID345_object = {
-                  first_name:userdata.first_name,
-                  user_id:userdata.user_id,
-                  last_name:userdata.last_name,
-                  gender_user:userdata.gender_user,
-                  email:userdata.email,
-                  phone_number:userdata.phone_number,
-                  Birth_day:userdata.birthday,
-                  social_thumb:userdata.social_thumb,
-                  auth_token:userdata.auth_token,
-                  total_amount:userdata.total_amount,
-                  is_signup:userdata.sign_up,
-                  total_distance:userdata.total_distance,
-               };
-
-              // // second user, delta values
-               let UID345_delta = {
-                  first_name:userdata.first_name,
-                  user_id:userdata.user_id,
-                  last_name:userdata.last_name,
-                  gender_user:userdata.gender_user,
-                  email:userdata.email,
-                  phone_number:userdata.phone_number,
-                  Birth_day:userdata.birthday,
-                  social_thumb:userdata.social_thumb,
-                  auth_token:userdata.auth_token,
-                  total_amount:userdata.total_amount,
-                  is_signup:userdata.sign_up,
-                  total_distance:userdata.total_distance,
-              };
-
+  
 
           let multi_set_pairs = [
               ['UID234', JSON.stringify(UID234_object)],
-              ['UID345', JSON.stringify(UID345_object)]
+            
           ]
           let multi_merge_pairs = [
               ['UID234', JSON.stringify(UID234_delta)],
-              ['UID345', JSON.stringify(UID345_delta)]
+         
           ]
 
           AsyncStorage.multiSet(multi_set_pairs, (err) => {
@@ -286,17 +227,19 @@ class LoginBtns extends Component {
 
       this.props.onPress && this.props.onPress();
     }
-     handleFBLogout(){
-    var _this = this;
-    FBLoginManager.logout(function(error, data){
-      if (!error) {
-        _this.setState({ user : null});
-        _this.props.onLogout && _this.props.onLogout();
-      } else {
-        console.log(error, data);
-      }
-    });
-  }
+    
+    handleFBLogout(){
+      var _this = this;
+      FBLoginManager.logout(function(error, data){
+        if (!error) {
+          _this.setState({ user : null});
+          _this.props.onLogout && _this.props.onLogout();
+        } else {
+          console.log(error, data);
+        }
+      });
+    }
+
 		render() {
 		return (
           <View style={styles.container}>
@@ -312,9 +255,9 @@ class LoginBtns extends Component {
               </View>
               <Image source={require('../images/google_plus.png')} style={styles.google}/>
             </TouchableOpacity>
-           </View>
-					);
-	    }
+          </View>
+				);
+	   }
 }
 var styles = StyleSheet.create({
     container:{

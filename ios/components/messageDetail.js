@@ -10,6 +10,7 @@ import{
     Dimensions,
     TouchableOpacity,
     Text,
+    AlertIOS
   } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
@@ -24,28 +25,24 @@ class CauseDetail extends Component {
       }
 
       // Navigate to Run Screen
-      NavigateToRunScreen(){
-        var data = this.props.data;
-         this.props.navigator.push({
-            title:'RunScreen',
-            id:'runlodingscreen',
-            navigator: this.props.navigator,
-            passProps: {data: data}
-         })
-      }
+      
 
       // Render_Screen
       render() {
-        var data = this.props.data
+        var data = this.props.rowData;
         return (
           <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}>  
             <View style={styles.Navbar}>
               <View style={{top:10,left:0,position:'absolute',height:50,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}> 
-                <TouchableOpacity onPress={this.popRoute.bind(this)} ><Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-close'}></Icon></TouchableOpacity>
+                <TouchableOpacity onPress={this.popRoute.bind(this)} style={{justifyContent: 'center',alignItems: 'center', height:70,width:70,}}><Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-close'}></Icon></TouchableOpacity>
               </View>
               <Text style={styles.menuTitle}>Feed</Text>
             </View>
-            
+            <View>
+            <Image style={{width:deviceWidth, height:deviceHeight/2}} source={{uri:data.message_image}}></Image>
+            <Text>{data.message_title}</Text>
+            <Text>{data.message_description}</Text>
+            </View>
           </View>
         )
       }
@@ -61,85 +58,6 @@ class CauseDetail extends Component {
     backgroundColor:'white',
   },
 
-  overlaytext:{
-    position:"absolute",
-    width:deviceWidth,
-    height:30,
-    backgroundColor:"rgba(51, 35, 80, 0.64)",
-    bottom:0,
-  },
-  slidesponser:{
-    paddingTop:5,
-    paddingBottom:5,
-    fontSize:15,
-    color:'#c0c'
-  },
-   backbtn:{
-    paddingLeft:10,
-    paddingTop:10,
-    height:50,
-    width:50,
-    fontSize:30,
-    backgroundColor:'transparent',
-   },
-  image:{
-    height:deviceHeight/2-20,
-  },
-  colortext:{
-    height:25,
-    fontSize:20,
-    fontWeight:'500',
-    letterSpacing:1,
-  },
-  Disctext:{
-   fontSize:15,
-   letterSpacing:1,
-   marginBottom:100,
-     },
-  bytext:{
-    paddingBottom:10,
-  },
-  btnBeginRun:{
-    position: 'absolute', 
-    left: 0, 
-    right: 0, 
-    bottom:55,
-    width:deviceWidth,
-    height:50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:'#e03ed2'
-  },
-  Btntext:{
-     backgroundColor:'transparent',
-     color:'white',
-     fontWeight:'500',
-     fontSize:20,
-  },
-  closebtn:{
-    left:10,
-    height:100,
-    width:100,
-    shadowColor: '#000000',
-      shadowOpacity: 0.6,
-      shadowRadius: 3,
-      shadowOffset: {
-        height: 4,
-      },
-  },
-  categorytext:{
-    position:'absolute',
-    bottom:-3,
-    padding:10,
-    backgroundColor:'transparent',
-    color:'white',
-    fontSize:16,
-    left:5,
-    fontWeight:'500',
-  },
-  textwraper:{
-    padding:10,
-  },
 
  Navbar:{
   position:'relative',
