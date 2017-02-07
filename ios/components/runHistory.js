@@ -15,7 +15,6 @@ import RunHistroyListView from '../../components/ListviewRunHistory';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import LoginBtns from '../../components/LoginBtns';
-import PTRView from 'react-native-pull-to-refresh';
 
 class RunHistroy extends Component {  
       renderRunsRow(rowData) {
@@ -23,8 +22,12 @@ class RunHistroy extends Component {
         var RunDistance = parseFloat(rowData.distance).toFixed(1);
         var RunDate = rowData.start_time;
         var day = RunDate.split("-")[2];
-        var time = rowData.run_duration;
-        var minutes = time.split(":")[1];
+        var time = rowData.run_duration;        
+        var hours = time.split(":")[0];
+         var minutes = time.split(":")[1];
+         var seconds = time.split(":")[2];
+        console.log('time'+ JSON.stringify(hours));
+        var hrsAndMins = (hours != '00')? hours+" hrs "+ minutes+" mins":(minutes != '00')? minutes+" mins":seconds+" sec";
         var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1]; 
         var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
@@ -46,7 +49,7 @@ class RunHistroy extends Component {
                     <Text style={styles.runContentText}>{RunAmount} Rs</Text>
                   </View>
                   <View style={styles.runContent}> 
-                    <Text style={styles.runContentText}>{minutes} mins</Text>
+                    <Text style={styles.runContentText}>{hrsAndMins}</Text>
                   </View>
                </View>
                 </View>

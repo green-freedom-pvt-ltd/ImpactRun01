@@ -21,6 +21,7 @@ import LodingScreen from '../../components/LodingScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+var DetailScreen = require('./messageDetail');
 class Feed extends Component {
 
       constructor(props) {
@@ -30,6 +31,8 @@ class Feed extends Component {
           FeedData: ds.cloneWithRows([]),
           loaded: false,
         };
+        this.renderRow = this.renderRow.bind(this);
+        this.NavigateToDetail = this.NavigateToDetail.bind(this);
       }
 
       navigateTOhome(){
@@ -39,15 +42,14 @@ class Feed extends Component {
           navigator: this.props.navigator,
        })
       }
-       NavigateToDetail(rowData){
+
+      NavigateToDetail(rowData){
         this.props.navigator.push({
-          title: 'Gps',
-          id:'messagedetail',
-          index:0,
-          navigator: this.props.navigator,
-          passProps:{data:rowData},
+          title: 'feeds',
+          id:'messagedetail', 
+          passProps:{rowData:rowData}
         })
-       }
+      }
 
       componentDidMount() {
         NetInfo.isConnected.fetch().done(
@@ -60,7 +62,6 @@ class Feed extends Component {
       }
       
       componentWillUnmount() {
-        console.log('myFucckingComponent')    
       }
 
       fetchFeedData() {
@@ -77,25 +78,25 @@ class Feed extends Component {
         };
         AsyncStorage.setItem('Feedcount', JSON.stringify(feedCount), () => {
         });
-          AlertIOS.alert('feeds',JSON.stringify(jsonData));
         })
         .catch( error => console.log('Error fetching: ' + error) );
       }
 
-      navigateTomessageDetail(){
-        return this.NavigateToDetail();
-      }
-
+    
       renderRow(rowData){
         var me = this;
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
-            <TouchableOpacity onPress={() => this.navigateTomessageDetail.bind(this,rowData)} style={{borderRadius:4,width:deviceWidth-10,backgroundColor:'white',padding:5,marginBottom:5,marginTop:5,}}>
+            <TouchableOpacity onPress={() => this.NavigateToDetail(rowData)} style={styles.card}>
               <View style={styles.thumb}>
                 <Image  style={styles.thumb} source={{uri:rowData.message_image}}></Image>
                 <Text style={styles.txt}>{rowData.message_center_id}</Text>
               </View>
               <Text style={styles.txtSec}>{rowData.message_brief}</Text>
+              <View style={{flexDirection:'row'}}>
+                <Text style={styles.txtSec}>{rowData.message_date}</Text>
+                <Text style={styles.txtSec}>share</Text>
+              </View>
             </TouchableOpacity>
           </View>
         );
@@ -116,8 +117,8 @@ class Feed extends Component {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
             <View style={{height:deviceHeight-105,width:deviceWidth,paddingBottom:45,}}>
-               <ListView
-               navigator={this.props.navigator}
+               <ListView 
+                 navigator={this.props.navigator}
                 dataSource={this.state.FeedData}
                 renderRow={this.renderRow}
                 style={styles.container}>
@@ -133,8 +134,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
     height:deviceHeight,
     width:deviceWidth,
-    bottom:-45,
+    bottom:-30,
     marginTop:-45,
+  },
+  card:{
+    borderRadius:4,
+    width:deviceWidth-10,
+    backgroundColor:'white',
+    padding:5,
+    marginBottom:5,
+    marginTop:5,
+    shadowColor: '#000000',
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 4,
+    },
   },
   txt:{
     fontSize:15,

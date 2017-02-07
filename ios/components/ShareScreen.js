@@ -57,7 +57,7 @@ import{
     }
 
     getUserData(){
-      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
+      AsyncStorage.multiGet(['UID234'], (err, stores) => {
         stores.map((result, i, store) => {
           let key = store[i][0];
           let val = store[i][1];
@@ -102,63 +102,40 @@ import{
     }
 
     componentDidMount(){
+      this.getUserData();      
       var StartLocation = this.props.StartLocation;
-      console.log('Sharestart',StartLocation);
-       AsyncStorage.multiGet(['RID1'], (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let val = store[i][1];
-          this.setState({
-          rundata:JSON.parse(val),  
-          loaded:true,             
-          })  
-          if (this.state.rundata != null) {};
-                  
-         });
-      });
-      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let val = store[i][1];
-          this.setState({
-          user:JSON.parse(val),  
-          loaded:true,             
-          })              
-         });
-         if(this.state.user) {
-          this.setState({
-          first_name:this.state.user.first_name,
-          gender_user:this.state.user.gender_user,
-          last_name:this.state.user.last_name,
-          email:this.state.user.email,
-          social_thumb:this.state.user.social_thumb,
-          user_id:this.state.user.user_id,
-          })
-           
-          
-        }
+      AsyncStorage.multiGet(['RID1'], (err, stores) => {
+      stores.map((result, i, store) => {
+        let key = store[i][0];
+        let val = store[i][1];
+        this.setState({
+        rundata:JSON.parse(val),  
+        loaded:true,             
+        })  
+        if (this.state.rundata != null) {};
+         
+        });
       });
     } 
+
     ifConnectTonetPost(){
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
            this.navigateToThankyou();
            this.PostRun();
-         }else{
-           console.log('isConnected'+this.state.isConnected)
+          }else{
            this.navigateToThankyou();
            this.SaveRunLocally();
-         }
-      }
-     );
+          }
+        }
+      );
     }
   
     SaveRunLocally(){
      
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
-     console.log('causeMessage'+CauseShareMessage);
      var speed = this.props.speed;
      var distance = this.props.distance;
      var impact =this.props.impact;
@@ -200,9 +177,7 @@ import{
                       this.setState({
                        userRunData:val,
                       })
-                  });
-                  
-                  console.log('myRunSomeData',this.state.userRunData);
+                  });                 
               })
             .then((userRunData) => { 
               
@@ -214,8 +189,6 @@ import{
      }else{
       if (this.state.rundata != null) {
       var TotalRunLegth = this.state.rundata;
-      AlertIOS.alert('mytitle'+TotalRunLegth);
-      console.log()
       var Runno = 2;
       var RunID = 'RID'+Runno;
       var RunID = {
@@ -250,9 +223,7 @@ import{
                       this.setState({
                        userRunData:val,
                       })
-                  });
-                  
-                  console.log('myRunSomeData',this.state.userRunData);
+                  });                  
               })
              .then((userRunData) => { 
               this.navigateToThankyou();
@@ -344,8 +315,6 @@ import{
       var data = this.props.data;
       var cause = this.props.data;
       var CauseShareMessage = cause.cause_share_message_template;
-
-      console.log('causeMessage'+CauseShareMessage.split("")[1]);
       var distance = this.props.distance;
       var impact =this.props.impact;
       var time = this.props.time;

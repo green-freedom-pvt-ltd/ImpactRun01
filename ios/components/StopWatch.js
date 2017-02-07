@@ -77,7 +77,7 @@ class TimerView extends Component {
 
     render() {
         return (
-            <Text {...this.props}>
+     <Text {...this.props}>
         {FormatTime(this.state.timeElapsed)}
     </Text>
     );

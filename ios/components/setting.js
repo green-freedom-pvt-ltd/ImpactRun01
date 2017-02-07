@@ -47,7 +47,7 @@ class OpenURLButton extends React.Component {
   }
 }
 
-var FBLoginManager = require('NativeModules').FBLoginManager;
+var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 class Setting extends Component {
      constructor(props) {

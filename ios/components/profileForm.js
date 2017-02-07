@@ -19,7 +19,6 @@ import Login from '../../components/LoginBtns';
 import LodingView from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-import PTRView from 'react-native-pull-to-refresh';
 var ProfileForm = React.createClass({
 
     getInitialState: function(){
