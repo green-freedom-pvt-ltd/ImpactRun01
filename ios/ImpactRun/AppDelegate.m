@@ -13,6 +13,10 @@
 #import "RNGoogleSignin.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+#import <asl.h>
+#import "RCTLog.h"
 #import "RCTPushNotificationManager.h"
 
 
@@ -21,6 +25,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [Fabric with:@[[Crashlytics class]]];
+  RCTSetLogThreshold(RCTLogLevelInfo);
+  RCTSetLogFunction(CrashlyticsReactLogFunction);
+  
   NSURL *jsCodeLocation;
   
   /**
@@ -37,7 +45,7 @@
    * on the same Wi-Fi network.
    */
   if(RCT_DEBUG == 1) {
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.10:8081/index.ios.bundle?platform=ios&dev=true"];
+    jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.6:8081/index.ios.bundle?platform=ios&dev=true"];
   } else {
     jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   }
@@ -109,4 +117,45 @@
 {
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
+
+RCTLogFunction CrashlyticsReactLogFunction = ^(
+                                               RCTLogLevel level,
+                                               __unused RCTLogSource source,
+                                               NSString *fileName,
+                                               NSNumber *lineNumber,
+                                               NSString *message
+                                               )
+{
+  NSString *log = RCTFormatLog([NSDate date], level, fileName, lineNumber, message);
+  
+#ifdef DEBUG
+  fprintf(stderr, "%s\n", log.UTF8String);
+  fflush(stderr);
+#else
+  CLS_LOG(@"REACT LOG: %s", log.UTF8String);
+#endif
+  
+  int aslLevel;
+  switch(level) {
+    case RCTLogLevelTrace:
+      aslLevel = ASL_LEVEL_DEBUG;
+      break;
+    case RCTLogLevelInfo:
+      aslLevel = ASL_LEVEL_NOTICE;
+      break;
+    case RCTLogLevelWarning:
+      aslLevel = ASL_LEVEL_WARNING;
+      break;
+    case RCTLogLevelError:
+      aslLevel = ASL_LEVEL_ERR;
+      break;
+    case RCTLogLevelFatal:
+      aslLevel = ASL_LEVEL_CRIT;
+      break;
+  }
+  asl_log(NULL, NULL, aslLevel, "%s", message.UTF8String);
+  
+  
+};
+
 @end

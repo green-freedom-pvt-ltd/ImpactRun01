@@ -12,30 +12,31 @@ import {
   AsyncStorage,
   NetInfo
  } from 'react-native';
+ import crashlytics from 'react-native-fabric-crashlytics';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
 import LodingScreen from './components/LodingScreen';
 global.bgGeo = BackgroundGeolocation;
-import Home from './ios/components/HomeScreen.ios';
-import RunScreen from './ios/components/home.ios';
-import Login from './ios/components/login';
-import Tab from './ios/components/tab';
-import CauseDetail from './ios/components/CauseDetail';
-import Setting from './ios/components/setting';
-import Runlogingscreen from './ios/components/runlodingscreen';
-import ShareScreen from './ios/components/shareScreen';
-import ThankyouScreen from './ios/components/thankyouScreen';
+import Home from './components/homescreen/HomeScreen.ios';
+import RunScreen from './components/gpstracking/home.ios';
+import Login from './components/login/login';
+import Tab from './components/homescreen/tab';
+import CauseDetail from './components/homescreen/CauseDetail';
+import Setting from './components/settings/setting';
+import Runlogingscreen from './components/gpstracking/runlodingscreen';
+import ShareScreen from './components/sharescreen/shareScreen';
+import ThankyouScreen from './components/thankyouScreen';
 import ImpactLeagueForm2 from './components/ImpactLeague/ImpactLeagueForm2';
 import ImpactLeagueCode from './components/ImpactLeague/ImpactLeagueCode';
 import ImpactLeagueHome from './components/ImpactLeague/ImpactLeagueHome';
 import ImpactLeagueLeaderBoard from './components/ImpactLeague/ImpactLeagueLeaderboard';
-import Faq from './ios/components/faq';
-import MessageCenter from './ios/components/messageCenter';
-import MessageCenterData from './ios/components/messageCenterData';
-import MessageDetail from './ios/components/messageDetail';
-import DownloadShareMeal from './components/downloadShareMeal';
-import Leaderboard  from'./ios/components/leaderBoard';
+import Faq from './components/faq/faq';
+import MessageCenter from './components/feed/messageCenter';
+import MessageCenterData from './components/feed/messageCenterData';
+import MessageDetail from './components/feed/messageDetail';
+import DownloadShareMeal from './components/downloadsharemeal/downloadShareMeal';
+import Leaderboard  from'./components/leaderboard/leaderBoard';
 
 const NoBackSwipe ={
   ...Navigator.SceneConfigs.FloatFromRight,
@@ -55,6 +56,7 @@ class Application extends Component{
     };
   }
   componentWillMount(){
+    crashlytics.init();
     AsyncStorage.multiGet(['UID234'], (err, stores) => {
       stores.map((result, i, store) => {
         let key = store[i][0];

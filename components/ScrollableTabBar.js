@@ -12,9 +12,8 @@ const {
   AsyncStorage,
 } = ReactNative;
 const Button = require('../node_modules/react-native-scrollable-tab-view/Button');
-import UserProfile from '../ios/components/profileHeader';
+import UserProfile from './profile/profileHeader';
 const WINDOW_WIDTH = Dimensions.get('window').width;
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const ScrollableTabBar = React.createClass({
   propTypes: {

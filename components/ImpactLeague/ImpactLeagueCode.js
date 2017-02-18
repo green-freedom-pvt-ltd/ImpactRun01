@@ -80,6 +80,11 @@ class ImpactLeagueCode extends Component {
       })  
       .catch((err) => {
         console.log('error',err);
+        this.setState({
+          codenotextist:'Sorry, this team is full.',
+          loading:false,
+
+        })
       })
       .done(); 
 
@@ -116,6 +121,7 @@ class ImpactLeagueCode extends Component {
     }
   
     codeDoesnotExistCheck(responseJson){
+      console.log('responcedatacode',responseJson);
       var valueReturn = "Object with team_code="+this.state.moreText+" does not exist.";
       if (responseJson) {
         if (responseJson.team[0] === valueReturn) {
@@ -123,7 +129,9 @@ class ImpactLeagueCode extends Component {
             codenotextist:'Sorry, that’s not the code.',
           })
         }else{
+
             this.Navigate_To_nextpage(responseJson);
+
         }
       }
     }
