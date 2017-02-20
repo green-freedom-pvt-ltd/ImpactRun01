@@ -149,7 +149,7 @@ class devdactic_tabs extends Component {
           .then(modeldata => {
             var jsonData = modeldata;
               this.setState({
-                  ModelData: jsonData.results,
+                  ModelData: jsonData.results[0],
               });
               this.ModelCheks();
           })

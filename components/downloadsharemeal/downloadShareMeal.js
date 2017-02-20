@@ -101,8 +101,9 @@ class Model extends Component {
 
     modelRender(openmodel){
       var ModelData = this.props.ModelData;
-      var open = this.state.open;
 
+      var open = this.state.open;
+      // AlertIOS.alert('mydata',this.props.open);
       if (ModelData) {
         let shareOptions = {
           title: "ImpactRun",
@@ -113,7 +114,7 @@ class Model extends Component {
         <View style={{height:height,width:width, justifyContent: 'center', alignItems: 'center'}}>
           <Modal
             saveSignup = {this.saveSignup}
-             isOpen={open}
+             isOpen={this.props.open}
                style={{height:height-160,width:width-60, alignItems: 'center',}}>
                   <View>
                     <View>

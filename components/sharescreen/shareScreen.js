@@ -68,7 +68,7 @@ import{
             if (this.state.user) {
             this.ifConnectTonetPost();
           }else{
-            AlertIOS.alert('Login', 'please login from creating impact');
+            AlertIOS.alert('Login', 'please login to create impact');
           }
           })
         })
@@ -122,7 +122,7 @@ import{
 
       var data = this.props.data;
       setTimeout(function(){
-        AlertIOS.alert('Thankyou','Impact created on cause'+ '"'+data.cause_title+'"');
+        AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
        console.log('after 2 sec');
       },2000)
 
@@ -227,7 +227,7 @@ import{
                   });                 
               })
             .then((userRunData) => { 
-              AlertIOS.alert('userndata',JSON.stringify(userRunData));
+              // AlertIOS.alert('userndata',JSON.stringify(userRunData));
             })
             .done();
           })
@@ -298,7 +298,7 @@ import{
         // AlertIOS.alert('responcerundataterror',userRunData);
       })
       .catch((error)=>{
-        AlertIOS.alert('error',error);
+        // AlertIOS.alert('error',error);
       })
     }else{
      AlertIOS.alert('rundata','not more than 100');

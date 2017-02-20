@@ -324,11 +324,13 @@ SettingsService.init('iOS');
       this.setState({
             prevDistance: newDistance-distanceTravelled,
           })
-      var sourceAccuracy = (this.state.distanceTravelled === 0.0)?100:15;
+      // AlertIOS.alert('accuracy',JSON.stringify(location.coords.accuracy));
+      var sourceAccuracy = (this.state.distanceTravelled === 0.0)?30:15;
     // If Location accuracy is less than 15
       if (location.coords.accuracy <= sourceAccuracy){
 
         // IF Speed More than 35km/hr
+        // AlertIOS.alert('accuracy',JSON.stringify(sourceAccuracy));
       if (location.coords.speed <= 9) {
       var me = this;
       // this.addAnnotations(mapRef, [this.createMarker(location)]);
