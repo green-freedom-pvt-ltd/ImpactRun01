@@ -157,7 +157,7 @@ import{
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
-           this.PostRun();
+           // this.PostRun();
           }else{
            this.SaveRunLocally();
           }

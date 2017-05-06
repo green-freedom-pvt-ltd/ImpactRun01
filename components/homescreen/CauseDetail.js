@@ -132,7 +132,7 @@ class CauseDetail extends Component {
     height:50,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'#ffcd4d'
+    backgroundColor:styleConfig.pale_magenta
   },
   Btntext:{
      backgroundColor:'transparent',

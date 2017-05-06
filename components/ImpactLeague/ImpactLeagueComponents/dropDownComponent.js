@@ -10,6 +10,7 @@ import{
 } from 'react-native';
 
 const DropDown = require('react-native-dropdown');
+import ModalDropdown from 'react-native-modal-dropdown';
 const {
   Select,
   Option,
@@ -18,48 +19,47 @@ const {
 } = DropDown;
 
 class ImpactLeagueDropdown extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      city: ''
-    };
-  }
 
-  componentDidMount() {
-    updatePosition(this.refs['SELECT1']);
-    updatePosition(this.refs['OPTIONLIST']);
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     city: ''
+  //   };
+  // }
 
-  _getOptionList() {
-    return this.refs['OPTIONLIST'];
-  }
+  // componentDidMount() {
+  //   updatePosition(this.refs['SELECT1']);
+  //   updatePosition(this.refs['OPTIONLIST']);
+  // }
+
+  // _getOptionList() {
+  //   return this.refs['OPTIONLIST'];
+  // }
 
 
-  city(province) {
+  // city(province) {
+  //   this.setState({
+  //     ...this.state,
+  //     city: province
+  //   });
+  //   let City_object = {
+  //    city:this.state.city,
+  //   };
+  //   // You only need to define what will be added or updated
+  //   let City_delta = {
+  //   city:this.state.city,
+  //   };
 
-    this.setState({
-      ...this.state,
-      city: province
-    });
-    let City_object = {
-     city:this.state.city,
-    };
-    // You only need to define what will be added or updated
-    let City_delta = {
-    city:this.state.city,
-    };
-
-    AsyncStorage.setItem('City', JSON.stringify(City_object), () => {
-      AsyncStorage.mergeItem('City', JSON.stringify(City_delta), () => {
-        AsyncStorage.getItem('City', (err, result) => {
-        });
-      });
-    });
-  }
+  //   AsyncStorage.setItem('City', JSON.stringify(City_object), () => {
+  //     AsyncStorage.mergeItem('City', JSON.stringify(City_delta), () => {
+  //       AsyncStorage.getItem('City', (err, result) => {
+  //       });
+  //     });
+  //   });
+  // }
 
 
   render() {
-
     var city = this.props.city;
     // var cityOptions = '';
     // var i;
@@ -69,20 +69,9 @@ class ImpactLeagueDropdown extends Component {
     // }
     // console.log(cityOptions);
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'transparent',}}>
-          <Select
-            width={250}
-            ref="SELECT1"
-            optionListRef={this._getOptionList.bind(this)}
-            defaultValue="choose your city"
-            onSelect={this.city.bind(this)}
-           >
-           <Option>{city[0].city}</Option>
-            <Option>{city[1].city}</Option>
-            <Option>{city[2].city}</Option>
-            <Option>{city[3].city}</Option>
-          </Select>
-          <OptionList ref="OPTIONLIST"/>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'transparent',}}>   
+          <ModalDropdown options={['option 1', 'option 2']}>
+          </ModalDropdown>         
       </View>
     );
   }

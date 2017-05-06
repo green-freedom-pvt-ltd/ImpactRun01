@@ -80,7 +80,7 @@ class LodingRunScreen extends Component {
                     width={5}
                     fill={100}
                     prefill={0}
-                    tintColor="#00e0ff"
+                    tintColor={styleConfig.bright_blue}
                     backgroundColor="#fafafa">
                     {
                       (fill) => (

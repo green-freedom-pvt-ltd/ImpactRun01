@@ -14,9 +14,28 @@ import styleConfig from '../../styleConfig';
 import RunHistroyListView from './ListviewRunHistory';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+
 import LoginBtns from '../../login/LoginBtns';
 
 class RunHistroy extends Component {  
+
+     isFlagedRun(rowData){
+      if (rowData.is_flag === false) {
+      return(
+       <Icon style={{color:'black',fontSize:20,margin:10}} name ="error_outline">error_outline</Icon>
+       )
+      }else{
+        return;
+      }
+     }
+     tooltip(){
+       setState({
+        shoe:true,
+       })
+     }
+
       renderRunsRow(rowData) {
         var RunAmount=parseFloat(rowData.run_amount).toFixed(0);
         var RunDistance = parseFloat(rowData.distance).toFixed(1);
@@ -32,21 +51,26 @@ class RunHistroy extends Component {
         var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1]; 
         var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
         console.log('myRunDay2',MyRunMonth);
+        if (rowData.is_flag) {
         return (
           <TouchableHighlight underlayColor="#dddddd">
             <View style={styles.container}>
               <View style={styles.rightContainer}>          
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
+                <View>
                  <Text style={styles.StartTime}>{day}</Text>
                   <Text style={styles.title}>{rowData.cause_run_title}</Text>
+                </View>
+                <Text>icon</Text>
+                  <Icon style={{color:'grey',fontSize:60,margin:10,marginRight:20,}} name ={'error'}></Icon>
                 </View>
                 <View style={{flexDirection:'row',flex:1}}>
                   <View style={styles.runContent}>
                     <Text style={styles.runContentText}>{RunDistance} Km</Text>
                   </View>
                   <View style={styles.runContent}>
-                    <Text style={styles.runContentText}>{RunAmount} Rs</Text>
+                    <Text style={styles.runContentText}>{RunAmount} <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon2></Text>
                   </View>
                   <View style={styles.runContent}> 
                     <Text style={styles.runContentText}>{hrsAndMins}</Text>
@@ -57,6 +81,35 @@ class RunHistroy extends Component {
             </View>
           </TouchableHighlight>
         );
+       }else{
+           return (
+          <TouchableHighlight underlayColor="#dddddd">
+            <View style={styles.container}>
+              <View style={styles.rightContainer}>          
+              <View style={styles.runDetail}>
+                <View style={styles.cause_run_titleWrap}>
+                <View>
+                 <Text style={styles.StartTime}>{day}</Text>
+                  <Text style={styles.title}>{rowData.cause_run_title}</Text>
+                  </View>
+                </View>
+                <View style={{flexDirection:'row',flex:1}}>
+                  <View style={styles.runContent}>
+                    <Text style={styles.runContentText}>{RunDistance} Km</Text>
+                  </View>
+                  <View style={styles.runContent}>
+                    <Text style={styles.runContentText}>{RunAmount} <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon2> </Text>
+                  </View>
+                  <View style={styles.runContent}> 
+                    <Text style={styles.runContentText}>{hrsAndMins}</Text>
+                  </View>
+               </View>
+                </View>
+              </View>
+            </View>
+          </TouchableHighlight>
+        );
+       }
       }
       NotLoginView(){
         if(this.props.user && Object.keys(this.props.user).length === 0 ){
@@ -165,6 +218,8 @@ const styles = StyleSheet.create({
     width:deviceWidth,
   },
   cause_run_titleWrap:{
+    justifyContent:'space-between',
+    flexDirection:'row',
     flex:2,
   },
 });

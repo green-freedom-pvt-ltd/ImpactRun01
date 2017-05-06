@@ -18,6 +18,10 @@
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		149740D5A2A34D55ADEA6E6F /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */; };
+		3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */; };
+		3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */; };
+		3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F91E65DC9100DCC7C6 /* UIKit.framework */; };
+		3818A3221E60B1E100EC0480 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3818A3211E60B1E100EC0480 /* GoogleService-Info.plist */; };
 		382654161E2FD09F00EBB67B /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 382654081E2FD08800EBB67B /* libRCTPushNotification.a */; };
 		3830D60C1D6C63BD0028922A /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D60B1D6C63A90028922A /* libRCTFBLogin.a */; };
 		3830D60E1D6C647C0028922A /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D60D1D6C647C0028922A /* Bolts.framework */; };
@@ -353,11 +357,13 @@
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Impactrun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Impactrun.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		1E1C74480B6510C57ED6D0CF /* Pods-ImpactrunTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpactrunTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests.release.xcconfig"; sourceTree = "<group>"; };
 		2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPedometer.xcodeproj; path = "../node_modules/react-native-pedometer/RNPedometer.xcodeproj"; sourceTree = "<group>"; };
-		2EB4F7EBC8D5573AE7E2BA22 /* Pods-Impactrun.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.debug.xcconfig"; sourceTree = "<group>"; };
 		2F81B07EEC3849D491066E24 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		31E1B80977F5476A8D804A07 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNShare.a; sourceTree = "<group>"; };
+		3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CleverTapSDK.framework; sourceTree = "<group>"; };
+		3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		3810C2F91E65DC9100DCC7C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		3818A3211E60B1E100EC0480 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "ImpactRun/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3824332C1E58002B0094BBC8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ImpactRun/Info.plist; sourceTree = "<group>"; };
 		382653EF1E2FD08700EBB67B /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		3830D6061D6C63A80028922A /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
@@ -397,9 +403,7 @@
 		38E376A11E57F9ED00D78F58 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		38FA6FFE1DCB3F3E00B10D63 /* Impactrun.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Impactrun.entitlements; path = Impactrun/Impactrun.entitlements; sourceTree = "<group>"; };
 		3DCB2538134749B6888AD41A /* RNShare.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
-		41FE14D1298B6CDCC1A62E2C /* Pods-ImpactrunTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpactrunTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests.debug.xcconfig"; sourceTree = "<group>"; };
 		54885F245294403CBAD6B5A5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		584D1A373B56138451C51898 /* Pods-Impactrun.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.release.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.release.xcconfig"; sourceTree = "<group>"; };
 		5EDC7B40852745BAB761C6FA /* SafariServices.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		689C4476686B4B9E867198B3 /* libRNBackgroundFetch.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBackgroundFetch.a; sourceTree = "<group>"; };
 		6AC090B146004D6AB3DF3CC8 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -443,6 +447,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */,
+				3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */,
+				386D498E1E15590300BE5D94 /* Security.framework in Frameworks */,
 				3875BA721E5871F800F880DC /* UserNotifications.framework in Frameworks */,
 				8350375D1C962ECA000DE4BA /* libsqlite3.tbd in Frameworks */,
 				382654161E2FD09F00EBB67B /* libRCTPushNotification.a in Frameworks */,
@@ -456,7 +463,6 @@
 				38E376A31E57F9ED00D78F58 /* Crashlytics.framework in Frameworks */,
 				386D49921E15593000BE5D94 /* QuartzCore.framework in Frameworks */,
 				386D49901E15591100BE5D94 /* CFNetwork.framework in Frameworks */,
-				386D498E1E15590300BE5D94 /* Security.framework in Frameworks */,
 				386D49621E15353D00BE5D94 /* CoreData.framework in Frameworks */,
 				3830D6151D6F9EB10028922A /* libART.a in Frameworks */,
 				3830D60C1D6C63BD0028922A /* libRCTFBLogin.a in Frameworks */,
@@ -491,6 +497,7 @@
 				B19105E787364D77BC06ADDD /* libRNShare.a in Frameworks */,
 				C64D22300DE940B3AA3BBDE6 /* libRCTFBSDK.a in Frameworks */,
 				12A4CF86793B42989D05CFA8 /* libRNBackgroundFetch.a in Frameworks */,
+				3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */,
 				8A9C757976B74038989E643B /* libRNPedometer.a in Frameworks */,
 				FFA2B93EE3AB4E86A5193D61 /* libRNKeyboardEvents.a in Frameworks */,
 			);
@@ -559,6 +566,7 @@
 			isa = PBXGroup;
 			children = (
 				38B00ADC1D377F7600863FF0 /* AppDelegate.h */,
+				3818A3211E60B1E100EC0480 /* GoogleService-Info.plist */,
 				3824332C1E58002B0094BBC8 /* Info.plist */,
 				38B00AD01D377D6900863FF0 /* AppDelegate.m */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -676,6 +684,8 @@
 		75A8F9D7F9684DC9A4842A15 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3810C2F91E65DC9100DCC7C6 /* UIKit.framework */,
+				3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */,
 				3875BA711E5871F800F880DC /* UserNotifications.framework */,
 				38370A161E1D02A0006EB024 /* TSBackgroundFetch.framework */,
 				8359A6E51CA58BA6008F13B7 /* SystemConfiguration.framework */,
@@ -784,13 +794,13 @@
 				38E376A11E57F9ED00D78F58 /* Crashlytics.framework */,
 				38FA6FFE1DCB3F3E00B10D63 /* Impactrun.entitlements */,
 				8350375C1C962ECA000DE4BA /* libsqlite3.tbd */,
+				3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */,
 				8350374D1C961801000DE4BA /* Fonts */,
 				13B07FAE1A68108700A75B9A /* ImpactRun */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				E4CE12272E164253BDFFAFB6 /* Resources */,
 				75A8F9D7F9684DC9A4842A15 /* Frameworks */,
-				D2EEB38B09CA704C87D37461 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -803,17 +813,6 @@
 				00E356EE1AD99517003FC87E /* Impactrun.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		D2EEB38B09CA704C87D37461 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				2EB4F7EBC8D5573AE7E2BA22 /* Pods-Impactrun.debug.xcconfig */,
-				584D1A373B56138451C51898 /* Pods-Impactrun.release.xcconfig */,
-				41FE14D1298B6CDCC1A62E2C /* Pods-ImpactrunTests.debug.xcconfig */,
-				1E1C74480B6510C57ED6D0CF /* Pods-ImpactrunTests.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		E4CE12272E164253BDFFAFB6 /* Resources */ = {
@@ -889,7 +888,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 820;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -1300,6 +1299,7 @@
 				8914D9C23501431C9CF7259F /* Foundation.ttf in Resources */,
 				F6CF81A70F0B43FA9AA03779 /* Ionicons.ttf in Resources */,
 				149740D5A2A34D55ADEA6E6F /* MaterialIcons.ttf in Resources */,
+				3818A3221E60B1E100EC0480 /* GoogleService-Info.plist in Resources */,
 				D39696302E3E4EA285FF66AF /* Octicons.ttf in Resources */,
 				5B2DAD3A5B854327A411E96F /* Zocial.ttf in Resources */,
 				38C19AAE1D55BA3300E5F990 /* GoogleSignIn.bundle in Resources */,
@@ -1454,6 +1454,12 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
 				PRODUCT_NAME = Impactrun;
 				PROVISIONING_PROFILE = "";
@@ -1477,6 +1483,12 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1522,12 +1534,19 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios",
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1575,12 +1594,19 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios",
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1651,6 +1677,12 @@
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1704,6 +1736,12 @@
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
+					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

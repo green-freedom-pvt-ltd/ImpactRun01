@@ -14,6 +14,7 @@ const {
 const Button = require('../node_modules/react-native-scrollable-tab-view/Button');
 import UserProfile from './profile/profileHeader';
 const WINDOW_WIDTH = Dimensions.get('window').width;
+import styleConfig from './styleConfig';
 
 const ScrollableTabBar = React.createClass({
   propTypes: {
@@ -41,7 +42,7 @@ const ScrollableTabBar = React.createClass({
       inactiveTextColor: '#1d1d26',
       underlineColor: '#673AB7',
       backgroundColor: 'white',
-      activeBackgroundColor:'#00b9ff',
+      activeBackgroundColor:styleConfig.bright_blue,
       InactiveBackgroundColor:'white',
       style: {},
       tabStyle: {
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor:'#00b9ff',
+    borderColor:styleConfig.bright_blue,
     borderRadius:30,
     backgroundColor:'white',
   },

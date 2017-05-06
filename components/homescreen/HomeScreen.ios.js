@@ -25,12 +25,12 @@ import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Lodingscreen from '../../components/LodingScreen';
 import commonStyles from '../../components/styles';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ProgressBar from './causeprogressbar';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
-
 
 class Homescreen extends Component {
       constructor(props) {
@@ -108,7 +108,7 @@ class Homescreen extends Component {
                     let causesArr = _this.state.causes.slice()
                     causesArr.push(val)
                     _this.setState({causes: causesArr})
-                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active]})})
+                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active,val.pk,val.amount_raised,val.amount,val.total_runs]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
                 });
               this.setState({navigation: Object.assign({}, this.state.navigation, {
@@ -275,46 +275,73 @@ class Homescreen extends Component {
     };
 
     functionForIphone4Brief(route){
-      if (deviceheight <= 480) {
+      if (deviceheight >= 667) {
       return(
-        <Text  numberOfLines={3} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+        <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
         )
       }else{
-        return(
-          <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+        if (deviceheight <= 568) {
+          return(
+          <Text  numberOfLines={2} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
           )
-      }
+        }
+    }
     };
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
-      var cause;
-      if (!!this.state.causes.length && this.state.navigation.index+1) {
-        cause = this.state.causes[this.state.navigation.index]
-      } else {
-        cause = {}
-      }
+        var cause;
+        if (!!this.state.causes.length && this.state.navigation.index+1) {
+          cause = this.state.causes[this.state.navigation.index]
+        } else {
+          cause = {}
+        }
+        var money = JSON.stringify(parseFloat(this.state.album[route.key][6]).toFixed(0));
+        var lenth = money.length;
+        var commmaplace = lenth-4;
+        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
+        var moneyslice = money.slice(0,2);
+        var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
+        var runlength = Runs.length;
+        var commmaplacerun =runlength-4;
+        var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,lenth));
+
+
+        console.log('slicevalue',moneyslice,lenth);
         return (
           <View style={styles.page}>
             <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
             <View style={styles.album}>
               <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
-              <View style={{position:'absolute',bottom:10,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
-               <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
-                {this.state.album[route.key][2]}
-               </Text>
-              </View>
+                <View style={{position:'absolute',bottom:5,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
+                 <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+                  {this.state.album[route.key][2]}
+                 </Text>
+                </View>
               </Image>
               <View style={styles.borderhide}></View>
-              <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-              <Text numberOfLines={1} style={{color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',left:10,top:-5,width:200,}}>By {this.state.album[route.key][3]}</Text>
-              <View  onPress={()=>this.navigateToCauseDetail()}>
-                {this.functionForIphone4Brief(route)}
+              <View style={{width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
+                <View style={{width:deviceWidth-105}}>
+                  <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
+                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',width:200,marginBottom:10,}}>By {this.state.album[route.key][3]}</Text>
+                  <View>
+                    {this.functionForIphone4Brief(route)}
+                  </View>
+                </View>
               </View>
-             </View>
-             </TouchableWithoutFeedback>
-             <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-               <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
-             </TouchableOpacity>
+              <View style={styles.barWrap}>
+                <View style = {styles.wraptext}>
+                  <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
+                  <Text style = {styles.textMoneyraised}>{parseFloat((this.state.album[route.key][6])/this.state.album[route.key][7]*100).toFixed(0)}%</Text>
+                </View>
+                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
+                <View style = {styles.wraptext2}>
+                  <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns</Text>
+                </View>      
+              </View>
+             
+            </View>
+            </TouchableWithoutFeedback>
+            
           </View>
         );
       
@@ -346,8 +373,15 @@ class Homescreen extends Component {
              style={[ styles.container, this.props.style ]}
              navigationState={this.state.navigation}
              renderScene={this._renderPage}
-             onRequestChangeTab={this._handleChangeTab}/>
+             onRequestChangeTab={this._handleChangeTab}>
+             </TabViewAnimated>
+             <View style={{top:-65,width:deviceWidth,height:50, justifyContent: 'center',alignItems: 'center',}}>
+              <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
+                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Let's Go > </Text>
+               </TouchableOpacity>
+              </View>
              </View>
+            
           </View>
       );
     }else{
@@ -363,13 +397,14 @@ class Homescreen extends Component {
 
   var styles = StyleSheet.create({
    container: {
-      height: deviceheight-70,
-      backgroundColor: 'white',
+      height: deviceheight-120,
       top:styleConfig.CardTop,
       width:deviceWidth,
     },
     page: {
-      flex: 1,
+      top:8,
+      height:deviceheight-200,
+      width:deviceWidth,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -399,15 +434,15 @@ class Homescreen extends Component {
      },
      cover: {
       width: deviceWidth-65,
-      height:deviceheight/2-90,
+      height:deviceheight/2-110,
       borderRadius:5,
       resizeMode: 'cover',
      },
      borderhide:{
       width: deviceWidth-65,
-      height:10,
-      top:-10,
+      height:5,
       backgroundColor:'white',
+      top:-5,
      },
      label: {
       margin: 16,
@@ -421,7 +456,6 @@ class Homescreen extends Component {
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius:80,
-      top:-styleConfig.beginRunBtnHeight-10,
       shadowColor: '#000000',
       shadowOpacity: 0.4,
       shadowRadius: 4,
@@ -433,18 +467,62 @@ class Homescreen extends Component {
       color:styleConfig.greyish_brown_two,
       fontSize:styleConfig.FontSizeTitle,
       fontWeight:'400',
-      paddingLeft:10,
-      top:-10,
       fontFamily:styleConfig.FontFamily,
+      marginBottom:0,
     },
-     causeBrief:{
+    causeBrief:{
+      marginBottom:10,
       color:styleConfig.greyish_brown_two,
       fontSize:styleConfig.FontSizeDisc,
       fontWeight:'400',
-      padding:10,
-      paddingTop:0,
-      width:deviceWidth-70,
       fontFamily:styleConfig.FontFamily3,
+    },
+  
+    barWrap:{
+      width: deviceWidth-65,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    wraptext:{
+      height:20,
+      justifyContent: 'space-between',
+      width: deviceWidth-105,
+      flexDirection:'row',
+    },
+    wraptext2:{
+      top:15,
+      height:20,
+      justifyContent: 'space-between',
+      width: deviceWidth-105,
+      flexDirection:'row',
+    },
+    textMoneyraised:{
+      color:styleConfig.greyish_brown_two,
+      fontSize:styleConfig.FontSize3,
+      fontWeight:'600',
+      fontFamily:styleConfig.FontFamily,
+    },
+    btnbegin2:{
+      width:deviceWidth-65,
+      height:50,
+      borderRadius:5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor:styleConfig.pale_magenta,
+      justifyContent: 'center',
+      shadowColor: '#000000',
+      shadowOpacity: 0.4,
+      shadowRadius: 4,
+      shadowOffset: {
+        height: 3,
+      },
     },
   });
   export default Homescreen;
+  // <View style={{bottom:0, width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
+     
+  //     <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
+  //       <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
+  //     </TouchableOpacity>
+     
+  // </View>

@@ -10,9 +10,10 @@ import {
   Text,
   Navigator,
   AsyncStorage,
-  NetInfo
+  NetInfo,
+  AlertIOS,
  } from 'react-native';
- import crashlytics from 'react-native-fabric-crashlytics';
+ // import crashlytics from 'react-native-fabric-crashlytics';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackgroundGeolocation from 'react-native-background-geolocation';
@@ -37,7 +38,7 @@ import MessageCenterData from './components/feed/messageCenterData';
 import MessageDetail from './components/feed/messageDetail';
 import DownloadShareMeal from './components/downloadsharemeal/downloadShareMeal';
 import Leaderboard  from'./components/leaderboard/leaderBoard';
-
+var REQUEST_URL = 'http://dev.impactrun.com/api/causes/';
 const NoBackSwipe ={
   ...Navigator.SceneConfigs.FloatFromRight,
     gestures: {
@@ -53,10 +54,28 @@ class Application extends Component{
       timePassed: false,
       Loding:false,
       textState:null,
+      result:null,
+      myCauseNum:null,
     };
   }
+
+
+
   componentWillMount(){
-    crashlytics.init();
+    this.fetchIntervelcausecard();
+    // crashlytics.init();
+    AsyncStorage.getItem('CAUSESDATA', (err, result) => {
+      console.log('results',result);
+      this.setState({
+          myCauseNum: JSON.parse(result),     
+      })
+    })
+    AsyncStorage.getItem('runDataAppKill', (err, result) => {
+ 
+      this.setState({
+        result:result
+      })
+    });    
     AsyncStorage.multiGet(['UID234'], (err, stores) => {
       stores.map((result, i, store) => {
         let key = store[i][0];
@@ -68,10 +87,97 @@ class Application extends Component{
       })
       this.setState({
         userLogin:this.state.user,
-        textState:(this.state.user) ? 'tab':'login', 
-      })
+      })  
+      if (this.state.result != null) {
+        this.setState({
+          textState:'runscreen',
+        })
+      }else{
+        this.setState({
+         textState:(this.state.user) ? 'tab':'login', 
+        })
+      }
     });  
   }
+  
+  
+  fetchIntervelcausecard(){
+    if (this.state.myCauseNum != null) {
+    this.RunSaveinterval = setInterval(()=>{
+      NetInfo.isConnected.fetch().done(
+      (isConnected) => {
+        if (isConnected) {
+          this.fetchData();
+        }
+      }) 
+    },(60000*60)*3);
+  }else{
+    NetInfo.isConnected.fetch().done(
+      (isConnected) => {
+        if (isConnected) {
+          console.log('this worked');
+          this.fetchData();
+        }else{
+          AlertIOS.alert('required','Internet is required');
+        }
+      }) 
+    }
+  }
+
+
+
+  fetchData(dataValue) {
+    // if (this.state.causeCount => this.state.savedCausecCount) {
+    fetch(REQUEST_URL)
+    .then((response) => response.json())
+    .then((causes) => {
+        var causes = causes;
+        let causesData = []
+        let newData = []
+        causes.results.forEach((item, i) => {
+            if (item.is_active) {
+                causesData.push(['cause' + i, JSON.stringify(item)])
+                newData.push('cause' + i);
+            };
+        })
+        this.setState({
+            myCauseNum: newData,
+            loaded: true,
+        })
+
+        let numberOfCauses = this.state.myCauseNum;
+        AsyncStorage.setItem('CAUSESDATA', JSON.stringify(numberOfCauses), () => {
+          AsyncStorage.getItem('CAUSESDATA', (err, result) => {
+            console.log('results',result);
+            this.setState({
+                myCauseNum: JSON.parse(result),
+                loaded: true,
+            })
+            try {
+                AsyncStorage.multiGet(this.state.myCauseNum, (err, stores) => {
+                    var _this = this
+                    stores.map((item) => {
+                        let key = item[0];
+                        let val = JSON.parse(item[1]);
+                        this.setState({
+                            myCusesDataExist: val,
+                        })
+                    })
+                });
+            } catch (err) {
+                console.log(err)
+            }
+          });
+        })
+
+        AsyncStorage.multiSet(causesData, (err) => {})
+    })
+    .done();
+   // }else{
+   //     this.loadingScreen();
+   // }
+  }
+
 
   onClickMenu() {
     this.refs.drawer.open();
@@ -133,6 +239,19 @@ class Application extends Component{
     return this.LodingFunction();
     }
 
+    runScreenRender(route,navigator){
+      if (this.state.result != null) {
+        return(
+            <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>
+          )
+      }else{
+        return(
+            <RunScreen  navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>
+          )
+      }
+    }
+
+
     renderScene(route, navigator, user,causeLength) {  
       console.log('mycauseLengthData',user);
        switch (route.id) {
@@ -149,7 +268,7 @@ class Application extends Component{
             case 'messagedetail':
             return <MessageDetail navigator={navigator} {...route.passProps}/>;
             case 'runscreen':
-            return <RunScreen navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>;
+            return this.runScreenRender(route,navigator);
             case 'login':
             return <Login navigator={navigator} {...route.passProps}/>;
             case 'setting':

@@ -18,7 +18,7 @@
 #import <asl.h>
 #import "RCTLog.h"
 #import "RCTPushNotificationManager.h"
-
+//#import <CleverTapSDK/CleverTap.h>
 
 
 @implementation AppDelegate
@@ -26,7 +26,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [Fabric with:@[[Crashlytics class]]];
-  
+//  [CleverTap autoIntegrate];
   RCTSetLogThreshold(RCTLogLevelInfo);
   RCTSetLogFunction(CrashlyticsReactLogFunction);
  
@@ -48,7 +48,7 @@
    * on the same Wi-Fi network.
    */
   if(RCT_DEBUG == 1) {
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.109:8081/index.ios.bundle?platform=ios&dev=true"];
+    jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
   } else {
     jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   }

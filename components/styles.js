@@ -17,7 +17,7 @@ var styles = StyleSheet.create({
   },
   topToolbar: {
     //paddingLeft: 10,
-    backgroundColor: styleConfig.bright_sky_blue,  //ff d7 00
+    backgroundColor: styleConfig.bright_blue,  //ff d7 00
     borderBottomColor: 'white',
     borderBottomWidth: 1,
     paddingRight: 5,
@@ -71,7 +71,7 @@ var styles = StyleSheet.create({
   redButton: {
     padding:10,
     height:50,
-    backgroundColor:styleConfig.bright_sky_blue,
+    backgroundColor:styleConfig.bright_blue,
     width:width/2-10, 
     justifyContent:'center',
     alignItems: 'center',
@@ -81,7 +81,7 @@ var styles = StyleSheet.create({
   greenButton: {
     padding:10,
     height:50,
-    backgroundColor:styleConfig.bright_sky_blue,
+    backgroundColor:styleConfig.bright_blue,
     width: 100,
     width:width/2-10,
     alignItems: 'center',
@@ -102,7 +102,7 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:styleConfig.bright_sky_blue,
+    backgroundColor:styleConfig.bright_blue,
      shadowColor: '#000000',
       shadowOpacity: 0.8,
       shadowRadius: 1,

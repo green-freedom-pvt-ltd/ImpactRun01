@@ -18,7 +18,10 @@ import {
 } from 'react-native';
 import DownloadShareMeal from '../downloadsharemeal/downloadShareMeal';
 import apis from '../../components/apis';
+import styleConfig from '../../components/styleConfig';
+
 var REQUEST_URL = apis.causeListapi;
+// var Analytics = require('react-native-firebase-analytics');
 var settingicon = 'data:image/png;base64,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'
 var Profileicon = 'data:image/png;base64,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';
 var RunIcon = 'data:image/png;base64,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';
@@ -35,7 +38,7 @@ import MessageCenter from '../feed/messageCenter';
 
 class devdactic_tabs extends Component {
 
-      constructor(props) {
+        constructor(props) {
           super(props);
           this.state = {
               selectedTab: 'welcome',
@@ -50,21 +53,20 @@ class devdactic_tabs extends Component {
               userSignup: false,
               countCampaign: 0,
           };
+
           this.getUserData = this.getUserData.bind(this);
           this.render = this.render.bind(this);
           this.ChangeCampaignCount = this.ChangeCampaignCount.bind(this);
           this.changePosition = this.changePosition.bind(this);
-      }
+        }
 
-      componentWillMount() {
-        this.getUserData();
-        
-        NetInfo.isConnected.fetch().done(
-          (isConnected) => {
-            if (isConnected) {
-                this.fetchModelData();
-              this.fetchData();
-            } else {
+        componentWillMount() {
+          this.getUserData();        
+          // NetInfo.isConnected.fetch().done(
+          // (isConnected) => {
+          //   if (isConnected) {
+          //       this.fetchData();
+          //   } else {
               AsyncStorage.getItem('CAUSESDATA', (err, result) => {
                 this.setState({
                     myCauseNum: JSON.parse(result),
@@ -85,11 +87,21 @@ class devdactic_tabs extends Component {
                     console.log(err)
                 }
               });
-            }
-          }
-        );
+        //     }
+        //   }
+        // );
       }
+     
+    //  Analyticsfunction(){
+    //   Analytics.setUserId('11111');
+    //   Analytics.setUserProperty('propertyName', 'propertyValue');
 
+    //   Analytics.logEvent('view_item', {
+    //     'item_id': 'login'
+    //   });
+
+    // }
+     
 
       fetchData(dataValue) {
         fetch(REQUEST_URL)
@@ -108,6 +120,7 @@ class devdactic_tabs extends Component {
                 myCauseNum: newData,
                 loaded: true,
             })
+
             let numberOfCauses = this.state.myCauseNum;
             AsyncStorage.setItem('CAUSESDATA', JSON.stringify(numberOfCauses), () => {
               AsyncStorage.getItem('CAUSESDATA', (err, result) => {
@@ -135,29 +148,33 @@ class devdactic_tabs extends Component {
             AsyncStorage.multiSet(causesData, (err) => {})
         })
         .done();
+       // }else{
+       //     this.loadingScreen();
+       // }
       }
 
-        fetchModelData() {
-          var url = 'http://dev.impactrun.com/api/campaign/';
-          fetch(url,{
-           header:{
-            'Accept':'application/json',
-            'Content-Type': 'application/json',
-           }
-          })
-          .then(response => response.json())
-          .then(modeldata => {
-            var jsonData = modeldata;
-              this.setState({
-                  ModelData: jsonData.results[0],
-              });
-              this.ModelCheks();
-          })
-          .catch(error => console.log('Error fetching: ' + error));
-        }
+        // fetchModelData() {
+        //   var url = 'http:/impactrun.com/api/campaign/';
+        //   fetch(url,{
+        //    header:{
+        //     'Accept':'application/json',
+        //     'Content-Type': 'application/json',
+        //    }
+        //   })
+        //   .then(response => response.json())
+        //   .then(modeldata => {
+        //     var jsonData = modeldata;
+        //       this.setState({
+        //           ModelData: jsonData.results[0],
+        //       });
+        //       console.log('modeldata',this.state.ModelData);
+        //       this.ModelCheks();
+        //   })
+        //   .catch(error => console.log('Error fetching: ' + error));
+        // }
 
 
-      getUserData() {
+        getUserData() {
           AsyncStorage.multiGet(['UID234'], (err, stores) => {
               stores.map((result, i, store) => {
                   let key = store[i][0];
@@ -167,51 +184,52 @@ class devdactic_tabs extends Component {
                   this.setState({
                       user: user,
                   })
+                
               })
           })
-      }
+        }
 
 
-      ChangeCampaignCount() {
+        ChangeCampaignCount() {
           this.setState({
               countCampaign: 1,
           })
-      }
+        }
 
-      changePosition(){
-        this.setState({
-           open: false,
-        })
-      }
+        changePosition(){
+            this.setState({
+               open: false,
+            })
+        }
 
-      ModelCheks() {
-          if (this.state.countCampaign == 0) {
-              if (this.state.ModelData) {
-                  if (this.state.ModelData.is_active == true) {
-                      if (this.state.user != null && this.state.ModelData.is_always == true) {
+        ModelCheks() {
+            if (this.state.ModelData) {
+                if (this.state.ModelData.is_active == true) {
+                    if (this.state.user != null && this.state.ModelData.is_always == true) {
                           this.setState({
                               open: this.state.ModelData.is_always,
                           })
                       } else {
-                          if (this.state.user != null && this.state.ModelData.show_on_sign_up == true) {
-                              this.setState({
-                                  open: (this.state.user.is_signup && this.state.ModelData.show_on_sign_up) ? true : false,
-                              })
-                          } else {
-                              return;
-                          }
-                      }
-                  }
-              }
-          } else {
-              this.setState({
-                  open: false,
-              })
-          }
-      }
+                        if (this.state.user != null && this.state.ModelData.show_on_sign_up == true) {
+                            this.setState({
+                               open: (this.state.user.is_signup && this.state.ModelData.show_on_sign_up) ? true : false,
+                            })
+                        } else {
+                            return;
+                        }
+                    }
+                }
+            }
+          
+        }
+        
+        loadingScreen(){
+         return(
+            <Lodingscreen/>
+            )
+        }
 
-
-      render() {
+        render() {
         var StylePositionC = (this.state.open == true) ? 'absolute' : 'relative';
         if (this.state.myCauseNum != null) {
             return (
@@ -219,7 +237,7 @@ class devdactic_tabs extends Component {
               <TabBarIOS 
                 style={{height:100,padding:10}}
                 unselectedTintColor="white"
-                tintColor="#00b9ff"
+                tintColor={styleConfig.bright_blue}
                 barTintColor="white" 
                 selectedTab={this.state.selectedTab} 
                 navigator={this.props.navigator}>
@@ -258,9 +276,7 @@ class devdactic_tabs extends Component {
                   }}>
                   <View>
                     <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>
-                      <View style={{top:0, position:StylePositionC}}>
-                     <DownloadShareMeal changePosition={this.changePosition} ChangeCampaignCount={this.ChangeCampaignCount} open={this.state.open} ModelData = {this.state.ModelData} user={this.state.user} getUserData={this.getUserData} />
-                    </View>
+                    
                  </View>
                 </TabBarIOS.Item>
 
@@ -292,8 +308,8 @@ class devdactic_tabs extends Component {
             </View>
           );
         }else{
-          return(
-            <Lodingscreen/>
+            return(
+              <Lodingscreen/>
             )
           }
       }
@@ -302,15 +318,16 @@ class devdactic_tabs extends Component {
   }
 
 
-var styles = StyleSheet.create({
-    tabsWrap: {
-        backgroundColor: 'white',
+    var styles = StyleSheet.create({
+        tabsWrap: {
+            backgroundColor: 'white',
 
-    },
-    tab: {
-        height: 50,
-        width: 50,
-    },
+        },
+        tab: {
+            height: 50,
+            width: 50,
+        },
 
-})
+    })
+
 export default devdactic_tabs;

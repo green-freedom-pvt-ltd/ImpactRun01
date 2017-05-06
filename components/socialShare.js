@@ -29,7 +29,7 @@ class SocialShare extends Component {
 
     let shareOptions = {
       title: "ImpactRun",
-      message: "I use ImpactRun to track my daily runs and 'do good' for socitry with every step. Check it out. It's amazing!",
+      message: "I use ImpactRun to track my daily runs and 'do good' for society with every step. Check it out. It's amazing!",
       url: "http://www.impactrun.com/#",
       subject: "Download ImpactRun Now " //  for email
     };

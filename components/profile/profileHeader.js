@@ -61,6 +61,7 @@ var UserProfile = React.createClass({
       )
     },
     TotalAmount:function(){
+
       if (this.props.userTotalAmount != null) {
         return(
            <Text style={styles.totalcontentText}>{parseFloat(this.props.userTotalAmount).toFixed(0)}</Text>
@@ -101,7 +102,7 @@ var UserProfile = React.createClass({
                 width={2}
                 fill={100}
                 prefill={0}
-                tintColor="#00b9ff"
+                tintColor={styleConfig.bright_blue}
                 backgroundColor="#fafafa"
               >                   
               </AnimatedCircularProgress>
@@ -111,7 +112,7 @@ var UserProfile = React.createClass({
               </View>
               <View style={{width:deviceWidth/3-20}}> 
                 <View style={{top:20,left:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.totalcontentTextSec}>Rupees</Text>
+                  <Text style={styles.totalcontentTextSec}>Rs</Text>
                   <Text style={styles.totalcontentText}>{this.TotalAmount()}</Text>
                 </View>
                 <AnimatedCircularProgress
@@ -121,7 +122,7 @@ var UserProfile = React.createClass({
                   width={2}
                   fill={100}
                   prefill={0}
-                  tintColor="#00b9ff"
+                  tintColor={styleConfig.bright_blue}
                   backgroundColor="#fafafa">                   
                 </AnimatedCircularProgress>
               </View>

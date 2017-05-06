@@ -1,3 +1,4 @@
+
 'use strict';
 var React = require('react-native');
 var {StyleSheet, PixelRatio,Dimensions} = React;
@@ -46,10 +47,10 @@ function BtnWidth () {
 }
 function fontSizer1 () {
   if(Devicewidth > 320){
-    return 22;
+    return 20;
   }else {
   if(Devicewidth <= 320){
-    return 20;
+    return 18;
   }else { 
     return 14;
   }
@@ -57,23 +58,23 @@ function fontSizer1 () {
 }
 function fontSizer2 () {
   if(Devicewidth > 320){
-    return 18;
+    return 14;
   }else {
   if(Devicewidth <= 320){
-    return 15;
+    return 12;
   }else { 
-    return 10;
+    return 7;
   }
 }
 }
 function fontSizer3 () {
   if(Devicewidth > 320){
-    return 16;
+    return 14;
   }else {
   if(Devicewidth <= 320){
-    return 14;
+    return 12;
   }else { 
-    return 10;
+    return 7;
   }
 }
 }
@@ -101,25 +102,38 @@ function LogoWidth () {
 }
 function CardHeight () {
   if(Deviceheight > 568){
-    return Deviceheight-180;
+    return Deviceheight-220;
   }else {
   if(Deviceheight <= 480){
-    return Deviceheight-150;
+    return Deviceheight-180;
   }else { 
     if (Deviceheight >= 480) {
-    return Deviceheight-170;
+    return Deviceheight-220;
+  }
+  }
+}
+}
+function barHeight () {
+  if(Deviceheight > 568){
+    return 8;
+  }else {
+  if(Deviceheight <= 480){
+    return 6;
+  }else { 
+    if (Deviceheight >= 480) {
+    return 7;
   }
   }
 }
 }
 function CardTop () {
   if(Deviceheight > 568){
-    return 7;
+    return 5;
   }else {
   if(Deviceheight <= 480){
-    return 3;
+    return 1;
   }else { 
-    return 2;
+    return 0;
   }
 }
 }
@@ -148,6 +162,7 @@ export default {
   LogoWidth:LogoWidth(),
   CardHeight:CardHeight(),
   CardTop:CardTop(),
+  barHeight:barHeight(),
   // navHight
   navBarHeight:70,
   // fontColors
@@ -169,6 +184,8 @@ export default {
   FontFamily:'Montserrat-Regular',
   FontFamily2:'Montserrat-Thin',
   FontFamily3:'Montserrat-Light',
-
+  pale_magenta:'#d667cd',
+  bright_blue:'#0077ff',
+  warm_grey_three:'#8a8a8a',
 
 }

@@ -20,10 +20,11 @@
   import styleConfig from '../styleConfig';
   import SubmitBtn from '../submitbtn';
   import apis from '../apis';
-  import ModalDropdown from 'react-native-modal-dropdown';
   import ImpactLeagueDropDown from './ImpactLeagueComponents/dropDownComponent';
   import ImpactLeagueDropDown2 from './ImpactLeagueComponents/dropDownComponent2';
- 
+  import ModalDropdown from './ImpactLeagueComponents/modelindex.js';
+   import ModalDropdown2 from './ImpactLeagueComponents/modelindex2.js';
+
 
   class ImpactLeagueForm2 extends Component {
       
@@ -31,8 +32,8 @@
     constructor() {
       super();
       this.state = {
-        department:null,
-        city:null,
+        department:'',
+        city:'',
         errtext:'',
         loading:false,
         animating: true,
@@ -41,45 +42,41 @@
 
 
       componentDidMount() {
-         this.removeKey();
+  
       }
-      
-      removeKey(){
-       let keys = ['Department','City'];
-        AsyncStorage.multiRemove(keys, (err) => {
-        }); 
+
+
+      componentWillMount() {
+       
       }
       
 
       getCityDepartment(){
-        AsyncStorage.getItem('Department', (err, result) => {
-        var department = JSON.parse(result);
-        if (department != null) {
+        var department = this.state.department;
+        var city = this.state.city;
+
+          if (city != '') {
+            this.setState({
+              city:city,        
+            })         
+            }else{
+            this.setState({
+              errtext:'please choose city',
+            })
+          }
+
+          if (department != '') {
           this.setState({
-            department:department.department,          
+            department:department,          
           })
+          if (city != '') {this.putRequestCityDepartment();}
+          
           }else{
             this.setState({
               errtext:'please choose department',
             })
           }
-        })
-        .then (()=>{
-          AsyncStorage.getItem('City', (err, result) => {
-            var city = JSON.parse(result);
-             if (city != null) {
-            this.setState({
-              city:city.city,        
-            })
-            this.putRequestCityDepartment();
-            }else{
-              this.setState({
-                errtext:'please choose city',
-              })
-            }
-          })
-        })   
-       
+            
       }
 
       submitCityDepartment(){
@@ -88,14 +85,13 @@
 
      
       putRequestCityDepartment(){   
-      this.setState({
-        loading:true,
-      }) 
+        this.setState({
+          loading:true,
+        }) 
         var data = this.props.data;
         var city = this.state.city;
         var department = this.state.department;
         let formData = new FormData();
-        // console.log('cityDEpartment',this.state.city,this.state.department);
         formData.append('user',data.user);
         formData.append('team', data.team);
         formData.append('city',this.state.city);
@@ -126,30 +122,43 @@
           console.error(error);
         });
       }
+
+
       RouteChangeField(responseJson){
-       var userdata = this.props.user;
-          // first user, delta values
-          let UID234_delta = {
-              team_code:responseJson.team_code,
-           };
+          var userdata = this.props.user;
+        // first user, delta values
+        let UID234_delta = {
+            team_code:responseJson.team_code,
+         };
 
-          let multi_merge_pairs = [
-            ['UID234', JSON.stringify(UID234_delta)],
-             
-          ]
+        let multi_merge_pairs = [
+          ['UID234', JSON.stringify(UID234_delta)],
+           
+        ]
+        AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
+            AsyncStorage.multiGet(['UID234'], (err, stores) => {
+                stores.map((result, i, store) => {
+                    let key = store[i][0];
+                    let val = store[i][1];
+                });
+              
+            });
+        })   
+      }
 
-      
-              AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-                  AsyncStorage.multiGet(['UID234'], (err, stores) => {
-                      stores.map((result, i, store) => {
-                          let key = store[i][0];
-                          let val = store[i][1];
-                      });
-                    
-                  });
-           })
-          
-    }
+      onSelectCity(idx,value){
+        console.log('index',idx,value);
+        this.setState({
+          city:value,
+        })
+      }
+
+      onSelectDepartment(idx,value){
+        console.log('index',idx,value);
+        this.setState({
+          department:value,
+        })
+      }
       
 
 
@@ -182,10 +191,11 @@
           }
         })
       }
-       
-  		render() {
-        var department = this.props.data.company_attribute;
-        var city = this.props.data.company_attribute;
+      
+     
+  
+
+  		render(cities) {
         var data = this.props.data;
   		  return (
           <View>
@@ -205,10 +215,12 @@
                   <Text style={{color:'white'}}>SUBMIT</Text>
               </TouchableOpacity>
               </View>
-              <ImpactLeagueDropDown city={data.company_attribute}>
-              </ImpactLeagueDropDown>
-               <ImpactLeagueDropDown2 department={data.company_attribute}>
-              </ImpactLeagueDropDown2>
+              <View style = {{top:-50,width:deviceWidth,justifyContent: 'center',alignItems:'center'}}>
+              <ModalDropdown onSelect={(idx, value) => this.onSelectCity(idx, value)} showsVerticalScrollIndicator={true} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown} defaultIndex ={1} animated={true} options={this.props.cities}>
+              </ModalDropdown>    
+              <ModalDropdown2 onSelect={(idx,value) => this.onSelectDepartment(idx,value)} defaultIndex ={3} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown}   options={this.props.departments}>
+              </ModalDropdown2>  
+              </View>  
               </View>
             </View>
            {this.isloading()}
@@ -248,5 +260,31 @@ const styles = StyleSheet.create({
       top:130,
     backgroundColor:styleConfig.light_gold,
   },
+  dropdown:{
+    width:deviceWidth-80,
+    marginBottom:10,
+    backgroundColor:'white',
+    borderRadius:5,
+    borderColor:'grey',
+    borderWidth:1,
+    justifyContent:'center',
+    alignItems: 'center',
+    height:40,
+  },
+  dropdownStyle:{
+    backgroundColor:'white',
+    justifyContent:'center',
+    alignItems: 'center',
+  },
+  textStyle:{
+    flex:1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+
 });
  export default ImpactLeagueForm2;
+  // <ImpactLeagueDropDown city={data.company_attribute}>
+  //             </ImpactLeagueDropDown>
+  //              <ImpactLeagueDropDown2 department={data.company_attribute}>
+  //             </ImpactLeagueDropDown2>

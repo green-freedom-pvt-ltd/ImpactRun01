@@ -27,7 +27,6 @@ import SettingDetail from './SettingDetail';
 import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
-import crashlytics from 'react-native-fabric-crashlytics';
 var Pedometer = require('react-native-pedometer');
 // var mapRef = 'mapRef';
 var deviceWidth = Dimensions.get('window').width;
@@ -151,6 +150,7 @@ SettingsService.init('iOS');
       Enbtn:'END RUN',
       enabled: true,
       isMoving: false,
+      distanceTravelledsec:0,
       paceButtonIcon: 'md-pause',
       navigateButtonIcon: 'md-locate',
       // mapHeight: 280,
@@ -167,6 +167,21 @@ SettingsService.init('iOS');
 
 
   componentWillMount: function() {
+      AsyncStorage.getItem('runDataAppKill', (err, result) => {
+       var datarun =JSON.parse(result);
+       if (datarun != null) {
+        this.setState({
+          result:result,
+          distanceTravelledsec:datarun.distance,
+          storedRunduration:datarun.time,
+        })
+     }else{
+       
+     }
+     
+      console.log('result234',this.state.result);
+    });    
+    
     // crashlytics.crash();
     AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
         stores.map((result, i, store) => {
@@ -266,7 +281,8 @@ SettingsService.init('iOS');
     }
   },
   
-  componentDidMount:function(){   
+  componentDidMount:function(){  
+   this.saveDataperiodcally(); 
     this._startStepCounterUpdates()
     var date = this.state.myrundate;
     this._handleStartStop();
@@ -395,6 +411,54 @@ SettingsService.init('iOS');
     // });
 
   },
+
+  saveDataperiodcally:function(){ 
+    var priv = this.state.distanceTravelledsec;
+
+    this.IntervelSaveRun = setInterval(()=>{
+    if (this.state.result != null) {
+      var distance = parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv)).toFixed(1);
+
+      console.log('functionhits',parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv)).toFixed(1),priv);
+    let Rundata = {
+      data:this.props.data,
+      distance:distance,
+      impact:parseFloat(distance * this.props.data.conversion_rate).toFixed(0),
+      speed:this.state.speed,
+      time:this.state.mainTimer + this.state.storedRunduration,
+      StartLocation:this.state.StartPosition,
+      EndLocation:this.state.EndPosition,
+      StartRunTime:this.state.myrundate,
+      noOfsteps:this.state.numberOfSteps,
+     }
+    AsyncStorage.setItem('runDataAppKill',JSON.stringify(Rundata));
+    AsyncStorage.getItem('runDataAppKill', (err, result) => {
+      console.log('myresult',result);
+    }); 
+
+    }else{
+    console.log('functionhits',parseFloat(this.state.distanceTravelled).toFixed(1),parseFloat(this.state.distanceTravelled).toFixed(1) * this.props.data.conversion_rate);
+    let Rundata = {
+      data:this.props.data,
+      distance:parseFloat(this.state.distanceTravelled).toFixed(1),
+      impact:parseFloat(this.state.distanceTravelled).toFixed(1) * this.props.data.conversion_rate,
+      speed:this.state.speed,
+      time:this.state.mainTimer,
+      StartLocation:this.state.StartPosition,
+      EndLocation:this.state.EndPosition,
+      StartRunTime:this.state.myrundate,
+      noOfsteps:this.state.numberOfSteps,
+     }
+    AsyncStorage.setItem('runDataAppKill',JSON.stringify(Rundata)); 
+    AsyncStorage.getItem('runDataAppKill', (err, result) => {
+      console.log('myresult',result);
+    }); 
+
+    }
+  },30000)
+
+  },
+
    // function for calculating new and previous latlag
    calcDistance:function(newLatLng) {
     const { prevLatLng } = this.state
@@ -437,7 +501,9 @@ SettingsService.init('iOS');
     // },
 
    onClickEnable: function(location) {
+     
     var me = this;
+    var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
     if (!this.state.enabled) {
         this.locationManager.start(function() {
         // me.initializePolyline();
@@ -445,8 +511,11 @@ SettingsService.init('iOS');
      
       } else {
       if (this.state.enabled) {
-      
-      if (parseFloat(this.state.distanceTravelled).toFixed(1) >= 0.1) {
+      console.log('mydat',Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv))
+      if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
+        AsyncStorage.removeItem('runDataAppKill');
+        clearInterval(this.IntervelSaveRun);
+        AsyncStorage.removeItem('runDataAppKill');
         this.EndGetLocation();
          this.locationManager.removeGeofences();
           this.locationManager.stop();
@@ -473,18 +542,21 @@ SettingsService.init('iOS');
       },
      navigateTOShareScreen:function(){
       var data = this.props.data;
+      var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
       var user = this.state.Storeduserdata;
+      var timetotal = (this.state.result != null)?Number(this.state.mainTimer )+ Number(this.state.storedRunduration):this.state.mainTimer;
+      console.log('datarun',timetotal,this.state.mainTimer,);
       this.props.navigator.push({
         id:'sharescreen',
         passProps:{
           data:data,
           getUserData:this.props.getUserData,
           user:this.props.user,
-          distance:parseFloat(this.state.distanceTravelled).toFixed(1),
-          impact:parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0),
+          distance:parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1),
+          impact:parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate,
           speed:this.state.speed,
           isUserlogin:user,
-          time:TimeFormatter(this.state.mainTimer),
+          time:TimeFormatter(timetotal),
           StartLocation:this.state.StartPosition,
           EndLocation:this.state.EndPosition,
           StartRunTime:this.state.myrundate,
@@ -505,7 +577,9 @@ SettingsService.init('iOS');
        ],
       ); 
     },
-   EndRunConfimation:function() {
+
+
+    EndRunConfimation:function() {
      VibrationIOS.vibrate();
       AlertIOS.alert(
          'Too short',
@@ -517,7 +591,9 @@ SettingsService.init('iOS');
       ); 
     },
     popRoute:function() {
-      if (this.state.enabled) {    
+      if (this.state.enabled) { 
+      AsyncStorage.removeItem('runDataAppKill');
+      clearInterval(this.IntervelSaveRun);
       this.locationManager.removeGeofences();
       this.locationManager.stop();
       this.navigateTOHomeScreen();
@@ -602,8 +678,47 @@ SettingsService.init('iOS');
     // onRightAnnotationTapped:function(e) {
     //   console.log(e);
     // },
+   impactTextView:function(data,priv){
+    if (this.state.result) {
+      return(
+          <Text style={styles.Impact}>{parseFloat(parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate).toFixed(0)}</Text>
+        )
+    }else{
+      return(
+           <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled).toFixed(1)* data.conversion_rate}</Text>
+        )
+    }
+   },
+
+   KmTextView:function(priv){
+    if (this.state.result) {
+      return(
+          <Text style={styles.distance}>{parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ Number(priv)).toFixed(1)}</Text>
+        )
+    }else{
+      return(
+           <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled).toFixed(1)}</Text>
+        )
+    }
+   },
+
+   TimeTextView:function(intime){
+    if (this.state.result) {
+      return(
+         <Text style={styles.distance}>{intime}</Text>
+        )
+    }else{
+      return(
+          <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
+        )
+    }
+   },
+
     render: function(location) {
+      var intime = TimeFormatter(this.state.mainTimer+this.state.storedRunduration);
       var data = this.props.data;
+      var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
+
       return (
         <View style={commonStyles.container}>
            <View ref="workspace" style={styles.workspace}>           
@@ -625,19 +740,19 @@ SettingsService.init('iOS');
                 backgroundColor="#fafafa">                   
               </AnimatedCircularProgress>
                <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
-                <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled * data.conversion_rate).toFixed(0)}</Text>
+                {this.impactTextView(data,priv)}
                 <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>RUPEES</Text>
               </View>
               </View>
               <View style={{flex:1,flexDirection:'row',backgroundColor:'transparent'}}>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,}} name={'ios-walk-outline'}></Icon>
-                    <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled ).toFixed(1)}</Text>
+                   {this.KmTextView(priv)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
                 </View>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
-                   <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
+                   {this.TimeTextView(intime)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
                 </View>
               </View>
@@ -658,4 +773,3 @@ SettingsService.init('iOS');
 });
 module.exports = Home;
 // <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
-
