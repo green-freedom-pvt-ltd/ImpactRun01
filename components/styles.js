@@ -89,13 +89,20 @@ var styles = StyleSheet.create({
     borderRadius:30,
   },
   menuTitle:{
-    width:200,
+    width:width-110,
     textAlign:'center',
     fontWeight:'400',
     color:'white',
-    fontSize:20,
+    fontSize:17,
     fontFamily:styleConfig.FontFamily,
   },
+   menuTitle2:{
+    fontWeight:'400',
+    color:'white',
+    fontSize:17,
+    fontFamily:styleConfig.FontFamily,
+  },
+
    Navbar:{
     position:'relative',
     height:styleConfig.navBarHeight,

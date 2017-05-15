@@ -98,14 +98,15 @@ import{
 		  render() {
 		    return (
           <View>
+         
             <View style={commonStyles.Navbar}>
               <Text style={commonStyles.menuTitle}>Leaderboard</Text>
               <View style={{position:'absolute',right:0,top:0,}}>{this.renderImpactLeagueIcon()}</View>
             </View>
             <View style= {styles.textlast7daysWrap}>
-              <Text style={styles.last7dayText}>Last seven days </Text>
+              <Text style={styles.last7dayText}>Most Kms last 7 days </Text>
             </View>
-              <View >{this.renderLeaderboadScreen()}</View>
+               <View >{this.renderLeaderboadScreen()}</View>
           </View>
 			  );
 	    }
@@ -120,14 +121,22 @@ var styles = StyleSheet.create({
   },
   textlast7daysWrap:{
     height:30,
+    marginBottom:8,
     justifyContent: 'center',
     alignItems: 'center',
     width:deviceWidth,
+    backgroundColor:'white',
+    shadowColor: '#000000',
+    shadowRadius:4,
+    shadowOpacity: 0.1,
+    shadowOffset: {
+      height: 0,
+    },
   },
   last7dayText:{
     color:styleConfig.greyish_brown_two,
-    fontSize:styleConfig.FontSize3,
-    fontWeight:'600',
+    fontSize:15,
+    fontWeight:'400',
     fontFamily:styleConfig.FontFamily,
   }
   })

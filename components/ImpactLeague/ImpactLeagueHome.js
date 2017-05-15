@@ -57,7 +57,6 @@ class ImpactLeague extends Component {
             })
           AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
             var boardData = JSON.parse(result);
-            console.log('boardData',boardData);
             if (result != null || undefined) {
               this.setState({
                 LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(boardData.results),
@@ -92,7 +91,6 @@ class ImpactLeague extends Component {
                 };  
               }
             );
-            console.log('myData',this.state.user);
             })
           })
         
@@ -122,10 +120,7 @@ class ImpactLeague extends Component {
             BannerData:jsonData.results,
           });
           let teamleaderBoardData = jsonData;
-          AsyncStorage.setItem('teamleaderBoardData',JSON.stringify(teamleaderBoardData));
-          AsyncStorage.getItem('teamleaderBoardData', (err, result) => {            
-          });  
-          console.log('data12345',jsonData);
+          AsyncStorage.setItem('teamleaderBoardData',JSON.stringify(teamleaderBoardData)); 
         })
         .catch( error => console.log('Error fetching: ' + error) );
       }
@@ -170,7 +165,7 @@ class ImpactLeague extends Component {
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
             <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:17,color:'#4a4a4a',}}>{rowID}</Text>
-              <Text style={styles.txt}>{rowData.team_name}</Text>
+              <Text numberOfLines={1} style={styles.txt}>{rowData.team_name}</Text>
               <View style={{width:deviceWidth/2-20, alignItems:'flex-end'}}>
               <Text style={styles.txtSec}>{parseFloat(rowData.total_distance.total_distance).toFixed(2)} Km</Text> 
               </View>             
@@ -183,8 +178,8 @@ class ImpactLeague extends Component {
         return (
           <View style={{height:deviceHeight}}>
           <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>
@@ -202,8 +197,8 @@ class ImpactLeague extends Component {
         return (
           <View>
            <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>
@@ -249,11 +244,9 @@ const styles = StyleSheet.create({
   },
   bannerimage:{
     height:deviceHeight/2-100,
-    borderWidth:1,
-    borderColor:'#CCC',
-
   },
-   txt: {
+
+  txt: {
     width:deviceWidth-200,
     color:'#4a4a4a',
     fontSize: 15,

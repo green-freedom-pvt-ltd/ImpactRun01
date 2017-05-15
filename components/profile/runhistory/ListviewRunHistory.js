@@ -257,13 +257,13 @@ var RunHostoryListView = React.createClass({
       var identities = rows.map(function(d) { return d.run_id; });
       if (this.props.withSections === true) {
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRowsAndSections(this.convertFoodArrayToMap(rows)),
+          dataSource: this.state.dataSource.cloneWithRowsAndSections(this.covertmonthArrayToMap(rows)),
           isRefreshing: false,
           paginationStatus: (options.allLoaded === true ? 'allLoaded' : 'waiting'),
         });
       } else {
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRowsAndSections(this.convertFoodArrayToMap(rows)),
+          dataSource: this.state.dataSource.cloneWithRowsAndSections(this.covertmonthArrayToMap(rows)),
           isRefreshing: false,
           paginationStatus: (options.allLoaded === true ? 'allLoaded' : 'waiting'),
         });
@@ -292,7 +292,7 @@ var RunHostoryListView = React.createClass({
   renderSectionHeader(sectionData, category) {
     return (
       <View style={[commonStyles.Navbar,{height:30,width:deviceWidth,justifyContent:'flex-start',paddingTop:0,paddingLeft:5}]}>
-      <Text style={commonStyles.menuTitle}>{category}</Text>
+      <Text style={commonStyles.menuTitle2}>{category}</Text>
       </View>
     )
   },
@@ -310,7 +310,7 @@ var RunHostoryListView = React.createClass({
       />
     );
   },
-  convertFoodArrayToMap(rows) {
+  covertmonthArrayToMap(rows) {
       console.log('myfaqdata24',rows);
       let _this = this;
       var foodCategoryMap = {}; // Create the blank map

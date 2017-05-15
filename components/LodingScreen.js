@@ -40,14 +40,12 @@ class Loding extends Component {
 
  const styles = StyleSheet.create({
   LodingWrap: {
-   height:deviceHeight,
-   width:deviceWidth,
+   flex:1,
    justifyContent: 'center',
    alignItems: 'center',
   },
   LodingBackgroundImg:{
-   height:deviceHeight,
-   width:deviceWidth,
+   flex:1,
    justifyContent: 'center',
    alignItems: 'center',
   },

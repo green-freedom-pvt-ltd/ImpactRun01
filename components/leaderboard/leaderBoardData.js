@@ -163,8 +163,8 @@ class LeaderboardData extends Component {
 
       renderLoadingView() {
         return (
-          <View style={{height:deviceHeight}}>
-            <LodingScreen style={{height:deviceHeight-50}}/>
+          <View style={{top:-8,height:deviceHeight-150, width:deviceWidth,}}>
+            <LodingScreen />
           </View>
         );
       }
@@ -173,7 +173,7 @@ class LeaderboardData extends Component {
         if (this.state.loaded) {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white',height:deviceHeight-100,width:deviceWidth,paddingBottom:45}}>
+            <View style={{backgroundColor:'white',height:deviceHeight-100,width:deviceWidth,paddingBottom:53}}>
                <ListView
                 style={styles.container}
                 renderRow={this.renderRow}

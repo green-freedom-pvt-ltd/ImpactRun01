@@ -11,13 +11,14 @@ import {
   TouchableOpacity,
   AlertIOS,
   NetInfo,
+  AsyncStorage,
+  RefreshControl,
 } from 'react-native';
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 var KeyboardEvents = require('react-native-keyboardevents');
-var KeyboardEventEmitter = KeyboardEvents.Emitter;
-import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import LodingScreen from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -25,25 +26,42 @@ class Faqdata extends Component {
 
       constructor(props) {
         super(props);
+        this.FetchfaqDataLocally();
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           faqData: ds.cloneWithRows([]),
           loaded: false,
-           keyboardSpace:0,
+          keyboardSpace:0,
+          refreshing:false,
         };
-        this.updateKeyboardSpace = this.updateKeyboardSpace.bind(this);
-        this.resetKeyboardSpace = this.resetKeyboardSpace.bind(this);
+      
       }
       
-
-      updateKeyboardSpace(frames) {
-        let newSize = Dimensions.get('window').height - deviceHeight/1.95-105;
-        this.setState({keyboardSpace: newSize});
+      FetchfaqDataLocally(){
+        AsyncStorage.getItem('faqData', (err, result) => { 
+          if (result != null || undefined) {
+          var faqdata = JSON.parse(result);  
+          this.setState({
+           faqData: this.state.faqData.cloneWithRows(faqdata.results),
+           loaded: true,
+          }) 
+        }else{
+          this.fetchifinternet();
+        }
+        });
       }
 
-      resetKeyboardSpace() {
-        this.setState({keyboardSpace: 0});
+      fetchifinternet(){
+        NetInfo.isConnected.fetch().done(
+          (isConnected) => { this.setState({isConnected}); 
+            if (isConnected) {
+               this.fetchFaqData();
+            };   
+          }
+        );
       }
+
+     
 
       navigateTOhome(){
         this.props.navigator.push({
@@ -54,53 +72,34 @@ class Faqdata extends Component {
       }
 
       componentDidMount() {
-        KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
-        KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
-        NetInfo.isConnected.fetch().done(
-          (isConnected) => { this.setState({isConnected}); 
-            if (isConnected) {
-               this.fetchFaqData();
-            };   
-          }
-        );
+       
       }
       
       componentWillUnmount() {
-        KeyboardEventEmitter.off(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
-        KeyboardEventEmitter.off(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
+        
       }
 
 
       fetchFaqData() {
+        AsyncStorage.removeItem('faqData',(err) => {
+          console.log(err,'itemremoved');
+         });
         var url = apis.faqsApi;
         fetch(url)
           .then( response => response.json() )
           .then( jsonData => {
             this.setState({
               faqData: this.state.faqData.cloneWithRows(jsonData.results),
-               loaded: true,
+              loaded: true,
+              refreshing:false,
             });
+            let faqData = jsonData;
+            AsyncStorage.setItem('faqData',JSON.stringify(faqData)); 
           })
         .catch( error => console.log('Error fetching: ' + error) );
       }
 
-      renderRow(rowData){
-        return (
-          <View style={{backgroundColor:'white',padding:10,marginBottom:1}}>
-            <View style={styles.thumb}>
-              <Text style={styles.txt}>{rowData.question}</Text>
-            </View>
-            <Text style={styles.txtSec}>{rowData.answer}</Text>
-          </View>
-        );
-      }
-      renderLoadingView() {
-        return (
-          <View style={{height:deviceHeight}}>
-            <LodingScreen style={{height:deviceHeight-50}}/>
-          </View>
-        );
-      }
+      
 
       SubmitFaq(){
         AlertIOS.alert('user_id',this.props.user);
@@ -127,11 +126,40 @@ class Faqdata extends Component {
         }else{
           AlertIOS.alert('No Internet Connection');
         }
+
         dismissKeyboard();
         this._textInput.setNativeProps({text: ''});
       }
 
+      _onRefresh(){
+        this.setState({
+          refreshing:true,
+        })
+        this.fetchifinternet();
+      }
+
+      
+      renderRow(rowData){
+        return (
+          <View style={{backgroundColor:'white',padding:10,marginBottom:1}}>
+            <View style={styles.thumb}>
+              <Text style={styles.txt}>{rowData.question}</Text>
+            </View>
+            <Text style={styles.txtSec}>{rowData.answer}</Text>
+          </View>
+        );
+      }
+      renderLoadingView() {
+        return (
+          <View style={{width:deviceWidth,height:deviceHeight-120}}>
+            <LodingScreen />
+          </View>
+        );
+      }
+
+
       render() {
+        console.log('keyboardSpace',this.state.keyboardSpace);
         if (!this.state.loaded) {
           return this.renderLoadingView();
         }
@@ -139,6 +167,11 @@ class Faqdata extends Component {
           <View style={{height:deviceHeight,width:deviceWidth}}>
             <View style={{height:deviceHeight-105,width:deviceWidth}}>
               <ListView
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh.bind(this)}
+                />}
                 dataSource={this.state.faqData}
                 renderRow={this.renderRow}
                 style={styles.container}>
@@ -154,7 +187,7 @@ class Faqdata extends Component {
                   <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
               </View>
-                <View style={{height: this.state.keyboardSpace}}></View>
+                 <KeyboardSpacer/>
             </View>
           </View> 
         );
@@ -224,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#00b9ff', 
+    backgroundColor:styleConfig.bright_blue, 
   }
 });
 

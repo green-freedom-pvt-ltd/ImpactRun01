@@ -103,13 +103,9 @@ class ImpactLeagueLeaderBoard extends Component {
             });
             let ILleaderBoardData = jsonData;
             AsyncStorage.setItem('ILleaderBoardData'+this.props.Team_id,JSON.stringify(ILleaderBoardData));
-             console.log('response',jsonData);
-          })
-           AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
-            var boardData = JSON.parse(result);
-            console.log('ILleaderBoardData'+this.props.Team_id,boardData);
-          })
+          })       
           .catch( error => console.log('Error fetching: ' + error));
+
         }else{
           var url2 = url +"?team_id="+this.props.Team_id;
           fetch(url2,{
@@ -128,12 +124,7 @@ class ImpactLeagueLeaderBoard extends Component {
           });
           let ILleaderBoardData2 = jsonData;
           AsyncStorage.setItem('ILleaderBoardData'+this.props.Team_id,JSON.stringify(ILleaderBoardData2));
-          //  console.log('response',jsonData);
           })
-        AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
-          var boardData = JSON.parse(result);
-          console.log('ILleaderBoardData'+this.props.Team_id,boardData);
-        })
         .catch( error => console.log('Error fetching: ' + error));
         }
       }
@@ -176,8 +167,9 @@ class ImpactLeagueLeaderBoard extends Component {
             'width':25,
           }
         ];
+        var backgroundColor = (this.props.user.user_id === rowData.user.user_id)?'#ffcd4d':'#fff';
         return (
-          <View style={styles.cardLeaderBoard}>
+          <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <View style={style}>
                 <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
               </View> 
@@ -191,8 +183,8 @@ class ImpactLeagueLeaderBoard extends Component {
         return (
           <View style={{height:deviceHeight}}>
           <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
             </TouchableOpacity>
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
             </View>     
@@ -209,8 +201,8 @@ class ImpactLeagueLeaderBoard extends Component {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
            <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
             </TouchableOpacity>
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
             </View>
@@ -238,12 +230,11 @@ const styles = StyleSheet.create({
 
   },
   cardLeaderBoard:{
-    backgroundColor:'white',
     alignItems: 'center',
     flexDirection:'row',
     padding:10,
-    marginTop:5,
     left:5,
+    borderRadius:5,
     width:deviceWidth-10,
     borderBottomWidth:1,
     borderColor:'#CCC',
