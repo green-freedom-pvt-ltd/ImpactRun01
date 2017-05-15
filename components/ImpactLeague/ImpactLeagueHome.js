@@ -14,7 +14,9 @@ import{
     AlertIOS,
     NetInfo,
     AsyncStorage,
+    RefreshControl,
   } from 'react-native';
+import TimeFormatter from 'minutes-seconds-milliseconds';
 import apis from '../apis';
 import commonStyles from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -26,22 +28,26 @@ class ImpactLeague extends Component {
       
       constructor(props) {
         super(props);
+        this.fetchDataLocally();
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           LeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
+          refreshing: false,
         };
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
       }
 
-       componentDidMount() {
-        this.getUserData();
-        this.props.getUserData();
+      componentDidMount() { 
+        this.fetchLeaderBoardDataIntervel = setInterval(()=>{
+          this.getUserData();
+         },(60000*60)*3)
+        // this.props.getUserData();
       }
-
-      getUserData(){
-      AsyncStorage.multiGet(['UID234'], (err, stores) => {
+      
+      fetchDataLocally(){
+        AsyncStorage.multiGet(['UID234'], (err, stores) => {
         stores.map((result, i, store) => {
           let key = store[i][0];
           let val = store[i][1];
@@ -49,6 +55,36 @@ class ImpactLeague extends Component {
             this.setState({
               user:user,
             })
+          AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
+            var boardData = JSON.parse(result);
+            console.log('boardData',boardData);
+            if (result != null || undefined) {
+              this.setState({
+                LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(boardData.results),
+                BannerData:boardData.results,
+                leaguename:boardData.results[0].impactleague,
+                loaded: true,
+              })
+            }else{
+               this.getUserData();
+               this.setState({
+                leaguename:'Impact League'
+               })
+            }
+          }); 
+        }); 
+        });
+      }
+
+      getUserData(){
+        AsyncStorage.multiGet(['UID234'], (err, stores) => {
+          stores.map((result, i, store) => {
+            let key = store[i][0];
+            let val = store[i][1];
+            let user = JSON.parse(val);
+              this.setState({
+                user:user,
+              })
             NetInfo.isConnected.fetch().done(
               (isConnected) => { this.setState({isConnected}); 
                 if (isConnected) {
@@ -57,12 +93,16 @@ class ImpactLeague extends Component {
               }
             );
             console.log('myData',this.state.user);
+            })
           })
-        })
+        
       }
 
-
+    
       fetchLeaderBoardData() {
+         AsyncStorage.removeItem('teamleaderBoardData',(err) => {
+          console.log(err,'itemremoved');
+         });
         var token = this.state.user.auth_token;
         console.log('mytoken',token)
         var url = apis.ImpactLeagueTeamLeaderBoardApi;
@@ -78,15 +118,24 @@ class ImpactLeague extends Component {
           this.setState({
             LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
+            refreshing:false,
             BannerData:jsonData.results,
-            countRow:jsonData.count,
           });
-          console.log('data',JSON.stringify(jsonData));
+          let teamleaderBoardData = jsonData;
+          AsyncStorage.setItem('teamleaderBoardData',JSON.stringify(teamleaderBoardData));
+          AsyncStorage.getItem('teamleaderBoardData', (err, result) => {            
+          });  
+          console.log('data12345',jsonData);
         })
         .catch( error => console.log('Error fetching: ' + error) );
       }
 
-      
+      NavigateToleagueend(){
+      this.props.navigator.push({
+         title: 'leaderboard',
+        id:'leaderboard',
+      })
+      }
 
   
       NavigateToDetail(rowData){
@@ -98,8 +147,18 @@ class ImpactLeague extends Component {
       }
 
       goBack(){
-           this.props.navigator.pop({})
+        if (this.props.data == 'fromshare') {
+          this.props.navigator.push({
+          id:'tab',
+          })
+        }else{
+          this.props.navigator.pop({})
+        }
         
+      }
+      _onRefresh() {
+        this.setState({refreshing: true});
+        this.fetchLeaderBoardData();
       }
 
       renderRow(rowData,index,rowID){
@@ -107,16 +166,15 @@ class ImpactLeague extends Component {
         var me = this;
         console.log('user',me.state.user);
         var backgroundColor =(me.state.user.team_code === rowData.id)?'#ffcd4d':'#fff';
-        var ClickableorNot = (me.state.user.team_code === rowData.id)?TouchableOpacity:TouchableOpacity;
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
-            <ClickableorNot onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
+            <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:17,color:'#4a4a4a',}}>{rowID}</Text>
               <Text style={styles.txt}>{rowData.team_name}</Text>
               <View style={{width:deviceWidth/2-20, alignItems:'flex-end'}}>
               <Text style={styles.txtSec}>{parseFloat(rowData.total_distance.total_distance).toFixed(2)} Km</Text> 
               </View>             
-            </ClickableorNot>
+            </TouchableOpacity>
           </View>
         );
       
@@ -126,9 +184,9 @@ class ImpactLeague extends Component {
           <View style={{height:deviceHeight}}>
           <View style={commonStyles.Navbar}>
             <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
-              <Text style={commonStyles.menuTitle}>Impact League</Text>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>
             <LodingScreen style={{height:deviceHeight-50}}/>
           </View>
@@ -145,14 +203,19 @@ class ImpactLeague extends Component {
           <View>
            <View style={commonStyles.Navbar}>
             <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
-              <Text style={commonStyles.menuTitle}>Impact League</Text>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>
             <View>
              <Image source={{uri:this.state.BannerData[0].impactleague_banner}} style={styles.bannerimage}>
               </Image>
               <ListView 
+               refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh.bind(this)}
+                />}
                 navigator={this.props.navigator}
                 dataSource={this.state.LeaderBoardData}
                 renderRow={this.renderRow}

@@ -160,8 +160,6 @@ class Homescreen extends Component {
           run_duration:RunData.run_duration,
           start_location_lat:RunData.start_location_lat,
           start_location_long:RunData.start_location_long,
-          end_location_lat:RunData.end_location_lat,
-          end_location_long:RunData.end_location_long,
           no_of_steps:RunData.no_of_steps,
           is_ios:RunData.is_ios,
         })

@@ -116,9 +116,30 @@ class ImpactLeagueCode extends Component {
 
 
 		Navigate_To_nextpage(responseJson){
+      var team_code = responseJson.team_code;
+      console.log(responseJson.company_attribute);
+      var cities = responseJson.company_attribute;
+      var city = [];
+      var i;
+      for (i = 0; i < cities.length; i++) {
+          city.push(cities[i].city);
+
+      }
+      console.log('text',city);
+      var departments = responseJson.company_attribute;
+      var department = [];
+      var i;
+      for (i = 0; i < departments.length; i++) {
+          department.push(departments[i].department);
+
+      }
+      console.log('text',department);
+
       this.props.navigator.replace({
       id:'impactleagueform2',
         passProps:{
+          cities:city,
+          departments:department,
           user:this.props.user,
           data:responseJson,
           getUserData:this.props.getUserData,

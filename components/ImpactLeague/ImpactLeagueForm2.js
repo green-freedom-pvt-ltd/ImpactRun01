@@ -20,10 +20,8 @@
   import styleConfig from '../styleConfig';
   import SubmitBtn from '../submitbtn';
   import apis from '../apis';
-  import ImpactLeagueDropDown from './ImpactLeagueComponents/dropDownComponent';
-  import ImpactLeagueDropDown2 from './ImpactLeagueComponents/dropDownComponent2';
   import ModalDropdown from './ImpactLeagueComponents/modelindex.js';
-   import ModalDropdown2 from './ImpactLeagueComponents/modelindex2.js';
+  import ModalDropdown2 from './ImpactLeagueComponents/modelindex2.js';
 
 
   class ImpactLeagueForm2 extends Component {
@@ -42,7 +40,7 @@
 
 
       componentDidMount() {
-  
+        this.props.getUserData();
       }
 
 

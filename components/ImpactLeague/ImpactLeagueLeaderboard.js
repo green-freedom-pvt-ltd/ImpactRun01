@@ -15,6 +15,7 @@ import{
     AlertIOS,
     ListView,
     AsyncStorage,
+    RefreshControl,
   } from 'react-native';
 
 import apis from '../apis';
@@ -27,49 +28,88 @@ class ImpactLeagueLeaderBoard extends Component {
 
       constructor(props) {
         super(props);
+        this.FetchLeaderBoardLocally();
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           ImpactLeagueLeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
+          refreshing:false,
         };
         this.renderRow = this.renderRow.bind(this);
       }
 
       componentDidMount() {
+        this.fetchLeaderBoardDataIntervel = setInterval(()=>{
+          this.FetchDataifInternet();
+        },(60000*60)*3);
+      }
+      
+      FetchDataifInternet(){
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
-               this.fetchFeedData();
+               this.FetchLeaderBoard();
             };  
           }
         );
       }
-      
+
       componentWillUnmount() {
         console.log('myComponent')    
       }
+      
+     
+      FetchLeaderBoardLocally(){
+        AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
+          var boardData = JSON.parse(result);
+          if (result != null || undefined) {
+            this.setState({
+              ImpactLeagueLeaderBoardData:this.state.ImpactLeagueLeaderBoardData.cloneWithRows(boardData.results),
+              BannerData:boardData.results,
+              teamname:boardData.results[0].team,
+              loaded: true,
+            })
+          }else{
+             this.FetchDataifInternet();
+             this.setState({
+              teamname:'Impact League'
+             })
+          }
+        }); 
+      }
 
-      fetchFeedData() {       
+
+
+      FetchLeaderBoard() {     
+         AsyncStorage.removeItem('ILleaderBoardData'+this.props.Team_id,(err) => {
+          console.log(err,'itemremoved');
+         });  
         var url = apis.ImpactLeagueLeaderboardApi;
         var token = this.props.user.auth_token;
         if (this.props.user.team_code == this.props.Team_id) {
-        fetch(url,{
-          method: "GET",
-          headers: {  
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-          }
-        })
-        .then( response => response.json() )
-        .then( jsonData => {
-          this.setState({
-            ImpactLeagueLeaderBoardData: this.state.ImpactLeagueLeaderBoardData.cloneWithRows(jsonData.results),
-            loaded: true,
-          });
-  
-          console.log('response',jsonData);
-        })
-        .catch( error => console.log('Error fetching: ' + error));
+          fetch(url,{
+            method: "GET",
+            headers: {  
+              'Authorization':"Bearer "+ token,
+              'Content-Type':'application/x-www-form-urlencoded',
+            }
+          })
+          .then( response => response.json() )
+          .then( jsonData => {
+            this.setState({
+              ImpactLeagueLeaderBoardData: this.state.ImpactLeagueLeaderBoardData.cloneWithRows(jsonData.results),
+              loaded: true,
+              refreshing:false,
+            });
+            let ILleaderBoardData = jsonData;
+            AsyncStorage.setItem('ILleaderBoardData'+this.props.Team_id,JSON.stringify(ILleaderBoardData));
+             console.log('response',jsonData);
+          })
+           AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
+            var boardData = JSON.parse(result);
+            console.log('ILleaderBoardData'+this.props.Team_id,boardData);
+          })
+          .catch( error => console.log('Error fetching: ' + error));
         }else{
           var url2 = url +"?team_id="+this.props.Team_id;
           fetch(url2,{
@@ -78,15 +118,21 @@ class ImpactLeagueLeaderBoard extends Component {
             'Authorization':"Bearer "+ token,
             'Content-Type':'application/x-www-form-urlencoded',
           }
-        })
+          })
         .then( response => response.json() )
         .then( jsonData => {
           this.setState({
             ImpactLeagueLeaderBoardData: this.state.ImpactLeagueLeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
+            refreshing:false,
           });
-  
-          console.log('response',jsonData);
+          let ILleaderBoardData2 = jsonData;
+          AsyncStorage.setItem('ILleaderBoardData'+this.props.Team_id,JSON.stringify(ILleaderBoardData2));
+          //  console.log('response',jsonData);
+          })
+        AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
+          var boardData = JSON.parse(result);
+          console.log('ILleaderBoardData'+this.props.Team_id,boardData);
         })
         .catch( error => console.log('Error fetching: ' + error));
         }
@@ -110,18 +156,20 @@ class ImpactLeagueLeaderBoard extends Component {
         }
       }
 
+      _onRefresh() {
+        this.setState({refreshing: true});
+        this.FetchLeaderBoard();
+      }
+
+
       renderRow(rowData,index,rowID){
         var totalkms = (rowData.league_total_distance.total_distance == null)?'0':rowData.league_total_distance.total_distance;
         rowID++
         var me = this;
-        let colors = ['#ffcd4d', '#ffcd4d', '#ffcd4d', 'white','white','white','white','white','white','white',];
         let style = [
           styles.row, 
-          {'backgroundColor': colors[rowID % colors.length-1],
+          {
             'alignItems': 'center',
-            'flexDirection':'row',
-            'borderRadius':12.5,
-            'right':5,
             'justifyContent': 'center',
             'alignItems': 'center',
             'height':25,
@@ -146,7 +194,7 @@ class ImpactLeagueLeaderBoard extends Component {
             <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
               <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
             </TouchableOpacity>
-              <Text style={commonStyles.menuTitle}>Team Leaderboard</Text>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
             </View>     
             <LodingScreen style={{ height:deviceHeight-150}}/>
           </View>
@@ -164,10 +212,15 @@ class ImpactLeagueLeaderBoard extends Component {
             <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
               <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
             </TouchableOpacity>
-              <Text style={commonStyles.menuTitle}>Team Leaderboard</Text>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
             </View>
             <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,}}>
                <ListView 
+                refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh.bind(this)}
+                />}
                 dataSource={this.state.ImpactLeagueLeaderBoardData}
                 renderRow={this.renderRow}
                 style={styles.container}

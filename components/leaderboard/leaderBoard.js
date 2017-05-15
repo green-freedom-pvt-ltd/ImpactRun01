@@ -11,7 +11,9 @@ import{
     TouchableOpacity,
     Text,
     AlertIOS,
+    AsyncStorage,
   } from 'react-native';
+  import styleConfig from '../../components/styleConfig';
   import ImpactLeagueCode from '../ImpactLeague/ImpactLeagueCode'
   import ScrollableTabView, { ScrollableTabBarLeaderBoard, } from 'react-native-scrollable-tab-view';
   import Icon from 'react-native-vector-icons/FontAwesome';
@@ -37,23 +39,33 @@ import{
       }
 
       navigateToImpactLeague(){
-         if (this.props.user != null) {
-         if (this.props.user.team_code === 0) {
-          this.setState({
-            RouteImpactleague:'impactleaguecode'
-          })
-         }else{
-          this.setState({
-            RouteImpactleague:'impactleaguehome'
-          })
+          AsyncStorage.multiGet(['UID234'], (err, stores) => {
+              stores.map((result, i, store) => {
+                  let key = store[i][0];
+                  let val = store[i][1];
+                  let user = JSON.parse(val);
+                  console.log('myuserdata',user)
+                  this.setState({
+                      user: user,
+                  })
+                if (this.state.user.team_code === 0) {
+                  this.setState({
+                    RouteImpactleague:'impactleaguecode'
+                  })
+                }else{
+                this.setState({
+                  RouteImpactleague:'impactleaguehome'
+                })
 
-         }
-         };
-        this.props.navigator.push({
-        id:this.state.RouteImpactleague,
-        navigator: this.props.navigator,
-        passProps:{user:this.props.user, getUserData:this.props.getUserData}
-        })
+               }
+              this.props.navigator.push({
+              id:this.state.RouteImpactleague,
+              navigator: this.props.navigator,
+              passProps:{user:this.props.user, getUserData:this.props.getUserData}
+              })
+              })
+          })    
+        
       }
 
       renderLeaderboadScreen(){
@@ -90,6 +102,9 @@ import{
               <Text style={commonStyles.menuTitle}>Leaderboard</Text>
               <View style={{position:'absolute',right:0,top:0,}}>{this.renderImpactLeagueIcon()}</View>
             </View>
+            <View style= {styles.textlast7daysWrap}>
+              <Text style={styles.last7dayText}>Last seven days </Text>
+            </View>
               <View >{this.renderLeaderboadScreen()}</View>
           </View>
 			  );
@@ -103,5 +118,17 @@ var styles = StyleSheet.create({
     height:deviceHeight,
     top:0,
   },
+  textlast7daysWrap:{
+    height:30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:deviceWidth,
+  },
+  last7dayText:{
+    color:styleConfig.greyish_brown_two,
+    fontSize:styleConfig.FontSize3,
+    fontWeight:'600',
+    fontFamily:styleConfig.FontFamily,
+  }
   })
 export default Leaderboard;

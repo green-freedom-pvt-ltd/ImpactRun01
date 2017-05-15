@@ -89,6 +89,8 @@ var styles = StyleSheet.create({
     borderRadius:30,
   },
   menuTitle:{
+    width:200,
+    textAlign:'center',
     fontWeight:'400',
     color:'white',
     fontSize:20,

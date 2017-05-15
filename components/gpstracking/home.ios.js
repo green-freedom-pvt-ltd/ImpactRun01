@@ -427,7 +427,6 @@ SettingsService.init('iOS');
       speed:this.state.speed,
       time:this.state.mainTimer + this.state.storedRunduration,
       StartLocation:this.state.StartPosition,
-      EndLocation:this.state.EndPosition,
       StartRunTime:this.state.myrundate,
       noOfsteps:this.state.numberOfSteps,
      }
@@ -445,7 +444,6 @@ SettingsService.init('iOS');
       speed:this.state.speed,
       time:this.state.mainTimer,
       StartLocation:this.state.StartPosition,
-      EndLocation:this.state.EndPosition,
       StartRunTime:this.state.myrundate,
       noOfsteps:this.state.numberOfSteps,
      }
@@ -516,8 +514,8 @@ SettingsService.init('iOS');
         AsyncStorage.removeItem('runDataAppKill');
         clearInterval(this.IntervelSaveRun);
         AsyncStorage.removeItem('runDataAppKill');
-        this.EndGetLocation();
          this.locationManager.removeGeofences();
+         this.navigateTOShareScreen();
           this.locationManager.stop();
           this.locationManager.resetOdometer();
           // this.removeAllAnnotations(mapRef);
@@ -558,7 +556,6 @@ SettingsService.init('iOS');
           isUserlogin:user,
           time:TimeFormatter(timetotal),
           StartLocation:this.state.StartPosition,
-          EndLocation:this.state.EndPosition,
           StartRunTime:this.state.myrundate,
           noOfsteps:this.state.numberOfSteps,
           },
@@ -623,6 +620,7 @@ SettingsService.init('iOS');
       this.updatePaceButtonStyle();
       this._handleStartStop();
     },
+
     StartGetLocation: function() { 
        navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -634,17 +632,18 @@ SettingsService.init('iOS');
       {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
       )
     }, 
-    EndGetLocation: function() { 
-       navigator.geolocation.getCurrentPosition(
-      (position) => {
-        var EndPosition = position;
-        this.setState({EndPosition})
-        this.navigateTOShareScreen();
-      },
-      (error) => alert(error.message),
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-      )
-    },
+
+    // EndGetLocation: function() { 
+    //    navigator.geolocation.getCurrentPosition(
+    //   (position) => {
+    //     var EndPosition = position;
+    //     this.setState({EndPosition})
+    //     this.navigateTOShareScreen();
+    //   },
+    //   (error) => alert(error.message),
+    //   {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+    //   )
+    // },
     // onRegionChange: function() {
     // },
     // setCenter: function(location) {

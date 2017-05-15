@@ -34,6 +34,7 @@ import{
     mixins: [TimerMixin]
     constructor(props) {
       super(props);
+      this.getILdata();
       var cause = this.props.data;
       var distance = this.props.distance;
       var impact =this.props.impact;
@@ -157,7 +158,7 @@ import{
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
-           // this.PostRun();
+           this.PostRun();
           }else{
            this.SaveRunLocally();
           }
@@ -169,9 +170,7 @@ import{
      var saveRuns = parseInt(this.state.saveRunCountData)+ 1 ;
      console.log('myrundata',saveRuns);
      var startPosition = this.props.StartLocation;
-     var endPosition = this.props.EndLocation;
      console.log('starttlocation:',this.props.StartLocation);
-     console.log('endlocation:',this.props.EndLocation);
      AsyncStorage.setItem("SaveRunCount",JSON.stringify(saveRuns));
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
@@ -198,8 +197,6 @@ import{
         run_duration: time,
         start_location_lat:startPosition.coords.latitude,
         start_location_long:startPosition.coords.longitude,
-        end_location_lat:endPosition.coords.latitude,
-        end_location_long: endPosition.coords.longitude,
         no_of_steps:steps,
         is_ios:true,
        
@@ -247,10 +244,7 @@ import{
     // }
 
     PostRun(){
-      if (this.props.distance >= 0.1) {
-         console.log('starttlocation:',this.props.StartLocation);
-       console.log('endlocation:',this.props.EndLocation);
-       
+      if (this.props.distance >= 0.1) {       
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
@@ -262,12 +256,9 @@ import{
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       var startPosition = this.props.StartLocation;
-      var endPosition = this.props.EndLocation;
-       console.log('startPosition.coords.latitude',startPosition.coords.latitude);
-        console.log('startPosition.coords.longitude',startPosition.coords.longitude);
-        console.log('endPosition.coords.lautiude',endPosition.coords.latitude);
-        console.log('endPosition.coords.longitude',endPosition.coords.longitude);
-
+      console.log('startPosition.coords.latitude',startPosition.coords.latitude);
+      console.log('startPosition.coords.longitude',startPosition.coords.longitude);
+    
       var cause = this.props.data;
       fetch(apis.runApi, {
          method: "POST",
@@ -287,8 +278,6 @@ import{
           run_duration: time,
           start_location_lat:startPosition.coords.latitude,
           start_location_long:startPosition.coords.longitude,
-          end_location_lat:endPosition.coords.latitude,
-          end_location_long: endPosition.coords.longitude, 
           no_of_steps:steps,
           is_ios:true,     
           })
@@ -308,11 +297,34 @@ import{
     DiscardRunfunction(){
       return this.navigateTOhome();
     }
+    
+    getILdata(){
+      AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
+        if (result != null || undefined) {
+        var boardData = JSON.parse(result);
+        console.log('mydatawewew',boardData)
+        if (boardData.impactleague_is_active) {   
+          this.setState({
+            navigatetopage:'impactleaguehome'
+          }) 
+        }else{
+          this.setState({
+            navigatetopage:'tab'
+          })
+        }
+        }else{
+          this.setState({
+            navigatetopage:'tab'
+          })
+        }       
+      }); 
+    }
 
     navigateTOhome(){
       this.props.navigator.push({
       title: 'Gps',
-      id:'tab',
+      id:this.state.navigatetopage,
+      passProps:{data:'fromshare'},
       navigator: this.props.navigator,
       })
      }
