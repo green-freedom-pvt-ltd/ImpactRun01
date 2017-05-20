@@ -19,113 +19,62 @@ import RunHistory from './runhistory/runHistory';
 import LodingView from '../LodingScreen';
 import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
 import Icon from 'react-native-vector-icons/Ionicons';
-import API from './runhistory/RunPaginationApi';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 
 class Profile extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-      loaded:false,
-        user:null,
-      };
-      this.onFetch = this.onFetch.bind(this);
-      this.getUserData = this.getUserData.bind(this);
-      this.getRunCount = this.getRunCount.bind(this);
-    }
-    
-    getUserData(){ 
-      NetInfo.isConnected.fetch().done(
-        (isConnected) => {  
-        if (isConnected) {
-          this.fetchAmount();
-          }else{
-            AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
-              var TotalAmount = JSON.parse(result);
-              this.setState({
-                RunTotalAmount2:TotalAmount.TotalRupeesCount,
-              })
-           })
+      constructor(props) {
+        super(props);
+        this.getRunCount();
+        this.fetchAmount();
+        this.state = {
+        loaded:false,
+          user:null,
+        };
+        this.getUserData = this.getUserData.bind(this);
+        this.getRunCount = this.getRunCount.bind(this);
+        this.fetchAmount = this.fetchAmount.bind(this);
+      }
+      
+      getUserData(){ 
+        NetInfo.isConnected.fetch().done(
+          (isConnected) => {  
+          if (isConnected) {
+            this.fetchAmount();
+            }else{
+              AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
+                var TotalAmount = JSON.parse(result);
+                this.setState({
+                  RunTotalAmount2:TotalAmount.TotalRupeesCount,
+                })
+             })
+            }
           }
-        }
-      );     
+        );     
       }
 
       fetchAmount(){
-        if (this.props.user != null) {
-            fetch("http://dev.impactrun.com/api/users/", {
-            method: "GET",
-             headers: {  
-                'Authorization':"Bearer " + this.props.user.auth_token,
-              }
-            })
-            .then((response) => response.json())
-            .then((userdata) => {
-              this.setState({
-                userTotalAmount:userdata[0].total_amount.total_amount,
-              })
-              let TotalRupees = {
-                TotalRupeesCount:this.state.userTotalAmount,               
-              }      
-
-              AsyncStorage.setItem('RunTotalAmount', JSON.stringify(TotalRupees), () => {
-                AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
-                  var TotalAmount = JSON.parse(result);
-                  this.setState({
-                    RunTotalAmount2:TotalAmount.TotalRupeesCount,
-                  })
-                })
-              })
-          })
-        
-        };
-
+        AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        if (result != null || undefined) {
+        var RunData = JSON.parse(result)
+        var sum = 0;
+        var i;
+        for (i = 0; i < RunData.length; i++) {
+          var flag = RunData[i].is_flag;
+          if (flag != true) {
+           sum += parseInt(RunData[i].run_amount);
+            };
+        }
+        this.setState({
+          RunTotalAmount2:sum,
+        })
+        }else{
+        return;
+         }     
+       })
       }
 
-      onFetch(page = 1, callback, options) {     
-        let rowArray = [];
-         this.setState({
-          myHistoryData:rowArray
-         })
-          Promise.resolve(API.getAllRuns(page,this.props.user))
-          .then((response) => {
-            NetInfo.isConnected.fetch().done(
-            (isConnected) => {  
-            if (isConnected) {
-              this.fetchAmount();
-              }else{
-                
-              }
-             }
-            );
-            this.setState({
-              runCount: response.count
-            });
-            let TotalRun = {
-              TotalRunCount:this.state.runCount,  
-            }
-          AsyncStorage.setItem('RunCount', JSON.stringify(TotalRun), () => {
-            this.getRunCount();
-          })
-          response.results.map((object) => {
-            rowArray.push(object);
-          });
-        })
-        .catch((error) => {
-          this.getRunCount();
-          this.getAmountCount();
-        })
-        .then(() => {
-          if (page === Math.round((this.state.runCount+2)/5)) {
-            callback(rowArray, {
-              allLoaded: true,
-            });
-          } else {
-            callback(rowArray);
-          }
-        });   
-      }
+     
 
       getAmountCount(){
         AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
@@ -137,12 +86,25 @@ class Profile extends Component {
       }
 
       getRunCount(){
-        AsyncStorage.getItem('RunCount', (err, result) => { 
-          var TotalRun = JSON.parse(result);
-          this.setState({
-            RunCountTotal:TotalRun.TotalRunCount,
-          })
+        AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        if (result != null || undefined) {
+        var RunData = JSON.parse(result)
+        var nonflagedRun = [];
+        var i;
+        for (i = 0; i < RunData.length; i++) {
+          var flag = RunData[i].is_flag;
+          if (flag != true) {
+            nonflagedRun.push(RunData[i].is_flag);
+            };
+        }
+        this.setState({
+          RunCountTotal:nonflagedRun.length,
         })
+        }else{
+        return;
+      }     
+        })
+
       }
 
       LodingView(){
@@ -162,7 +124,7 @@ class Profile extends Component {
               renderTabBar={() => <ScrollableTabBar userTotalAmount={this.state.RunTotalAmount2} RunCount={this.state.RunCountTotal} getUserData={this.props.getUserData} user={this.props.user} />}>
               <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm getUserData={this.props.getUserData} user={this.props.user}/></View>
               <View style={styles.tabContent} tabLabel='History'>
-                  <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} user={this.props.user}/>
+                  <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} getRunCount={this.getRunCount} fetchAmount = {this.fetchAmount}user={this.props.user}/>
               </View>
             </ScrollableTabView>
           </View>

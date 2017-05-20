@@ -102,9 +102,7 @@ class Faqdata extends Component {
       
 
       SubmitFaq(){
-        AlertIOS.alert('user_id',this.props.user);
         var user_id = this.props.user.user_id;
-        if (this.state.isConnected === true) {
          fetch("http://dev.impactrun.com/api/faq/", {
             method: "post",
             headers: {  
@@ -123,13 +121,9 @@ class Faqdata extends Component {
           })    
           .catch((err) => {
           })
-        }else{
-          AlertIOS.alert('No Internet Connection');
-        }
 
-        dismissKeyboard();
         this._textInput.setNativeProps({text: ''});
-      }
+        }
 
       _onRefresh(){
         this.setState({

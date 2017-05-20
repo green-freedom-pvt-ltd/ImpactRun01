@@ -19,8 +19,7 @@
   import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
   import LodingScreen from '../LodingScreen';
   import apis from '../apis';
-
-
+   import BackgroundFetch from "react-native-background-fetch";
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LeaderboardData extends Component {
@@ -48,10 +47,12 @@ class LeaderboardData extends Component {
           navigator: this.props.navigator,
         })
       }
+
       
       fetchLeaderBoardLocally(){
         AsyncStorage.getItem('leaderBoard', (err, result) => { 
-        var jsonData = JSON.parse(result); 
+        var jsonData = JSON.parse(result);
+        console.log('myld',jsonData); 
         if (result != null || undefined) {
           this.setState({
             LeaderBoard: this.state.LeaderBoard.cloneWithRows(jsonData.results),
@@ -65,10 +66,25 @@ class LeaderboardData extends Component {
         });
       }
 
-      componentDidMount() {       
-        this.fetchLeaderBoardDataIntervel = setInterval(()=>{
-          this.fetchLeaderBoard();
-        },(60000*60)*3)
+      componentDidMount() {  
+        
+      BackgroundFetch.configure({
+      stopOnTerminate: false
+      }, function() {
+        console.log("[js] RNBackgroundFetch to start");
+         this.fetchLeaderBoard();
+        // To signal completion of your task to iOS, you must call #finish!
+        // If you fail to do this, iOS can kill your app.
+        BackgroundFetch.finish();
+      }, function(error) {
+        console.log("[js] RNBackgroundFetch failed to start");
+      });
+      BackgroundFetch.start(()=>{
+        console.log('startedfetch');
+      });     
+        // this.fetchLeaderBoardDataIntervel = setInterval(()=>{
+        //   this.fetchLeaderBoard();
+        // },(60000*60)*3)
       }
       
       fetchDataIfInternet(){

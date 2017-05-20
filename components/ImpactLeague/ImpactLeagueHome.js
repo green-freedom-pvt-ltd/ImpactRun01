@@ -16,7 +16,6 @@ import{
     AsyncStorage,
     RefreshControl,
   } from 'react-native';
-import TimeFormatter from 'minutes-seconds-milliseconds';
 import apis from '../apis';
 import commonStyles from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -120,6 +119,7 @@ class ImpactLeague extends Component {
             BannerData:jsonData.results,
           });
           let teamleaderBoardData = jsonData;
+          console.log('teamleaderBoardData',teamleaderBoardData);
           AsyncStorage.setItem('teamleaderBoardData',JSON.stringify(teamleaderBoardData)); 
         })
         .catch( error => console.log('Error fetching: ' + error) );
@@ -179,7 +179,7 @@ class ImpactLeague extends Component {
           <View style={{height:deviceHeight}}>
           <View style={commonStyles.Navbar}>
             <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>
@@ -198,7 +198,7 @@ class ImpactLeague extends Component {
           <View>
            <View style={commonStyles.Navbar}>
             <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>

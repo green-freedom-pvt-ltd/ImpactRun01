@@ -10,7 +10,8 @@ var {
   AsyncStorage,
   Dimensions,
   VibrationIOS,
-  TouchableHighlight
+  TouchableHighlight,
+  ActivityIndicatorIOS
 } = ReactNative;
 
 
@@ -68,7 +69,10 @@ var UserProfile = React.createClass({
           )
       }else{
         return(
-            <Text style={styles.totalcontentText}>0</Text>
+             <ActivityIndicatorIOS
+                style={{height: 10,marginTop:5}}
+                size="small"
+              />
           )
       }
     },
@@ -80,7 +84,10 @@ var UserProfile = React.createClass({
         )
       }else{
         return(
-            <Text style={styles.totalcontentText}>0</Text>
+            <ActivityIndicatorIOS
+                style={{height: 10,marginTop:5}}
+                size="small"
+              />
         )
       }
     },
@@ -93,7 +100,7 @@ var UserProfile = React.createClass({
               <View style={{width:deviceWidth/3-20}}> 
               <View style={{top:20,right:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
                 <Text style={styles.totalcontentTextSec}>Runs</Text>
-                <Text style={styles.totalcontentText}>{this.TotalRuns()}</Text>
+                {this.TotalRuns()}
               </View>
               <AnimatedCircularProgress
                 style={{top:10,right:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
@@ -113,7 +120,7 @@ var UserProfile = React.createClass({
               <View style={{width:deviceWidth/3-20}}> 
                 <View style={{top:20,left:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
                   <Text style={styles.totalcontentTextSec}>Rs</Text>
-                  <Text style={styles.totalcontentText}>{this.TotalAmount()}</Text>
+                 {this.TotalAmount()}
                 </View>
                 <AnimatedCircularProgress
                   style={{top:10,left:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}

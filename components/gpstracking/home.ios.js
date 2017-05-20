@@ -15,7 +15,7 @@ var {
   VibrationIOS,
   DeviceEventEmitter
  } = ReactNative;
-import TimeFormatter from 'minutes-seconds-milliseconds';
+import TimeFormatter from '../counterRuntime.js';
 import TimerMixin from 'react-timer-mixin';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -569,8 +569,8 @@ SettingsService.init('iOS');
           'Go Back',
          'Are you sure you want to go back ',
          [
-        {text: 'Confirm', onPress: () => this.popRoute() },
-        {text: 'Cancel',},
+        {text: 'CONFIRM', onPress: () => this.popRoute() },
+        {text: 'CANClE',},
        ],
       ); 
     },

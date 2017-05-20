@@ -258,7 +258,7 @@ import{
       var startPosition = this.props.StartLocation;
       console.log('startPosition.coords.latitude',startPosition.coords.latitude);
       console.log('startPosition.coords.longitude',startPosition.coords.longitude);
-    
+      
       var cause = this.props.data;
       fetch(apis.runApi, {
          method: "POST",
@@ -284,7 +284,7 @@ import{
        })
       .then((response) => response.json())
       .then((userRunData) => { 
-        // AlertIOS.alert('responcerundataterror',userRunData);
+        
       })
       .catch((error)=>{
         // AlertIOS.alert('error',error);
@@ -324,7 +324,7 @@ import{
       this.props.navigator.push({
       title: 'Gps',
       id:this.state.navigatetopage,
-      passProps:{data:'fromshare'},
+      passProps:(this.state.navigatetopage === 'impactleaguehome')?{data:'fromshare'}:{profileTab:'profile'},
       navigator: this.props.navigator,
       })
      }

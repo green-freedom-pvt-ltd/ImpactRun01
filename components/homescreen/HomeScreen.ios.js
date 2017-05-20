@@ -51,44 +51,35 @@ class Homescreen extends Component {
       };
       
       componentWillMount() {
-      // var keys = ['RID0','RID1','RID2','RID3','RID4','RID5','SaveRunCount'];
-      //  AsyncStorage.multiRemove(keys, (err) => {
-      //     console.log('removedkey');
-      // });
+        
         AsyncStorage.getItem('RID0', (err, result) => {
           this.setState({
           Rundata:JSON.parse(result),  
           loaded:true,             
            })
           this.PostSavedRundataIfInternetisOn();
-           console.log('this.rundata.user',this.state.Rundata);
         
         })  
-         AsyncStorage.getItem('SaveRunCount', (err, result) => {
+
+
+        AsyncStorage.getItem('SaveRunCount', (err, result) => {
           this.setState({
           RunCount:JSON.parse(result),  
           loaded:true,             
            })
-          
-           console.log('this.rundata.user',this.state.RunCount);
-        
+              
         })  
-        console.log('this.props.user',this.props.user);
         
       }
        
       componentWillUnmount() {
-        console.log('component unmonted');
       }
 
       PostSavedRundataIfInternetisOn(){
            if(this.props.user) {
            NetInfo.isConnected.fetch().done(
             (isConnected) => {
-              console.log('isConnected',isConnected);
-              console.log('isConnected',this.state.Rundata);
               if (isConnected && this.state.Rundata != null) {
-                console.log('this.rundata.user',this.state.Rundata);
                   this.postPastRun();
                }
             }
@@ -132,7 +123,6 @@ class Homescreen extends Component {
           runNumber.push("RID" + i )  ;
       }
       
-      console.log('runNo',runNumber);
       AsyncStorage.multiGet(runNumber, (err, stores) => {
         stores.map((result, i, store) => {
           let key = store[i][0];
@@ -167,7 +157,6 @@ class Homescreen extends Component {
 
       .then((response) => response.json())
       .then((userRunData) => { 
-        console.log('userRunData',userRunData);
         this.RemoveStoredRun(runNumber);
        })
       });
@@ -178,7 +167,6 @@ class Homescreen extends Component {
       let keys = runNumber;
       keys.push("SaveRunCount");
         AsyncStorage.multiRemove(keys, (err) => {
-          console.log('removedkey');
       });
 
     }
@@ -302,9 +290,6 @@ class Homescreen extends Component {
         var runlength = Runs.length;
         var commmaplacerun =runlength-4;
         var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,lenth));
-
-
-        console.log('slicevalue',moneyslice,lenth);
         return (
           <View style={styles.page}>
             <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
@@ -375,7 +360,7 @@ class Homescreen extends Component {
              </TabViewAnimated>
              <View style={{top:-65,width:deviceWidth,height:50, justifyContent: 'center',alignItems: 'center',}}>
               <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Let's Go > </Text>
+                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Let's Go</Text>
                </TouchableOpacity>
               </View>
              </View>
