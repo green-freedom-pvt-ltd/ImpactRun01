@@ -21,6 +21,7 @@
 		3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */; };
 		3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */; };
 		3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F91E65DC9100DCC7C6 /* UIKit.framework */; };
+		38133CE81ED8809C00ADF687 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38133CD71ED8807900ADF687 /* libRCTOneSignal.a */; };
 		3818A3221E60B1E100EC0480 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3818A3211E60B1E100EC0480 /* GoogleService-Info.plist */; };
 		382654161E2FD09F00EBB67B /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 382654081E2FD08800EBB67B /* libRCTPushNotification.a */; };
 		3830D60C1D6C63BD0028922A /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3830D60B1D6C63A90028922A /* libRCTFBLogin.a */; };
@@ -73,6 +74,7 @@
 		B19105E787364D77BC06ADDD /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31E1B80977F5476A8D804A07 /* libRNShare.a */; };
 		C2ACA79FC4454A7388FFCB87 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1AB504E48A84EE3BAA20525 /* libz.tbd */; };
 		C64D22300DE940B3AA3BBDE6 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E21C3DEB979148679E9EA78E /* libRCTFBSDK.a */; };
+		CDB61ADC848856561E967EEA /* libPods-ImpactrunTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E738E2298EF57D3769B5EED8 /* libPods-ImpactrunTests.a */; };
 		CF4BA4422FF24907B6497A9E /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 783FD0DC84B24580B0848643 /* EvilIcons.ttf */; };
 		D148107897A34C318C71251C /* Montserrat-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = A5331CA9760849C0898EAF04 /* Montserrat-Light.otf */; };
 		D39696302E3E4EA285FF66AF /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54885F245294403CBAD6B5A5 /* Octicons.ttf */; };
@@ -146,6 +148,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
+		};
+		38133CD61ED8807900ADF687 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 38133CBE1ED8807800ADF687 /* RCTOneSignal.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3245CDED1BFEE35C00EABF68;
+			remoteInfo = RCTOneSignal;
 		};
 		38239C0D1E582E8F009F454F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -358,11 +367,13 @@
 		13B07F961A680F5B00A75B9A /* Impactrun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Impactrun.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPedometer.xcodeproj; path = "../node_modules/react-native-pedometer/RNPedometer.xcodeproj"; sourceTree = "<group>"; };
+		2DA757BBDB80A94C5E7D25E2 /* Pods-Impactrun.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.release.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.release.xcconfig"; sourceTree = "<group>"; };
 		2F81B07EEC3849D491066E24 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		31E1B80977F5476A8D804A07 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNShare.a; sourceTree = "<group>"; };
 		3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CleverTapSDK.framework; sourceTree = "<group>"; };
 		3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		3810C2F91E65DC9100DCC7C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		38133CBE1ED8807800ADF687 /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		3818A3211E60B1E100EC0480 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "ImpactRun/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3824332C1E58002B0094BBC8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ImpactRun/Info.plist; sourceTree = "<group>"; };
 		382653EF1E2FD08700EBB67B /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
@@ -403,6 +414,7 @@
 		38E376A11E57F9ED00D78F58 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		38FA6FFE1DCB3F3E00B10D63 /* Impactrun.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Impactrun.entitlements; path = Impactrun/Impactrun.entitlements; sourceTree = "<group>"; };
 		3DCB2538134749B6888AD41A /* RNShare.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
+		46B022307871A444B187C1DB /* Pods-Impactrun.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.debug.xcconfig"; sourceTree = "<group>"; };
 		54885F245294403CBAD6B5A5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		5EDC7B40852745BAB761C6FA /* SafariServices.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		689C4476686B4B9E867198B3 /* libRNBackgroundFetch.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBackgroundFetch.a; sourceTree = "<group>"; };
@@ -419,6 +431,7 @@
 		8356DDC21CC922F000FCCEFB /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
 		8359A6E51CA58BA6008F13B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8D044B4F97F847218D193FC9 /* RNKeyboardEvents.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeyboardEvents.xcodeproj; path = "../node_modules/react-native-keyboardevents/RNKeyboardEvents.xcodeproj"; sourceTree = "<group>"; };
+		8D4A806460D694386FF28D3F /* Pods-ImpactrunTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpactrunTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests.debug.xcconfig"; sourceTree = "<group>"; };
 		958BADC6FB8A4B0A971BB1F6 /* libRNPedometer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNPedometer.a; sourceTree = "<group>"; };
 		9CD79DC5D70D43B9A465AC5C /* RNBackgroundFetch.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBackgroundFetch.xcodeproj; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch.xcodeproj"; sourceTree = "<group>"; };
 		A46DD3FC37DF420381A94676 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -429,8 +442,11 @@
 		B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGoogleSignin.a; sourceTree = "<group>"; };
 		D08051B8B9CB49E2BE0ADF94 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		DDD87A13B47AE6D4AC74753D /* libPods-Impactrun.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Impactrun.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E21C3DEB979148679E9EA78E /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
 		E3231894C43A499083A766E8 /* libRNKeyboardEvents.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKeyboardEvents.a; sourceTree = "<group>"; };
+		E738E2298EF57D3769B5EED8 /* libPods-ImpactrunTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ImpactrunTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EBD9BFC2767335792B57D624 /* Pods-ImpactrunTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpactrunTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests.release.xcconfig"; sourceTree = "<group>"; };
 		EC1A3BC49DA74FA3A1E076E0 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGoogleSignin.xcodeproj; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; };
 		F39C9CF476F145E7968AC7C0 /* AddressBook.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -440,6 +456,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDB61ADC848856561E967EEA /* libPods-ImpactrunTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,6 +464,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38133CE81ED8809C00ADF687 /* libRCTOneSignal.a in Frameworks */,
 				3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */,
 				3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */,
 				386D498E1E15590300BE5D94 /* Security.framework in Frameworks */,
@@ -584,6 +602,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		38133CBF1ED8807800ADF687 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				38133CD71ED8807900ADF687 /* libRCTOneSignal.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		38239BEA1E582E8F009F454F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -711,8 +737,21 @@
 				B1AB504E48A84EE3BAA20525 /* libz.tbd */,
 				5EDC7B40852745BAB761C6FA /* SafariServices.framework */,
 				F39C9CF476F145E7968AC7C0 /* AddressBook.framework */,
+				DDD87A13B47AE6D4AC74753D /* libPods-Impactrun.a */,
+				E738E2298EF57D3769B5EED8 /* libPods-ImpactrunTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		77AA68B895989D5C4B2A91FD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				46B022307871A444B187C1DB /* Pods-Impactrun.debug.xcconfig */,
+				2DA757BBDB80A94C5E7D25E2 /* Pods-Impactrun.release.xcconfig */,
+				8D4A806460D694386FF28D3F /* Pods-ImpactrunTests.debug.xcconfig */,
+				EBD9BFC2767335792B57D624 /* Pods-ImpactrunTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
@@ -726,6 +765,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				38133CBE1ED8807800ADF687 /* RCTOneSignal.xcodeproj */,
 				382653EF1E2FD08700EBB67B /* RCTPushNotification.xcodeproj */,
 				3867183B1E1D08C400939934 /* Lumberjack.xcodeproj */,
 				383709611E1A66AC006EB024 /* RNBackgroundGeolocation.xcodeproj */,
@@ -801,6 +841,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				E4CE12272E164253BDFFAFB6 /* Resources */,
 				75A8F9D7F9684DC9A4842A15 /* Frameworks */,
+				77AA68B895989D5C4B2A91FD /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -865,6 +906,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Impactrun" */;
 			buildPhases = (
+				508113C26D600F3227F975D2 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -872,6 +914,8 @@
 				8356DDC51CC922F100FCCEFB /* Embed Frameworks */,
 				3895E1D21D96CE5D00FA7B11 /* ShellScript */,
 				38E3767C1E57F9B400D78F58 /* ShellScript */,
+				F554FC915886D170B2BCD104 /* [CP] Embed Pods Frameworks */,
+				82EF5A6AFC9A8D7E353F7B88 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -906,7 +950,7 @@
 								enabled = 1;
 							};
 							com.apple.Push = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.SafariKeychain = {
 								enabled = 0;
@@ -969,6 +1013,10 @@
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
+				},
+				{
+					ProductGroup = 38133CBF1ED8807800ADF687 /* Products */;
+					ProjectRef = 38133CBE1ED8807800ADF687 /* RCTOneSignal.xcodeproj */;
 				},
 				{
 					ProductGroup = 382653F01E2FD08700EBB67B /* Products */;
@@ -1090,6 +1138,13 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		38133CD71ED8807900ADF687 /* libRCTOneSignal.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTOneSignal.a;
+			remoteRef = 38133CD61ED8807900ADF687 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		38239C0E1E582E8F009F454F /* libRNPedometer.a */ = {
@@ -1382,6 +1437,36 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		508113C26D600F3227F975D2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		82EF5A6AFC9A8D7E353F7B88 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CE541B8EA759BE80AFD98088 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1395,6 +1480,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F554FC915886D170B2BCD104 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1429,6 +1529,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D4A806460D694386FF28D3F /* Pods-ImpactrunTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1469,6 +1570,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBD9BFC2767335792B57D624 /* Pods-ImpactrunTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1506,6 +1608,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 46B022307871A444B187C1DB /* Pods-Impactrun.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-1";
@@ -1535,6 +1638,7 @@
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1567,6 +1671,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA757BBDB80A94C5E7D25E2 /* Pods-Impactrun.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-1";
@@ -1595,6 +1700,7 @@
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

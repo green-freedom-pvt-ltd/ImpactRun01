@@ -40,7 +40,7 @@ class devdactic_tabs extends Component {
 
         constructor(props) {
           super(props);
-          
+         
           this.state = {
               selectedTab: 'welcome',
               notifCount: 1,
@@ -61,16 +61,74 @@ class devdactic_tabs extends Component {
           this.changePosition = this.changePosition.bind(this);
         }
         
-
+        componentDidMount() {
+             this.getCause();
+        }
         componentWillMount() {
           this.getUserData();        
-          AsyncStorage.getItem('CAUSESDATA', (err, result) => {
+       
+           
+           if (this.props.profileTab != null || undefined) {
+           this.setState({
+             selectedTab:'profile',
+           })
+           }else{
+            return;
+           }
+        }
+      
+
+      fetchDataonInternet(){
+        NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+                if (isConnected) {
+                    this.fetchLeaderBoard();
+                }
+            }
+        );
+      }
+
+
+
+      fetchLeaderBoard() {
+      
+        var token = this.state.user.auth_token;
+        var url = apis.leaderBoardapi;
+        fetch(url,{
+          method: "GET",
+          headers: {  
+            'Authorization':"Bearer "+ token,
+            'Content-Type':'application/x-www-form-urlencoded',
+          }
+        })
+        .then( response => response.json() )
+        .then( jsonData => {
+          this.setState({
+            loaded: true,
+            refreshing:false,
+          });
+          let leaderBoard = jsonData;
+           AsyncStorage.removeItem('leaderBoard',(err) => {
+       });
+          AsyncStorage.setItem('leaderBoard',JSON.stringify(leaderBoard));
+          AsyncStorage.getItem('leaderBoard', (err, result) => {  
+          });  
+          
+        })
+        .catch( error => console.log('Error fetching: ' + error) );
+      }
+
+
+
+
+ 
+       getCause(){
+          AsyncStorage.getItem('myCauseNumindex', (err, result) => {
             this.setState({
-                myCauseNum: JSON.parse(result),
-                loaded: true,
+                dataCauseNum:JSON.parse(result),
             })
             try {
-                AsyncStorage.multiGet(this.state.myCauseNum, (err, stores) => {
+                AsyncStorage.multiGet(this.state.dataCauseNum, (err, stores) => {
                     var _this = this
                     stores.map((item) => {
                         let key = item[0];
@@ -83,18 +141,9 @@ class devdactic_tabs extends Component {
             } catch (err) {
                 console.log(err)
             }
-          });
-           if (this.props.profileTab != null || undefined) {
-           this.setState({
-             selectedTab:'profile',
-           })
-           }else{
-            return;
-           }
-        }
-     
- 
-
+          })
+            
+       }
 
         getUserData() {
           AsyncStorage.multiGet(['UID234'], (err, stores) => {
@@ -102,10 +151,12 @@ class devdactic_tabs extends Component {
                   let key = store[i][0];
                   let val = store[i][1];
                   let user = JSON.parse(val);
-                  console.log('myuserdata',user)
                   this.setState({
                       user: user,
                   })
+                  if (this.state.user != null) {
+                  this.fetchDataonInternet();
+                  }
                 
               })
           })
@@ -152,8 +203,8 @@ class devdactic_tabs extends Component {
         }
 
         render() {
-            console.log('this.state.myCauseNum',this.state.myCauseNum);
-        if (this.state.myCauseNum != null) {
+            console.log('this.state.myCauseNum',this.state.dataCauseNum);
+        if (this.state.dataCauseNum != null) {
             return (
             <View style={{flex:1}}>     
               <TabBarIOS 
@@ -197,7 +248,7 @@ class devdactic_tabs extends Component {
                       });
                   }}>
                   <View>
-                    <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.myCauseNum} navigator={this.props.navigator}/>                    
+                    <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
                  </View>
                 </TabBarIOS.Item>
 

@@ -66,6 +66,7 @@ import{
             this.setState({
               user:user,
             })
+            this.AddruntoRunHistory();
             if (this.state.user) {
             this.ifConnectTonetPost();
           }else{
@@ -121,11 +122,11 @@ import{
 
     componentDidMount(){
 
-      var data = this.props.data;
-      setTimeout(function(){
-        AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
-       console.log('after 2 sec');
-      },2000)
+      // var data = this.props.data;
+      // setTimeout(function(){
+      //   AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
+      //  console.log('after 2 sec');
+      // },2000)
 
       this.getSavedRunCount();
       this.getUserData();           
@@ -168,9 +169,8 @@ import{
   
     SaveRunLocally(){
      var saveRuns = parseInt(this.state.saveRunCountData)+ 1 ;
-     console.log('myrundata',saveRuns);
-     var startPosition = this.props.StartLocation;
-     console.log('starttlocation:',this.props.StartLocation);
+     // var startPosition = this.props.StartLocation;
+     // console.log('starttlocation:',this.props.StartLocation);
      AsyncStorage.setItem("SaveRunCount",JSON.stringify(saveRuns));
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
@@ -195,8 +195,8 @@ import{
         avg_speed:speed,
         run_amount:impact,
         run_duration: time,
-        start_location_lat:startPosition.coords.latitude,
-        start_location_long:startPosition.coords.longitude,
+        // start_location_lat:startPosition.coords.latitude,
+        // start_location_long:startPosition.coords.longitude,
         no_of_steps:steps,
         is_ios:true,
        
@@ -215,7 +215,6 @@ import{
           AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
               AsyncStorage.multiGet([RunNO], (err, stores) => {
                   stores.map((result, i, store) => {
-                     console.log('userRunDataIN1',store[i]);
                       let key = store[i][0];
                       let val = store[i][1];
                       this.setState({
@@ -255,9 +254,9 @@ import{
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
-      var startPosition = this.props.StartLocation;
-      console.log('startPosition.coords.latitude',startPosition.coords.latitude);
-      console.log('startPosition.coords.longitude',startPosition.coords.longitude);
+      // var startPosition = this.props.StartLocation;
+      // console.log('startPosition.coords.latitude',startPosition.coords.latitude);
+      // console.log('startPosition.coords.longitude',startPosition.coords.longitude);
       
       var cause = this.props.data;
       fetch(apis.runApi, {
@@ -276,15 +275,22 @@ import{
           avg_speed:speed,
           run_amount:impact,
           run_duration: time,
-          start_location_lat:startPosition.coords.latitude,
-          start_location_long:startPosition.coords.longitude,
+          // start_location_lat:startPosition.coords.latitude,
+          // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
           is_ios:true,     
           })
        })
       .then((response) => response.json())
       .then((userRunData) => { 
-        
+        var epochtime = userRunData.version;
+        // var newDate = new Date();
+        // var convertepoch = newDate.getTime()/1000
+        // var epochtime = parseFloat(convertepoch).toFixed(0);
+        let responceversion = epochtime;
+        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
+         
+        });
       })
       .catch((error)=>{
         // AlertIOS.alert('error',error);
@@ -297,8 +303,48 @@ import{
     DiscardRunfunction(){
       return this.navigateTOhome();
     }
+
+    AddruntoRunHistory(){
+      var distance = this.props.distance;
+      var speed = this.props.speed;
+      var impact = this.props.impact;
+      var steps = this.props.noOfsteps;
+      var time = this.props.time;
+      var date = this.props.StartRunTime;
+      var cause = this.props.data;
+      var userdata = this.state.user;
+      var user_id =JSON.stringify(userdata.user_id);
+       // var startPosition = this.props.StartLocation;
+      AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        var rundata = JSON.parse(result);
+        var newRun = {
+          cause_run_title:cause.cause_title,
+          user_id:user_id,
+          start_time:date,
+          distance: distance,
+          peak_speed: 1,
+          avg_speed:speed,
+          run_amount:impact,
+          run_duration: time,
+          // start_location_lat:startPosition.coords.latitude,
+          // start_location_long:startPosition.coords.longitude,
+          no_of_steps:steps,
+          is_ios:true,  
+        }
+        var newRunArray = [];
+        var runSavedata = newRunArray.push(newRun);
+        var newtoprun =newRunArray.concat(rundata);
+        AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+        });
+        let fetchRunhistoryData = newtoprun;
+        AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
+
+        })
+      })       
+    }
     
     getILdata(){
+
       AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
         if (result != null || undefined) {
         var boardData = JSON.parse(result);

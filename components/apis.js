@@ -10,5 +10,6 @@
 	faqsApi:'http://dev.impactrun.com/api/faq/',
     ImpactLeagueCodeApi:'http://dev.impactrun.com/api/employeetoteam/',
     ImpactLeagueTeamLeaderBoardApi:'http://dev.impactrun.com/api/teamboard/',
-    ImpactLeagueLeaderboardApi:'http://dev.impactrun.com/api/teamleaderboard/'
+    ImpactLeagueLeaderboardApi:'http://dev.impactrun.com/api/teamleaderboard/',
+    UserFeedBack:'http://dev.impactrun.com/api/userFeedback/',
   }

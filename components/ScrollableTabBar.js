@@ -190,7 +190,6 @@ const ScrollableTabBar = React.createClass({
   //     this.getUserData();
   //   },
   render() {
-    console.log('MYPRoFIleData3',this.props.user);
     const tabUnderlineStyle = {
           height: this.props.underlineHeight,
       backgroundColor: this.props.underlineColor,

@@ -124,7 +124,7 @@ class Profile extends Component {
               renderTabBar={() => <ScrollableTabBar userTotalAmount={this.state.RunTotalAmount2} RunCount={this.state.RunCountTotal} getUserData={this.props.getUserData} user={this.props.user} />}>
               <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm getUserData={this.props.getUserData} user={this.props.user}/></View>
               <View style={styles.tabContent} tabLabel='History'>
-                  <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} getRunCount={this.getRunCount} fetchAmount = {this.fetchAmount}user={this.props.user}/>
+                  <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} getRunCount={this.getRunCount} fetchAmount = {this.fetchAmount} user={this.props.user}/>
               </View>
             </ScrollableTabView>
           </View>

@@ -117,7 +117,7 @@ class Faqdata extends Component {
           })
           .then((response) => response.json())
           .then((response) => { 
-            AlertIOS.alert('Thankyou for submitting your question');
+            AlertIOS.alert('Thank you for submitting your question');
           })    
           .catch((err) => {
           })

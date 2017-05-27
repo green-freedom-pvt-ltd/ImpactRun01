@@ -19,6 +19,7 @@ import {
   AsyncStorage,
   NetInfo,
   PanResponder,
+  PushNotificationIOS,
   TouchableWithoutFeedback
 } from 'react-native';
 import apis from '../../components/apis';
@@ -42,6 +43,7 @@ class Homescreen extends Component {
           navigation: {
             index: 1,
             routes: [],
+            loadingimage:true,
           },
         };
       }
@@ -51,15 +53,19 @@ class Homescreen extends Component {
       };
       
       componentWillMount() {
-        
+      // PushNotificationIOS.addListener('register', this._onRegistered);
+      // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
+      // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
+      // PushNotificationIOS.addListener('localNotification', this._onLocalNotification);
+
+      PushNotificationIOS.requestPermissions();          
         AsyncStorage.getItem('RID0', (err, result) => {
           this.setState({
           Rundata:JSON.parse(result),  
           loaded:true,             
            })
-          this.PostSavedRundataIfInternetisOn();
-        
-        })  
+          this.PostSavedRundataIfInternetisOn();      
+      })  
 
 
         AsyncStorage.getItem('SaveRunCount', (err, result) => {
@@ -74,7 +80,9 @@ class Homescreen extends Component {
        
       componentWillUnmount() {
       }
+      
 
+  
       PostSavedRundataIfInternetisOn(){
            if(this.props.user) {
            NetInfo.isConnected.fetch().done(
@@ -85,6 +93,23 @@ class Homescreen extends Component {
             }
            );  
          }
+      }
+      showImage(route){
+        if (this.state.loadingimage === true) {
+          return(
+            <Image style={styles.cover}></Image>
+            )
+        }else{
+          return(
+            <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
+            <View style={{position:'absolute',bottom:5,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
+                 <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+                  {this.state.album[route.key][2]}
+                 </Text>
+                </View>
+            </Image>
+            )
+        }
       }
 
       componentDidMount() {
@@ -102,9 +127,12 @@ class Homescreen extends Component {
                     _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active,val.pk,val.amount_raised,val.amount,val.total_runs]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
                 });
-              this.setState({navigation: Object.assign({}, this.state.navigation, {
+              this.setState({
+                loadingimage:false,
+                navigation: Object.assign({}, this.state.navigation, {
                 index: 1,
                 routes: Object.keys(this.state.album).map(key => ({ key })),
+
               })})
           });
           } catch (err) {
@@ -148,8 +176,8 @@ class Homescreen extends Component {
           avg_speed:RunData.avg_speed,
           run_amount:RunData.run_amount,
           run_duration:RunData.run_duration,
-          start_location_lat:RunData.start_location_lat,
-          start_location_long:RunData.start_location_long,
+          // start_location_lat:RunData.start_location_lat,
+          // start_location_long:RunData.start_location_long,
           no_of_steps:RunData.no_of_steps,
           is_ios:RunData.is_ios,
         })
@@ -157,6 +185,10 @@ class Homescreen extends Component {
 
       .then((response) => response.json())
       .then((userRunData) => { 
+       var epochtime = userRunData.version;
+       let responceversion = epochtime;
+        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{   
+        });
         this.RemoveStoredRun(runNumber);
        })
       });
@@ -294,13 +326,7 @@ class Homescreen extends Component {
           <View style={styles.page}>
             <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
             <View style={styles.album}>
-              <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
-                <View style={{position:'absolute',bottom:5,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
-                 <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
-                  {this.state.album[route.key][2]}
-                 </Text>
-                </View>
-              </Image>
+              {this.showImage(route)}
               <View style={styles.borderhide}></View>
               <View style={{width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
                 <View style={{width:deviceWidth-105}}>
@@ -324,7 +350,7 @@ class Homescreen extends Component {
              
             </View>
             </TouchableWithoutFeedback>
-            
+
           </View>
         );
       

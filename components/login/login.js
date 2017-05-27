@@ -39,6 +39,7 @@ class Profile extends Component {
 
       constructor(props) {
           super(props);
+          this.fetchDataonInternet();
           this.state = {
               visibleHeight: Dimensions.get('window').height,
               scroll: false,
@@ -48,7 +49,9 @@ class Profile extends Component {
               LoginCountTotal: null,
           };
       }
-
+      componentDidMount() {
+          this.fetchDataonInternet();
+      }
       LoginCountFunction() {
           let TotalLogin = {
               TotalLoginCount: 1,
@@ -85,13 +88,17 @@ class Profile extends Component {
                   let val = store[i][1];
               });
           })
-          NetInfo.isConnected.fetch().done(
-              (isConnected) => {
-                  if (isConnected) {
-                      this.fetchData();
-                  }
-              }
-          );
+         
+      }
+
+      fetchDataonInternet(){
+        NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+                if (isConnected) {
+                    this.fetchData();
+                }
+            }
+        );
       }
 
 
@@ -108,9 +115,13 @@ class Profile extends Component {
                       newData.push('cause' + i);
                   };
               })
+              console.log('newData',newData);
               this.setState({
                   myCauseNum: newData,
               })
+              let myCauseNum = this.state.myCauseNum;
+              AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
+              console.log('myCauseNum',this.state.myCauseNum,causesData);
               AsyncStorage.multiSet(causesData, (err) => {
                   console.log('myCauseErr' + err)
               })

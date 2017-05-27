@@ -39,7 +39,7 @@ var UserProfile = React.createClass({
     social_thumb:function(){
       if (this.props.user.first_name != '') {
         return( 
-          <Image  onPress={() => VibrationIOS.vibrate()} style={styles.UserImage} source={{uri:this.props.user.social_thumb}}></Image>
+          <Image  style={styles.UserImage} source={{uri:this.props.user.social_thumb}}></Image>
         ) 
       };
       return(

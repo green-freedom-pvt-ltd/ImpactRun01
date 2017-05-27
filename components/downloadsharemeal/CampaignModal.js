@@ -239,7 +239,6 @@ var ModalBox = React.createClass({
       this.setState({});
       if (this.props.onClosed) this.props.onClosed();
     });
-    this.props.saveSignup();
 
   },
 

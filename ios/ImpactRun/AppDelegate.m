@@ -18,13 +18,16 @@
 #import <asl.h>
 #import "RCTLog.h"
 #import "RCTPushNotificationManager.h"
+#import "RCTOneSignal.h"
 //#import <CleverTapSDK/CleverTap.h>
 
 
 @implementation AppDelegate
-
+@synthesize oneSignal = _oneSignal;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  
+  
   [Fabric with:@[[Crashlytics class]]];
 //  [CleverTap autoIntegrate];
   RCTSetLogThreshold(RCTLogLevelInfo);
@@ -33,9 +36,10 @@
 
   
   NSURL *jsCodeLocation;
- 
+  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
+                                                         appId:@"fe19376e-04a5-4ba1-a4a8-74f9ea9b0ca8"];
   /**
-   * Loading JavaScript code - uncomment the one you want.
+   * Loading JavaScript code - uncomment the one you want.d
    *
    * OPTION 1
    * Load from development server. Start the server from the repository root:
@@ -48,7 +52,7 @@
    * on the same Wi-Fi network.
    */
   if(RCT_DEBUG == 1) {
-    jsCodeLocation = [NSURL URLWithString:@"http://192.168.2.5:8081/index.ios.bundle?platform=ios&dev=true"];
+    jsCodeLocation = [NSURL URLWithString:@"http://192.168.0.105:8081/index.ios.bundle?platform=ios&dev=true"];
   } else {
     jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   }
@@ -71,8 +75,7 @@
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
-//  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
-//                                                         appId:@"c6288ab1-1ded-48e4-a980-7e7195c54194"];
+
   [self.window makeKeyAndVisible];
   //  return YES;
   return [[FBSDKApplicationDelegate sharedInstance] application:application
@@ -82,6 +85,9 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
   [FBSDKAppEvents activateApp];
+}
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
+  [RCTOneSignal didReceiveRemoteNotification:notification];
 }
 //- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
 //  [RCTOneSignal didReceiveRemoteNotification:notification];
@@ -96,31 +102,10 @@
           annotation:annotation];
   
 }
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
-{
-  [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
-}
+// Required to register for notifications
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings { [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings]; }
 // Required for the register event.
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-  [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-}
-//// Required for the notification event. You must call the completion handler after handling the remote notification.
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-//fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-//{
-//  [RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-//}
-//// Required for the registrationError event.
-//- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-//{
-//  [RCTPushNotificationManager didFailToRegisterForRemoteNotificationsWithError:error];
-//}
-// Required for the localNotification event.
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
-{
-  [RCTPushNotificationManager didReceiveLocalNotification:notification];
-}
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken { [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken]; }
 
 RCTLogFunction CrashlyticsReactLogFunction = ^(
                                                RCTLogLevel level,

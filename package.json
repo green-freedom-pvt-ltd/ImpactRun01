@@ -25,6 +25,7 @@
     "react-native-list-popover": "^1.0.5",
     "react-native-mapbox-gl": "^4.0.0",
     "react-native-modal-dropdown": "^0.4.2",
+    "react-native-onesignal": "^3.0.4",
     "react-native-pedometer": "0.0.6",
     "react-native-pull-to-refresh": "^2.0.0",
     "react-native-scrollable-tab-view": "^0.5.3",
@@ -33,6 +34,7 @@
     "react-native-simple-modal": "^4.0.1",
     "react-native-tab-view": "0.0.18",
     "react-native-vector-icons": "^2.0.2",
-    "react-number-format": "^1.1.2"
+    "react-number-format": "^1.1.2",
+    "react-timer-mixin": "^0.13.3"
   }
 }

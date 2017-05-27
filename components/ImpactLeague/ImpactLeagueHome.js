@@ -21,10 +21,11 @@ import commonStyles from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import GiftedListView from 'react-native-gifted-listview';
 import LodingScreen from '../LodingScreen';
+import TimerMixin from 'react-timer-mixin';
+import styleConfig from '../styleConfig'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ImpactLeague extends Component {
-      
       constructor(props) {
         super(props);
         this.fetchDataLocally();
@@ -33,18 +34,20 @@ class ImpactLeague extends Component {
           LeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
           refreshing: false,
+          downrefresh:true,
         };
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
       }
-
+       mixins: [TimerMixin]
+       
       componentDidMount() { 
-        this.fetchLeaderBoardDataIntervel = setInterval(()=>{
-          this.getUserData();
-         },(60000*60)*3)
-        // this.props.getUserData();
+          this.getUserData();      
+          setTimeout(() => {this.setState({downrefresh: false})}, 1000)
+
+        }
+      componentWillMount() {
       }
-      
       fetchDataLocally(){
         AsyncStorage.multiGet(['UID234'], (err, stores) => {
         stores.map((result, i, store) => {
@@ -53,6 +56,7 @@ class ImpactLeague extends Component {
           let user = JSON.parse(val);
             this.setState({
               user:user,
+             
             })
           AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
             var boardData = JSON.parse(result);
@@ -187,7 +191,16 @@ class ImpactLeague extends Component {
           </View>
         );
       }
-
+      
+      swwipeDowntoRefress(){
+        if (this.state.downrefresh === true) {
+          return(
+            <View style={styles.swipedown}><Text style={styles.txt3}>Pull down to refresh</Text></View>
+            )
+        }else{
+          return;
+        }
+      }
       render(rowData,jsonData) {
         console.log('bannerimage',this.state.BannerData);
         if (!this.state.loaded) {
@@ -203,8 +216,11 @@ class ImpactLeague extends Component {
               <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
             </View>
             <View>
+           
              <Image source={{uri:this.state.BannerData[0].impactleague_banner}} style={styles.bannerimage}>
+             
               </Image>
+               {this.swwipeDowntoRefress()}
               <ListView 
                refreshControl={
                 <RefreshControl
@@ -242,6 +258,13 @@ const styles = StyleSheet.create({
         height: 3,
       },
   },
+  swipedown:{
+    height:30,
+    width:deviceWidth,
+    backgroundColor:styleConfig.bright_blue,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   bannerimage:{
     height:deviceHeight/2-100,
   },
@@ -253,6 +276,12 @@ const styles = StyleSheet.create({
     fontWeight:'400',
     textAlign: 'left',
     marginLeft:10,
+    fontFamily: 'Montserrat-Regular',
+  },
+  txt3: {
+    color:'white',
+    fontSize: 13,
+    fontWeight:'400',
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{

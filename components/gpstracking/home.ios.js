@@ -297,7 +297,7 @@ SettingsService.init('iOS');
         textState:'PAUSE',
         isRunning:true,
       });
-      this.StartGetLocation()
+      // this.StartGetLocation()
       this.updatePaceButtonStyle();
       return;  
   },
@@ -426,7 +426,7 @@ SettingsService.init('iOS');
       impact:parseFloat(distance * this.props.data.conversion_rate).toFixed(0),
       speed:this.state.speed,
       time:this.state.mainTimer + this.state.storedRunduration,
-      StartLocation:this.state.StartPosition,
+      // StartLocation:this.state.StartPosition,
       StartRunTime:this.state.myrundate,
       noOfsteps:this.state.numberOfSteps,
      }
@@ -443,7 +443,7 @@ SettingsService.init('iOS');
       impact:parseFloat(this.state.distanceTravelled).toFixed(1) * this.props.data.conversion_rate,
       speed:this.state.speed,
       time:this.state.mainTimer,
-      StartLocation:this.state.StartPosition,
+      // StartLocation:this.state.StartPosition,
       StartRunTime:this.state.myrundate,
       noOfsteps:this.state.numberOfSteps,
      }
@@ -555,7 +555,7 @@ SettingsService.init('iOS');
           speed:this.state.speed,
           isUserlogin:user,
           time:TimeFormatter(timetotal),
-          StartLocation:this.state.StartPosition,
+          // StartLocation:this.state.StartPosition,
           StartRunTime:this.state.myrundate,
           noOfsteps:this.state.numberOfSteps,
           },
@@ -621,17 +621,17 @@ SettingsService.init('iOS');
       this._handleStartStop();
     },
 
-    StartGetLocation: function() { 
-       navigator.geolocation.getCurrentPosition(
-      (position) => {
-        var StartPosition = position;
-        this.setState({
-          StartPosition});
-      },
-      (error) => alert(error.message),
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-      )
-    }, 
+    // StartGetLocation: function() { 
+    //    navigator.geolocation.getCurrentPosition(
+    //   (position) => {
+    //     var StartPosition = position;
+    //     this.setState({
+    //       StartPosition});
+    //   },
+    //   (error) => alert(error.message),
+    //   {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+    //   )
+    // }, 
 
     // EndGetLocation: function() { 
     //    navigator.geolocation.getCurrentPosition(
@@ -658,7 +658,7 @@ SettingsService.init('iOS');
         paceButtonStyle: style,
         paceButtonIcon: (this.state.enabled  && this.state.isRunning) ? 'md-pause' : 'md-play',
         textState:(this.state.enabled && this.state.isRunning) ? 'PAUSE':'RESUME', 
-        EndRun:(this.state.enabled) ? 'END RUN':'BEGIN RUN', 
+        EndRun:(this.state.enabled) ? 'END RUN':'END RUN', 
       });
     },
     // MapBox
@@ -712,12 +712,12 @@ SettingsService.init('iOS');
         )
     }
    },
-
+   
     render: function(location) {
+     var circularprogress =  ((parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2 === 100)?(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/5:(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2;
       var intime = TimeFormatter(this.state.mainTimer+this.state.storedRunduration);
       var data = this.props.data;
       var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
-
       return (
         <View style={commonStyles.container}>
            <View ref="workspace" style={styles.workspace}>           
@@ -733,9 +733,9 @@ SettingsService.init('iOS');
                 ref='circularProgress'
                 size={130}
                 width={5}
-                fill={this.state.distanceTravelled*10/2}
+                fill={circularprogress}
                 prefill={100}
-                tintColor="#00e0ff"
+                tintColor={styleConfig.bright_blue}
                 backgroundColor="#fafafa">                   
               </AnimatedCircularProgress>
                <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>

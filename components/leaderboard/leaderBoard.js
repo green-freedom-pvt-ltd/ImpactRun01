@@ -44,7 +44,6 @@ import{
                   let key = store[i][0];
                   let val = store[i][1];
                   let user = JSON.parse(val);
-                  console.log('myuserdata',user)
                   this.setState({
                       user: user,
                   })

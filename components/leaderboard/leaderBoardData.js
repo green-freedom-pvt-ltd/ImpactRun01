@@ -19,7 +19,8 @@
   import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
   import LodingScreen from '../LodingScreen';
   import apis from '../apis';
-   import BackgroundFetch from "react-native-background-fetch";
+  import BackgroundFetch from "react-native-background-fetch";
+  import styleConfig from '../styleConfig'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LeaderboardData extends Component {
@@ -35,6 +36,7 @@ class LeaderboardData extends Component {
           loaded:false,
           myindex:null,
           refreshing:false,
+          downrefresh:true,
         };
         this.renderRow = this.renderRow.bind(this);
       }
@@ -52,39 +54,21 @@ class LeaderboardData extends Component {
       fetchLeaderBoardLocally(){
         AsyncStorage.getItem('leaderBoard', (err, result) => { 
         var jsonData = JSON.parse(result);
-        console.log('myld',jsonData); 
+        console.log('jsonData',jsonData);
         if (result != null || undefined) {
           this.setState({
             LeaderBoard: this.state.LeaderBoard.cloneWithRows(jsonData.results),
             loaded:true,
-          })
-            console.log('data12345',JSON.parse(result));         
-        
+          })        
         }else{
-         this.fetchDataIfInternet()
+         this.renderLoadingView()
         }
         });
       }
 
       componentDidMount() {  
-        
-      BackgroundFetch.configure({
-      stopOnTerminate: false
-      }, function() {
-        console.log("[js] RNBackgroundFetch to start");
-         this.fetchLeaderBoard();
-        // To signal completion of your task to iOS, you must call #finish!
-        // If you fail to do this, iOS can kill your app.
-        BackgroundFetch.finish();
-      }, function(error) {
-        console.log("[js] RNBackgroundFetch failed to start");
-      });
-      BackgroundFetch.start(()=>{
-        console.log('startedfetch');
-      });     
-        // this.fetchLeaderBoardDataIntervel = setInterval(()=>{
-        //   this.fetchLeaderBoard();
-        // },(60000*60)*3)
+        setTimeout(() => {this.setState({downrefresh: false})}, 1000)
+      
       }
       
       fetchDataIfInternet(){
@@ -100,11 +84,9 @@ class LeaderboardData extends Component {
       }
 
       fetchLeaderBoard() {
-         AsyncStorage.removeItem('leaderBoard',(err) => {
-          console.log(err,'itemremoved');
-         });
+       AsyncStorage.removeItem('leaderBoard',(err) => {
+       });
         var token = this.props.user.auth_token;
-        console.log('mytoken',token)
         var url = apis.leaderBoardapi;
         fetch(url,{
           method: "GET",
@@ -123,7 +105,6 @@ class LeaderboardData extends Component {
           let leaderBoard = jsonData;
           AsyncStorage.setItem('leaderBoard',JSON.stringify(leaderBoard));
           AsyncStorage.getItem('leaderBoard', (err, result) => {   
-            console.log('data12345',JSON.parse(result));         
           });  
           
         })
@@ -156,7 +137,6 @@ class LeaderboardData extends Component {
             'width':25,
           }
         ];
-        console.log('reowdataleaderboard',rowData);
         return (
           <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor}]}>
            <View style={styles.flexbox1}>
@@ -190,6 +170,7 @@ class LeaderboardData extends Component {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
             <View style={{backgroundColor:'white',height:deviceHeight-100,width:deviceWidth,paddingBottom:53}}>
+            {this.swwipeDowntoRefress()}
                <ListView
                 style={styles.container}
                 renderRow={this.renderRow}
@@ -207,7 +188,24 @@ class LeaderboardData extends Component {
         return this.renderLoadingView();
       }
       }
+
+
+
+      swwipeDowntoRefress(){
+        if (this.state.downrefresh === true) {
+          return(
+            <View style={styles.swipedown}><Text style={styles.txt3}>Pull down to refresh</Text></View>
+            )
+        }else{
+          return;
+        }
+      }
+
+
+
 }
+
+  
 
 const styles = StyleSheet.create({
 
@@ -286,7 +284,20 @@ const styles = StyleSheet.create({
     width:40,
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
+    swipedown:{
+    height:30,
+    width:deviceWidth,
+    backgroundColor:styleConfig.bright_blue,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+    txt3: {
+    color:'white',
+    fontSize: 13,
+    fontWeight:'400',
+    fontFamily: 'Montserrat-Regular',
+  },
 
 
 });
