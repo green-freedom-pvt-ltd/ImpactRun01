@@ -59,6 +59,7 @@
 		583CC830C90E44E0BB8989A5 /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */; };
 		5B2DAD3A5B854327A411E96F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9D25947B431419BB2CEFF8B /* Zocial.ttf */; };
 		5B60DF2E2BE54B0292982577 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC7B40852745BAB761C6FA /* SafariServices.framework */; };
+		7B4026D929964E049B1BCE7A /* libRNBackgroundTimer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A868A35916A24BE5B5DF79D7 /* libRNBackgroundTimer.a */; };
 		7C36DDF2314540AC8B8DB616 /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B269B95BADB7494CA998A954 /* Montserrat-Thin.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		835037441C96176B000DE4BA /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 835037381C961738000DE4BA /* libRNDeviceInfo.a */; };
@@ -338,6 +339,27 @@
 			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
 			remoteInfo = RCTMapboxGLTests;
 		};
+		B60B496B1EE0885D009687ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 07B7A7FB5D2A4DD985C6930B /* RNBackgroundTimer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNBackgroundTimer;
+		};
+		B60B496D1EE0885D009687ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 07B7A7FB5D2A4DD985C6930B /* RNBackgroundTimer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 641926921ECB4257009CF731;
+			remoteInfo = "RNBackgroundTimer-tvOS";
+		};
+		B60B49B11EE29A04009687ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C27057541E3947F0A8C794BD /* RNBackgroundJob.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNBackgroundJob;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -362,6 +384,7 @@
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* Impactrun.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Impactrun.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		07B7A7FB5D2A4DD985C6930B /* RNBackgroundTimer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBackgroundTimer.xcodeproj; path = "../node_modules/react-native-background-timer/ios/RNBackgroundTimer.xcodeproj"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Impactrun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Impactrun.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -436,11 +459,13 @@
 		9CD79DC5D70D43B9A465AC5C /* RNBackgroundFetch.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBackgroundFetch.xcodeproj; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch.xcodeproj"; sourceTree = "<group>"; };
 		A46DD3FC37DF420381A94676 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		A5331CA9760849C0898EAF04 /* Montserrat-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.otf"; path = "../node_modules/react-native-vector-icons/Fonts/Montserrat-Light.otf"; sourceTree = "<group>"; };
+		A868A35916A24BE5B5DF79D7 /* libRNBackgroundTimer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBackgroundTimer.a; sourceTree = "<group>"; };
 		A9D25947B431419BB2CEFF8B /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		B1AB504E48A84EE3BAA20525 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B269B95BADB7494CA998A954 /* Montserrat-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Thin.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Montserrat-Thin.ttf"; sourceTree = "<group>"; };
 		B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGoogleSignin.a; sourceTree = "<group>"; };
+		C27057541E3947F0A8C794BD /* RNBackgroundJob.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBackgroundJob.xcodeproj; path = "../node_modules/react-native-background-job/ios/RNBackgroundJob.xcodeproj"; sourceTree = "<group>"; };
 		D08051B8B9CB49E2BE0ADF94 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		DDD87A13B47AE6D4AC74753D /* libPods-Impactrun.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Impactrun.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E21C3DEB979148679E9EA78E /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
@@ -518,6 +543,7 @@
 				3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */,
 				8A9C757976B74038989E643B /* libRNPedometer.a in Frameworks */,
 				FFA2B93EE3AB4E86A5193D61 /* libRNKeyboardEvents.a in Frameworks */,
+				7B4026D929964E049B1BCE7A /* libRNBackgroundTimer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -790,6 +816,8 @@
 				9CD79DC5D70D43B9A465AC5C /* RNBackgroundFetch.xcodeproj */,
 				2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */,
 				8D044B4F97F847218D193FC9 /* RNKeyboardEvents.xcodeproj */,
+				07B7A7FB5D2A4DD985C6930B /* RNBackgroundTimer.xcodeproj */,
+				C27057541E3947F0A8C794BD /* RNBackgroundJob.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -852,6 +880,23 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* Impactrun.app */,
 				00E356EE1AD99517003FC87E /* Impactrun.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B60B49481EE0885D009687ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B60B496C1EE0885D009687ED /* libRNBackgroundTimer.a */,
+				B60B496E1EE0885D009687ED /* libRNBackgroundTimer.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B60B498F1EE29A04009687ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B60B49B21EE29A04009687ED /* libRNBackgroundJob.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -942,6 +987,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = SMK2PD2433;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1049,6 +1095,14 @@
 				{
 					ProductGroup = 383709621E1A66AC006EB024 /* Products */;
 					ProjectRef = 383709611E1A66AC006EB024 /* RNBackgroundGeolocation.xcodeproj */;
+				},
+				{
+					ProductGroup = B60B498F1EE29A04009687ED /* Products */;
+					ProjectRef = C27057541E3947F0A8C794BD /* RNBackgroundJob.xcodeproj */;
+				},
+				{
+					ProductGroup = B60B49481EE0885D009687ED /* Products */;
+					ProjectRef = 07B7A7FB5D2A4DD985C6930B /* RNBackgroundTimer.xcodeproj */;
 				},
 				{
 					ProductGroup = 835037341C961738000DE4BA /* Products */;
@@ -1329,6 +1383,27 @@
 			remoteRef = 835037561C962E40000DE4BA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		B60B496C1EE0885D009687ED /* libRNBackgroundTimer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNBackgroundTimer.a;
+			remoteRef = B60B496B1EE0885D009687ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B60B496E1EE0885D009687ED /* libRNBackgroundTimer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNBackgroundTimer.a;
+			remoteRef = B60B496D1EE0885D009687ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B60B49B21EE29A04009687ED /* libRNBackgroundJob.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNBackgroundJob.a;
+			remoteRef = B60B49B11EE29A04009687ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1534,6 +1609,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = SMK2PD2433;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1542,11 +1618,14 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = RNBackgroundGeolocationSampleTests/Info.plist;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1576,15 +1655,19 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = SMK2PD2433;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/Developer/Library/Frameworks",
 				);
-				INFOPLIST_FILE = RNBackgroundGeolocationSampleTests/Info.plist;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1639,12 +1722,18 @@
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-background-timer/ios",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1701,6 +1790,9 @@
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-background-timer/ios",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1722,7 +1814,11 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.impactrun.app$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Impactrun;
@@ -1789,6 +1885,9 @@
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-background-timer/ios",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1848,6 +1947,9 @@
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/react-native-background-timer/ios",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

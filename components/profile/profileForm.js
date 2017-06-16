@@ -17,6 +17,8 @@ var {
 import styleConfig from '../styleConfig';
 import Login from '../login/LoginBtns';
 import LodingView from '../LodingScreen';
+import commonStyles from '../styles';
+import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var ProfileForm = React.createClass({
@@ -44,7 +46,7 @@ var ProfileForm = React.createClass({
           <View style={{height:deviceHeight/2,width:deviceWidth,top:(deviceHeight/2)-200,}}>
             <Login getUserData={this.props.getUserData}/>
           </View>
-        ) 
+        )
       }
     },
 
@@ -62,34 +64,48 @@ var ProfileForm = React.createClass({
       });
     },
 
+    goBack:function(){
+        this.props.navigator.pop({});
+
+    },
+
     render: function() {
       var user = this.props.user;
       if (this.props.user != null) {
         return (
+          <View>
+          <View style={commonStyles.Navbar}>
+            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+            </TouchableOpacity>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
+          </View>
+
           <ScrollView style={styles.container}>
             <View style={styles.FromWrap}>
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Name</Text> 
-                <Text style={styles.userProfileText}>{user.first_name} {user.last_name}</Text>         
+                <Text style={styles.ProfileTitle}>Name</Text>
+                <Text style={styles.userProfileText}>{user.first_name} {user.last_name}</Text>
               </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Email</Text>
-                <Text style={styles.userProfileText}>{user.email}</Text>        
+                <Text style={styles.userProfileText}>{user.email}</Text>
               </View>
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Phone Number</Text> 
-                <Text style={styles.userProfileText}>{user.phone}</Text> 
-              </View>    
+                <Text style={styles.ProfileTitle}>Phone Number</Text>
+                <Text style={styles.userProfileText}>{user.phone}</Text>
+              </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Birthday</Text>
                 <Text style={styles.userProfileText}>{user.BirthDate}</Text>
-              </View>    
+              </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Gender</Text>
                 <Text style={styles.userProfileText}>{user.gender_user}</Text>
               </View>
-            </View> 
+            </View>
           </ScrollView>
+          </View>
         );
       }else{
         if (this.state.loaded) {

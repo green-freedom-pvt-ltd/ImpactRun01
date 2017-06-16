@@ -40,7 +40,7 @@ class devdactic_tabs extends Component {
 
         constructor(props) {
           super(props);
-         
+
           this.state = {
               selectedTab: 'welcome',
               notifCount: 1,
@@ -60,14 +60,14 @@ class devdactic_tabs extends Component {
           this.ChangeCampaignCount = this.ChangeCampaignCount.bind(this);
           this.changePosition = this.changePosition.bind(this);
         }
-        
+
         componentDidMount() {
              this.getCause();
         }
         componentWillMount() {
-          this.getUserData();        
-       
-           
+          this.getUserData();
+
+
            if (this.props.profileTab != null || undefined) {
            this.setState({
              selectedTab:'profile',
@@ -76,7 +76,7 @@ class devdactic_tabs extends Component {
             return;
            }
         }
-      
+
 
       fetchDataonInternet(){
         NetInfo.isConnected.fetch().done(
@@ -91,12 +91,12 @@ class devdactic_tabs extends Component {
 
 
       fetchLeaderBoard() {
-      
+
         var token = this.state.user.auth_token;
         var url = apis.leaderBoardapi;
         fetch(url,{
           method: "GET",
-          headers: {  
+          headers: {
             'Authorization':"Bearer "+ token,
             'Content-Type':'application/x-www-form-urlencoded',
           }
@@ -111,9 +111,9 @@ class devdactic_tabs extends Component {
            AsyncStorage.removeItem('leaderBoard',(err) => {
        });
           AsyncStorage.setItem('leaderBoard',JSON.stringify(leaderBoard));
-          AsyncStorage.getItem('leaderBoard', (err, result) => {  
-          });  
-          
+          AsyncStorage.getItem('leaderBoard', (err, result) => {
+          });
+
         })
         .catch( error => console.log('Error fetching: ' + error) );
       }
@@ -121,7 +121,7 @@ class devdactic_tabs extends Component {
 
 
 
- 
+
        getCause(){
           AsyncStorage.getItem('myCauseNumindex', (err, result) => {
             this.setState({
@@ -142,7 +142,7 @@ class devdactic_tabs extends Component {
                 console.log(err)
             }
           })
-            
+
        }
 
         getUserData() {
@@ -157,7 +157,7 @@ class devdactic_tabs extends Component {
                   if (this.state.user != null) {
                   this.fetchDataonInternet();
                   }
-                
+
               })
           })
         }
@@ -193,9 +193,9 @@ class devdactic_tabs extends Component {
         //             }
         //         }
         //     }
-          
+
         // }
-        
+
         loadingScreen(){
          return(
             <Lodingscreen/>
@@ -206,13 +206,13 @@ class devdactic_tabs extends Component {
             console.log('this.state.myCauseNum',this.state.dataCauseNum);
         if (this.state.dataCauseNum != null) {
             return (
-            <View style={{flex:1}}>     
-              <TabBarIOS 
+            <View style={{flex:1}}>
+              <TabBarIOS
                 style={{height:100,padding:10}}
                 unselectedTintColor="white"
                 tintColor={styleConfig.bright_blue}
-                barTintColor="white" 
-                selectedTab={this.state.selectedTab} 
+                barTintColor="white"
+                selectedTab={this.state.selectedTab}
                 navigator={this.props.navigator}>
 
                 <TabBarIOS.Item
@@ -235,9 +235,9 @@ class devdactic_tabs extends Component {
                             selectedTab: 'profile',
                         });
                   }}>
-                 <Profile user={this.state.user} getUserData={this.getUserData} />
+                 <Profile user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
                 </TabBarIOS.Item>
-                
+
                 <TabBarIOS.Item
                   selected={this.state.selectedTab === 'welcome'}
                   title="Home"
@@ -248,7 +248,7 @@ class devdactic_tabs extends Component {
                       });
                   }}>
                   <View>
-                    <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
+                    <Welcome myCauseCount={this.props.dataCauseCount} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>
                  </View>
                 </TabBarIOS.Item>
 

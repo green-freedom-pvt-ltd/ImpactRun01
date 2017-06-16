@@ -40,6 +40,10 @@ import MessageCenterData from './components/feed/messageCenterData';
 import MessageDetail from './components/feed/messageDetail';
 import DownloadShareMeal from './components/downloadsharemeal/downloadShareMeal';
 import Leaderboard  from'./components/leaderboard/leaderBoard';
+import RunHistory from './components/profile/runhistory/runHistory';
+import ProfileForm from './components/profile/profileForm';
+import ProfileHeader from './components/profile/profileHeader';
+import Profile from './components/profile/profile';
 import BackgroundFetch from "react-native-background-fetch";
 import apis from './components/apis'
 var REQUEST_URL = 'http://dev.impactrun.com/api/causes/';
@@ -71,17 +75,17 @@ class Application extends Component{
 
 
       componentWillMount(){
-      
+
         AsyncStorage.getItem('CAUSESDATA', (err, result) => {
           this.setState({
-              myCauseNum: JSON.parse(result),     
+              myCauseNum: JSON.parse(result),
           })
         })
-        AsyncStorage.getItem('runDataAppKill', (err, result) => {   
+        AsyncStorage.getItem('runDataAppKill', (err, result) => {
           this.setState({
             result:result
           })
-        });    
+        });
         AsyncStorage.multiGet(['UID234'], (err, stores) => {
           stores.map((result, i, store) => {
             let key = store[i][0];
@@ -93,19 +97,19 @@ class Application extends Component{
           })
           this.setState({
             userLogin:this.state.user,
-          })  
+          })
           if (this.state.result != null) {
             this.setState({
               textState:'runscreen',
             })
           }else{
             this.setState({
-             textState:(this.state.user) ? 'tab':'login', 
+             textState:(this.state.user) ? 'tab':'login',
             })
           }
-        });  
+        });
       }
-      
+
       fetchDataonInternet(){
         NetInfo.isConnected.fetch().done(
             (isConnected) => {
@@ -115,8 +119,8 @@ class Application extends Component{
             }
         );
       }
-      
-      
+
+
 
       fetchData(dataValue) {
         fetch(REQUEST_URL)
@@ -149,7 +153,7 @@ class Application extends Component{
       getDrawer() {
         return this.refs.drawer;
       }
-      
+
       LodingFunction(){
        return(
         <LodingScreen/>
@@ -190,14 +194,14 @@ class Application extends Component{
         console.log('mysomedatacount',mycausecount);
         return (
           <View  style={{flex: 1}} >
-        
-            <Navigator  
+
+            <Navigator
                 ref={(ref) => this._navigator = ref}
                 configureScene={ this._configureScene }
                 initialRoute={{id:this.state.textState}}
                 renderScene={this.renderScene.bind(this)}
                 passProps={this.state.mycauseDataCount}
-                /> 
+                />
            </View>);
         }
         return this.LodingFunction();
@@ -216,7 +220,7 @@ class Application extends Component{
         }
 
 
-        renderScene(route, navigator, user,causeLength) {  
+        renderScene(route, navigator, user,causeLength) {
           console.log('mycauseLengthData',user);
            switch (route.id) {
                 case 'home':
@@ -242,20 +246,28 @@ class Application extends Component{
                 case 'sharescreen':
                 return <ShareScreen navigator={navigator} {...route.passProps}/>;
                 case 'thankyouscreen':
-                return <ThankyouScreen navigator={navigator} {...route.passProps}/>;            
+                return <ThankyouScreen navigator={navigator} {...route.passProps}/>;
                 case 'faq':
-                return <Faq navigator={navigator} {...route.passProps}/>;   
+                return <Faq navigator={navigator} {...route.passProps}/>;
                 case 'leaderboard':
-                return <Leaderboard navigator={navigator} {...route.passProps}/>;   
+                return <Leaderboard navigator={navigator} {...route.passProps}/>;
                 case 'impactleagueform2':
                 return <ImpactLeagueForm2 navigator={navigator} {...route.passProps}/>;
                 case 'impactleaguecode':
-                return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>;     
+                return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>;
                 case 'impactleaguehome':
-                return <ImpactLeagueHome navigator={navigator} {...route.passProps}/>; 
+                return <ImpactLeagueHome navigator={navigator} {...route.passProps}/>;
                 case 'impactleagueleaderboard':
-                return <ImpactLeagueLeaderBoard navigator={navigator} {...route.passProps}/>; 
-          
+                return <ImpactLeagueLeaderBoard navigator={navigator} {...route.passProps}/>;
+                case 'runhistory':
+                return <RunHistory navigator={navigator} {...route.passProps}/>;
+                case 'profileform':
+                return <ProfileForm navigator={navigator} {...route.passProps}/>;
+                case 'profileheader':
+                return <ProfileHeader navigator={navigator} {...route.passProps}/>;
+                case 'profile':
+                return <Profile navigator={navigator} {...route.passProps}/>;
+
                 default :
                  return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
             }
