@@ -63,7 +63,7 @@ class ImpactLeague extends Component {
             if (result != null || undefined) {
               this.setState({
                 LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(boardData.results),
-                BannerData:boardData.results,
+                BannerData:boardData.results[0].impactleague_banner,
                 leaguename:boardData.results[0].impactleague,
                 loaded: true,
               })
@@ -87,7 +87,7 @@ class ImpactLeague extends Component {
               this.setState({
                 user:user,
               })
-            NetInfo.isConnected.fetch().done(
+              NetInfo.isConnected.fetch().done(
               (isConnected) => { this.setState({isConnected}); 
                 if (isConnected) {
                    this.fetchLeaderBoardData();
@@ -101,11 +101,9 @@ class ImpactLeague extends Component {
 
     
       fetchLeaderBoardData() {
-         AsyncStorage.removeItem('teamleaderBoardData',(err) => {
-          console.log(err,'itemremoved');
-         });
+        
         var token = this.state.user.auth_token;
-        console.log('mytoken',token)
+        console.log('auth_token',token,this.state.user);
         var url = apis.ImpactLeagueTeamLeaderBoardApi;
         fetch(url,{
           method: "GET",
@@ -120,8 +118,11 @@ class ImpactLeague extends Component {
             LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
             refreshing:false,
-            BannerData:jsonData.results,
+            BannerData:jsonData.results[0].impactleague_banner,
           });
+           AsyncStorage.removeItem('teamleaderBoardData',(err) => {
+          console.log(err,'itemremoved');
+         });
           let teamleaderBoardData = jsonData;
           console.log('teamleaderBoardData',teamleaderBoardData);
           AsyncStorage.setItem('teamleaderBoardData',JSON.stringify(teamleaderBoardData)); 
@@ -217,7 +218,7 @@ class ImpactLeague extends Component {
             </View>
             <View>
            
-             <Image source={{uri:this.state.BannerData[0].impactleague_banner}} style={styles.bannerimage}>
+             <Image source={{uri:this.state.BannerData}} style={styles.bannerimage}>
              
               </Image>
                {this.swwipeDowntoRefress()}

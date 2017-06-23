@@ -27,6 +27,7 @@ import SettingDetail from './SettingDetail';
 import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
+import CaloriCounter from './caloriCounter'
 var Pedometer = require('react-native-pedometer');
 // var mapRef = 'mapRef';
 var deviceWidth = Dimensions.get('window').width;
@@ -113,8 +114,12 @@ var styles = StyleSheet.create({
    timeDistanceWrap:{
     justifyContent: 'center',      
     alignItems: 'center',
-    width:deviceWidth/2, 
-    backgroundColor:'transparent',   
+    width:deviceWidth/3, 
+   },
+   timeDistanceWrap2:{
+    justifyContent: 'center',      
+    alignItems: 'center',
+    width:deviceWidth/4, 
    },
 });
 
@@ -141,7 +146,7 @@ SettingsService.init('iOS');
       currentPace: 0,
       currentCadence: 0,
       isRunning:true,
-      mainTimer:null,
+      mainTimer:0,
       speed:0,
       prevLatLng: {},
       distanceTravelled: 0,
@@ -153,6 +158,11 @@ SettingsService.init('iOS');
       distanceTravelledsec:0,
       paceButtonIcon: 'md-pause',
       navigateButtonIcon: 'md-locate',
+      MetsValue:0,
+      weight:0,
+      calorieBurned:0.0,
+      storedRunduration:0,
+      timeBetweenTwoPoint:0,
       // mapHeight: 280,
       // mapWidth: 300,
       // zoom: 10,
@@ -282,13 +292,14 @@ SettingsService.init('iOS');
   },
   
   componentDidMount:function(){  
+   this.getWeight();
    this.saveDataperiodcally(); 
     this._startStepCounterUpdates()
     var date = this.state.myrundate;
     this._handleStartStop();
-    if (this.state.isMoving) {
+    if (this.state.isMoving ) {
       this._handleStartStop();}; 
-      this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 5000)
+      this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 1000)
       this.locationManager.start();    
       this.updatePaceButtonStyle();
       this.locationManager.changePace(!this.state.isMoving);
@@ -331,7 +342,7 @@ SettingsService.init('iOS');
     }
   },
   
-  
+
   // Add Marker if check clear
   addMarker :function(location) {
     const {distanceTravelled,prevDistance } = this.state
@@ -340,14 +351,15 @@ SettingsService.init('iOS');
       this.setState({
             prevDistance: newDistance-distanceTravelled,
           })
+      
       // AlertIOS.alert('accuracy',JSON.stringify(location.coords.accuracy));
       var sourceAccuracy = (this.state.distanceTravelled === 0.0)?30:15;
     // If Location accuracy is less than 15
       if (location.coords.accuracy <= sourceAccuracy){
-
         // IF Speed More than 35km/hr
         // AlertIOS.alert('accuracy',JSON.stringify(sourceAccuracy));
-      if (location.coords.speed <= 9) {
+      // if (location.coords.speed <= 9) {
+
       var me = this;
       // this.addAnnotations(mapRef, [this.createMarker(location)]);
       // if ( this.polyline) {
@@ -357,42 +369,244 @@ SettingsService.init('iOS');
       // }
       const {distanceTravelled,prevDistance } = this.state
       const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
+      const newTimeStamp = location.timestamp;
+      
+      console.log("timeinsec",new Date(newTimeStamp).getTime())
       this.setState({
           distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
           prevLatLng: newLatLngs,
+          newTimeStamp:location.timestamp,
+          prevTimeStamp:this.state.newTimeStamp,
           speed:location.coords.speed,
         })
-        }else{
-          this.locationManager.removeGeofences();
-          this.locationManager.stop();
-          this.setState({
-             isMoving:false,
-             isRunning:false,    
-          });
-          this.updatePaceButtonStyle();
-          this._handleStartStop();
-          VibrationIOS.vibrate();
-          AlertIOS.alert('Too fast','Your speed is more than running speed it seems you are travelling in vehicle');
-         }
+           var oldtime = new Date(this.state.prevTimeStamp).getTime();
+            var newTime = new Date(this.state.newTimeStamp).getTime();
+            var timeBetweenTwoPoint = newTime - oldtime;
+            console.log("timeBetweenTwoPoint1",timeBetweenTwoPoint)
+            if (timeBetweenTwoPoint) {
+            this.previousLocationTime(newTimeStamp);
+            this.caloriCounterStart(newTimeStamp);
+             }else{
+              console.log("Nanvalue")
+            }
+            
+     
+        // }else{
+        //   this.locationManager.removeGeofences();
+        //   this.locationManager.stop();
+        //   this.setState({
+        //      isMoving:false,
+        //      isRunning:false,    
+        //   });
+        //   this.updatePaceButtonStyle();
+        //   this._handleStartStop();
+        //   VibrationIOS.vibrate();
+        //   AlertIOS.alert('Too fast','Your speed is more than running speed it seems you are travelling in vehicle');
+        //  }
       }else{
           // else to our algo part
+ 
           var Prevdistance = this.state.prevDistance*1000;
           var locationAccuracy=location.coords.accuracy;
           var thresholdAccuracy = 16;
           var offset = 1;
           var thresholdFactor = 5; 
           var currentDistance = Prevdistance;
+
             if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){
             const {distanceTravelled,prevDistance } = this.state
             const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
+            const newTimeStamp = location.timestamp;
             this.setState({
                 distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
                 prevLatLng: newLatLngs,
+                newTimeStamp:location.timestamp,
+                prevTimeStamp:this.state.newTimeStamp,
+
                 speed:location.coords.speed,
               })
+            var oldtime = new Date(this.state.prevTimeStamp).getTime();
+            var newTime = new Date(this.state.newTimeStamp).getTime();
+            var timeBetweenTwoPoint = newTime - oldtime;
+             console.log("timeBetweenTwoPoint2",timeBetweenTwoPoint)
+            if (timeBetweenTwoPoint) {
+            this.previousLocationTime(newTimeStamp);
+            this.caloriCounterStart(newTimeStamp);
+            }else{
+              console.log("Nanvalue")
+            }
+            
              }
           }
       
+  },
+
+  getMetsValue:function(speed){
+     // deltaSpeed is in m/s
+     if (speed != NaN) {
+     var speed = speed*1000;
+    console.log("speed",speed);
+     var mph = 2.2369 * speed;
+     console.log("mph",mph);
+
+       // Referring Compendium of Physical Activities over here
+        // https://sites.google.com/site/compendiumofphysicalactivities/Activity-Categories/walking
+        // and here
+        // https://sites.google.com/site/compendiumofphysicalactivities/Activity-Categories/running
+
+       if (mph <= 0.625) {
+            this.setState({
+              metval:0
+            })
+        }else if (mph <= 1){
+          this.setState({
+              metval:1.3
+            })
+           
+        }else if (mph <= 2){
+          this.setState({
+              metval:(1.3 + 1.5*(mph - 1))
+            })
+           
+          // 2.8 at 2 mph
+        }else if (mph <= 2.5){
+          this.setState({
+              metval:2.8 + 0.4*(mph - 2)
+            })
+           
+           // 3.0 at 2.5 mph
+        }else if (mph <= 3.5){
+          this.setState({
+              metval:1.3
+            })
+           
+            // 4.3 at 3.5 mph
+        }else if (mph <= 4){  
+          this.setState({
+              metval:3.0 + 1.3*(mph - 2.5)
+            })
+           
+          // 6.0 at 4 mph
+        }
+        /// All walking values uptill here, range 4-5 mph is ambiguous range need to decide between running and walking
+        else if (mph <= 5){
+          this.setState({
+              metval:6 + 2.3*(mph - 4)
+            })
+           
+          // 8.3 at 5 mph
+           
+        }else if (mph <= 6){
+          this.setState({
+              metval:8.3 + 1.5*(mph - 5)
+            })
+           
+             // 9.8 at 6 mph
+        }else if (mph <= 7){
+          this.setState({
+              metval:9.8 + 1.2*(mph - 6)
+            })
+           
+           // 11.0 at 7mph
+        }else if (mph <= 7.7){
+          this.setState({
+              metval:11 + 1.143*(mph - 7)
+            })
+           
+             // 11.8 at 7.7 mph
+        }else if (mph <= 9){
+          this.setState({
+              metval:11.8 + 0.77*(mph - 7.7)
+            })
+           
+           // 12.8 at 9 mph
+        }else if (mph <= 10){
+          this.setState({
+              metval:12.8 + 1.7*(mph - 9)
+            })
+           
+           // 14.5 at 10 mph
+        }else if (mph <= 11){
+          this.setState({
+              metval:14.5 + 1.5*(mph - 10)
+            })
+         // 16 at 11 mph
+        }else if (mph <= 12){
+          this.setState({
+              metval:16 + 3*(mph - 11)
+            })
+           
+          // 19 at 12 mph
+        }else if (mph <= 14){
+          this.setState({
+              metval:19 + 2*(mph - 12)
+            })
+          // 23 at 14 mph
+        }else if (mph <= 15){
+          this.setState({
+              metval:23 + 1*(mph - 14)
+            })
+           
+          // 24 at 15 mph
+        }else {
+          this.setState({
+              metval:1.3
+            })
+           
+            // For speeds greater than 15 mph (23 kmph) we assume that the person is driving so we don't add calories
+           
+        }
+    }
+  },
+ 
+    getWeight:function(){
+          AsyncStorage.getItem('userWeight', (err, result) => { 
+            var weight = JSON.parse(result)
+            console.log('resultcalori',weight);
+            this.setState({
+              weight:weight
+            })
+          })
+
+      } ,
+
+      
+     caloriCounterStart:function(){
+        // Start activity detection
+        var totalCaloriesBurned = this.state.calorieBurned;
+        var timeinHr = ((this.state.mainTimer + this.state.storedRunduration)/1000)/3600;
+        var time =(this.state.timeBetweenTwoPoint/1000)/3600;
+        var Calories =  this.state.metval*this.state.weight*time;
+        console.log('Calories', this.state.metval,this.state.weight,time,Calories);
+        console.log('this.state.calorieBurned',this.state.calorieBurned);
+        var totalCalories = this.state.calorieBurned ;
+       
+        
+        totalCaloriesBurned += Calories;
+        console.log('totalCalories',totalCaloriesBurned);
+        this.setState({
+          calorieBurned:totalCaloriesBurned,
+        })     
+
+        console.log('calorieBurned',this.state.calorieBurned);
+
+      },
+  previousLocationTime:function(){
+    var oldtime = new Date(this.state.prevTimeStamp).getTime();
+    var newTime = new Date(this.state.newTimeStamp).getTime();
+    var timeBetweenTwoPoint = newTime - oldtime;
+    this.setState({
+      timeBetweenTwoPoint:timeBetweenTwoPoint,
+    })
+    var prevDistance = this.state.prevDistance*1000;
+    console.log("timeBetweenTwoPoint",timeBetweenTwoPoint,oldtime,newTime);
+    var speed = prevDistance/timeBetweenTwoPoint;
+    if (speed != NaN) {
+    this.getMetsValue(speed);
+    console.log("newTimeStamp",parseFloat(timeBetweenTwoPoint/1000).toFixed(0),"prevDistance",parseFloat(prevDistance).toFixed(0)+"m","speed",speed*1000);
+  }else{
+    console.log("speednana");
+  }
   },
 
  _startStepCounterUpdates:function() {
@@ -414,7 +628,6 @@ SettingsService.init('iOS');
 
   saveDataperiodcally:function(){ 
     var priv = this.state.distanceTravelledsec;
-
     this.IntervelSaveRun = setInterval(()=>{
     if (this.state.result != null) {
       var distance = parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv)).toFixed(1);
@@ -427,6 +640,7 @@ SettingsService.init('iOS');
       speed:this.state.speed,
       time:this.state.mainTimer + this.state.storedRunduration,
       // StartLocation:this.state.StartPosition,
+      calories_burnt:this.state.calorieBurned,
       StartRunTime:this.state.myrundate,
       noOfsteps:this.state.numberOfSteps,
      }
@@ -554,6 +768,7 @@ SettingsService.init('iOS');
           impact:parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate,
           speed:this.state.speed,
           isUserlogin:user,
+          calories_burnt:this.state.calorieBurned,
           time:TimeFormatter(timetotal),
           // StartLocation:this.state.StartPosition,
           StartRunTime:this.state.myrundate,
@@ -714,8 +929,8 @@ SettingsService.init('iOS');
    },
    
     render: function(location) {
-     var circularprogress =  ((parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2 === 100)?(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/5:(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2;
-      var intime = TimeFormatter(this.state.mainTimer+this.state.storedRunduration);
+      var circularprogress =  ((parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2 >= 100)?(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/7:(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2;
+      var intime = TimeFormatter( this.state.mainTimer + this.state.storedRunduration );
       var data = this.props.data;
       var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
       return (
@@ -749,10 +964,15 @@ SettingsService.init('iOS');
                    {this.KmTextView(priv)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
                 </View>
+                
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                    {this.TimeTextView(intime)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
+                </View>
+                 
+                 <View style={styles.timeDistanceWrap2}>
+                  <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned} />
                 </View>
               </View>
             </View>
@@ -768,6 +988,7 @@ SettingsService.init('iOS');
           </View>
         </View>
       );
+
     }
 });
 module.exports = Home;

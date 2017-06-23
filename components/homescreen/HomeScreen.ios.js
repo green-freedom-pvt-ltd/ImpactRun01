@@ -113,8 +113,10 @@ class Homescreen extends Component {
       }
 
       componentDidMount() {
+        console.log('deviceheight',deviceheight);
         var provider = this.props.provider;
         var causeNum = this.props.myCauseNum;
+        if (causeNum != null || undefined) {
           try {
             AsyncStorage.multiGet(causeNum, (err, stores) => {
                 var _this = this
@@ -138,6 +140,9 @@ class Homescreen extends Component {
           } catch (err) {
             console.log(err)
           } 
+        }else{
+          this.props.fetchDataonInternet();
+        }
       }
      postPastRun(){
       var userdata = this.props.user;
@@ -176,6 +181,7 @@ class Homescreen extends Component {
           avg_speed:RunData.avg_speed,
           run_amount:RunData.run_amount,
           run_duration:RunData.run_duration,
+          is_flag:false,
           // start_location_lat:RunData.start_location_lat,
           // start_location_long:RunData.start_location_long,
           no_of_steps:RunData.no_of_steps,
@@ -187,6 +193,9 @@ class Homescreen extends Component {
       .then((userRunData) => { 
        var epochtime = userRunData.version;
        let responceversion = epochtime;
+        AsyncStorage.removeItem('runversion',(err) => {
+          console.log("removedRunVersionfromsharescreen");
+         });
         AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{   
         });
         this.RemoveStoredRun(runNumber);
@@ -361,6 +370,7 @@ class Homescreen extends Component {
     _renderPage = (props,data,route) => {
       return (
         <TabViewPage
+          topcard={300}
           {...props}
           style={this._buildCoverFlowStyle(props)}
           renderScene={this._renderScene}/>
@@ -378,15 +388,17 @@ class Homescreen extends Component {
           <View style={commonStyles.Navbar}>
             <Text style={commonStyles.menuTitle}>Impactrun</Text>
           </View>
+          <View style={styles.tabwrap}>
            <TabViewAnimated
              style={[ styles.container, this.props.style ]}
              navigationState={this.state.navigation}
              renderScene={this._renderPage}
              onRequestChangeTab={this._handleChangeTab}>
              </TabViewAnimated>
+             </View>
              <View style={{top:-65,width:deviceWidth,height:50, justifyContent: 'center',alignItems: 'center',}}>
               <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Let's Go</Text>
+                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Lets Go</Text>
                </TouchableOpacity>
               </View>
              </View>
@@ -405,14 +417,17 @@ class Homescreen extends Component {
   }
 
   var styles = StyleSheet.create({
-   container: {
-      height: deviceheight-120,
-      top:styleConfig.CardTop,
+    tabwrap:{
+      height:deviceheight-120,
       width:deviceWidth,
+      justifyContent: 'center',
+    },
+   container: {
+      width:deviceWidth,
+      backgroundColor:'blue',
+      justifyContent: 'center',
     },
     page: {
-      top:8,
-      height:deviceheight-200,
       width:deviceWidth,
       alignItems: 'center',
       justifyContent: 'center',
@@ -429,9 +444,9 @@ class Homescreen extends Component {
       width:deviceWidth,
      },
      album: {
+      paddingBottom:30,
       backgroundColor: '#fff',
       width: deviceWidth-65,
-      height: styleConfig.CardHeight,
       elevation: 12,
       shadowColor: '#000000',
       shadowOpacity: 0.2,

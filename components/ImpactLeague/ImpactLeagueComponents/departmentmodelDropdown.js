@@ -53,7 +53,7 @@ export default class ModalDropdown extends Component {
   static defaultProps = {
     disabled: false,
     defaultIndex: -1,
-    defaultValue: 'Please select...',
+    defaultValue: 'Please select your department',
     options: null,
     animated: false,
     showsVerticalScrollIndicator: true
@@ -367,6 +367,9 @@ export default class ModalDropdown extends Component {
 
 const styles = StyleSheet.create({
   button: {
+    width:deviceWidth-80,
+    height:40,
+    alignItems: 'center',
     justifyContent: 'center'
   },
   buttonText: {

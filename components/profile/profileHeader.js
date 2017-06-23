@@ -10,14 +10,19 @@ var {
   AsyncStorage,
   Dimensions,
   VibrationIOS,
+  Navigator,
+  TouchableOpacity,
   TouchableHighlight,
   ActivityIndicatorIOS
 } = ReactNative;
 
 
 var FB_PHOTO_WIDTH = 200;
+var base64Icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABICAYAAACqT5alAAAABGdBTUEAALGPC/xhBQAABOFJREFUeAHtmlmIFEcYx2dUxDt4YTSieCAqHkgkJARU9EFFgygeICIi+qCgQRHFh4CQhzwsgSiJeGD0yQNR8SDg8WBWvFZNRFkkEW/BCKsuisQcuvl9Zqbt6emq6aquaWd2+4P/dPVX31lfV3X1dGcyhtTU1HQdVAotNgw/08pUodrl04SrvYKl4k8rXGqEqr0/y3K7hSQ+NEhkIrKdDeTLKforxu8bONguCd9CYaCBUjWLrkzncDWXL0rs76PCLwhsCtgcJUDXMu8j4Z3ZbPY4iawHL10nVMpeG43AVvoehPSvgNcrhB+VJXYzJP2cBXMPzSVRFUPkDsCTlTpIC2AMDTLfnssqDcLoszAFBOM8PNT6bWJrbJhjA95Cv718G/3DChsrkr6k5Z7vEVW+zMkvHiOBhlzSTQo/WQU/CvsZQrvBY/AEPM0df+YYpNkwhoFuoHsOYzlOBbakKuQbSbgBDAqx3DOEF5W1ieptiCKM3B3kBB5xOUrAjcB2R9fDM1bYaBDDjwp53lnoHPZ69Y2FBD1AL6LtXU2vVbL47YDuaIX1R5LwNUXnEpRtV2NJ9iL6RoOGfGvwPbo1ipiisFch1D5E8DW8+gwOPgYqOhRURNBklf4T+XlBG2HnyHUGPwETKlilURwB/lIYqPX8IvCbQkjYx4D3NEXbJGHRfwPGec4UDWTEjyl5CaM4FzRoDCwT1/mNx1e09ylimQa/HkOy6l4CXRRyKras9vdUnT7+Q187avMT4uqK8BdgkkZJFsUdXj9K8phYC8pBUZKVqTW/HM5zNmflk5VFS7Z5ci+eA2xGWUzo6N3cyUkRxFDQLqBUJBfotz2tIb+DocoEMQo8BC5pad4ZRjuCb8G/4CaYmO+TI+e3gUv6EWNvi+r3U9BGoDc459DrzFwy07F5L8TuTniyw5KE5Vbmgv7GyJqCxHQnCMucXgDugrgkK+eFEkZE5kwJmSjdckfYDwar8pMVVEkoSv+nYAYYDvqAIcBqF4Sea5LVVx5hZe2RNeAw8/UPju6IQVgHKoH+IYiOppnpJ3S4tbPh7MS5V6mm8T8mNgnLM6yxozIMx2kbm8YJM6qvcLTXxpljnV029owTzjnZZuPMoc45Br7exp5Vwjirw9kJG4eOdL52ZCe6GVbIYUBu8EnTkehRFktaVVjMUOUbHL4pNllWjvxX9mVZPeiMU9pW4GhCJX6Nn8m6eBLpI4gPQF2Zk5Yt4/JEEorihGA6gVNlSlp2VPImobKIoNqCGiCXniu6g6HxlZVpIBoC/BxcBXFI/oj7AVTKQ0ogy8ApgcrjpTz/ngYmFX+C/EbQN2Cyek4JvidYBF4BFcn8HwdaV09mJSIlmUZVtvA3lFB31m298XAWQcKG0oQTHvDE3aUVTnzIE3aYVjjhAU/cXYurcBvXQ8wmQl6nyvvg4GvVthpfI9Gb7+uXl3u/8yfDFR+v8poE3Re4fBn3XeVl6YuIZOXx0DV95HMRu+l6DvePHVGxgX7FLHuO64TtI0lIs8UlrH1dWmrQmawTkFnrkxtD2/vix8eP0zyPsnyVJ9TIyu1fzf/nGvzGvS31xlecbyKjhOr/uO1xFAWdTIu7pNOEdZdDc+hLK9wcqqjLIa2wbnSaQ19a4eZQRV0OcXda8tXbSZ0Dx33yBUBK6QhoRuA/Om5HY4SRRjAAAAAASUVORK5CYII=";
+import LevelBar from './levelBar';
 import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import commonStyles from '../styles';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 var deviceHeight = Dimensions.get('window').height;
 var deviceWidth = Dimensions.get('window').width;
@@ -27,20 +32,21 @@ var UserProfile = React.createClass({
       return {
         user:null,
         Circlefill:0,
-       
+
       };
+      this.fetchUserData = this.fetchUserData.bind(this);
     },
     componentWillMount:function() {
-   
+
     },
     componentDidMount:function() {
     },
- 
+
     social_thumb:function(){
       if (this.props.user.first_name != '') {
-        return( 
+        return(
           <Image  style={styles.UserImage} source={{uri:this.props.user.social_thumb}}></Image>
-        ) 
+        )
       };
       return(
         <View>
@@ -48,14 +54,14 @@ var UserProfile = React.createClass({
         </View>
       )
     },
-    
+
     fullname:function(){
       if (this.props.user != null) {
-        return( 
+        return(
         <View>
           <Text style={styles.profilename}>{this.props.user.first_name} {this.props.user.last_name}</Text>
-        </View>    
-        ) 
+        </View>
+        )
       };
       return(
         <Text></Text>
@@ -91,55 +97,54 @@ var UserProfile = React.createClass({
         )
       }
     },
+    fetchUserData:function(){
+      this.props.fetchUserData();
+    },
+    navigateToProfileForm() {
+      this.props.navigator.push({
+      title: 'Gps',
+      id:'profileform',
+      index: 0,
+      passProps:{fetchRunData:this.onFetch,user:this.props.user,getUserData:this.props.getUserData,getRunCount:this.getRunCount,fetchAmount:this.fetchAmount},
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      navigator: this.props.navigator,
+      });
+    },
+
+      renderEditProfileIcon(){
+        if (this.props.user != null) {
+
+        return(
+           <TouchableOpacity style={{height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToProfileForm()} >
+             <Icon style={{fontSize:22, height:40,width:40,top:18, color:'white'}} name={'pencil'} ></Icon>
+            </TouchableOpacity>
+          );
+         }else{
+          return;
+         }
+      },
 
     render: function() {
       if (this.props.user != null) {
         return (
-          <View style={styles.loginContainer}>
-            <View style={styles.userContentwrap}>
-              <View style={{width:deviceWidth/3-20}}> 
-              <View style={{top:20,right:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
-                <Text style={styles.totalcontentTextSec}>Runs</Text>
-                {this.TotalRuns()}
-              </View>
-              <AnimatedCircularProgress
-                style={{top:10,right:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
-                ref='circularProgress1'
-                size={70}
-                width={2}
-                fill={100}
-                prefill={0}
-                tintColor={styleConfig.bright_blue}
-                backgroundColor="#fafafa"
-              >                   
-              </AnimatedCircularProgress>
-              </View>
-              <View style={styles.userimagwrap}>
-                <View style={styles.UserImage}>{this.social_thumb()}</View>
-              </View>
-              <View style={{width:deviceWidth/3-20}}> 
-                <View style={{top:20,left:20,height:50,width:deviceWidth/3-20,position:'absolute',justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.totalcontentTextSec}>Rs</Text>
-                 {this.TotalAmount()}
-                </View>
-                <AnimatedCircularProgress
-                  style={{top:10,left:20,justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
-                  ref='circularProgress2'
-                  size={70}
-                  width={2}
-                  fill={100}
-                  prefill={0}
-                  tintColor={styleConfig.bright_blue}
-                  backgroundColor="#fafafa">                   
-                </AnimatedCircularProgress>
-              </View>
-            </View>
-            <View style={styles.NameWraper}>
-            {this.fullname()}
-            </View>
+      <View>
+
+          <View style={commonStyles.Navbar}>
+              <Text style={commonStyles.menuTitle}>Profile</Text>
+              <View style={{position:'absolute',right:0,top:0,}}>{this.renderEditProfileIcon()}</View>
           </View>
+
+        <View>
+          <View style={styles.userimagwrap}>
+          <View style={styles.UserImageWrap}>{this.social_thumb()}</View>
+          <View style={styles.barWrap}>
+          <LevelBar totalKm={this.props.totalKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={deviceWidth-150} totalKm={this.props.totalKm}/>
+          </View>
+          </View>
+        </View>
+        </View>
         );
-      };   
+      };
     }
 });
 
@@ -152,42 +157,43 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  barWrap:{
+  width:deviceWidth-120,
+  justifyContent: 'center',
+  },
   bottomBump: {
     marginBottom: 15,
   },
+  UserImageWrap:{
+   flex:1,
+   justifyContent: 'center',
+   alignItems: 'center',
+  },
   UserImage:{
-    height:80,
-    width:80,
-    borderRadius:40,
+    width:70,
+    height:70,
+    borderRadius:35,
   },
   userimagwrap:{
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection:'row',
     height:80,
-    width:80,
-    borderColor:'rgba(247, 243, 243, 0.48)',
-    borderRadius:40,
-    shadowColor: '#000000',
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      shadowOffset: {
-        height:1,
-      },
+    width:deviceWidth,
     top:10,
   },
   userContentwrap:{
     width:deviceWidth,
     flexDirection:'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginLeft: 61,
   },
   NameWraper:{
-    top:20,
     flexDirection: 'row',
     justifyContent:'center',
   },
   profilename:{
-    marginRight:5,
+    marginTop:15,
+    marginLeft:15,
     color:styleConfig.greyish_brown_two,
     fontSize:18,
     fontWeight:'600',

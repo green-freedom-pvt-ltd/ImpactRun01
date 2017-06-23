@@ -122,7 +122,9 @@ class ImpactLeagueCode extends Component {
       var city = [];
       var i;
       for (i = 0; i < cities.length; i++) {
+        if (cities[i].city != null ) {
           city.push(cities[i].city);
+        }
 
       }
       console.log('text',city);
@@ -130,7 +132,9 @@ class ImpactLeagueCode extends Component {
       var department = [];
       var i;
       for (i = 0; i < departments.length; i++) {
+        if (departments[i].department != null) {
           department.push(departments[i].department);
+        }
 
       }
       console.log('text',department);

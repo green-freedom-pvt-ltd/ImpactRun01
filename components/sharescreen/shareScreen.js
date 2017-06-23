@@ -66,6 +66,7 @@ import{
             this.setState({
               user:user,
             })
+            console.log("user",this.state.user);
             this.AddruntoRunHistory();
             if (this.state.user) {
             this.ifConnectTonetPost();
@@ -186,6 +187,7 @@ import{
      var token = JSON.stringify(userdata.auth_token);
      var tokenparse = JSON.parse(token);
      var Runid = this.state.runid;
+     var calories_burnt = this.props.calories_burnt;
        let RID1  = {
         cause_run_title:cause.cause_title,
         user_id:user_id,
@@ -195,6 +197,9 @@ import{
         avg_speed:speed,
         run_amount:impact,
         run_duration: time,
+        is_flag:false,
+        calories_burnt:calories_burnt,
+        team_id:this.state.user.team_code,
         // start_location_lat:startPosition.coords.latitude,
         // start_location_long:startPosition.coords.longitude,
         no_of_steps:steps,
@@ -254,6 +259,8 @@ import{
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
+      var calories_burnt = this.props.calories_burnt;
+      console.log("calories_burnt",calories_burnt);
       // var startPosition = this.props.StartLocation;
       // console.log('startPosition.coords.latitude',startPosition.coords.latitude);
       // console.log('startPosition.coords.longitude',startPosition.coords.longitude);
@@ -275,6 +282,9 @@ import{
           avg_speed:speed,
           run_amount:impact,
           run_duration: time,
+          is_flag:false,
+          calories_burnt:calories_burnt,
+          team_id:this.state.user.team_code,
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -288,6 +298,9 @@ import{
         // var convertepoch = newDate.getTime()/1000
         // var epochtime = parseFloat(convertepoch).toFixed(0);
         let responceversion = epochtime;
+        AsyncStorage.removeItem('runversion',(err) => {
+          console.log("removedRunVersionfromsharescreen");
+         });
         AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
          
         });
@@ -313,6 +326,7 @@ import{
       var date = this.props.StartRunTime;
       var cause = this.props.data;
       var userdata = this.state.user;
+      var calories_burnt = this.props.calories_burnt;
       var user_id =JSON.stringify(userdata.user_id);
        // var startPosition = this.props.StartLocation;
       AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
@@ -326,6 +340,9 @@ import{
           avg_speed:speed,
           run_amount:impact,
           run_duration: time,
+          is_flag:false,
+          calories_burnt:calories_burnt,
+          team_id:this.state.user.team_code,
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -347,6 +364,7 @@ import{
 
       AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
         if (result != null || undefined) {
+
         var boardData = JSON.parse(result);
         console.log('mydatawewew',boardData)
         if (boardData.impactleague_is_active) {   
@@ -432,6 +450,11 @@ import{
                 </View>
                 <View style={styles.wrapperRunContent}>
                   <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{this.props.calories_burn}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
+                </View>
+                <View style={styles.wrapperRunContent}>
+                  <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
                 </View>
@@ -448,6 +471,7 @@ import{
                   <Text style={{color:styleConfig.grey_70,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
                   <TouchableOpacity onPress={()=> this.PopForRunNOtSubmit()}>
                     <Text style={{left:5,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>
+                   
                   </TouchableOpacity>
                 </View>
               </View>

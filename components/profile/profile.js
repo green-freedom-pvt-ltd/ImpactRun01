@@ -1,4 +1,3 @@
-
 'use strict';
 
 import React, { Component } from 'react';
@@ -7,42 +6,231 @@ import{
     View,
     Image,
     ScrollView,
+    Navigator,
     Dimensions,
     TouchableOpacity,
     Text,
     NetInfo,
+    ActivityIndicatorIOS,
     AsyncStorage,
   } from 'react-native';
 var {FBLoginManager} = require('react-native-facebook-login');
+import Chart from 'react-native-chart';
+import apis from '../apis';
 import ProfileForm from './profileForm';
 import RunHistory from './runhistory/runHistory';
 import LodingView from '../LodingScreen';
+import LoginBtn from '../login/LoginBtns'
+import styleConfig from '../../components/styleConfig';
+import UserProfile from './profileHeader';
 import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+import AnimateNumber from 'react-native-animate-number';
+import commonStyles from '../styles'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-
+const dataP = [];
 class Profile extends Component {
       constructor(props) {
         super(props);
-        this.getRunCount();
-        this.fetchAmount();
+        
+
+        this.fetchRunDataLocally();
+
         this.state = {
-        loaded:false,
-          user:null,
+          rowData:[],
+          runfeatching:false,
+          user:null ,
+          loadingFirst:true,
+          RunTotalAmount2:0,
+          RunCountTotal:0,
+          RunTotalDistance:0,
+          navigation: {
+            index: 1,
+            routes: [],
+            loadingimage:true,
+          },
+          counterDate:new Date(),
         };
         this.getUserData = this.getUserData.bind(this);
-        this.getRunCount = this.getRunCount.bind(this);
-        this.fetchAmount = this.fetchAmount.bind(this);
       }
-      
-      getUserData(){ 
+
+
+     componentDidMount() {
+     
+     }
+      fetchRunDataLocally(){
+           AsyncStorage.getItem('nextpage', (err, result) => {
+            this.setState({
+              nextPage:JSON.parse(result),
+            })
+
+            })
+          AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+            var RunData = JSON.parse(result);
+            if (result != null || undefined) {
+              this.setState({
+                rawData: RunData,
+              })
+              this.fetch7DayData();
+              this.getRunCount();
+              this.fetchAmount();
+              this.fetchTotalDistance();
+            }else{
+               this.fetchRunhistoryData();
+            }
+          });
+      }
+
+
+
+      fetchRunhistoryData() {
+        if (this.props.user != null) {
+        var token = this.props.user.auth_token;
+        var url = apis.runListapi;
+        fetch(url,{
+          method: "GET",
+          headers: {
+            'Authorization':"Bearer "+ token,
+            'Content-Type':'application/x-www-form-urlencoded',
+          }
+        })
+        .then( response => response.json() )
+        .then( jsonData => {
+          this.setState({
+            runfeatching:true,
+            rawData:jsonData.results,
+            RunCount:jsonData.count,
+            nextPage:jsonData.next,
+          });
+          if (this.state.nextPage != null) {
+          fetch(this.state.nextPage,{
+          method: "GET",
+          headers: {
+            'Authorization':"Bearer "+ token,
+            'Content-Type':'application/x-www-form-urlencoded',
+            }
+          })
+
+          .then( response => response.json())
+          .then( jsonDataobj => {
+            this.setState({
+              runfeatching:true,
+              rawData: this.state.rawData.concat(jsonDataobj.results),
+              nextPage:jsonDataobj.next,
+              RunCount:jsonDataobj.count,
+            })
+            let RunCount = this.state.RunCount;
+            AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
+               if (jsonData.results != null || undefined) {
+                 AsyncStorage.removeItem('runversion',(err) => {
+                });
+                var newDate = new Date();
+                var convertepoch = newDate.getTime()/1000
+                var epochtime = parseFloat(convertepoch).toFixed(0);
+                let responceversion = epochtime;
+                AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
+                 AsyncStorage.getItem('runversion', (err, result) => {
+                  this.setState({
+                    runversion:JSON.parse(result),
+                  })
+                })
+                });
+              }else{
+                return;
+              }
+              let nextpage = this.state.nextPage;
+              AsyncStorage.setItem('nextpage',JSON.stringify(nextpage));
+              var storepage =  this.state.rawData;
+              let fetchRunhistoryData = this.state.rawData;
+              AsyncStorage.setItem('fetchRunhistoryData',JSON.stringify(storepage));
+              this.LoadmoreView();
+          })
+          }else{
+            return;
+          }
+        })
+         .catch( error => console.log('Error fetching: ' + error) );
+         };
+      }
+
+
+      LoadmoreView(){
+        this.nextPage();
+      }
+
+
+
+      nextPage(){
+        if (this.state.nextPage != null) {
+        var token = this.props.user.auth_token;
+        var url = this.state.nextPage;
+        fetch(url,{
+          method: "GET",
+          headers: {
+            'Authorization':"Bearer "+ token,
+            'Content-Type':'application/x-www-form-urlencoded',
+          }
+        })
+        .then( response => response.json() )
+        .then( jsonData => {
+          this.setState({
+            rawData: this.state.rawData.concat(jsonData.results),
+            loaded: true,
+            runfeatching:true,
+            refreshing:false,
+            nextPage:jsonData.next,
+            loadingFirst:true,
+            RunCount:jsonData.count,
+          });
+          AsyncStorage.removeItem('runversion',(err) => {
+          });
+          var newDate = new Date();
+          var convertepoch = newDate.getTime()/1000
+          var epochtime = parseFloat(convertepoch).toFixed(0);
+          let responceversion = epochtime;
+          AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
+           this.setState({
+             runversion:responceversion
+           })
+          });
+          let RunCount = this.state.RunCount;
+          AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
+          AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+         });
+          AsyncStorage.removeItem('nextpage',(err) => {
+         });
+          let nextpage = this.state.nextPage;
+          AsyncStorage.setItem('nextpage', JSON.stringify(nextpage));
+          let fetchRunhistoryData = this.state.rawData.concat();
+          AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
+
+           })
+          this.LoadmoreView();
+        })
+        .catch( error => console.log('Error fetching: ' + error) );
+
+       }else{
+        this.setState({
+          loadingFirst:false,
+          runfeatching:false,
+        })
+        this.getRunCount();
+        this.fetchAmount();
+        this.fetchTotalDistance();
+        this.fetch7DayData();
+       }
+      }
+
+
+      getUserData(){
         NetInfo.isConnected.fetch().done(
-          (isConnected) => {  
+          (isConnected) => {
           if (isConnected) {
             this.fetchAmount();
             }else{
-              AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
+              AsyncStorage.getItem('RunTotalAmount', (err, result) => {
                 var TotalAmount = JSON.parse(result);
                 this.setState({
                   RunTotalAmount2:TotalAmount.TotalRupeesCount,
@@ -50,7 +238,7 @@ class Profile extends Component {
              })
             }
           }
-        );     
+        );
       }
 
       fetchAmount(){
@@ -70,14 +258,116 @@ class Profile extends Component {
         })
         }else{
         return;
-         }     
+         }
        })
       }
 
-     
+
+      fetch7DayData(){
+        AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        if (result != null || undefined) {
+        var RunData = JSON.parse(result)
+        var sum = 0;
+        var nowdate = new Date();
+        var sdate = new Date();
+        sdate.setDate(nowdate.getDate() - 7);
+        var i;
+        var dataI = [];
+        dataP = [];
+        var counterDate = nowdate;
+        for (i = 0; i < RunData.length; i++) {
+          var somedate =  RunData[i].start_time.slice(0,10);
+          var currDate = new Date(somedate);
+          var flag = RunData[i].is_flag;
+          if(currDate <= nowdate && currDate > sdate){
+            if(!(currDate.toLocaleDateString() in dataI)){
+              if (flag != true) {
+                dataI[currDate.toLocaleDateString()] = parseInt(RunData[i].run_amount);
+              }
+
+            }
+            else{
+              if (flag != true) {
+                dataI[currDate.toLocaleDateString()] += parseInt(RunData[i].run_amount);
+              }
+            }
+          }
+          // counterDate.setDate(counterDate.getDate() - 1);
+        }
+
+        for (i = 0 ;  i <= 6; i++ ) {
+          var weekday = new Array(7);
+          weekday[0] = "SUN";
+          weekday[1] = "MON";
+          weekday[2] = "TUE";
+          weekday[3] = "WED";
+          weekday[4] = "THU";
+          weekday[5] = "FRI";
+          weekday[6] = "SAT";
+        if(!( counterDate.toLocaleDateString() in dataI)) {
+         
+          var tempA = [];
+          tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
+          dataP.push(tempA);
+          counterDate.setDate(counterDate.getDate() - 1);
+        }
+        else{
+          var tempA = [];
+          tempA.push(weekday[counterDate.getDay()], dataI[counterDate.toLocaleDateString()]);
+          dataP.push(tempA);
+
+          //  this.setState({
+
+          //   counterDate:setDate(counterDate.getDate() - 1),
+          // })
+          counterDate.setDate(counterDate.getDate() - 1);
+        }
+
+        }
+
+
+        // console.log('dataI', dataI);
+        // console.log('dataP: ', dataP);
+
+
+        this.setState({
+          RunTotalAmount7:dataI,
+        })
+        }else{
+        return;
+         }
+       })
+      }
+
+      fetchTotalDistance(){
+         AsyncStorage.removeItem('totalkm',(err) => {
+         });
+        AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        if (result != null || undefined) {
+        var RunData = JSON.parse(result)
+        var sum = 0;
+        var i;
+        for (i = 0; i < RunData.length; i++) {
+          var flag = RunData[i].is_flag;
+          if (flag != true) {
+           sum += parseFloat(RunData[i].distance);
+            };
+        }
+        this.setState({
+          RunTotalDistance:sum,
+        })      
+         AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
+         })
+        }else{
+        return;
+         }
+       })
+      }
+
+
 
       getAmountCount(){
-        AsyncStorage.getItem('RunTotalAmount', (err, result) => {  
+        AsyncStorage.getItem('RunTotalAmount', (err, result) => {
           var TotalAmount = JSON.parse(result);
             this.setState({
               RunTotalAmount2:TotalAmount.TotalRupeesCount,
@@ -102,10 +392,26 @@ class Profile extends Component {
         })
         }else{
         return;
-      }     
+      }
         })
 
       }
+
+    navigateToRunHistory() {
+      if (!this.state.runfeatching) {
+      this.props.navigator.push({
+      title: 'Gps',
+      id:'runhistory',
+      index: 0,
+      passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      navigator: this.props.navigator,
+      });}else{
+        return;
+      }
+    }
+     
+    
 
       LodingView(){
         return(
@@ -113,40 +419,162 @@ class Profile extends Component {
         )
       }
 
-  	  render() {
+      activityIndicator(){
+        if(this.state.runfeatching){
+          return(
+           <ActivityIndicatorIOS
+                style={{height: 20}}
+                size="small"
+              />
+            )
+        }else{
+          return;
+        }
+      }
+      ShowRunScreenBtn(){
+        if(this.state.runfeatching){
+        return(
+           <TouchableOpacity  style={styles.btnviewRun1 }>
+              <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}} >LOADING RUNS...</Text>
+               <ActivityIndicatorIOS
+                style={{height: 20}}
+                size="small"
+              />
+             </TouchableOpacity>
+          )
+      }else{
+        return(
+          <TouchableOpacity  style={styles.btnviewRun2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunHistory()}>
+              <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}} >SEE RUNS</Text>
+             </TouchableOpacity>
+          )
+      }
+      }
 
-    		return (
-          <View>
-          	<ScrollableTabView
-              style={styles.scrollTabWrapper}
-              initialPage={1}
-              vertical={false}
-              renderTabBar={() => <ScrollableTabBar userTotalAmount={this.state.RunTotalAmount2} RunCount={this.state.RunCountTotal} getUserData={this.props.getUserData} user={this.props.user} />}>
-              <View style={styles.tabContent1} tabLabel='Profile'><ProfileForm getUserData={this.props.getUserData} user={this.props.user}/></View>
-              <View style={styles.tabContent} tabLabel='History'>
-                  <RunHistory fetchRunData={this.onFetch} getUserData={this.props.getUserData} getRunCount={this.getRunCount} fetchAmount = {this.fetchAmount} user={this.props.user}/>
-              </View>
-            </ScrollableTabView>
+      render() {
+        var km = (this.state.RunTotalDistance <= 1)?"km":"kms";
+        if (this.props.user != null ) {
+        return (
+          <View style={{width:deviceWidth}}>
+          <View style={styles.container}>
+          <UserProfile fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
           </View>
-    		);
-  	  }
+          <View style={{flex: 1, justifyContent:'center' ,alignItems:'center', top:13}}>
+            <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>All Time</Text>
+            <Text style={{fontSize:36, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:32,fontWeight:'400'}}name="inr"></Icon2>
+            <AnimateNumber value={this.state.RunTotalAmount2} formatter={(val) => {
+                return ' ' + parseFloat(val).toFixed(0)
+              }} ></AnimateNumber>
+            </Text>
+            <Text style={{fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
+
+          </View>
+
+          <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
+            <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
+            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
+            <AnimateNumber value={this.state.RunCountTotal} formatter={(val) => {
+                return ' ' + parseFloat(val).toFixed(0)
+              }} ></AnimateNumber></Text>
+            <Text style={{fontFamily: styleConfig.FontFamily, color:'grey'}}> ImpactRuns </Text>
+            </View>
+            <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
+            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
+              <AnimateNumber value={this.state.RunTotalDistance} formatter={(val) => {
+                return ' ' + parseFloat(val).toFixed(0)
+              }} ></AnimateNumber><Text style={{fontSize:18}}> {km}</Text></Text>
+            <Text style={{fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
+            </View>
+            </View>
+
+            <View>
+             <View style={{height:20,width:deviceWidth,justifyContent: 'flex-end',alignItems: 'center',}}> 
+            <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Last 7 days</Text>
+           </View>
+            <View style={styles.container2}>
+           
+            <Chart
+              style={styles.chart}
+              data={dataP}
+              height={(deviceHeight/2)-130}
+              type='bar'
+              hideVerticalGridLines={true}
+              showYAxisLabels={false}
+              cornerRadius = {2}
+               />
+            </View>
+            <View style={{top:20,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+            {this.ShowRunScreenBtn()}
+             </View>
+             </View>
+          </View>
+        );
+      }else{
+        return(
+          <View>
+          <View style={commonStyles.Navbar}>
+              <Text style={commonStyles.menuTitle}>Profile</Text>
+          </View>
+           <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
+           <LoginBtn getUserData={this.props.getUserData}/>
+           </View>
+           </View>
+
+          )
+      }
+      }
 
    }
 // userTotalAmount={this.state.RunTotalAmount.TotalRupeesCount}
 
- 
+
 var styles = StyleSheet.create({
   scrollTabWrapper:{
     position:'relative',
     width:deviceWidth,
     backgroundColor:'white',
-    height:deviceHeight,
-    top:0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height:200,
+    top:-250,
   },
   menuTitle:{
     left:20,
     color:'#fafafa',
     fontSize:20,
+  },
+  btnviewRun1:{
+      top: 20,
+      width:deviceWidth-65,
+      height:styleConfig.SeeRunBtnHeight,
+      borderRadius:5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor:"grey",
+      justifyContent: 'center',
+      shadowColor: 'black',
+      shadowOpacity: 0.4,
+      shadowRadius: 4,
+      flexDirection:'row',
+      shadowOffset: {
+        height: 3,
+      }
+  },
+  btnviewRun2:{
+      top: 20,
+      width:deviceWidth-65,
+      height:styleConfig.SeeRunBtnHeight,
+      borderRadius:5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor:"white",
+      justifyContent: 'center',
+      shadowColor: 'black',
+      shadowOpacity: 0.4,
+      shadowRadius: 4,
+      shadowOffset: {
+        height: 3,
+      }
   },
   tabContent1:{
     position:'relative',
@@ -159,6 +587,22 @@ var styles = StyleSheet.create({
     backgroundColor:'#f4f4f4',
     height:deviceHeight-200,
   },
- 
+  container: {
+    width:deviceWidth-65,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    backgroundColor: 'white',
+  },
+   container2: {
+    top:20,
+    width:deviceWidth,
+    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  chart: {
+    width: deviceWidth-20,
+    height:styleConfig.GraphHeight,
+  },
+
 })
  export default Profile;

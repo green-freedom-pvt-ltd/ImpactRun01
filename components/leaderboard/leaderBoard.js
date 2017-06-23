@@ -35,7 +35,7 @@ import{
 
 
       componentDidMount() {
-        this.props.getUserData();
+       this.props.getUserData(); 
       }
 
       navigateToImpactLeague(){

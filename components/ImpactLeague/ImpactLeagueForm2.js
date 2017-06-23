@@ -195,6 +195,7 @@
 
   		render(cities) {
         var data = this.props.data;
+        console.log('data',data);
   		  return (
           <View>
             <View style={commonStyles.Navbar}>
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor:styleConfig.light_gold,
   },
   dropdown:{
-    width:deviceWidth-80,
+    width:deviceWidth-79,
     marginBottom:10,
     backgroundColor:'white',
     borderRadius:5,
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
     borderWidth:1,
     justifyContent:'center',
     alignItems: 'center',
-    height:40,
+    height:41,
   },
   dropdownStyle:{
     backgroundColor:'white',
@@ -275,9 +276,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textStyle:{
-    flex:1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    fontFamily:styleConfig.FontFamily3,
+    fontSize:12,
   }
 
 });

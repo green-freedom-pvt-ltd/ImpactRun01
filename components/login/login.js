@@ -148,7 +148,7 @@ class Profile extends Component {
                     var userdata = userdata[0];
                     console.log('usrrrr',userdata);
                     let UID234_object = {
-
+                        body_weight:userdata.body_weight,
                         first_name: userdata.first_name,
                         user_id: userdata.user_id,
                         last_name: userdata.last_name,
@@ -165,6 +165,7 @@ class Profile extends Component {
                     };
                     // first user, delta values
                     let UID234_delta = {
+                        body_weight:userdata.body_weight,
                         first_name: userdata.first_name,
                         user_id: userdata.user_id,
                         last_name: userdata.last_name,
@@ -233,6 +234,7 @@ class Profile extends Component {
                 var userdata = userdata[0];
                 console.log('usrrrr',userdata);
                 let UID234_object = {
+                    body_weight:userdata.body_weight,
                     first_name: userdata.first_name,
                     user_id: userdata.user_id,
                     last_name: userdata.last_name,
@@ -249,6 +251,7 @@ class Profile extends Component {
                 };
                 // first user, delta values
                 let UID234_delta = {
+                    body_weight:userdata.body_weight,
                     first_name: userdata.first_name,
                     user_id: userdata.user_id,
                     last_name: userdata.last_name,

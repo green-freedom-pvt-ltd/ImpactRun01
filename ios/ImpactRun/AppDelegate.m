@@ -89,9 +89,8 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
   [RCTOneSignal didReceiveRemoteNotification:notification];
 }
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
-//  [RCTOneSignal didReceiveRemoteNotification:notification];
-//}
+
+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
   return [[RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation],
@@ -102,10 +101,6 @@
           annotation:annotation];
   
 }
-// Required to register for notifications
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings { [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings]; }
-// Required for the register event.
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken { [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken]; }
 
 RCTLogFunction CrashlyticsReactLogFunction = ^(
                                                RCTLogLevel level,

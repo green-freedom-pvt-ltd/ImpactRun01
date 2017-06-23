@@ -4,6 +4,15 @@ var React = require('react-native');
 var {StyleSheet, PixelRatio,Dimensions} = React;
 const Devicewidth = Dimensions.get('window').width
 const Deviceheight = Dimensions.get('window').height
+var iphone5 = 568;
+var iphone5s = 568;
+var iphone6 = 667;
+var iphone6s = 667;
+var iphone7 = 667;
+var iphone6Plus = 736;
+var iphone6SPlus = 736;
+var iphone7Plus = 736;
+
 
 import { Platform } from 'react-native';
 var FONT_LABEL1   = 18;
@@ -32,6 +41,43 @@ function BtnHight () {
     return 50;
   }
 }
+}
+
+
+function GraphHeight (){
+  if (iphone5 === Deviceheight) {
+    return (Deviceheight/2)-160
+  }else if (iphone5s === Deviceheight) {
+    return (Deviceheight/2)-160
+  }else if (iphone6 === Deviceheight) {
+    return (Deviceheight/2)-130
+  }else if (iphone6s === Deviceheight) {
+    return (Deviceheight/2)-130
+  }else if (iphone6Plus === Deviceheight) {
+    return (Deviceheight/2)-125
+  }else if (iphone7 === Deviceheight) {
+    return (Deviceheight/2)-125
+  }else if (iphone7Plus === Deviceheight) {
+    return (Deviceheight/2)-125
+  };
+}
+
+function seeRunBtnHeight (){
+  if (iphone5 === Deviceheight) {
+    return 35
+  }else if (iphone5s === Deviceheight) {
+    return 35
+  }else if (iphone6 === Deviceheight) {
+    return 45
+  }else if (iphone6s === Deviceheight) {
+    return 45
+  }else if (iphone6Plus === Deviceheight) {
+    return 50
+  }else if (iphone7 === Deviceheight) {
+    return 50
+  }else if (iphone7Plus === Deviceheight) {
+    return 50
+  };
 }
 
 function BtnWidth () {
@@ -163,6 +209,8 @@ export default {
   CardHeight:CardHeight(),
   CardTop:CardTop(),
   barHeight:barHeight(),
+  GraphHeight:GraphHeight(),
+  SeeRunBtnHeight:seeRunBtnHeight(),
   // navHight
   navBarHeight:70,
   // fontColors

@@ -61,7 +61,7 @@ class LeaderboardData extends Component {
             loaded:true,
           })        
         }else{
-         this.renderLoadingView()
+         this.fetchDataIfInternet()
         }
         });
       }
@@ -77,7 +77,7 @@ class LeaderboardData extends Component {
             if (isConnected) {
               this.fetchLeaderBoard();
             }else{
-              return;
+              return this.fetchLeaderBoardLocally();
             }  
           }
         );

@@ -22,18 +22,18 @@ var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
-import BackgroundJob from 'react-native-background-job';
+import Icon3 from 'react-native-vector-icons/Ionicons';
 import LoginBtns from '../../login/LoginBtns';
 import commonStyles from '../../styles';
 import BackgroundFetch from "react-native-background-fetch";
 import Modal from '../../downloadsharemeal/CampaignModal'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
-class RunHistroy extends Component {  
-    
+class RunHistory extends Component {
+
      constructor(props) {
         super(props);
-        this.fetchRunDataLocally();
+        this.getWeightLocal();
         var ds = new ListView.DataSource({
           rowHasChanged: (row1, row2) => row1.version !== row2.version,
           sectionHeaderHasChanged: (section1, section2) => section1.version !== section2.version,
@@ -42,60 +42,32 @@ class RunHistroy extends Component {
           rowData:[],
           runHistoryData: ds.cloneWithRowsAndSections([]),
           loaded: false,
-          refreshing: false,  
+          refreshing: false,
           open:false,
           user:null ,
-          loadingFirst:true,
+          loadingFirst:false,
+          enterWeightmodel:false,
         };
         this.renderRunsRow = this.renderRunsRow.bind(this);
         this.fetchRunhistoryupdataData = this.fetchRunhistoryupdataData.bind(this);
-         
+
       }
-      
+
 
 
       componentDidMount() {
-         BackgroundFetch.configure({
-          stopOnTerminate: false
-         }, function() {
-          this.fetchRunhistoryupdataData();
-          
-          // To signal completion of your task to iOS, you must call #finish!
-          // If you fail to do this, iOS can kill your app.
-          BackgroundFetch.finish();
-        }, function(error) {
-        });
-      }
-
-     
-      fetchRunDataLocally(){          
-           AsyncStorage.getItem('nextpage', (err, result) => {
-            this.setState({
-              nextPage:JSON.parse(result),
-            })
-            
-            })
-            AsyncStorage.getItem('runversion', (err, result) => {
+        // console.log('RawData', this.props.rawData);
+        AsyncStorage.getItem('runversion', (err, result) => {
             this.setState({
               runversion:JSON.parse(result),
             })
           })
-          AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {           
-            var RunData = JSON.parse(result);
-            if (result != null || undefined) {
-              this.setState({
-                rawData: RunData,
-                loaded: true,
-                loadingFirst:false,
-                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(RunData)),
-              })
-              console.log('rawData',this.state.rawData);
-            }else{
-               this.fetchRunhistoryData();              
-            }
-          }); 
+        this.setState({
+          rowData: this.props.rawData,
+          runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
+        })
       }
-      
+
       getUserData(){
         AsyncStorage.multiGet(['UID234'], (err, stores) => {
         stores.map((result, i, store) => {1
@@ -108,7 +80,7 @@ class RunHistroy extends Component {
             })
             this.fetchRunDataLocally();
           })
-        })         
+        })
       }
 
      isFlagedRun(rowData){
@@ -121,81 +93,7 @@ class RunHistroy extends Component {
       }
      }
 
-     
-     
-      fetchRunhistoryData() {
-        if (this.props.user != null) {
-        var token = this.props.user.auth_token;
-        var url = apis.runListapi;
-        fetch(url,{
-          method: "GET",
-          headers: {  
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-          }
-        })
-        .then( response => response.json() )
-        .then( jsonData => {
-          this.setState({
-            rawData:jsonData.results,
-            runHistoryData: this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(jsonData.results)),
-            loaded: true,
-            refreshing:false,
-            loadingFirst:false,
-            RunCount:jsonData.count,
-            nextPage:jsonData.next,
-          });
-          if (this.state.nextPage != null) {
-          fetch(this.state.nextPage,{
-          method: "GET",
-          headers: {  
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-            }
-          })
-          
-          .then( response => response.json())
-          .then( jsonDataobj => {
-            this.setState({
-              rawData: this.state.rawData.concat(jsonDataobj.results),
-              runHistoryData: this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.state.rawData.concat(jsonDataobj.results))),
-              nextPage:jsonDataobj.next,
-              loadingFirst:false,
-              RunCount:jsonDataobj.count,
-            })
-            let RunCount = this.state.RunCount;
-            AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
-               if (jsonData.results != null || undefined) {
-                 AsyncStorage.removeItem('runversion',(err) => {
-                });
-                var newDate = new Date();
-                var convertepoch = newDate.getTime()/1000
-                var epochtime = parseFloat(convertepoch).toFixed(0);
-                let responceversion = epochtime;
-                AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                 AsyncStorage.getItem('runversion', (err, result) => {
-                  this.setState({
-                    runversion:JSON.parse(result),
-                  })
-                })
-                });
-              }else{
-                return;
-              }
-              let nextpage = this.state.nextPage;
-              AsyncStorage.setItem('nextpage',JSON.stringify(nextpage)); 
-              var storepage =  this.state.rawData;
-              let fetchRunhistoryData = this.state.rawData;
-              AsyncStorage.setItem('fetchRunhistoryData',JSON.stringify(storepage));
-              this.LoadmoreView();
-          })
-          }else{
-            return;
-          }
-        })
-         .catch( error => console.log('Error fetching: ' + error) );
-         };       
-      }
+
 
       removeallRun(){
           AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
@@ -231,7 +129,7 @@ class RunHistroy extends Component {
          var feebback = 'Feedback by user: '+"Date :"+date+" "+this.state.runpostdata+"  Feedback Message: "+this.state.text;
          fetch(apis.UserFeedBack, {
             method: "post",
-            headers: {  
+            headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
@@ -241,10 +139,10 @@ class RunHistroy extends Component {
             })
           })
           .then((response) => response.json())
-          .then((response) => { 
+          .then((response) => {
             this.closemodel();
             AlertIOS.alert('Thank you for giving your feedback');
-          })    
+          })
           .catch((err) => {
             console.log('err',err);
           })
@@ -259,18 +157,89 @@ class RunHistroy extends Component {
                >
                   <View style={styles.modelWrap}>
                      <Text>FEEDBACK</Text>
+                     <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
                      <View>
                      <TextInput
                      placeholder="Enter your feedback here"
-                     style={{width:deviceWidth-100,height:(deviceHeight/10)-20,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
+                     style={{width:deviceWidth-120,height:(deviceHeight/10)-20,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
                      multiline = {true}
-                     numberOfLines = {4}
+                     numberOfLines = {6}
                      onChangeText={(text) => this.setState({text})}
                      value={this.state.text}
                    />
+                   </View>
                    <View style={styles.modelBtnWrap}>
                     <TouchableOpacity style={styles.modelbtn} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>CLOSE</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.modelbtn}onPress ={()=>this.postRunFeedback()}><Text style={styles.btntext}>SUBMIT</Text></TouchableOpacity>
+                  </View>
+                   </View>
+                  </View>
+                  <KeyboardSpacer/>
+            </Modal>
+          )
+      }
+     
+     getWeightLocal(){
+        AsyncStorage.getItem('userWeight', (err, result) => { 
+            var weight = JSON.parse(result)
+            console.log('resultcalori',weight);
+            this.setState({
+              weight:weight
+            })
+          })
+      }
+
+      putUserHeight(){
+        var user_id = this.props.user.user_id;
+        var auth_token = this.props.user.auth_token;
+        fetch(apis.userDataapi + user_id + "/", {
+            method: "put",
+            headers: {  
+              'Authorization':"Bearer "+ auth_token,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body:JSON.stringify({
+            "body_weight":this.state.bodyweight,
+            })
+          })
+          .then((response) => response.json())
+          .then((response) => { 
+            this.closemodel();
+            console.log('submited',response);
+            var userWeight = response.body_weight;
+             AsyncStorage.mergeItem('userWeight',JSON.stringify(userWeight),()=>{
+              this.setState({
+                weight:userWeight,
+              })
+             });
+          })    
+          .catch((err) => {
+            console.log('err',err);
+          })
+      }
+
+      modelViewEnterWeight(){
+        return(
+          <Modal
+            style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
+             isOpen={this.state.enterWeightmodel}
+               >
+                  <View style={styles.modelWrap}>
+                     <Text>YOUR WEIGHT</Text>
+                     <View>
+                     <TextInput
+                     placeholder="Enter Your weight in KG"
+                     style={{width:deviceWidth-120,height:40,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
+                     multiline = {true}
+                     numberOfLines = {1}
+                     keyboardType = "numeric"
+                     onChangeText={(bodyweight) => this.setState({bodyweight})}
+                     value={this.state.bodyweight}
+                   />
+                   <View style={styles.modelBtnWrap}>
+                    <TouchableOpacity style={styles.modelbtn} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>CLOSE</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtn}onPress ={()=>this.putUserHeight()}><Text style={styles.btntext}>SUBMIT</Text></TouchableOpacity>
                   </View>
                    </View>
                   </View>
@@ -282,29 +251,49 @@ class RunHistroy extends Component {
       closemodel(){
         this.setState({
           open:false,
+          enterWeightmodel:false,
           text:'',
         })
       }
 
+      EnterWeight(){
+        this.setState({
+          enterWeightmodel:true,
+        })
+      }
+
+      whyIamNotSeeingCaloriePopup(){
+         AlertIOS.alert(
+            'No calorie data',
+            "We couldn't count calories as we didn't have your weight then. But no worries! We will count calories from now on :)",
+              {text: 'OK', onPress: () => console.log('OK'), style: 'cancel'}     
+
+            )
+      }
+
       renderRunsRow(rowData) {
         if (rowData) {
+        if (this.state.weight != null) {
+          var colorie = (rowData.calories_burnt === null)? <TouchableOpacity onPress={()=> this.whyIamNotSeeingCaloriePopup()}><Text>--</Text></TouchableOpacity>:<Text style={styles.runContentText}>{parseFloat(rowData.calories_burnt).toFixed(1)} cal</Text>;
+        }else{
+         var colorie = (rowData.calories_burnt === null)? <TouchableOpacity onPress={()=> this.EnterWeight()}><Text>--</Text></TouchableOpacity>:<Text style={styles.runContentText}>{parseFloat(rowData.calories_burnt).toFixed(1)} cal</Text>;
+        }
         var RunAmount=parseFloat(rowData.run_amount).toFixed(0);
         var RunDistance = parseFloat(rowData.distance).toFixed(1);
         var RunDate = rowData.start_time;
         var day = RunDate.split("-")[2];
-        var time = rowData.run_duration;        
+        var time = rowData.run_duration;
         var hours = time.split(":")[0];
         var minutes = time.split(":")[1];
         var seconds = time.split(":")[2];
         var hrsAndMins = (hours != '00')? hours+" hrs "+ minutes+" mins "+ seconds +" sec":(minutes != '00')? minutes+" mins " + seconds+" sec":seconds+" sec";
         var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1]; 
+        var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1];
         var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
         var backgroundColor = (rowData.is_flag)?'#f0f0f0':'white';
         var textDecoration = (rowData.is_flag)?'line-through':'none';
         if (rowData.is_flag) {
         return (
-
           <TouchableHighlight onPress={()=> this.onPressFlagedRun(rowData)}underlayColor="#dddddd">
             <View style={[styles.container,{backgroundColor:backgroundColor}]}>
               <View style={styles.rightContainer}>          
@@ -322,6 +311,9 @@ class RunHistroy extends Component {
                   </View>
                   <View style={styles.runContent}>
                     <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}>{RunAmount} <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon2></Text>
+                  </View>
+                   <View onPress={()=> this.EnterWeight()}style={styles.runContent}>
+                    {colorie}
                   </View>
                   <View style={styles.runContent}> 
                     <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}>{hrsAndMins}</Text>
@@ -352,6 +344,9 @@ class RunHistroy extends Component {
                   <View style={styles.runContent}>
                     <Text style={styles.runContentText}>{RunAmount} <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon2> </Text>
                   </View>
+                  <View onPress={()=> this.EnterWeight()}style={styles.runContent}>
+                    {colorie}
+                  </View>
                   <View style={styles.runContent}> 
                     <Text style={styles.runContentText}>{hrsAndMins}</Text>
                   </View>
@@ -372,7 +367,7 @@ class RunHistroy extends Component {
             <View style={{height:deviceHeight/2,width:deviceWidth,top:(deviceHeight/2)-210,}}>
               <LoginBtns getUserData={this.getUserData()}/>
             </View>
-          ) 
+          )
         }
       }
 
@@ -383,33 +378,35 @@ class RunHistroy extends Component {
         console.log('mydataurl',url);
         fetch(url,{
           method: "GET",
-          headers: {  
+          headers: {
             'Authorization':"Bearer "+ token,
             'Content-Type':'application/x-www-form-urlencoded',
           }
         })
         .then( response => response.json() )
         .then( jsonData => {
+          // console.log('response: ',jsonData)
            if(jsonData.count > 0 ){
            var runversion = jsonData.results;
-           var array = this.state.rawData;   
-           runversion.forEach(function(item) { 
+           var array = this.state.rawData;
+           runversion.forEach(function(item) {
                 objIndex = array.findIndex((obj => obj.start_time == item.start_time));
-                var arrray1 = array[objIndex] = item;     
+                var arrray1 = array[objIndex] = item;
              })
-        
-          
+
+
            this.rows = array;
-         
+           // console.log('Rows :' , this.rows);
+
            this.setState({
              rawData:this.rows,
              runHistoryData: this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.rows)),
-             refreshing:false,         
+             refreshing:false,
            });
-        
+
            let fetchRunhistoryData = this.rows;
            AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
- 
+
            })
            this.props.getRunCount();
            this.props.fetchAmount();
@@ -428,13 +425,13 @@ class RunHistroy extends Component {
            }
          }else{
           this.setState({
-            refreshing:false,    
-          })         
+            refreshing:false,
+          })
         }
         })
          .catch(function(err) {
           this.setState({
-            refreshing:false,  
+            refreshing:false,
           })
           console.log('err123',err);
           return err;
@@ -443,8 +440,8 @@ class RunHistroy extends Component {
 
 
       }
-      
-     
+
+
 
       nextPage(){
         if (this.state.nextPage != null) {
@@ -452,7 +449,7 @@ class RunHistroy extends Component {
         var url = this.state.nextPage;
         fetch(url,{
           method: "GET",
-          headers: {  
+          headers: {
             'Authorization':"Bearer "+ token,
             'Content-Type':'application/x-www-form-urlencoded',
           }
@@ -489,12 +486,12 @@ class RunHistroy extends Component {
           AsyncStorage.setItem('nextpage', JSON.stringify(nextpage));
           let fetchRunhistoryData = this.state.rawData.concat();
           AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
- 
+
            })
           this.LoadmoreView();
         })
         .catch( error => console.log('Error fetching: ' + error) );
-       
+
        }else{
         this.setState({
           loadingFirst:false,
@@ -503,7 +500,7 @@ class RunHistroy extends Component {
         this.props.fetchAmount();
        }
       }
-      
+
 
       covertmonthArrayToMap(rowData) {
         if (rowData) {
@@ -513,15 +510,15 @@ class RunHistroy extends Component {
         rows.forEach(function(runItem) {
         var RunDate = runItem.start_time;
         var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1]; 
+        var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1];
         var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
         if (!rundateCategory[day]) {
           // Create an entry in the map for the category if it hasn't yet been created
           rundateCategory[day] = [];
         }
-        rundateCategory[day].push(runItem);  
+        rundateCategory[day].push(runItem);
         });
-        
+
         return rundateCategory;
       }else{
        return this.covertmonthArrayToMap();
@@ -539,26 +536,40 @@ class RunHistroy extends Component {
         this.nextPage();
       }
 
+      goBack(){
+          this.props.navigator.pop({});
+      }
+
       render(rowData) {
         var fetchingRun = this.props.fetchRunData;
         var user = this.props.user || 0;
         if (Object.keys(user).length) {
           return (
-            <View style={{height:deviceHeight-200}}>
-            <ListView
-               renderSectionHeader={this.renderSectionHeader}
-               refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />}
-                style={styles.listView}
-                dataSource={this.state.runHistoryData}
-                renderRow={this.renderRunsRow}/>
-                {this.runLodingFirstTime()}
-                {this.modelView()}
+            <View>
+              <View style={commonStyles.Navbar}>
+                <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+                  <Icon3 style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
+                </TouchableOpacity>
+                  <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Run History'}</Text>
+              </View>
+              <View style={{height:deviceHeight}}>
+              <TouchableOpacity onPress={()=> this.removeallRun()}><Text>remove</Text></TouchableOpacity>
+                <ListView
+                 renderSectionHeader={this.renderSectionHeader}
+                 refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh.bind(this)}
+                  />}
+                  style={styles.listView}
+                  dataSource={this.state.runHistoryData}
+                  renderRow={this.renderRunsRow}/>
+                  {this.runLodingFirstTime()}
+                  {this.modelView()}
+                  {this.modelViewEnterWeight()}
 
-                </View>
+              </View>
+            </View>
 
               )
 
@@ -566,11 +577,11 @@ class RunHistroy extends Component {
             return (
             <View style={{paddingTop:10,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
                {this.NotLoginView()}
-            </View>    
+            </View>
           )
-          
+
          };
-        } 
+        }
 
         runLodingFirstTime(){
         if (this.state.loadingFirst) {
@@ -587,12 +598,11 @@ class RunHistroy extends Component {
 
       };
 
-      
+
 
 
 const styles = StyleSheet.create({
   modelStyle:{
-    top:-120,
     height:deviceHeight,
     justifyContent: 'center',
     alignItems: 'center',
@@ -606,14 +616,14 @@ const styles = StyleSheet.create({
    backgroundColor:styleConfig.bright_blue,
   },
   modelBtnWrap:{
-    width:deviceWidth-100,
+    width:deviceWidth-120,
     flexDirection:'row',
     justifyContent: 'space-between',
   },
   modelbtn:{
     marginTop:(deviceHeight/10)-50,
     padding:8,
-    width:((deviceWidth-100)/2)-10,
+    width:((deviceWidth-120)/2)-10,
     alignItems: 'center',
     borderRadius:5,
     backgroundColor:styleConfig.bright_blue,
@@ -624,12 +634,13 @@ const styles = StyleSheet.create({
 
   },
   modelWrap:{
+    top:-100,
     borderRadius:5,
     padding:10,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:'white',
-    width:deviceWidth-50,
+    width:deviceWidth-100,
   },
   container: {
     width:deviceWidth-10,
@@ -708,7 +719,6 @@ const styles = StyleSheet.create({
   },
   listView: {
     backgroundColor: 'white',
-    marginBottom:50,
   },
   ListViewPage:{
     paddingTop:5,
@@ -723,4 +733,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RunHistroy;
+export default RunHistory;

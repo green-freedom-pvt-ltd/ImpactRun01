@@ -55,6 +55,7 @@ class LoginBtns extends Component {
         .then((userdata) => {
               var userdata = userdata[0];
               let UID234_object = {
+                  body_weight:userdata.body_weight,
                   first_name:userdata.first_name,
                   user_id:userdata.user_id,
                   last_name:userdata.last_name,
@@ -71,6 +72,7 @@ class LoginBtns extends Component {
               };
               // first user, delta values
               let UID234_delta = {
+                  body_weight:userdata.body_weight,
                   first_name:userdata.first_name,
                   user_id:userdata.user_id,
                   last_name:userdata.last_name,

@@ -28,7 +28,7 @@ class ImpactLeagueLeaderBoard extends Component {
 
       constructor(props) {
         super(props);
-        this.FetchLeaderBoardLocally();
+       
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           ImpactLeagueLeaderBoardData: ds.cloneWithRows([]),
@@ -39,9 +39,7 @@ class ImpactLeagueLeaderBoard extends Component {
       }
 
       componentDidMount() {
-        this.fetchLeaderBoardDataIntervel = setInterval(()=>{
-          this.FetchDataifInternet();
-        },(60000*60)*3);
+         this.FetchLeaderBoardLocally();
       }
       
       FetchDataifInternet(){
@@ -54,6 +52,7 @@ class ImpactLeagueLeaderBoard extends Component {
         );
       }
 
+
       componentWillUnmount() {
         console.log('myComponent')    
       }
@@ -62,7 +61,9 @@ class ImpactLeagueLeaderBoard extends Component {
       FetchLeaderBoardLocally(){
         AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
           var boardData = JSON.parse(result);
-          if (result != null || undefined) {
+          console.log("boardData",boardData);
+          if (boardData != null) {
+            console.log('result',result);
             this.setState({
               ImpactLeagueLeaderBoardData:this.state.ImpactLeagueLeaderBoardData.cloneWithRows(boardData.results),
               BannerData:boardData.results,
@@ -194,7 +195,7 @@ class ImpactLeagueLeaderBoard extends Component {
       }
 
       render() {
-        if (!this.state.loaded) {
+        if (!this.state.loaded ) {
           return this.renderLoadingView();
         }
         console.log(this.state.isConnected);
