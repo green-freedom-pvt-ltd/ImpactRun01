@@ -54,7 +54,6 @@ class LeaderboardData extends Component {
       fetchLeaderBoardLocally(){
         AsyncStorage.getItem('leaderBoard', (err, result) => { 
         var jsonData = JSON.parse(result);
-        console.log('jsonData',jsonData);
         if (result != null || undefined) {
           this.setState({
             LeaderBoard: this.state.LeaderBoard.cloneWithRows(jsonData.results),

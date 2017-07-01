@@ -40,7 +40,7 @@ class devdactic_tabs extends Component {
 
         constructor(props) {
           super(props);
-         
+        
           this.state = {
               selectedTab: 'welcome',
               notifCount: 1,
@@ -53,6 +53,7 @@ class devdactic_tabs extends Component {
               open: false,
               userSignup: false,
               countCampaign: 0,
+              indexcause:-1,
           };
 
           this.getUserData = this.getUserData.bind(this);
@@ -64,7 +65,12 @@ class devdactic_tabs extends Component {
         
         componentDidMount() {
           this.getUserData();
-          AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
+          this.getData();
+        
+          
+        }
+        getData(){
+             AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
             if (result != null) {
                 this.setState({
                   causeFeatchVersion:JSON.parse(result),
@@ -73,10 +79,10 @@ class devdactic_tabs extends Component {
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
                 var fetchversion = parseInt(this.state.causeFeatchVersion)+3600;
-                console.log('this.state.causeFeatchVersion <= (this.state.causeFeatchVersion)+10000',fetchversion,epochtime);
+                console.log('is cause fetch',fetchversion <= epochtime);
                 if (fetchversion <= epochtime) {
                     this.fetchDataonInternet();
-                 console.log('causeFeatchVersion',this.state.causeFeatchVersion);
+               
                }else{
                 this.getCause();
                }
@@ -93,11 +99,9 @@ class devdactic_tabs extends Component {
                   this.fetchDataonInternet();
                   
               })
-          })
+             })
             }
-          })
-        
-          
+         })
         }
         componentWillMount() {
              
@@ -165,32 +169,45 @@ class devdactic_tabs extends Component {
           fetch(REQUEST_URL)
             .then((response) => response.json())
             .then((causes) => {
+              console.log("fetching....");
               var causes = causes;
               let causesData = []
               let newData = []
               causes.results.forEach((item, i) => {
+                // console.log("i",i)
                   if (item.is_active) {
-                      causesData.push(['cause' + i, JSON.stringify(item)])
-                      newData.push('cause' + i);
+                    // console.log("JSON.stringify(item)123  ",JSON.stringify(item))
+                     this.state.indexcause = this.state.indexcause + 1
+                      causesData.push(['causes' + this.state.indexcause, JSON.stringify(item)])
+                      newData.push('causes' + this.state.indexcause);
+                      console.log("newData",newData);
                   };
               })
               this.setState({
                   myCauseNum: newData,
               })
               let myCauseNum = this.state.myCauseNum;
-               AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
-               var newDate = new Date();
-               var convertepoch = newDate.getTime()/1000
-               var epochtime = parseFloat(convertepoch).toFixed(0);
+                AsyncStorage.removeItem('CauseNumber',(err) => {
+                   console.log("removed");
+                });
+                AsyncStorage.setItem('CauseNumber',JSON.stringify(myCauseNum));
+                var newDate = new Date();
+                var convertepoch = newDate.getTime()/1000
+                var epochtime = parseFloat(convertepoch).toFixed(0);
                 AsyncStorage.removeItem('causeFeatchVersion',(err) => {
                    console.log("causeFeatchVersion");
                 });
-               AsyncStorage.setItem('causeFeatchVersion',JSON.stringify(epochtime));
-               AsyncStorage.getItem('myCauseNumindex', (err, result) => {
+                AsyncStorage.setItem('causeFeatchVersion',JSON.stringify(epochtime));
+                AsyncStorage.getItem('CauseNumber', (err, result) => {
                 this.setState({
                   dataCauseNum:JSON.parse(result),
                 })
                })
+               
+              AsyncStorage.multiRemove(newData, (err) => {
+                console.log("multiremovecause");
+              })
+              console.log("causesData",JSON.stringify(causesData));
               AsyncStorage.multiSet(causesData, (err) => {
               })
             })
@@ -201,9 +218,9 @@ class devdactic_tabs extends Component {
 
  
        getCause(){
-          AsyncStorage.getItem('myCauseNumindex', (err, result) => {
+            AsyncStorage.getItem('CauseNumber', (err, result) => {
             this.setState({
-                dataCauseNum:JSON.parse(result),
+              dataCauseNum:JSON.parse(result),
             })
             if (this.state.dataCauseNum != null ) {
             try {
@@ -215,6 +232,7 @@ class devdactic_tabs extends Component {
                         this.setState({
                             myCusesDataExist: val,
                         })
+                     
                     })
                 });
             } catch (err) {
@@ -281,7 +299,7 @@ class devdactic_tabs extends Component {
         }
 
         render() {
-            console.log('this.state.myCauseNum',this.state.dataCauseNum);
+            // console.log('this.state.myCauseNum',this.state.dataCauseNum);
         if (this.state.dataCauseNum != null) {
             return (
             <View style={{flex:1}}>     

@@ -2,7 +2,7 @@
 
   export default {	
 	DownshareMealapi:'http://dev.impactrun.com/api/campaign/',
-	causeListapi:'http://dev.impactrun.com/api/causes/',
+	causeListapi:'http://dev.impactrun.com/api/causesv2/',
 	runListapi:'http://dev.impactrun.com/api/runs/?is_flag=all',
 	leaderBoardapi:`http://dev.impactrun.com/api/leaderBoard/`,
 	runApi:'http://dev.impactrun.com/api/runs/',

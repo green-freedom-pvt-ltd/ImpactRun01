@@ -33,6 +33,7 @@ var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
 
+
 class Homescreen extends Component {
       constructor(props) {
         super(props);
@@ -102,10 +103,10 @@ class Homescreen extends Component {
         }else{
           return(
             <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
-            <View style={{position:'absolute',bottom:5,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
-                 <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
-                  {this.state.album[route.key][2]}
-                 </Text>
+                <View style={{position:'absolute',bottom:5,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
+                  <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+                    {this.state.album[route.key][2]}
+                  </Text>
                 </View>
             </Image>
             )
@@ -113,7 +114,6 @@ class Homescreen extends Component {
       }
 
       componentDidMount() {
-        console.log('deviceheight',deviceheight);
         var provider = this.props.provider;
         var causeNum = this.props.myCauseNum;
         if (causeNum != null || undefined) {
@@ -124,7 +124,7 @@ class Homescreen extends Component {
                     let key = item[0];
                     let val = JSON.parse(item[1]);
                     let causesArr = _this.state.causes.slice()
-                    causesArr.push(val)
+                    causesArr.push(val)                  
                     _this.setState({causes: causesArr})
                     _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active,val.pk,val.amount_raised,val.amount,val.total_runs]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
@@ -135,7 +135,9 @@ class Homescreen extends Component {
                 index: 1,
                 routes: Object.keys(this.state.album).map(key => ({ key })),
 
-              })})
+              })
+
+              })
           });
           } catch (err) {
             console.log(err)
@@ -182,6 +184,7 @@ class Homescreen extends Component {
           run_amount:RunData.run_amount,
           run_duration:RunData.run_duration,
           is_flag:false,
+          calories_burnt:RunData.calories_burnt,
           // start_location_lat:RunData.start_location_lat,
           // start_location_long:RunData.start_location_long,
           no_of_steps:RunData.no_of_steps,
@@ -194,7 +197,6 @@ class Homescreen extends Component {
        var epochtime = userRunData.version;
        let responceversion = epochtime;
         AsyncStorage.removeItem('runversion',(err) => {
-          console.log("removedRunVersionfromsharescreen");
          });
         AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{   
         });
@@ -203,6 +205,7 @@ class Homescreen extends Component {
       });
       })
     }
+
     RemoveStoredRun(runNumber){
 
       let keys = runNumber;
@@ -317,8 +320,10 @@ class Homescreen extends Component {
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
         var cause;
+
         if (!!this.state.causes.length && this.state.navigation.index+1) {
           cause = this.state.causes[this.state.navigation.index]
+
         } else {
           cause = {}
         }
@@ -331,6 +336,7 @@ class Homescreen extends Component {
         var runlength = Runs.length;
         var commmaplacerun =runlength-4;
         var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,lenth));
+        // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
         return (
           <View style={styles.page}>
             <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
@@ -353,7 +359,7 @@ class Homescreen extends Component {
                 </View>
                 <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
                 <View style = {styles.wraptext2}>
-                  <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns</Text>
+                  <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
                 </View>      
               </View>
              
@@ -398,7 +404,7 @@ class Homescreen extends Component {
              </View>
              <View style={{top:-65,width:deviceWidth,height:50, justifyContent: 'center',alignItems: 'center',}}>
               <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Lets Go</Text>
+                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Lets Go </Text>
                </TouchableOpacity>
               </View>
              </View>

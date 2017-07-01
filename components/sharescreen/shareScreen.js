@@ -18,6 +18,7 @@ import{
   import apis from '../apis';
   import TimerMixin from 'react-timer-mixin';
   import Icon from 'react-native-vector-icons/Ionicons';
+  import Icon2 from 'react-native-vector-icons/MaterialIcons';
   import styleConfig from '../styleConfig';
   var deviceWidth = Dimensions.get('window').width;
   var deviceHeight = Dimensions.get('window').height;
@@ -199,7 +200,7 @@ import{
         run_duration: time,
         is_flag:false,
         calories_burnt:calories_burnt,
-        team_id:this.state.user.team_code,
+        team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
         // start_location_lat:startPosition.coords.latitude,
         // start_location_long:startPosition.coords.longitude,
         no_of_steps:steps,
@@ -260,7 +261,7 @@ import{
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       var calories_burnt = this.props.calories_burnt;
-      console.log("calories_burnt",calories_burnt);
+      console.log("calories_burnt",calories_burnt,date);
       // var startPosition = this.props.StartLocation;
       // console.log('startPosition.coords.latitude',startPosition.coords.latitude);
       // console.log('startPosition.coords.longitude',startPosition.coords.longitude);
@@ -284,7 +285,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:this.state.user.team_code,
+          team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -328,6 +329,7 @@ import{
       var userdata = this.state.user;
       var calories_burnt = this.props.calories_burnt;
       var user_id =JSON.stringify(userdata.user_id);
+      console.log("savetorunhistroy",date);
        // var startPosition = this.props.StartLocation;
       AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
         var rundata = JSON.parse(result);
@@ -342,7 +344,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:this.state.user.team_code,
+          team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -354,8 +356,8 @@ import{
         AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
         });
         let fetchRunhistoryData = newtoprun;
-        AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-
+        AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
+             console.log("data",data);
         })
       })       
     }
@@ -366,6 +368,9 @@ import{
         if (result != null || undefined) {
 
         var boardData = JSON.parse(result);
+        this.setState({
+          impactleague_is_active:boardData.impactleague_is_active
+        })
         console.log('mydatawewew',boardData)
         if (boardData.impactleague_is_active) {   
           this.setState({
@@ -449,14 +454,14 @@ import{
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
                 </View>
                 <View style={styles.wrapperRunContent}>
-                  <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{this.props.calories_burn}</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
+                   <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="whatshot"></Icon2>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{this.props.calories_burnt}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Cal</Text>
                 </View>
                 <View style={styles.wrapperRunContent}>
                   <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Time</Text>
                 </View>
               </View>
               <View style={{top:-30, flexDirection:'column',flex:1,alignItems: 'center',}}>
@@ -484,20 +489,32 @@ import{
       return(
         <View style={styles.container}>
           <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
-            <View style={{flexDirection:'row',flex:1}}>
+            <View style={{flexDirection:'column',flex:1,top:70}}>
+              <View style={styles.wrapperRunContentImpact}>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
+              </View>
+
+
+
+              <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>
               <View style={styles.wrapperRunContent}>
                 <Icon style={{color:'#4a4a4a',fontSize:35,}} name={'ios-walk-outline'}></Icon>
                 <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
                 <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
               </View>
-              <View style={styles.wrapperRunContentImpact}>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
-              </View>
+              
+              
+               <View style={styles.wrapperRunContent}>
+                   <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="whatshot"></Icon2>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{parseFloat(this.props.calories_burnt).toFixed(1)}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Cal</Text>
+                </View>
               <View style={styles.wrapperRunContent}>
                 <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'md-stopwatch'}></Icon>
                 <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
                 <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
+              </View>
               </View>
             </View>
             <View style={{flex:1}}>
@@ -544,8 +561,7 @@ import{
     wrapperRunContentImpact:{
       justifyContent: 'center',
       alignItems: 'center',
-      width:deviceWidth/4,
-      top:-70,
+      width:deviceWidth,
     },
     shadow: {
       flex:1,

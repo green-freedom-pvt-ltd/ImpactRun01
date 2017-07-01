@@ -135,6 +135,9 @@ dependencies {
 
     compile project(":react-native-svg")
     compile fileTree(dir: "node_modules/react-native-svg/android/libs", include: ["*.jar"])
+
+    compile project(":react-native-view-shot")
+    compile fileTree(dir: "node_modules/react-native-view-shot/android/libs", include: ["*.jar"])
 }
 
 // Run this once to be able to run the application with BUCK

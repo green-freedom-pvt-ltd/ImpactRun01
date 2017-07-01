@@ -18,6 +18,7 @@
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		149740D5A2A34D55ADEA6E6F /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */; };
+		380EDA011F0435B100AACE4C /* libAppHub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 380ED9FE1F0435A000AACE4C /* libAppHub.a */; };
 		3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */; };
 		3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */; };
 		3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F91E65DC9100DCC7C6 /* UIKit.framework */; };
@@ -148,6 +149,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
+		};
+		380ED9FD1F0435A000AACE4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 555FF3AF1B37AC8D0064F175;
+			remoteInfo = AppHub;
+		};
+		380ED9FF1F0435A000AACE4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 555FF3BA1B37AC8D0064F175;
+			remoteInfo = AppHubTests;
 		};
 		38133CD61ED8807900ADF687 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -370,6 +385,8 @@
 		2DA757BBDB80A94C5E7D25E2 /* Pods-Impactrun.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.release.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.release.xcconfig"; sourceTree = "<group>"; };
 		2F81B07EEC3849D491066E24 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		31E1B80977F5476A8D804A07 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNShare.a; sourceTree = "<group>"; };
+		380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppHub.xcodeproj; path = ../node_modules/apphub/AppHub/AppHub.xcodeproj; sourceTree = "<group>"; };
+		380EDA021F0435B200AACE4C /* libAppHubTestUtils.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAppHubTestUtils.a; path = "../node_modules/apphub/AppHubTestUtils/build/Debug-iphoneos/libAppHubTestUtils.a"; sourceTree = "<group>"; };
 		3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CleverTapSDK.framework; sourceTree = "<group>"; };
 		3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		3810C2F91E65DC9100DCC7C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -464,6 +481,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				380EDA011F0435B100AACE4C /* libAppHub.a in Frameworks */,
 				38133CE81ED8809C00ADF687 /* libRCTOneSignal.a in Frameworks */,
 				3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */,
 				3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */,
@@ -602,6 +620,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		380ED9F71F04359E00AACE4C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				380ED9FE1F0435A000AACE4C /* libAppHub.a */,
+				380EDA001F0435A000AACE4C /* AppHub.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		38133CBF1ED8807800ADF687 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -710,6 +737,7 @@
 		75A8F9D7F9684DC9A4842A15 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				380EDA021F0435B200AACE4C /* libAppHubTestUtils.a */,
 				3810C2F91E65DC9100DCC7C6 /* UIKit.framework */,
 				3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */,
 				3875BA711E5871F800F880DC /* UserNotifications.framework */,
@@ -765,6 +793,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */,
 				38133CBE1ED8807800ADF687 /* RCTOneSignal.xcodeproj */,
 				382653EF1E2FD08700EBB67B /* RCTPushNotification.xcodeproj */,
 				3867183B1E1D08C400939934 /* Lumberjack.xcodeproj */,
@@ -976,6 +1005,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 380ED9F71F04359E00AACE4C /* Products */;
+					ProjectRef = 380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */;
+				},
+				{
 					ProductGroup = 3830D6101D6F9CB40028922A /* Products */;
 					ProjectRef = 3830D60F1D6F9CB40028922A /* ART.xcodeproj */;
 				},
@@ -1139,6 +1172,20 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		380ED9FE1F0435A000AACE4C /* libAppHub.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAppHub.a;
+			remoteRef = 380ED9FD1F0435A000AACE4C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		380EDA001F0435A000AACE4C /* AppHub.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AppHub.xctest;
+			remoteRef = 380ED9FF1F0435A000AACE4C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		38133CD71ED8807900ADF687 /* libRCTOneSignal.a */ = {
@@ -1646,6 +1693,7 @@
 					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/apphub/AppHub",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1713,6 +1761,7 @@
 					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
+					"$(SRCROOT)/../node_modules/apphub/AppHub",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

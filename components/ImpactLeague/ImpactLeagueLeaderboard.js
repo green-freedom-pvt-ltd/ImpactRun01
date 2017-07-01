@@ -47,23 +47,23 @@ class ImpactLeagueLeaderBoard extends Component {
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
                this.FetchLeaderBoard();
-            };  
+            }else{
+              AlertIOS.alert('No internet connection', 'Please connect your device to internet connection')
+            } 
           }
         );
       }
 
 
       componentWillUnmount() {
-        console.log('myComponent')    
+       
       }
       
      
       FetchLeaderBoardLocally(){
         AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
-          var boardData = JSON.parse(result);
-          console.log("boardData",boardData);
+          var boardData = JSON.parse(result);        
           if (boardData != null) {
-            console.log('result',result);
             this.setState({
               ImpactLeagueLeaderBoardData:this.state.ImpactLeagueLeaderBoardData.cloneWithRows(boardData.results),
               BannerData:boardData.results,
@@ -82,9 +82,7 @@ class ImpactLeagueLeaderBoard extends Component {
 
 
       FetchLeaderBoard() {     
-         AsyncStorage.removeItem('ILleaderBoardData'+this.props.Team_id,(err) => {
-          console.log(err,'itemremoved');
-         });  
+           
         var url = apis.ImpactLeagueLeaderboardApi;
         var token = this.props.user.auth_token;
         if (this.props.user.team_code == this.props.Team_id) {
@@ -118,10 +116,13 @@ class ImpactLeagueLeaderBoard extends Component {
           })
         .then( response => response.json() )
         .then( jsonData => {
+          
           this.setState({
             ImpactLeagueLeaderBoardData: this.state.ImpactLeagueLeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
             refreshing:false,
+          });
+          AsyncStorage.removeItem('ILleaderBoardData'+this.props.Team_id,(err) => {
           });
           let ILleaderBoardData2 = jsonData;
           AsyncStorage.setItem('ILleaderBoardData'+this.props.Team_id,JSON.stringify(ILleaderBoardData2));

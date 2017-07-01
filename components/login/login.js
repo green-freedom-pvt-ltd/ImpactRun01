@@ -56,7 +56,6 @@ class Profile extends Component {
           let TotalLogin = {
               TotalLoginCount: 1,
           }
-          console.log('somedata');
           AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
               AsyncStorage.getItem('LoginCount', (err, result) => {
                   var Logincount = JSON.parse(result);
@@ -71,7 +70,6 @@ class Profile extends Component {
       componentWillMount() {
           AsyncStorage.getItem('LoginCount', (err, result) => {
               var Logincount = JSON.parse(result);
-              console.log('Logincount', Logincount);
               this.setState({
                   LoginCountTotal: Logincount,
               })
@@ -115,13 +113,11 @@ class Profile extends Component {
                       newData.push('cause' + i);
                   };
               })
-              console.log('newData',newData);
               this.setState({
                   myCauseNum: newData,
               })
               let myCauseNum = this.state.myCauseNum;
               AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
-              console.log('myCauseNum',this.state.myCauseNum,causesData);
               AsyncStorage.multiSet(causesData, (err) => {
                   console.log('myCauseErr' + err)
               })
@@ -146,7 +142,7 @@ class Profile extends Component {
                 .then((response) => response.json())
                 .then((userdata) => {
                     var userdata = userdata[0];
-                    console.log('usrrrr',userdata);
+                    console.log('usrerloginGoogle',userdata);
                     let UID234_object = {
                         body_weight:userdata.body_weight,
                         first_name: userdata.first_name,
@@ -232,7 +228,7 @@ class Profile extends Component {
               .then((response) => response.json())
               .then((userdata) => {
                 var userdata = userdata[0];
-                console.log('usrrrr',userdata);
+               console.log('usrerloginfacebook',userdata);
                 let UID234_object = {
                     body_weight:userdata.body_weight,
                     first_name: userdata.first_name,

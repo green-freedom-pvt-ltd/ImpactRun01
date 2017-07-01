@@ -24,7 +24,6 @@ import{
 
    componentDidMount() {
     var totalkm = this.props.totalKm;
-    console.log("totalkm",this.props.totalKm);
     if (this.props.totalKm != undefined) {
     this.setState({
       level:this.userLevelFunction(totalkm),
@@ -39,7 +38,6 @@ import{
 
  getKMfunction(){
    AsyncStorage.getItem('totalkm', (err, result) => {
-    console.log("resultslevel",result);
     this.setState({
       totalKm:result,
       level:this.userLevelFunction(result),
@@ -49,7 +47,6 @@ import{
  }
    
    userLevelFunction(totalkm){
-    console.log("totalkm",totalkm);
    if (totalkm != null) {
     if (totalkm <= 50 ) { 
       this.setState({

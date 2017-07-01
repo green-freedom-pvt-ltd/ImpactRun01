@@ -288,6 +288,7 @@ SettingsService.init('iOS');
      this.setState({
      myrundate: mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
     });
+     console.log("myrundate",mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds());
     }
   },
   
@@ -964,16 +965,16 @@ SettingsService.init('iOS');
                    {this.KmTextView(priv)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
                 </View>
-                
+                 <View style={styles.timeDistanceWrap2}>
+                  <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned} />
+                </View>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                    {this.TimeTextView(intime)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
                 </View>
                  
-                 <View style={styles.timeDistanceWrap2}>
-                  <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned} />
-                </View>
+                
               </View>
             </View>
 

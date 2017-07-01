@@ -47,25 +47,34 @@ class RunHistory extends Component {
           user:null ,
           loadingFirst:false,
           enterWeightmodel:false,
+          newarray:false,
+          someData:null,
         };
         this.renderRunsRow = this.renderRunsRow.bind(this);
         this.fetchRunhistoryupdataData = this.fetchRunhistoryupdataData.bind(this);
+        this.covertmonthArrayToMap = this.covertmonthArrayToMap.bind(this);
 
       }
 
 
 
       componentDidMount() {
-        // console.log('RawData', this.props.rawData);
+        console.log('RawData', this.props.rawData);
+         this.state.someData =  this.props.rawData
         AsyncStorage.getItem('runversion', (err, result) => {
             this.setState({
               runversion:JSON.parse(result),
             })
           })
+        if (this.state.someData != null) {
+        console.log("this.state.runHistoryData",this.state.runHistoryData);
         this.setState({
-          rowData: this.props.rawData,
           runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
         })
+         console.log("this.state.runHistoryData",this.state.runHistoryData);
+       }else{
+        console.log("elsepart");
+       }
       }
 
       getUserData(){
@@ -78,7 +87,6 @@ class RunHistory extends Component {
               user:user,
               rawData: [],
             })
-            this.fetchRunDataLocally();
           })
         })
       }
@@ -97,7 +105,9 @@ class RunHistory extends Component {
 
       removeallRun(){
           AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+              console.log("fetchRunhistoryDataerr",err);
          });
+
       }
 
 
@@ -156,12 +166,12 @@ class RunHistory extends Component {
              isOpen={this.state.open}
                >
                   <View style={styles.modelWrap}>
-                     <Text>FEEDBACK</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'500',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,}}>FEEDBACK</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
                      <View>
                      <TextInput
                      placeholder="Enter your feedback here"
-                     style={{width:deviceWidth-120,height:(deviceHeight/10)-20,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
+                     style={{width:deviceWidth-100,height:(deviceHeight/10)-20,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
                      multiline = {true}
                      numberOfLines = {6}
                      onChangeText={(text) => this.setState({text})}
@@ -181,17 +191,25 @@ class RunHistory extends Component {
      
      getWeightLocal(){
         AsyncStorage.getItem('userWeight', (err, result) => { 
+
             var weight = JSON.parse(result)
-            console.log('resultcalori',weight);
-            this.setState({
-              weight:weight
-            })
+             if (weight != null) {
+              console.log('resultcalori',weight);
+              this.setState({
+                weight:weight
+              })
+            }else{
+              this.setState({
+                enterWeightmodel:true,
+              })
+            }
           })
       }
 
-      putUserHeight(){
+      putUserWeight(){
         var user_id = this.props.user.user_id;
         var auth_token = this.props.user.auth_token;
+        this.closemodel();
         fetch(apis.userDataapi + user_id + "/", {
             method: "put",
             headers: {  
@@ -205,7 +223,7 @@ class RunHistory extends Component {
           })
           .then((response) => response.json())
           .then((response) => { 
-            this.closemodel();
+           
             console.log('submited',response);
             var userWeight = response.body_weight;
              AsyncStorage.mergeItem('userWeight',JSON.stringify(userWeight),()=>{
@@ -216,6 +234,11 @@ class RunHistory extends Component {
           })    
           .catch((err) => {
             console.log('err',err);
+            if (err != null) {
+              this.setState({
+                enterWeightmodel:true,
+              })
+            };
           })
       }
 
@@ -226,11 +249,11 @@ class RunHistory extends Component {
              isOpen={this.state.enterWeightmodel}
                >
                   <View style={styles.modelWrap}>
-                     <Text>YOUR WEIGHT</Text>
+                     <Text style={{marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'500',width:deviceWidth-100,fontFamily: styleConfig.FontFamily,}}>Enter your weight to calculate calories.</Text>
                      <View>
                      <TextInput
                      placeholder="Enter Your weight in KG"
-                     style={{width:deviceWidth-120,height:40,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
+                     style={{width:deviceWidth-100,height:40,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}
                      multiline = {true}
                      numberOfLines = {1}
                      keyboardType = "numeric"
@@ -239,7 +262,7 @@ class RunHistory extends Component {
                    />
                    <View style={styles.modelBtnWrap}>
                     <TouchableOpacity style={styles.modelbtn} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>CLOSE</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.modelbtn}onPress ={()=>this.putUserHeight()}><Text style={styles.btntext}>SUBMIT</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtn}onPress ={()=>this.putUserWeight()}><Text style={styles.btntext}>SUBMIT</Text></TouchableOpacity>
                   </View>
                    </View>
                   </View>
@@ -372,6 +395,7 @@ class RunHistory extends Component {
       }
 
       fetchRunhistoryupdataData(){
+        var mergerowData = [];
         var token = this.props.user.auth_token;
         var runversionfetch =this.state.runversion;
         var url ='http://dev.impactrun.com/api/runs/'+'?client_version='+runversionfetch;
@@ -385,29 +409,36 @@ class RunHistory extends Component {
         })
         .then( response => response.json() )
         .then( jsonData => {
-          // console.log('response: ',jsonData)
+          console.log('response: ',jsonData)
            if(jsonData.count > 0 ){
            var runversion = jsonData.results;
-           var array = this.state.rawData;
+           var array = this.props.rawData;
            runversion.forEach(function(item) {
-                objIndex = array.findIndex((obj => obj.start_time == item.start_time));
-                var arrray1 = array[objIndex] = item;
+            
+                   console.log("array",array)   
+                 objIndex = array.findIndex(obj => obj.start_time == item.start_time);
+                 var arrray1 = array[objIndex] = item;
+                
+               
+          
              })
+            this.rows = array
+                console.log("runHistoryData",this.rows);
+                 this.setState({
+                   runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.rows)),
+                   refreshing:false,
+                 });
+                 let fetchRunhistoryData = this.rows;
+                 AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
+
+                 })
 
 
-           this.rows = array;
+           
            // console.log('Rows :' , this.rows);
 
-           this.setState({
-             rawData:this.rows,
-             runHistoryData: this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.rows)),
-             refreshing:false,
-           });
 
-           let fetchRunhistoryData = this.rows;
-           AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-
-           })
+           
            this.props.getRunCount();
            this.props.fetchAmount();
             if (jsonData != null || undefined) {
@@ -466,28 +497,45 @@ class RunHistory extends Component {
             RunCount:jsonData.count,
           });
           AsyncStorage.removeItem('runversion',(err) => {
+
           });
+
           var newDate = new Date();
+
           var convertepoch = newDate.getTime()/1000
+
           var epochtime = parseFloat(convertepoch).toFixed(0);
           let responceversion = epochtime;
+
           AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-           this.setState({
-             runversion:responceversion
-           })
+
+            this.setState({
+              runversion:responceversion
+            })
+
           });
           let RunCount = this.state.RunCount;
+
           AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
+
           AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-         });
+
+          });
+
           AsyncStorage.removeItem('nextpage',(err) => {
-         });
+
+          });
+
           let nextpage = this.state.nextPage;
+
           AsyncStorage.setItem('nextpage', JSON.stringify(nextpage));
+
           let fetchRunhistoryData = this.state.rawData.concat();
+
           AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
 
-           })
+          })
+
           this.LoadmoreView();
         })
         .catch( error => console.log('Error fetching: ' + error) );
@@ -553,7 +601,6 @@ class RunHistory extends Component {
                   <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Run History'}</Text>
               </View>
               <View style={{height:deviceHeight}}>
-              <TouchableOpacity onPress={()=> this.removeallRun()}><Text>remove</Text></TouchableOpacity>
                 <ListView
                  renderSectionHeader={this.renderSectionHeader}
                  refreshControl={
@@ -616,7 +663,7 @@ const styles = StyleSheet.create({
    backgroundColor:styleConfig.bright_blue,
   },
   modelBtnWrap:{
-    width:deviceWidth-120,
+    width:deviceWidth-100,
     flexDirection:'row',
     justifyContent: 'space-between',
   },
@@ -640,7 +687,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:'white',
-    width:deviceWidth-100,
+    width:deviceWidth-50,
   },
   container: {
     width:deviceWidth-10,

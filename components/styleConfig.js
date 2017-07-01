@@ -46,37 +46,37 @@ function BtnHight () {
 
 function GraphHeight (){
   if (iphone5 === Deviceheight) {
-    return (Deviceheight/2)-160
+    return (Deviceheight/2)-150
   }else if (iphone5s === Deviceheight) {
-    return (Deviceheight/2)-160
+    return (Deviceheight/2)-150
   }else if (iphone6 === Deviceheight) {
-    return (Deviceheight/2)-130
+    return (Deviceheight/2)-120
   }else if (iphone6s === Deviceheight) {
-    return (Deviceheight/2)-130
+    return (Deviceheight/2)-120
   }else if (iphone6Plus === Deviceheight) {
-    return (Deviceheight/2)-125
+    return (Deviceheight/2)-115
   }else if (iphone7 === Deviceheight) {
-    return (Deviceheight/2)-125
+    return (Deviceheight/2)-115
   }else if (iphone7Plus === Deviceheight) {
-    return (Deviceheight/2)-125
+    return (Deviceheight/2)-115
   };
 }
 
 function seeRunBtnHeight (){
   if (iphone5 === Deviceheight) {
-    return 35
+    return 38
   }else if (iphone5s === Deviceheight) {
-    return 35
+    return 38
   }else if (iphone6 === Deviceheight) {
-    return 45
+    return 50
   }else if (iphone6s === Deviceheight) {
-    return 45
+    return 50
   }else if (iphone6Plus === Deviceheight) {
-    return 50
+    return 55
   }else if (iphone7 === Deviceheight) {
-    return 50
+    return 55
   }else if (iphone7Plus === Deviceheight) {
-    return 50
+    return 55
   };
 }
 

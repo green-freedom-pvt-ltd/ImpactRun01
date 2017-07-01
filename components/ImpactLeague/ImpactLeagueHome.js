@@ -103,7 +103,6 @@ class ImpactLeague extends Component {
       fetchLeaderBoardData() {
         
         var token = this.state.user.auth_token;
-        console.log('auth_token',token,this.state.user);
         var url = apis.ImpactLeagueTeamLeaderBoardApi;
         fetch(url,{
           method: "GET",
@@ -121,10 +120,9 @@ class ImpactLeague extends Component {
             BannerData:jsonData.results[0].impactleague_banner,
           });
            AsyncStorage.removeItem('teamleaderBoardData',(err) => {
-          console.log(err,'itemremoved');
+         
          });
           let teamleaderBoardData = jsonData;
-          console.log('teamleaderBoardData',teamleaderBoardData);
           AsyncStorage.setItem('teamleaderBoardData',JSON.stringify(teamleaderBoardData)); 
         })
         .catch( error => console.log('Error fetching: ' + error) );
@@ -164,7 +162,6 @@ class ImpactLeague extends Component {
       renderRow(rowData,index,rowID){
         rowID++
         var me = this;
-        console.log('user',me.state.user);
         var backgroundColor =(me.state.user.team_code === rowData.id)?'#ffcd4d':'#fff';
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
@@ -203,11 +200,10 @@ class ImpactLeague extends Component {
         }
       }
       render(rowData,jsonData) {
-        console.log('bannerimage',this.state.BannerData);
         if (!this.state.loaded) {
           return this.renderLoadingView();
         }
-        console.log(this.state.isConnected);
+      
         return (
           <View>
            <View style={commonStyles.Navbar}>

@@ -35,7 +35,9 @@ class Profile extends Component {
       constructor(props) {
         super(props);
         
-
+      //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+      //   console.log("fetchRunhistoryDataerr",err);
+      // });
         this.fetchRunDataLocally();
 
         this.state = {
@@ -53,23 +55,24 @@ class Profile extends Component {
           },
           counterDate:new Date(),
         };
-        this.getUserData = this.getUserData.bind(this);
       }
 
 
      componentDidMount() {
+      //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+      // });
      
      }
       fetchRunDataLocally(){
-           AsyncStorage.getItem('nextpage', (err, result) => {
+          AsyncStorage.getItem('nextpage', (err, result) => {
             this.setState({
               nextPage:JSON.parse(result),
             })
-
-            })
+          })
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
             if (result != null || undefined) {
+              console.log("RunData",RunData);
               this.setState({
                 rawData: RunData,
               })
@@ -98,6 +101,7 @@ class Profile extends Component {
         })
         .then( response => response.json() )
         .then( jsonData => {
+
           this.setState({
             runfeatching:true,
             rawData:jsonData.results,
@@ -148,7 +152,9 @@ class Profile extends Component {
               this.LoadmoreView();
           })
           }else{
-            return;
+            this.setState({
+              runfeatching:false,
+            })
           }
         })
          .catch( error => console.log('Error fetching: ' + error) );
@@ -213,32 +219,13 @@ class Profile extends Component {
 
        }else{
         this.setState({
-          loadingFirst:false,
-          runfeatching:false,
+           runfeatching:false,
         })
         this.getRunCount();
         this.fetchAmount();
         this.fetchTotalDistance();
         this.fetch7DayData();
        }
-      }
-
-
-      getUserData(){
-        NetInfo.isConnected.fetch().done(
-          (isConnected) => {
-          if (isConnected) {
-            this.fetchAmount();
-            }else{
-              AsyncStorage.getItem('RunTotalAmount', (err, result) => {
-                var TotalAmount = JSON.parse(result);
-                this.setState({
-                  RunTotalAmount2:TotalAmount.TotalRupeesCount,
-                })
-             })
-            }
-          }
-        );
       }
 
       fetchAmount(){
@@ -257,7 +244,9 @@ class Profile extends Component {
           RunTotalAmount2:sum,
         })
         }else{
-        return;
+          this.setState({
+             RunTotalAmount2:0,
+          })
          }
        })
       }
@@ -266,7 +255,9 @@ class Profile extends Component {
       fetch7DayData(){
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
         if (result != null || undefined) {
+
         var RunData = JSON.parse(result)
+        console.log("RunDatafetch7DayData",RunData);
         var sum = 0;
         var nowdate = new Date();
         var sdate = new Date();
@@ -488,22 +479,22 @@ class Profile extends Component {
             </View>
 
             <View>
-             <View style={{height:20,width:deviceWidth,justifyContent: 'flex-end',alignItems: 'center',}}> 
-            <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Last 7 days</Text>
+             <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}> 
+                <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raise last 7 days</Text>
            </View>
             <View style={styles.container2}>
            
             <Chart
               style={styles.chart}
               data={dataP}
-              height={(deviceHeight/2)-130}
+              height={(deviceHeight/2)-120}
               type='bar'
               hideVerticalGridLines={true}
               showYAxisLabels={false}
               cornerRadius = {2}
                />
             </View>
-            <View style={{top:20,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+            <View style={{width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
             {this.ShowRunScreenBtn()}
              </View>
              </View>
@@ -544,7 +535,7 @@ var styles = StyleSheet.create({
     fontSize:20,
   },
   btnviewRun1:{
-      top: 20,
+      top: 10,
       width:deviceWidth-65,
       height:styleConfig.SeeRunBtnHeight,
       borderRadius:5,
@@ -561,7 +552,7 @@ var styles = StyleSheet.create({
       }
   },
   btnviewRun2:{
-      top: 20,
+      top: 10,
       width:deviceWidth-65,
       height:styleConfig.SeeRunBtnHeight,
       borderRadius:5,
@@ -594,7 +585,6 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
   },
    container2: {
-    top:20,
     width:deviceWidth,
     justifyContent: 'center',
     backgroundColor: 'white',
