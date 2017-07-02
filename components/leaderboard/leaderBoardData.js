@@ -24,7 +24,7 @@
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LeaderboardData extends Component {
-  
+
       constructor(props) {
         super(props);
         this.fetchLeaderBoardLocally();
@@ -40,8 +40,8 @@ class LeaderboardData extends Component {
         };
         this.renderRow = this.renderRow.bind(this);
       }
-     
-     
+
+
       navigateTOhome(){
         this.props.navigator.push({
           title: 'Gps',
@@ -50,34 +50,34 @@ class LeaderboardData extends Component {
         })
       }
 
-      
+
       fetchLeaderBoardLocally(){
-        AsyncStorage.getItem('leaderBoard', (err, result) => { 
+        AsyncStorage.getItem('leaderBoard', (err, result) => {
         var jsonData = JSON.parse(result);
         if (result != null || undefined) {
           this.setState({
             LeaderBoard: this.state.LeaderBoard.cloneWithRows(jsonData.results),
             loaded:true,
-          })        
+          })
         }else{
          this.fetchDataIfInternet()
         }
         });
       }
 
-      componentDidMount() {  
+      componentDidMount() {
         setTimeout(() => {this.setState({downrefresh: false})}, 1000)
-      
+
       }
-      
+
       fetchDataIfInternet(){
         NetInfo.isConnected.fetch().done(
-          (isConnected) => { this.setState({isConnected}); 
+          (isConnected) => { this.setState({isConnected});
             if (isConnected) {
               this.fetchLeaderBoard();
             }else{
               return this.fetchLeaderBoardLocally();
-            }  
+            }
           }
         );
       }
@@ -89,7 +89,7 @@ class LeaderboardData extends Component {
         var url = apis.leaderBoardapi;
         fetch(url,{
           method: "GET",
-          headers: {  
+          headers: {
             'Authorization':"Bearer "+ token,
             'Content-Type':'application/x-www-form-urlencoded',
           }
@@ -103,9 +103,9 @@ class LeaderboardData extends Component {
           });
           let leaderBoard = jsonData;
           AsyncStorage.setItem('leaderBoard',JSON.stringify(leaderBoard));
-          AsyncStorage.getItem('leaderBoard', (err, result) => {   
-          });  
-          
+          AsyncStorage.getItem('leaderBoard', (err, result) => {
+          });
+
         })
         .catch( error => console.log('Error fetching: ' + error) );
       }
@@ -118,7 +118,7 @@ class LeaderboardData extends Component {
 
 
       renderRow(rowData, index,rowID){
-        rowID++       
+        rowID++
         var myflex = (this.props.user.user_id === rowData.user_id)?1:0;
         // console.log('rodatacount',this.state.userCount,this.state.responce);
         var backgroundcolor=(this.props.user.user_id === rowData.user_id)?'#ffcd4d':"white";
@@ -126,7 +126,7 @@ class LeaderboardData extends Component {
         var mytop = (this.props.user.user_id === rowData.user_id)?-100:0;
         var visiblity = (this.props.user.user_id === rowData.user_id)?0:1;
         let style = [
-          styles.row, 
+          styles.row,
           {
             'alignItems': 'center',
             'right':5,
@@ -140,7 +140,7 @@ class LeaderboardData extends Component {
           <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor}]}>
            <View style={styles.flexbox1}>
             <View style={style}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowData.ranking}</Text>
+              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:14,color:'#4a4a4a',}}>{rowData.ranking}</Text>
             </View>
            </View>
             <View style={styles.flexbox}>
@@ -180,8 +180,8 @@ class LeaderboardData extends Component {
                 />}
                 dataSource={this.state.LeaderBoard}/>
              </View>
-            
-          </View> 
+
+          </View>
         );
       }else{
         return this.renderLoadingView();
@@ -204,7 +204,7 @@ class LeaderboardData extends Component {
 
 }
 
-  
+
 
 const styles = StyleSheet.create({
 

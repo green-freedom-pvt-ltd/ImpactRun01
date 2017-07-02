@@ -59,7 +59,7 @@ class RunHistory extends Component {
 
 
       componentDidMount() {
-        console.log('RawData', this.props.rawData);
+        // console.log('RawData', this.props.rawData);
          this.state.someData =  this.props.rawData
         AsyncStorage.getItem('runversion', (err, result) => {
             this.setState({
@@ -67,11 +67,11 @@ class RunHistory extends Component {
             })
           })
         if (this.state.someData != null) {
-        console.log("this.state.runHistoryData",this.state.runHistoryData);
+        // console.log("this.state.runHistoryData",this.state.runHistoryData);
         this.setState({
           runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
         })
-         console.log("this.state.runHistoryData",this.state.runHistoryData);
+         // console.log("this.state.runHistoryData",this.state.runHistoryData);
        }else{
         console.log("elsepart");
        }
@@ -188,9 +188,9 @@ class RunHistory extends Component {
             </Modal>
           )
       }
-     
+
      getWeightLocal(){
-        AsyncStorage.getItem('userWeight', (err, result) => { 
+        AsyncStorage.getItem('userWeight', (err, result) => {
 
             var weight = JSON.parse(result)
              if (weight != null) {
@@ -212,7 +212,7 @@ class RunHistory extends Component {
         this.closemodel();
         fetch(apis.userDataapi + user_id + "/", {
             method: "put",
-            headers: {  
+            headers: {
               'Authorization':"Bearer "+ auth_token,
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -222,8 +222,8 @@ class RunHistory extends Component {
             })
           })
           .then((response) => response.json())
-          .then((response) => { 
-           
+          .then((response) => {
+
             console.log('submited',response);
             var userWeight = response.body_weight;
              AsyncStorage.mergeItem('userWeight',JSON.stringify(userWeight),()=>{
@@ -231,7 +231,7 @@ class RunHistory extends Component {
                 weight:userWeight,
               })
              });
-          })    
+          })
           .catch((err) => {
             console.log('err',err);
             if (err != null) {
@@ -289,7 +289,7 @@ class RunHistory extends Component {
          AlertIOS.alert(
             'No calorie data',
             "We couldn't count calories as we didn't have your weight then. But no worries! We will count calories from now on :)",
-              {text: 'OK', onPress: () => console.log('OK'), style: 'cancel'}     
+              {text: 'OK', onPress: () => console.log('OK'), style: 'cancel'}
 
             )
       }
@@ -319,7 +319,7 @@ class RunHistory extends Component {
         return (
           <TouchableHighlight onPress={()=> this.onPressFlagedRun(rowData)}underlayColor="#dddddd">
             <View style={[styles.container,{backgroundColor:backgroundColor}]}>
-              <View style={styles.rightContainer}>          
+              <View style={styles.rightContainer}>
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
                 <View>
@@ -338,7 +338,7 @@ class RunHistory extends Component {
                    <View onPress={()=> this.EnterWeight()}style={styles.runContent}>
                     {colorie}
                   </View>
-                  <View style={styles.runContent}> 
+                  <View style={styles.runContent}>
                     <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}>{hrsAndMins}</Text>
                   </View>
                </View>
@@ -352,7 +352,7 @@ class RunHistory extends Component {
           return (
           <TouchableHighlight underlayColor="#dddddd">
             <View style={[styles.container,{backgroundColor:backgroundColor}]}>
-              <View style={styles.rightContainer}>          
+              <View style={styles.rightContainer}>
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
                 <View>
@@ -370,7 +370,7 @@ class RunHistory extends Component {
                   <View onPress={()=> this.EnterWeight()}style={styles.runContent}>
                     {colorie}
                   </View>
-                  <View style={styles.runContent}> 
+                  <View style={styles.runContent}>
                     <Text style={styles.runContentText}>{hrsAndMins}</Text>
                   </View>
                </View>
@@ -414,13 +414,13 @@ class RunHistory extends Component {
            var runversion = jsonData.results;
            var array = this.props.rawData;
            runversion.forEach(function(item) {
-            
-                   console.log("array",array)   
+
+                   console.log("array",array)
                  objIndex = array.findIndex(obj => obj.start_time == item.start_time);
                  var arrray1 = array[objIndex] = item;
-                
-               
-          
+
+
+
              })
             this.rows = array
                 console.log("runHistoryData",this.rows);
@@ -434,11 +434,11 @@ class RunHistory extends Component {
                  })
 
 
-           
+
            // console.log('Rows :' , this.rows);
 
 
-           
+
            this.props.getRunCount();
            this.props.fetchAmount();
             if (jsonData != null || undefined) {

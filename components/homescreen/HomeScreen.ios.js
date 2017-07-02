@@ -52,38 +52,38 @@ class Homescreen extends Component {
       static propTypes = {
         style: View.propTypes.style,
       };
-      
+
       componentWillMount() {
       // PushNotificationIOS.addListener('register', this._onRegistered);
       // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
       // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
       // PushNotificationIOS.addListener('localNotification', this._onLocalNotification);
 
-      PushNotificationIOS.requestPermissions();          
+      PushNotificationIOS.requestPermissions();
         AsyncStorage.getItem('RID0', (err, result) => {
           this.setState({
-          Rundata:JSON.parse(result),  
-          loaded:true,             
+          Rundata:JSON.parse(result),
+          loaded:true,
            })
-          this.PostSavedRundataIfInternetisOn();      
-      })  
+          this.PostSavedRundataIfInternetisOn();
+      })
 
 
         AsyncStorage.getItem('SaveRunCount', (err, result) => {
           this.setState({
-          RunCount:JSON.parse(result),  
-          loaded:true,             
+          RunCount:JSON.parse(result),
+          loaded:true,
            })
-              
-        })  
-        
+
+        })
+
       }
-       
+
       componentWillUnmount() {
       }
-      
 
-  
+
+
       PostSavedRundataIfInternetisOn(){
            if(this.props.user) {
            NetInfo.isConnected.fetch().done(
@@ -92,7 +92,7 @@ class Homescreen extends Component {
                   this.postPastRun();
                }
             }
-           );  
+           );
          }
       }
       showImage(route){
@@ -124,7 +124,7 @@ class Homescreen extends Component {
                     let key = item[0];
                     let val = JSON.parse(item[1]);
                     let causesArr = _this.state.causes.slice()
-                    causesArr.push(val)                  
+                    causesArr.push(val)
                     _this.setState({causes: causesArr})
                     _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active,val.pk,val.amount_raised,val.amount,val.total_runs]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
@@ -141,7 +141,7 @@ class Homescreen extends Component {
           });
           } catch (err) {
             console.log(err)
-          } 
+          }
         }else{
           this.props.fetchDataonInternet();
         }
@@ -157,22 +157,22 @@ class Homescreen extends Component {
       for (i = 0; i < runcount+1; i++) {
           runNumber.push("RID" + i )  ;
       }
-      
+
       AsyncStorage.multiGet(runNumber, (err, stores) => {
         stores.map((result, i, store) => {
           let key = store[i][0];
           let val = store[i][1];
           this.setState({
-          MyRunVal:JSON.parse(val),  
-          loaded:true,             
-          }) 
+          MyRunVal:JSON.parse(val),
+          loaded:true,
+          })
          var RunData = this.state.MyRunVal;
          fetch(apis.runApi, {
           method: "POST",
-          headers: {  
+          headers: {
             'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
-            'Content-Type': 'application/json',    
+            'Content-Type': 'application/json',
           },
           body:JSON.stringify({
           cause_run_title:RunData.cause_run_title,
@@ -193,12 +193,12 @@ class Homescreen extends Component {
        })
 
       .then((response) => response.json())
-      .then((userRunData) => { 
+      .then((userRunData) => {
        var epochtime = userRunData.version;
        let responceversion = epochtime;
         AsyncStorage.removeItem('runversion',(err) => {
          });
-        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{   
+        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
         });
         this.RemoveStoredRun(runNumber);
        })
@@ -261,7 +261,7 @@ class Homescreen extends Component {
         opacity,
       };
     };
-     
+
 
     // ONCHANGE_SLIDER_FUNCTION
     _handleChangeTab = (index) => {
@@ -330,7 +330,7 @@ class Homescreen extends Component {
         var money = JSON.stringify(parseFloat(this.state.album[route.key][6]).toFixed(0));
         var lenth = money.length;
         var commmaplace = lenth-4;
-        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
+        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ;
         var moneyslice = money.slice(0,2);
         var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
         var runlength = Runs.length;
@@ -357,20 +357,20 @@ class Homescreen extends Component {
                   <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
                   <Text style = {styles.textMoneyraised}>{parseFloat((this.state.album[route.key][6])/this.state.album[route.key][7]*100).toFixed(0)}%</Text>
                 </View>
-                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
+                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/>
                 <View style = {styles.wraptext2}>
                   <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
-                </View>      
+                </View>
               </View>
-             
+
             </View>
             </TouchableWithoutFeedback>
 
           </View>
         );
-      
+
     };
-   
+
 
      // RENDER_PAGE
     _renderPage = (props,data,route) => {
@@ -381,12 +381,12 @@ class Homescreen extends Component {
           style={this._buildCoverFlowStyle(props)}
           renderScene={this._renderScene}/>
       );
-    
+
     };
-    
+
 
     // RENDER_FUNCTION
-    render(route) { 
+    render(route) {
       if (this.props.myCauseNum != null ) {
       return (
         <View style={{height:deviceheight,width:deviceWidth,backgroundColor:'white'}}>
@@ -408,7 +408,7 @@ class Homescreen extends Component {
                </TouchableOpacity>
               </View>
              </View>
-            
+
           </View>
       );
     }else{
@@ -417,8 +417,8 @@ class Homescreen extends Component {
         )
     }
     }
-  
-  
+
+
 
   }
 
@@ -443,7 +443,7 @@ class Homescreen extends Component {
       width:deviceWidth,
       opacity:1,
      },
-     homebg:{    
+     homebg:{
       flexDirection: 'row',
       position:'absolute',
       height:deviceheight,
@@ -507,7 +507,7 @@ class Homescreen extends Component {
       fontWeight:'400',
       fontFamily:styleConfig.FontFamily3,
     },
-  
+
     barWrap:{
       width: deviceWidth-65,
       justifyContent: 'center',
@@ -550,9 +550,9 @@ class Homescreen extends Component {
   });
   export default Homescreen;
   // <View style={{bottom:0, width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
-     
+
   //     <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
   //       <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
   //     </TouchableOpacity>
-     
+
   // </View>
