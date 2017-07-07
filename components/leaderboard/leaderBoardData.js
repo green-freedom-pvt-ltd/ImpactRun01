@@ -52,9 +52,12 @@ class LeaderboardData extends Component {
 
       
       fetchLeaderBoardLocally(){
+      
         AsyncStorage.getItem('leaderBoard', (err, result) => { 
         var jsonData = JSON.parse(result);
+        console.log("jsonData",jsonData);
         if (result != null || undefined) {
+
           this.setState({
             LeaderBoard: this.state.LeaderBoard.cloneWithRows(jsonData.results),
             loaded:true,
@@ -86,6 +89,7 @@ class LeaderboardData extends Component {
        AsyncStorage.removeItem('leaderBoard',(err) => {
        });
         var token = this.props.user.auth_token;
+        console.log("token",token);
         var url = apis.leaderBoardapi;
         fetch(url,{
           method: "GET",

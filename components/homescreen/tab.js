@@ -64,11 +64,30 @@ class devdactic_tabs extends Component {
         }
         
         componentDidMount() {
+
+          this.removerundata();
           this.getUserData();
-          this.getData();
+         this.getData();
         
           
         }
+        removerundata(){
+        AsyncStorage.getItem('runremovecount', (err, result) => {  
+            if (result == null) {
+                AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+                    if (err == null ) {
+                    let rumremovecount = 1;
+                    AsyncStorage.setItem('runremovecount', JSON.stringify(rumremovecount), (data) => {
+                      console.log("data",data);
+                    })
+                    };
+               });
+            }else{
+               return;
+            }
+        })
+        }
+
         getData(){
              AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
             if (result != null) {
@@ -103,10 +122,8 @@ class devdactic_tabs extends Component {
             }
          })
         }
-        componentWillMount() {
-             
-       
-           
+        
+        componentWillMount() {  
            if (this.props.profileTab != null || undefined) {
            this.setState({
              selectedTab:'profile',
@@ -122,11 +139,6 @@ class devdactic_tabs extends Component {
             (isConnected) => {
                 if (isConnected) {
                     this.fetchData();
-                    if (this.state.user != null) {
-                    this.fetchLeaderBoard();
-                    }else{
-                        return;
-                    }
                 }else{
                    this.getCause();
                 }
@@ -139,6 +151,7 @@ class devdactic_tabs extends Component {
       fetchLeaderBoard() {
       
         var token = this.state.user.auth_token;
+        console.log("token",token);
         var url = apis.leaderBoardapi;
         fetch(url,{
           method: "GET",

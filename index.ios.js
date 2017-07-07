@@ -191,7 +191,6 @@ class Application extends Component{
         if(this.state.textState != null)
         {
         var mycausecount = this.state.mycauseDataCount;
-        console.log('mysomedatacount',mycausecount);
         return (
           <View  style={{flex: 1}} >
 
@@ -221,7 +220,6 @@ class Application extends Component{
 
 
         renderScene(route, navigator, user,causeLength) {
-          console.log('mycauseLengthData',user);
            switch (route.id) {
                 case 'home':
                 return <Home navigator={navigator} {...route.passProps}/>;

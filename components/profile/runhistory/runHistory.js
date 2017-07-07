@@ -59,7 +59,6 @@ class RunHistory extends Component {
 
 
       componentDidMount() {
-        console.log('RawData', this.props.rawData);
          this.state.someData =  this.props.rawData
         AsyncStorage.getItem('runversion', (err, result) => {
             this.setState({
@@ -67,13 +66,10 @@ class RunHistory extends Component {
             })
           })
         if (this.state.someData != null) {
-        console.log("this.state.runHistoryData",this.state.runHistoryData);
         this.setState({
           runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
         })
-         console.log("this.state.runHistoryData",this.state.runHistoryData);
        }else{
-        console.log("elsepart");
        }
       }
 
@@ -194,7 +190,6 @@ class RunHistory extends Component {
 
             var weight = JSON.parse(result)
              if (weight != null) {
-              console.log('resultcalori',weight);
               this.setState({
                 weight:weight
               })
@@ -224,7 +219,6 @@ class RunHistory extends Component {
           .then((response) => response.json())
           .then((response) => { 
            
-            console.log('submited',response);
             var userWeight = response.body_weight;
              AsyncStorage.mergeItem('userWeight',JSON.stringify(userWeight),()=>{
               this.setState({

@@ -13,7 +13,8 @@ var {
   TouchableOpacity,
   Image,
   VibrationIOS,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  PushNotificationIOS
  } = ReactNative;
 import TimeFormatter from '../counterRuntime.js';
 import TimerMixin from 'react-timer-mixin';
@@ -45,6 +46,7 @@ var styles = StyleSheet.create({
     fontSize:30,
     color:'white',
     borderRadius:30,
+
   },
   DistanceFill:{
     backgroundColor:'transparent',
@@ -135,6 +137,16 @@ SettingsService.init('iOS');
 
   // InitilialStates
 
+  _sendNotification:function() {
+    require('RCTDeviceEventEmitter').emit('remoteNotificationReceived', {
+      aps: {
+        alert: 'Sample notification',
+        badge: '+1',
+        sound: 'default',
+        category: 'REACT_NATIVE'
+      },
+    });
+  },
   getInitialState: function() {
     return {
       startDate: null,
@@ -163,6 +175,8 @@ SettingsService.init('iOS');
       calorieBurned:0.0,
       storedRunduration:0,
       timeBetweenTwoPoint:0,
+       permissions:null,
+       gpsNotAccepatableStepvalue:0,
       // mapHeight: 280,
       // mapWidth: 300,
       // zoom: 10,
@@ -189,7 +203,6 @@ SettingsService.init('iOS');
        
      }
      
-      console.log('result234',this.state.result);
     });    
     
     // crashlytics.crash();
@@ -258,12 +271,14 @@ SettingsService.init('iOS');
     });
     // activitychange event
     this.locationManager.on("activitychange", function(activityName) {
+      console.log("activityName ",activityName);
     });
 
     // getGeofences
     this.locationManager.getGeofences(function(rs) {
     }, function(error) {
     });
+ 
 
     // Fetch settings and configure.
     SettingsService.getValues(function(values) {
@@ -288,7 +303,6 @@ SettingsService.init('iOS');
      this.setState({
      myrundate: mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
     });
-     console.log("myrundate",mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds());
     }
   },
   
@@ -372,10 +386,10 @@ SettingsService.init('iOS');
       const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
       const newTimeStamp = location.timestamp;
       
-      console.log("timeinsec",new Date(newTimeStamp).getTime())
       this.setState({
           distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
           prevLatLng: newLatLngs,
+          gpsNotAccepatableStepvalue:0,
           newTimeStamp:location.timestamp,
           prevTimeStamp:this.state.newTimeStamp,
           speed:location.coords.speed,
@@ -383,7 +397,6 @@ SettingsService.init('iOS');
            var oldtime = new Date(this.state.prevTimeStamp).getTime();
             var newTime = new Date(this.state.newTimeStamp).getTime();
             var timeBetweenTwoPoint = newTime - oldtime;
-            console.log("timeBetweenTwoPoint1",timeBetweenTwoPoint)
             if (timeBetweenTwoPoint) {
             this.previousLocationTime(newTimeStamp);
             this.caloriCounterStart(newTimeStamp);
@@ -423,32 +436,42 @@ SettingsService.init('iOS');
                 prevLatLng: newLatLngs,
                 newTimeStamp:location.timestamp,
                 prevTimeStamp:this.state.newTimeStamp,
-
+                gpsNotAccepatableStepvalue:0,      
                 speed:location.coords.speed,
               })
             var oldtime = new Date(this.state.prevTimeStamp).getTime();
             var newTime = new Date(this.state.newTimeStamp).getTime();
             var timeBetweenTwoPoint = newTime - oldtime;
-             console.log("timeBetweenTwoPoint2",timeBetweenTwoPoint)
             if (timeBetweenTwoPoint) {
             this.previousLocationTime(newTimeStamp);
             this.caloriCounterStart(newTimeStamp);
             }else{
+
               console.log("Nanvalue")
             }
             
+             }else{
+              return;
+              //  AlertIOS.alert("point not Accepted","unaccepted point");
+              // if (this.state.numberOfSteps > 10) {
+
+              //    this.StartWhenLocationIsNotAcceptable();
+              // }else{
+              //   return;
+              // }
              }
+
           }
+
       
   },
+
 
   getMetsValue:function(speed){
      // deltaSpeed is in m/s
      if (speed != NaN) {
      var speed = speed*1000;
-    console.log("speed",speed);
      var mph = 2.2369 * speed;
-     console.log("mph",mph);
 
        // Referring Compendium of Physical Activities over here
         // https://sites.google.com/site/compendiumofphysicalactivities/Activity-Categories/walking
@@ -563,7 +586,6 @@ SettingsService.init('iOS');
     getWeight:function(){
           AsyncStorage.getItem('userWeight', (err, result) => { 
             var weight = JSON.parse(result)
-            console.log('resultcalori',weight);
             this.setState({
               weight:weight
             })
@@ -578,19 +600,13 @@ SettingsService.init('iOS');
         var timeinHr = ((this.state.mainTimer + this.state.storedRunduration)/1000)/3600;
         var time =(this.state.timeBetweenTwoPoint/1000)/3600;
         var Calories =  this.state.metval*this.state.weight*time;
-        console.log('Calories', this.state.metval,this.state.weight,time,Calories);
-        console.log('this.state.calorieBurned',this.state.calorieBurned);
         var totalCalories = this.state.calorieBurned ;
        
         
         totalCaloriesBurned += Calories;
-        console.log('totalCalories',totalCaloriesBurned);
         this.setState({
           calorieBurned:totalCaloriesBurned,
         })     
-
-        console.log('calorieBurned',this.state.calorieBurned);
-
       },
   previousLocationTime:function(){
     var oldtime = new Date(this.state.prevTimeStamp).getTime();
@@ -600,11 +616,9 @@ SettingsService.init('iOS');
       timeBetweenTwoPoint:timeBetweenTwoPoint,
     })
     var prevDistance = this.state.prevDistance*1000;
-    console.log("timeBetweenTwoPoint",timeBetweenTwoPoint,oldtime,newTime);
     var speed = prevDistance/timeBetweenTwoPoint;
     if (speed != NaN) {
     this.getMetsValue(speed);
-    console.log("newTimeStamp",parseFloat(timeBetweenTwoPoint/1000).toFixed(0),"prevDistance",parseFloat(prevDistance).toFixed(0)+"m","speed",speed*1000);
   }else{
     console.log("speednana");
   }
@@ -612,9 +626,7 @@ SettingsService.init('iOS');
 
  _startStepCounterUpdates:function() {
     const today = new Date();
- 
     Pedometer.startPedometerUpdatesFromDate(today.getTime(), (motionData) => {
-      console.log("motionData: " + motionData);
       this.setState(motionData);
     });
     // var startDate = new Date();
@@ -627,13 +639,26 @@ SettingsService.init('iOS');
 
   },
 
+
+
+  
+  // StartWhenLocationIsNotAcceptable:function(){
+  //    const today = new Date();
+  //    Pedometer.startPedometerUpdatesFromDate(today.getTime(), (motionData) => {
+  //     console.log("motionData:123 " + motionData.nuumberOfSteps);
+  //     this.setState({
+  //       gpsNotAccepatableStepvalue:motionData.numberOfSteps,
+  //     });
+  //   });
+  // },
+
+
   saveDataperiodcally:function(){ 
     var priv = this.state.distanceTravelledsec;
     this.IntervelSaveRun = setInterval(()=>{
     if (this.state.result != null) {
       var distance = parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv)).toFixed(1);
 
-      console.log('functionhits',parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv)).toFixed(1),priv);
     let Rundata = {
       data:this.props.data,
       distance:distance,
@@ -651,7 +676,6 @@ SettingsService.init('iOS');
     }); 
 
     }else{
-    console.log('functionhits',parseFloat(this.state.distanceTravelled).toFixed(1),parseFloat(this.state.distanceTravelled).toFixed(1) * this.props.data.conversion_rate);
     let Rundata = {
       data:this.props.data,
       distance:parseFloat(this.state.distanceTravelled).toFixed(1),
@@ -672,6 +696,12 @@ SettingsService.init('iOS');
 
   },
 
+
+
+
+
+
+  
    // function for calculating new and previous latlag
    calcDistance:function(newLatLng) {
     const { prevLatLng } = this.state
@@ -724,7 +754,6 @@ SettingsService.init('iOS');
      
       } else {
       if (this.state.enabled) {
-      console.log('mydat',Number(parseFloat(this.state.distanceTravelled).toFixed(1)) + Number(priv))
       if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
         AsyncStorage.removeItem('runDataAppKill');
         clearInterval(this.IntervelSaveRun);
@@ -758,7 +787,6 @@ SettingsService.init('iOS');
       var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
       var user = this.state.Storeduserdata;
       var timetotal = (this.state.result != null)?Number(this.state.mainTimer )+ Number(this.state.storedRunduration):this.state.mainTimer;
-      console.log('datarun',timetotal,this.state.mainTimer,);
       this.props.navigator.push({
         id:'sharescreen',
         passProps:{
@@ -943,6 +971,7 @@ SettingsService.init('iOS');
               <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>
             </View>
             <View style={{justifyContent: 'center',alignItems: 'center', flex:1}}>
+                
             <Text style={{fontSize:20,marginTop:30,marginBottom:20,color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,backgroundColor:'transparent',}}>IMPACT</Text> 
              <AnimatedCircularProgress
                 style={{justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
@@ -973,12 +1002,13 @@ SettingsService.init('iOS');
                    {this.TimeTextView(intime)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
                 </View>
-                 
+            
                 
               </View>
             </View>
 
           <View style={commonStyles.bottomToolbar}>
+
           <TouchableOpacity   onPress={this.onClickPace} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
            <View style={{flexDirection:'row'}}>
             <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:18,marginTop:2,marginRight:5}}></Icon>

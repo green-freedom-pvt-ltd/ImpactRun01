@@ -170,6 +170,7 @@ import{
     }
   
     SaveRunLocally(){
+      if (this.state.user) {
      var saveRuns = parseInt(this.state.saveRunCountData)+ 1 ;
      // var startPosition = this.props.StartLocation;
      // console.log('starttlocation:',this.props.StartLocation);
@@ -235,6 +236,9 @@ import{
           })
           
        });
+     }else{
+      return;
+     }
   
     }
     
@@ -249,7 +253,7 @@ import{
     // }
 
     PostRun(){
-      if (this.props.distance >= 0.1) {       
+      if (this.state.user) {       
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
@@ -261,7 +265,6 @@ import{
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       var calories_burnt = this.props.calories_burnt;
-      console.log("calories_burnt",calories_burnt,date);
       // var startPosition = this.props.StartLocation;
       // console.log('startPosition.coords.latitude',startPosition.coords.latitude);
       // console.log('startPosition.coords.longitude',startPosition.coords.longitude);
@@ -310,8 +313,8 @@ import{
         // AlertIOS.alert('error',error);
       })
     }else{
-     AlertIOS.alert('rundata','not more than 100');
-    }
+      return;
+     }
   }
 
     DiscardRunfunction(){
@@ -319,6 +322,7 @@ import{
     }
 
     AddruntoRunHistory(){
+      if (this.state.user) {
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
@@ -329,10 +333,11 @@ import{
       var userdata = this.state.user;
       var calories_burnt = this.props.calories_burnt;
       var user_id =JSON.stringify(userdata.user_id);
-      console.log("savetorunhistroy",date);
        // var startPosition = this.props.StartLocation;
       AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        // if (rundata != null) {
         var rundata = JSON.parse(result);
+        if (rundata != null) {
         var newRun = {
           cause_run_title:cause.cause_title,
           user_id:user_id,
@@ -357,9 +362,40 @@ import{
         });
         let fetchRunhistoryData = newtoprun;
         AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
-             console.log("data",data);
         })
-      })       
+       }else{
+        var newRun = {
+          cause_run_title:cause.cause_title,
+          user_id:user_id,
+          start_time:date,
+          distance: distance,
+          peak_speed: 1,
+          avg_speed:speed,
+          run_amount:impact,
+          run_duration: time,
+          is_flag:false,
+          calories_burnt:calories_burnt,
+          team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
+          // start_location_lat:startPosition.coords.latitude,
+          // start_location_long:startPosition.coords.longitude,
+          no_of_steps:steps,
+          is_ios:true,  
+        }
+        var newRunArray = [];
+        var runSavedata = newRunArray.push(newRun);
+        var newtoprun = newRunArray;
+        AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+        });
+        let fetchRunhistoryData = newtoprun;
+        AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
+        })
+       
+       }
+      })
+      
+      }else{
+      return;
+     }       
     }
     
     getILdata(){
@@ -371,7 +407,6 @@ import{
         this.setState({
           impactleague_is_active:boardData.impactleague_is_active
         })
-        console.log('mydatawewew',boardData)
         if (boardData.impactleague_is_active) {   
           this.setState({
             navigatetopage:'impactleaguehome'

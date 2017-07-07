@@ -42,7 +42,7 @@ class Homescreen extends Component {
           album : {},
           causes : [],
           navigation: {
-            index: 1,
+            index: 0,
             routes: [],
             loadingimage:true,
           },
@@ -116,13 +116,17 @@ class Homescreen extends Component {
       componentDidMount() {
         var provider = this.props.provider;
         var causeNum = this.props.myCauseNum;
+       
         if (causeNum != null || undefined) {
           try {
             AsyncStorage.multiGet(causeNum, (err, stores) => {
+
                 var _this = this
                 stores.map((item) => {
+
                     let key = item[0];
                     let val = JSON.parse(item[1]);
+                   
                     let causesArr = _this.state.causes.slice()
                     causesArr.push(val)                  
                     _this.setState({causes: causesArr})
@@ -132,7 +136,7 @@ class Homescreen extends Component {
               this.setState({
                 loadingimage:false,
                 navigation: Object.assign({}, this.state.navigation, {
-                index: 1,
+                index: 0,
                 routes: Object.keys(this.state.album).map(key => ({ key })),
 
               })
@@ -327,15 +331,28 @@ class Homescreen extends Component {
         } else {
           cause = {}
         }
+
+
         var money = JSON.stringify(parseFloat(this.state.album[route.key][6]).toFixed(0));
+       
+      if (money.length > 5) {
         var lenth = money.length;
         var commmaplace = lenth-4;
         var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
-        var moneyslice = money.slice(0,2);
+      }else{
+        // AlertIOS.alert("someval");
+         var Moneyfinalvalue = JSON.parse(money);
+      }
+        // var moneyslice = money.slice(0,2);
+
         var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
+        if (Runs.length > 5) {
         var runlength = Runs.length;
         var commmaplacerun =runlength-4;
         var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,lenth));
+        }else{
+          var runFinalvalue = JSON.parse(Runs);
+        }
         // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
         return (
           <View style={styles.page}>
@@ -414,7 +431,7 @@ class Homescreen extends Component {
     }else{
       return(
         <Lodingscreen/>
-        )
+        );
     }
     }
   

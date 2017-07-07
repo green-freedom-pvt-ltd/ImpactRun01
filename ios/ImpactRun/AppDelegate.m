@@ -18,10 +18,12 @@
 #import <asl.h>
 #import "RCTLog.h"
 //#import "RCTPushNotificationManager.h"
+#import "RCTPushNotificationManager.h"
 #import "RCTOneSignal.h"
 #import "AppHub/AppHub.h"
 #import "RCTBridge.h"
 #import "RCTJavaScriptLoader.h"
+
 
 //#import <CleverTapSDK/CleverTap.h>
 @interface AppDelegate() <RCTBridgeDelegate, UIAlertViewDelegate>
@@ -75,8 +77,8 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-                           
-                           
+  
+    
 //  [[NSNotificationCenter defaultCenter] addObserver:self
 //                                        selector:@selector(newBuildDidBecomeAvailable:)
 //                                            name:AHBuildManagerDidMakeBuildAvailableNotification
@@ -196,8 +198,8 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      * on the same Wi-Fi network.
      */
     
-      sourceURL = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
-    
+//      sourceURL = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+//
     
     /**
      * OPTION 2 - AppHub
@@ -211,14 +213,14 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      * $ react-native bundle --entry-file index.ios.js --platform ios --dev true --bundle-output iOS/main.jsbundle
      *
      */
-    
-//    AHBuild *build = [[AppHub buildManager] currentBuild];
-//    sourceURL = [build.bundle URLForResource:@"main"
-//                               withExtension:@"jsbundle"];
+//    
+    AHBuild *build = [[AppHub buildManager] currentBuild];
+    sourceURL = [build.bundle URLForResource:@"main"
+                               withExtension:@"jsbundle"];
 
         return sourceURL;
   }
-                           
+
                            - (void)loadSourceForBridge:(RCTBridge *)bridge
                            withBlock:(RCTSourceLoadBlock)loadCallback
   {
@@ -255,6 +257,27 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
        [_bridge reload];
      }
    }
+
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+  [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
+}
+// Required for the register event.
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+  [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+//// Required for the notification event.
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+//{
+//  [RCTPushNotificationManager didReceiveRemoteNotification:notification];
+//}
+// Required for the localNotification event.
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+  [RCTPushNotificationManager didReceiveLocalNotification:notification];
+}
 
 
 @end
