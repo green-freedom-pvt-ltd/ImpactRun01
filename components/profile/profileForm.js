@@ -43,7 +43,7 @@ var ProfileForm = React.createClass({
     onDateChange:function(date) {
       this.setState({date: date});
     },
-    
+
     goBack:function(){
         this.props.navigator.pop({});
     },
@@ -62,10 +62,10 @@ var ProfileForm = React.createClass({
       body_weight:JSON.stringify(user.body_weight),
       gender:user.gender_user,
       date:date,
-     }) 
+     })
     },
 
-  
+
 
     putRequestUser:function(){
         var user_id = this.props.user.user_id;
@@ -78,7 +78,7 @@ var ProfileForm = React.createClass({
         var weight = parseInt(this.state.body_weight);
         fetch(apis.userDataapi + user_id + "/", {
             method: "put",
-            headers: {  
+            headers: {
               'Authorization':"Bearer "+ auth_token,
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ var ProfileForm = React.createClass({
             })
           })
           .then((response) => response.json())
-          .then((response) => { 
+          .then((response) => {
             console.log('submited',response);
             // let keys = ['UID234', 'UID345'];
             //   AsyncStorage.multiRemove(keys, (err) => {
@@ -152,17 +152,17 @@ var ProfileForm = React.createClass({
                               let key = store[i][0];
                               let val = store[i][1];
                               this.props.getUserData();
-                              this.goBack();                                    
+                              this.goBack();
                           });
                       });
                   });
               });
-          })    
+          })
           .catch((err) => {
             console.log('err',err);
           })
     },
-    
+
     LoginView:function(){
       if(this.props.user && Object.keys(this.props.user).length > 0 ){
         this.setState({loaded:true});
@@ -182,7 +182,7 @@ var ProfileForm = React.createClass({
             <Login getUserData={this.props.getUserData}/>
           </View>
           </View>
-        ) 
+        )
       }
     },
 
@@ -218,7 +218,7 @@ var ProfileForm = React.createClass({
             <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
               <Icon3 style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon3>
             </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Run History'}</Text>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Edit Profile'}</Text>
             <TouchableOpacity style={{right:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.putRequestUser()} >
               <Text style={{color:'white'}}>SAVE</Text>
             </TouchableOpacity>
@@ -226,23 +226,23 @@ var ProfileForm = React.createClass({
           <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
 
             <View style={styles.FromWrap}>
-             
+
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Name</Text> 
-                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>         
+                <Text style={styles.ProfileTitle}>Name</Text>
+                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>
               </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Email</Text>
-                <TextInput  onFocus={() => this.setState({showDatePicker:false})}onChangeText={(email) => this.setState({email})}  keyboardType="email-address" value={this.state.email} style={styles.userProfileText}></TextInput>        
+                <TextInput  onFocus={() => this.setState({showDatePicker:false})}onChangeText={(email) => this.setState({email})}  keyboardType="email-address" value={this.state.email} style={styles.userProfileText}></TextInput>
               </View>
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Phone Number</Text> 
-                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(number) => this.setState({number})}  maxLength= {10} keyboardType= 'numeric' value={this.state.number} style={styles.userProfileText}></TextInput> 
-              </View>    
+                <Text style={styles.ProfileTitle}>Phone Number</Text>
+                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(number) => this.setState({number})}  maxLength= {10} keyboardType= 'numeric' value={this.state.number} style={styles.userProfileText}></TextInput>
+              </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Birthday</Text>
                 <TextInput  onChangeText={() => this.setState({showDatePicker:false})}   onFocus={() => this.onBirthDateChange()} value={this.state.date} style={styles.userProfileText}></TextInput>
-              </View>    
+              </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Body weight</Text>
                 <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(body_weight) => this.setState({body_weight})} keyboardType= 'numeric' value={this.state.body_weight} style={styles.userProfileText}></TextInput>
@@ -250,13 +250,13 @@ var ProfileForm = React.createClass({
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Gender</Text>
                 <TextInput onFocus={() => this.setState({showDatePicker:false})}onChangeText={(gender) => this.setState({gender})} value={this.state.gender} style={styles.userProfileText}></TextInput>
-                
+
               </View>
               <View style={styles.ProfileTextInput2}>
                {showDatePicker}
               </View>
-            </View> 
-             
+            </View>
+
           </ScrollView>
              <KeyboardSpacer/>
         </View>

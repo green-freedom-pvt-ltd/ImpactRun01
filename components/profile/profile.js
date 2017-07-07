@@ -34,7 +34,7 @@ const dataP = [];
 class Profile extends Component {
       constructor(props) {
         super(props);
-        
+
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       //   console.log("fetchRunhistoryDataerr",err);
       // });
@@ -61,7 +61,7 @@ class Profile extends Component {
      componentDidMount() {
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
-     
+
      }
       fetchRunDataLocally(){
           AsyncStorage.getItem('nextpage', (err, result) => {
@@ -72,6 +72,10 @@ class Profile extends Component {
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
             if (result != null || undefined) {
+<<<<<<< HEAD
+=======
+              // console.log("RunData",RunData);
+>>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
               this.setState({
                 rawData: RunData,
               })
@@ -256,6 +260,10 @@ class Profile extends Component {
         if (result != null || undefined) {
        
         var RunData = JSON.parse(result)
+<<<<<<< HEAD
+=======
+        // console.log("RunDatafetch7DayData",RunData);
+>>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
         var sum = 0;
         var nowdate = new Date();
         var sdate = new Date();
@@ -295,7 +303,7 @@ class Profile extends Component {
           weekday[5] = "FRI";
           weekday[6] = "SAT";
         if(!( counterDate.toLocaleDateString() in dataI)) {
-         
+
           var tempA = [];
           tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
           dataP.push(tempA);
@@ -345,7 +353,7 @@ class Profile extends Component {
         }
         this.setState({
           RunTotalDistance:sum,
-        })      
+        })
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
         }else{
@@ -400,8 +408,8 @@ class Profile extends Component {
         return;
       }
     }
-     
-    
+
+
 
       LodingView(){
         return(
@@ -462,7 +470,7 @@ class Profile extends Component {
 
           <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
             <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
-            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
+            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} >
             <AnimateNumber value={this.state.RunCountTotal} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
               }} ></AnimateNumber></Text>
@@ -478,11 +486,16 @@ class Profile extends Component {
             </View>
 
             <View>
+<<<<<<< HEAD
              <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}> 
                 <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raised in last 7 days</Text>
+=======
+             <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+                <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raise last 7 days</Text>
+>>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
            </View>
             <View style={styles.container2}>
-           
+
             <Chart
               style={styles.chart}
               data={dataP}
