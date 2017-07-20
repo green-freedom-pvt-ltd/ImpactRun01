@@ -198,7 +198,7 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      * on the same Wi-Fi network.
      */
     
-//      sourceURL = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+      sourceURL = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
 //
     
     /**
@@ -214,9 +214,9 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      *
      */
 //    
-    AHBuild *build = [[AppHub buildManager] currentBuild];
-    sourceURL = [build.bundle URLForResource:@"main"
-                               withExtension:@"jsbundle"];
+//    AHBuild *build = [[AppHub buildManager] currentBuild];
+//    sourceURL = [build.bundle URLForResource:@"main"
+//                               withExtension:@"jsbundle"];
 
         return sourceURL;
   }

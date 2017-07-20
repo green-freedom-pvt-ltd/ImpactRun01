@@ -72,10 +72,6 @@ class Profile extends Component {
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
             if (result != null || undefined) {
-<<<<<<< HEAD
-=======
-              // console.log("RunData",RunData);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
               this.setState({
                 rawData: RunData,
               })
@@ -260,10 +256,6 @@ class Profile extends Component {
         if (result != null || undefined) {
        
         var RunData = JSON.parse(result)
-<<<<<<< HEAD
-=======
-        // console.log("RunDatafetch7DayData",RunData);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
         var sum = 0;
         var nowdate = new Date();
         var sdate = new Date();
@@ -486,13 +478,8 @@ class Profile extends Component {
             </View>
 
             <View>
-<<<<<<< HEAD
              <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}> 
                 <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raised in last 7 days</Text>
-=======
-             <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-                <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raise last 7 days</Text>
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
            </View>
             <View style={styles.container2}>
 

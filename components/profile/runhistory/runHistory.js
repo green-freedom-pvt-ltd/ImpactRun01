@@ -59,10 +59,6 @@ class RunHistory extends Component {
 
 
       componentDidMount() {
-<<<<<<< HEAD
-=======
-        // console.log('RawData', this.props.rawData);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
          this.state.someData =  this.props.rawData
         AsyncStorage.getItem('runversion', (err, result) => {
             this.setState({
@@ -70,17 +66,9 @@ class RunHistory extends Component {
             })
           })
         if (this.state.someData != null) {
-<<<<<<< HEAD
         this.setState({
           runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
         })
-=======
-        // console.log("this.state.runHistoryData",this.state.runHistoryData);
-        this.setState({
-          runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
-        })
-         // console.log("this.state.runHistoryData",this.state.runHistoryData);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
        }else{
        }
       }
@@ -229,14 +217,7 @@ class RunHistory extends Component {
             })
           })
           .then((response) => response.json())
-<<<<<<< HEAD
           .then((response) => { 
-           
-=======
-          .then((response) => {
-
-            console.log('submited',response);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
             var userWeight = response.body_weight;
              AsyncStorage.mergeItem('userWeight',JSON.stringify(userWeight),()=>{
               this.setState({

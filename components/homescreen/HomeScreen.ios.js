@@ -338,7 +338,6 @@ class Homescreen extends Component {
       if (money.length > 5) {
         var lenth = money.length;
         var commmaplace = lenth-4;
-<<<<<<< HEAD
         var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
       }else{
         // AlertIOS.alert("someval");
@@ -346,10 +345,8 @@ class Homescreen extends Component {
       }
         // var moneyslice = money.slice(0,2);
 
-=======
         var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ;
         var moneyslice = money.slice(0,2);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
         var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
         if (Runs.length > 5) {
         var runlength = Runs.length;
