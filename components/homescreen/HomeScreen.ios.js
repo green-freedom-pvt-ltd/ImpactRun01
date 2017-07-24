@@ -491,7 +491,8 @@ class Homescreen extends Component {
          var Moneyfinalvalue = JSON.parse(money);
       }
         // var moneyslice = money.slice(0,2);
-
+        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ;
+        var moneyslice = money.slice(0,2);
         var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
         if (Runs.length > 5) {
         var runlength = Runs.length;

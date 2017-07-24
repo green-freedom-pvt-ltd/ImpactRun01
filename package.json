@@ -46,5 +46,9 @@
     "react-native-youtube": "^1.0.0-alpha.6",
     "react-number-format": "^1.1.2",
     "react-timer-mixin": "^0.13.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-react": "^6.24.1"
   }
 }

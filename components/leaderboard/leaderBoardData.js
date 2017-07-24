@@ -52,8 +52,7 @@ class LeaderboardData extends Component {
 
       
       fetchLeaderBoardLocally(){
-      
-        AsyncStorage.getItem('leaderBoard', (err, result) => { 
+        AsyncStorage.getItem('leaderBoard', (err, result) => {
         var jsonData = JSON.parse(result);
         console.log("jsonData",jsonData);
         if (result != null || undefined) {

@@ -59,8 +59,6 @@ class RunHistory extends Component {
 
 
       componentDidMount() {
-          
-          AsyncStorage.getItem('USERDATA', (err, result) => {})
          this.state.someData =  this.props.rawData
          AsyncStorage.getItem('runversion', (err, result) => {
             this.setState({
@@ -220,10 +218,10 @@ class RunHistory extends Component {
             
             AsyncStorage.mergeItem('USERDATA',JSON.stringify(userbodyweight),()=>{
               this.props.getUserData();
+            var userWeight = response.body_weight;
               this.setState({
-                weight:userbodyweight,
-              })
-            });
+                weight:userWeight,
+              });
           })    
           .catch((err) => {
             console.log('err',err);
