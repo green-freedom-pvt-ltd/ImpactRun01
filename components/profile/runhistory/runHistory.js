@@ -222,6 +222,7 @@ class RunHistory extends Component {
               this.setState({
                 weight:userWeight,
               });
+          })
           })    
           .catch((err) => {
             console.log('err',err);

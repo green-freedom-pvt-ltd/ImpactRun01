@@ -56,7 +56,6 @@
 		38D5C7611D915F7F00AB528B /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38D5C7601D915F7F00AB528B /* Montserrat-Regular.ttf */; };
 		38E376A21E57F9ED00D78F58 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38E376A01E57F9ED00D78F58 /* Fabric.framework */; };
 		38E376A31E57F9ED00D78F58 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38E376A11E57F9ED00D78F58 /* Crashlytics.framework */; };
-		53F70E9453B04E659922FC27 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C128A32FFA5A48008878A3BE /* libRNViewShot.a */; };
 		583CC830C90E44E0BB8989A5 /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */; };
 		5B2DAD3A5B854327A411E96F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9D25947B431419BB2CEFF8B /* Zocial.ttf */; };
 		5B60DF2E2BE54B0292982577 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC7B40852745BAB761C6FA /* SafariServices.framework */; };
@@ -73,7 +72,6 @@
 		8914D9C23501431C9CF7259F /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AC090B146004D6AB3DF3CC8 /* Foundation.ttf */; };
 		8A9C757976B74038989E643B /* libRNPedometer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 958BADC6FB8A4B0A971BB1F6 /* libRNPedometer.a */; };
 		B19105E787364D77BC06ADDD /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31E1B80977F5476A8D804A07 /* libRNShare.a */; };
-		B389124A119340848E8254A0 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43439C8C90004A28BA19B343 /* libRCTYouTube.a */; };
 		C2ACA79FC4454A7388FFCB87 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1AB504E48A84EE3BAA20525 /* libz.tbd */; };
 		C64D22300DE940B3AA3BBDE6 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E21C3DEB979148679E9EA78E /* libRCTFBSDK.a */; };
 		CDB61ADC848856561E967EEA /* libPods-ImpactrunTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E738E2298EF57D3769B5EED8 /* libPods-ImpactrunTests.a */; };
@@ -192,20 +190,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNLocation;
-		};
-		382E7BD41F24FA7B007AE15B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2763343A529440C985EB63D6 /* RNViewShot.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNViewShot;
-		};
-		382E7BD91F24FA7B007AE15B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9B19A2E1DB0438A8139D324 /* RCTYouTube.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8BDB9BC91B4289AE00EF9FEF;
-			remoteInfo = RCTYouTube;
 		};
 		3830D60A1D6C63A90028922A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -375,7 +359,6 @@
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Impactrun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Impactrun.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		2763343A529440C985EB63D6 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
 		2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPedometer.xcodeproj; path = "../node_modules/react-native-pedometer/RNPedometer.xcodeproj"; sourceTree = "<group>"; };
 		2DA757BBDB80A94C5E7D25E2 /* Pods-Impactrun.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.release.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.release.xcconfig"; sourceTree = "<group>"; };
 		2F81B07EEC3849D491066E24 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
@@ -428,7 +411,6 @@
 		38E376A11E57F9ED00D78F58 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		38FA6FFE1DCB3F3E00B10D63 /* Impactrun.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Impactrun.entitlements; path = Impactrun/Impactrun.entitlements; sourceTree = "<group>"; };
 		3DCB2538134749B6888AD41A /* RNShare.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
-		43439C8C90004A28BA19B343 /* libRCTYouTube.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTYouTube.a; sourceTree = "<group>"; };
 		46B022307871A444B187C1DB /* Pods-Impactrun.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.debug.xcconfig"; sourceTree = "<group>"; };
 		48862F61DFF945B7AAC005D8 /* RNLocation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNLocation.xcodeproj; path = "../node_modules/react-native-location/RNLocation.xcodeproj"; sourceTree = "<group>"; };
 		54885F245294403CBAD6B5A5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -456,8 +438,6 @@
 		B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGoogleSignin.a; sourceTree = "<group>"; };
 		BDFDE845FFB0413AA8C16D0E /* libRNLocation.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNLocation.a; sourceTree = "<group>"; };
-		C128A32FFA5A48008878A3BE /* libRNViewShot.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNViewShot.a; sourceTree = "<group>"; };
-		C9B19A2E1DB0438A8139D324 /* RCTYouTube.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTYouTube.xcodeproj; path = "../node_modules/react-native-youtube/RCTYouTube.xcodeproj"; sourceTree = "<group>"; };
 		D08051B8B9CB49E2BE0ADF94 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		DDD87A13B47AE6D4AC74753D /* libPods-Impactrun.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Impactrun.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E21C3DEB979148679E9EA78E /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
@@ -531,8 +511,6 @@
 				3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */,
 				8A9C757976B74038989E643B /* libRNPedometer.a in Frameworks */,
 				F26DCFCFECBC470295165EBB /* libRNLocation.a in Frameworks */,
-				53F70E9453B04E659922FC27 /* libRNViewShot.a in Frameworks */,
-				B389124A119340848E8254A0 /* libRCTYouTube.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,22 +635,6 @@
 			isa = PBXGroup;
 			children = (
 				382E7BD21F24FA7B007AE15B /* libRNLocation.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		382E7BCE1F24FA7B007AE15B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				382E7BD51F24FA7B007AE15B /* libRNViewShot.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		382E7BD61F24FA7B007AE15B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				382E7BDA1F24FA7B007AE15B /* libRCTYouTube.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -816,8 +778,6 @@
 				3DCB2538134749B6888AD41A /* RNShare.xcodeproj */,
 				2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */,
 				48862F61DFF945B7AAC005D8 /* RNLocation.xcodeproj */,
-				2763343A529440C985EB63D6 /* RNViewShot.xcodeproj */,
-				C9B19A2E1DB0438A8139D324 /* RCTYouTube.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1074,10 +1034,6 @@
 					ProjectRef = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
 				},
 				{
-					ProductGroup = 382E7BD61F24FA7B007AE15B /* Products */;
-					ProjectRef = C9B19A2E1DB0438A8139D324 /* RCTYouTube.xcodeproj */;
-				},
-				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
@@ -1104,10 +1060,6 @@
 				{
 					ProductGroup = 8350372E1C961726000DE4BA /* Products */;
 					ProjectRef = 8350372D1C961726000DE4BA /* RNVectorIcons.xcodeproj */;
-				},
-				{
-					ProductGroup = 382E7BCE1F24FA7B007AE15B /* Products */;
-					ProjectRef = 2763343A529440C985EB63D6 /* RNViewShot.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1215,20 +1167,6 @@
 			fileType = archive.ar;
 			path = libRNLocation.a;
 			remoteRef = 382E7BD11F24FA7B007AE15B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		382E7BD51F24FA7B007AE15B /* libRNViewShot.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNViewShot.a;
-			remoteRef = 382E7BD41F24FA7B007AE15B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		382E7BDA1F24FA7B007AE15B /* libRCTYouTube.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTYouTube.a;
-			remoteRef = 382E7BD91F24FA7B007AE15B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3830D60B1D6C63A90028922A /* libRCTFBLogin.a */ = {
@@ -1588,11 +1526,13 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = RNBackgroundGeolocationSampleTests/Info.plist;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1638,11 +1578,13 @@
 					"$(inherited)",
 					"$(SDKROOT)/Developer/Library/Frameworks",
 				);
-				INFOPLIST_FILE = RNBackgroundGeolocationSampleTests/Info.plist;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1714,14 +1656,15 @@
 					"$(SRCROOT)/../node_modules/react-native-activity-view",
 					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-location",
-					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
-					"$(SRCROOT)/../node_modules/react-native-youtube/**",
+					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1799,14 +1742,15 @@
 					"$(SRCROOT)/../node_modules/react-native-activity-view",
 					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-location",
-					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
-					"$(SRCROOT)/../node_modules/react-native-youtube/**",
+					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1914,6 +1858,8 @@
 					"$(SRCROOT)/../node_modules/react-native-location",
 					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-youtube/**",
+					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
+					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1984,6 +1930,8 @@
 					"$(SRCROOT)/../node_modules/react-native-location",
 					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-youtube/**",
+					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
+					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
