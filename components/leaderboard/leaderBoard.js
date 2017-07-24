@@ -39,32 +39,27 @@ import{
       }
 
       navigateToImpactLeague(){
-          AsyncStorage.multiGet(['UID234'], (err, stores) => {
-              stores.map((result, i, store) => {
-                  let key = store[i][0];
-                  let val = store[i][1];
-                  let user = JSON.parse(val);
-                  this.setState({
-                      user: user,
-                  })
-                if (this.state.user.team_code === 0) {
-                  this.setState({
-                    RouteImpactleague:'impactleaguecode'
-                  })
-                }else{
-                this.setState({
-                  RouteImpactleague:'impactleaguehome'
-                })
-
-               }
-              this.props.navigator.push({
-              id:this.state.RouteImpactleague,
-              navigator: this.props.navigator,
-              passProps:{user:this.props.user, getUserData:this.props.getUserData}
-              })
-              })
-          })    
-        
+        AsyncStorage.getItem('USERDATA', (err, result) => {
+          let user = JSON.parse(result);
+          console.log("user",user.team_code);
+          this.setState({
+            user:user,
+          })
+          if (this.state.user.team_code === 0) {
+            this.setState({
+              RouteImpactleague:'impactleaguecode'
+            })
+          }else{               
+            this.setState({
+              RouteImpactleague:'impactleaguehome'
+            })
+          }
+          this.props.navigator.push({
+            id:this.state.RouteImpactleague,
+            navigator: this.props.navigator,
+            passProps:{user:this.props.user, getUserData:this.props.getUserData}
+          })
+        })
       }
 
       renderLeaderboadScreen(){

@@ -119,7 +119,7 @@ import{
    
     	return(
     		<View style={styles.Maincontainer}>
-          <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.capitalizeFirstLetter()+" "+this.props.lastname}</Text>
+          <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.props.userName +" "+this.props.lastname}</Text>
           <View style={[styles.wrapLevelKm,{width:this.props.widthBar}]}>
            <Text style={styles.kmtext}>{this.state.prevKm}km</Text><Text  style={styles.kmtext2}>{this.state.levelKm}km</Text>
          </View>

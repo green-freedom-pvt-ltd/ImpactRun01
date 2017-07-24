@@ -20,13 +20,20 @@ import {
   NetInfo,
   PanResponder,
   PushNotificationIOS,
+  DeviceEventEmitter,
+  Linking,
   TouchableWithoutFeedback
 } from 'react-native';
+import Modal from '../downloadsharemeal/CampaignModal'
+var { RNLocation: Location } = require('NativeModules');
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Lodingscreen from '../../components/LodingScreen';
 import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import Icon3 from 'react-native-vector-icons/Ionicons';
+
 import ProgressBar from './causeprogressbar';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
@@ -45,45 +52,149 @@ class Homescreen extends Component {
             index: 0,
             routes: [],
             loadingimage:true,
+            FeedCount:0,
+            localfeedCount:0,
           },
+          isDenied:false,
         };
+        this.getfeedCount = this.getfeedCount.bind(this);
       }
+
       locationManager: undefined
       static propTypes = {
         style: View.propTypes.style,
       };
+      
+      getfeedCount(){
+        AsyncStorage.getItem('Feedcount', (err, result) => { 
+          if (result != null) {
+          var count = JSON.parse(result).count;
+          console.log("FeedCount",);
+          this.setState({
+            localfeedCount:count,
+
+          })
+        }else{
+          this.setState({
+            localfeedCount:0,
+          })
+        }
+        })
+      }
+
+
+
+      modelViewdeniedLocationRequest(){
+        return(
+          <Modal
+          onPress={()=>this.closemodel()}
+          style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
+             isOpen={this.state.isDenied}
+               >
+                  <View style={styles.modelWrap}>
+                    <View  style={styles.contentWrap}>
+                    <View style={styles.iconWrapmodel}>
+                      <Icon3 style={{color:"white",fontSize:30,}} name={'md-warning'}></Icon3>
+                    </View>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>DENIED LOCATION REQUEST</Text>
+                     <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>You denied the location request this app use your location to track you run please go > settings > Location > Always</Text>
+                   <View style={styles.modelBtnWrap}>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.navigateToIOSsetting()}><Text style={styles.btntext}>SETTINGS</Text></TouchableOpacity>
+                  </View>
+                   </View>
+                   </View>
+                  </View>
+            </Modal>
+          )
+      }
+     
+     closemodel(){
+        this.setState({
+          isDenied:false,
+        })
+      }
 
       componentWillMount() {
+        this.getfeedCount();
+
+        // this.fetchifinternet();
       // PushNotificationIOS.addListener('register', this._onRegistered);
       // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
       // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
       // PushNotificationIOS.addListener('localNotification', this._onLocalNotification);
 
-      PushNotificationIOS.requestPermissions();
+        PushNotificationIOS.requestPermissions();          
         AsyncStorage.getItem('RID0', (err, result) => {
           this.setState({
-          Rundata:JSON.parse(result),
-          loaded:true,
+          Rundata:JSON.parse(result),  
+          loaded:true,             
            })
-          this.PostSavedRundataIfInternetisOn();
-      })
+          this.PostSavedRundataIfInternetisOn();      
+      })  
 
 
         AsyncStorage.getItem('SaveRunCount', (err, result) => {
           this.setState({
-          RunCount:JSON.parse(result),
-          loaded:true,
+          RunCount:JSON.parse(result),  
+          loaded:true,             
            })
-
-        })
-
+              
+        })  
+        
       }
-
+       
       componentWillUnmount() {
       }
 
 
 
+      getFeedFromlocal(){
+
+       AsyncStorage.getItem('feedData', (err, result) => { 
+          if (result != null || undefined) {
+          var feeddata = JSON.parse(result);  
+          console.log("faqdata",feeddata);
+          AlertIOS.alert("result",JSON.stringify(feeddata));
+          this.setState({
+           FeedData: this.state.FeedData.cloneWithRows(feeddata),
+           loaded: true,
+          }) 
+        }else{
+          this.fetchifinternet();
+        }
+        });
+      }
+      
+      fetchifinternet(){
+         NetInfo.isConnected.fetch().done(
+          (isConnected) => { this.setState({isConnected}); 
+            if (isConnected) {
+              console.log("isind");
+               this.fetchFeedData();
+            }else{
+              this.getFeedFromlocal();
+            } 
+          }
+        );
+      }
+
+      fetchFeedData() {
+        var url = 'http://139.59.243.245/api/messageCenter/';
+        fetch(url)
+        .then( response => response.json() )
+        .then( jsonData => {
+        this.setState({
+          loaded: true,
+          notificationCount:jsonData.count,
+        });
+        console.log("jsonData.results",jsonData.results);
+        AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
+        });
+        })
+        .catch( error => console.log('Error fetching: ' + error) );
+      }
+  
       PostSavedRundataIfInternetisOn(){
            if(this.props.user) {
            NetInfo.isConnected.fetch().done(
@@ -92,9 +203,12 @@ class Homescreen extends Component {
                   this.postPastRun();
                }
             }
-           );
+           );  
          }
       }
+
+     
+
       showImage(route){
         if (this.state.loadingimage === true) {
           return(
@@ -113,7 +227,7 @@ class Homescreen extends Component {
         }
       }
 
-      componentDidMount() {
+      componentDidMount() {       
         var provider = this.props.provider;
         var causeNum = this.props.myCauseNum;
        
@@ -128,7 +242,7 @@ class Homescreen extends Component {
                     let val = JSON.parse(item[1]);
                    
                     let causesArr = _this.state.causes.slice()
-                    causesArr.push(val)
+                    causesArr.push(val)                  
                     _this.setState({causes: causesArr})
                     _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active,val.pk,val.amount_raised,val.amount,val.total_runs]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
@@ -145,7 +259,7 @@ class Homescreen extends Component {
           });
           } catch (err) {
             console.log(err)
-          }
+          } 
         }else{
           this.props.fetchDataonInternet();
         }
@@ -161,22 +275,22 @@ class Homescreen extends Component {
       for (i = 0; i < runcount+1; i++) {
           runNumber.push("RID" + i )  ;
       }
-
+      
       AsyncStorage.multiGet(runNumber, (err, stores) => {
         stores.map((result, i, store) => {
           let key = store[i][0];
           let val = store[i][1];
           this.setState({
-          MyRunVal:JSON.parse(val),
-          loaded:true,
-          })
+          MyRunVal:JSON.parse(val),  
+          loaded:true,             
+          }) 
          var RunData = this.state.MyRunVal;
          fetch(apis.runApi, {
           method: "POST",
-          headers: {
+          headers: {  
             'Authorization':"Bearer "+ tokenparse,
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json',    
           },
           body:JSON.stringify({
           cause_run_title:RunData.cause_run_title,
@@ -197,13 +311,15 @@ class Homescreen extends Component {
        })
 
       .then((response) => response.json())
-      .then((userRunData) => {
+      .then((userRunData) => { 
        var epochtime = userRunData.version;
-       let responceversion = epochtime;
-        AsyncStorage.removeItem('runversion',(err) => {
-         });
-        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-        });
+         let responceversion = {
+           runversion:epochtime
+         }
+        AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),()=>{   
+          console.log("removed version",responceversion);
+
+        });      
         this.RemoveStoredRun(runNumber);
        })
       });
@@ -265,7 +381,7 @@ class Homescreen extends Component {
         opacity,
       };
     };
-
+     
 
     // ONCHANGE_SLIDER_FUNCTION
     _handleChangeTab = (index) => {
@@ -276,21 +392,52 @@ class Homescreen extends Component {
 
     // NAVIGATION
     navigateToRunScreen(cause) {
-      var cause;
-      if (!!this.state.causes.length && this.state.navigation.index+1) {
-        cause = this.state.causes[this.state.navigation.index]
-      } else {
-        cause = {}
+      var me = this;
+      Location.getAuthorizationStatus(function(authorization) {
+        if (authorization === "authorizedAlways") {
+        // authorization is a string which is either "authorizedAlways",
+        // "authorizedWhenInUse", "denied", "notDetermined" or "restricted"
+      
+        var cause;
+        if (!!me.state.causes.length && me.state.navigation.index+1) {
+          cause = me.state.causes[me.state.navigation.index]
+        } else {
+          cause = {}
+        }
+
+        Location.startUpdatingLocation();
+
+        me.props.navigator.replace({
+        title: 'Gps',
+        id:'runlodingscreen',
+        index: 0,
+        passProps:{data:cause,user:me.props.user,getUserData:me.props.getUserData},
+        sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+        navigator: me.props.navigator,
+        });
+      }else{
+        if (authorization === "denied") {
+          me.setState({
+            isDenied:true,
+          })                 
+        }else{
+          Location.requestAlwaysAuthorization();
+        }
       }
-      this.props.navigator.replace({
-      title: 'Gps',
-      id:'runlodingscreen',
-      index: 0,
-      passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      navigator: this.props.navigator,
-      });
+     });
     };
+
+    navigateToIOSsetting(){
+     this.closemodel();
+     Linking.canOpenURL('app-settings:{6}').then(supported => {
+        if (!supported) {
+          console.log('Can\'t handle settings url');
+        } else {
+          return Linking.openURL('app-settings:');
+        }
+      }).catch(err => console.error('An error occurred', err));
+
+    }
 
     navigateToCauseDetail() {
       var cause;
@@ -338,7 +485,6 @@ class Homescreen extends Component {
       if (money.length > 5) {
         var lenth = money.length;
         var commmaplace = lenth-4;
-<<<<<<< HEAD
         var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
       }else{
         // AlertIOS.alert("someval");
@@ -346,10 +492,6 @@ class Homescreen extends Component {
       }
         // var moneyslice = money.slice(0,2);
 
-=======
-        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ;
-        var moneyslice = money.slice(0,2);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
         var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
         if (Runs.length > 5) {
         var runlength = Runs.length;
@@ -379,20 +521,20 @@ class Homescreen extends Component {
                   <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
                   <Text style = {styles.textMoneyraised}>{parseFloat((this.state.album[route.key][6])/this.state.album[route.key][7]*100).toFixed(0)}%</Text>
                 </View>
-                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/>
+                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
                 <View style = {styles.wraptext2}>
                   <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
-                </View>
+                </View>      
               </View>
-
+             
             </View>
             </TouchableWithoutFeedback>
 
           </View>
         );
-
+      
     };
-
+   
 
      // RENDER_PAGE
     _renderPage = (props,data,route) => {
@@ -403,12 +545,46 @@ class Homescreen extends Component {
           style={this._buildCoverFlowStyle(props)}
           renderScene={this._renderScene}/>
       );
-
+    
     };
+
+    navigateToFeed() {
+      this.props.navigator.push({
+      title: 'Gps',
+      id:'messagecenter',
+      index: 0,
+      passProps:{getfeedCount:this.getfeedCount},
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      navigator: this.props.navigator,
+      });
+    };
+
+     notificationIcon(){
+        // this.state.notificationCount > this.state.localStorenotificationCount
+        if (this.state.notificationCount > this.state.localfeedCount) {
+          return(
+            <View style={styles.notificationBatch}><Text style={{fontSize:7,color:"white",fontWeight:"600"}}>1</Text></View>
+            )
+        }else{
+          return;
+        }
+      }
+
+    
+    // renderFeedIcon(){
+
+    //     return(
+    //        <TouchableOpacity style={{height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToFeed()} >
+         
+    //          <Icon2 style={{fontSize:22,top:5, color:'white'}} name={'notifications'} ></Icon2>
+    //            {this.notificationIcon()}
+    //         </TouchableOpacity>
+    //       );
+    //   };
 
 
     // RENDER_FUNCTION
-    render(route) {
+    render(route) { 
       if (this.props.myCauseNum != null ) {
       return (
         <View style={{height:deviceheight,width:deviceWidth,backgroundColor:'white'}}>
@@ -430,7 +606,7 @@ class Homescreen extends Component {
                </TouchableOpacity>
               </View>
              </View>
-
+            {this.modelViewdeniedLocationRequest()}
           </View>
       );
     }else{
@@ -439,8 +615,8 @@ class Homescreen extends Component {
         );
     }
     }
-
-
+  
+  
 
   }
 
@@ -465,7 +641,7 @@ class Homescreen extends Component {
       width:deviceWidth,
       opacity:1,
      },
-     homebg:{
+     homebg:{    
       flexDirection: 'row',
       position:'absolute',
       height:deviceheight,
@@ -529,7 +705,7 @@ class Homescreen extends Component {
       fontWeight:'400',
       fontFamily:styleConfig.FontFamily3,
     },
-
+  
     barWrap:{
       width: deviceWidth-65,
       justifyContent: 'center',
@@ -569,12 +745,78 @@ class Homescreen extends Component {
         height: 3,
       },
     },
+    notificationBatch:{
+      marginTop:-18,
+      marginLeft:35,
+      position:"absolute",
+      justifyContent: 'center',
+      alignItems: 'center',
+      height:10,
+      width:10,
+      borderRadius:5,
+      backgroundColor:"red",
+    },
+    modelStyle:{
+    justifyContent: 'center',
+    alignItems: 'center',
+   },
+   modelWrap:{
+    padding:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"white",
+    paddingBottom:5,
+    borderRadius:5,
+   },
+   iconWrapmodel:{
+     justifyContent: 'center',
+     alignItems: 'center',
+     height:70,
+     width:70,
+     marginTop:-55,
+     borderRadius:35,
+     backgroundColor:styleConfig.bright_blue,
+     shadowColor: '#000000',
+     shadowOpacity: 0.4,
+     shadowRadius: 4,
+     shadowOffset: {
+      height: 2,
+     },
+   },
+   contentWrap:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"white",
+    width:deviceWidth-100,
+   },
+   modelBtnWrap:{
+    marginTop:10,
+    width:deviceWidth-100,
+    flexDirection:'row',
+    justifyContent: 'space-between',
+   },
+    modelbtnEndRun:{
+    flex:1,
+    height:40,
+    margin:5,
+    borderRadius:5,
+    backgroundColor:styleConfig.pale_magenta,
+    justifyContent: 'center',
+    alignItems: 'center',
+   },
+   btntext:{
+    color:"white",
+    textAlign:'center',
+    margin:5,
+    fontWeight:'600',
+    fontFamily: styleConfig.FontFamily,
+   },
   });
   export default Homescreen;
   // <View style={{bottom:0, width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
-
+     
   //     <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
   //       <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
   //     </TouchableOpacity>
-
+     
   // </View>

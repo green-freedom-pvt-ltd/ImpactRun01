@@ -123,25 +123,18 @@
 
 
       RouteChangeField(responseJson){
-          var userdata = this.props.user;
+        var userdata = this.props.user;
+        var userdata = this.props.user;
+        console.log("userdata",userdata);
+        let userData = {
+          team_code:responseJson.team_code
+        }
         // first user, delta values
-        let UID234_delta = {
-            team_code:responseJson.team_code,
-         };
-
-        let multi_merge_pairs = [
-          ['UID234', JSON.stringify(UID234_delta)],
-           
-        ]
-        AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-            AsyncStorage.multiGet(['UID234'], (err, stores) => {
-                stores.map((result, i, store) => {
-                    let key = store[i][0];
-                    let val = store[i][1];
-                });
-              
-            });
-        })   
+        AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
+         AsyncStorage.getItem('USERDATA', (err, result) => {
+          console.log("userresult ",result);
+        })
+        })    
       }
 
       onSelectCity(idx,value){

@@ -13,7 +13,8 @@ var {
   ScrollView,
   DatePickerIOS,
   TouchableOpacity,
-  Keyboard
+  Keyboard,
+  AlertIOS
 } = ReactNative;
 import styleConfig from '../styleConfig';
 import Login from '../login/LoginBtns';
@@ -43,31 +44,53 @@ var ProfileForm = React.createClass({
     onDateChange:function(date) {
       this.setState({date: date});
     },
-
+    
     goBack:function(){
         this.props.navigator.pop({});
     },
 
     componentDidMount:function() {
       var user = this.props.user;
-      var date = moment(user.Birth_day).format('MM/DD/YYYY');
+      if (user.Birthday != null) {
+        var date = moment(user.Birth_day).format('MM/DD/YYYY');
+      }else{
+        var date = moment(new Date()).format('MM/DD/YYYY');
+      }
+      if (user.phone_number != null) { 
+        var phoneno = JSON.stringify(user.phone_number)
+      }else{
+        var phoneno = " ";
+      }
+      if (user.email != null ) {
+       var emailuser = user.email
+      }else{
+        var emailuser = " ";
+      }
+      if (user.body_weight != null) {
+        var weight = JSON.stringify(user.body_weight);
+      }else{
+        var weight = " ";
+      }
+     console.log("newDate",date);
      this.setState({
       name:user.first_name +" "+ user.last_name,
       first_name:"",
       last_name:"",
-      email:user.email,
-      number:JSON.stringify(user.phone_number),
-      bday:"990",
-      myweight:JSON.stringify(user.body_weight)+" "+"kg",
-      body_weight:JSON.stringify(user.body_weight),
+      email:emailuser,
+      number:phoneno,
+      body_weight:weight,
       gender:user.gender_user,
       date:date,
-     })
+     }) 
     },
 
-
+  
 
     putRequestUser:function(){
+      if(this.state.email != " "  ){
+        if(this.state.number != " " ){
+          if (this.state.birthday != " " ){
+          if (this.state.body_weight != " " ) {
         var user_id = this.props.user.user_id;
         var auth_token = this.props.user.auth_token;
         var nameArr = this.state.name.split(/\s+/);
@@ -78,7 +101,7 @@ var ProfileForm = React.createClass({
         var weight = parseInt(this.state.body_weight);
         fetch(apis.userDataapi + user_id + "/", {
             method: "put",
-            headers: {
+            headers: {  
               'Authorization':"Bearer "+ auth_token,
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -94,31 +117,16 @@ var ProfileForm = React.createClass({
             })
           })
           .then((response) => response.json())
-          .then((response) => {
+          .then((response) => { 
             console.log('submited',response);
-            // let keys = ['UID234', 'UID345'];
-            //   AsyncStorage.multiRemove(keys, (err) => {
-            //   });
+            let keys = ['UID234', 'UID345','USERDATA',];
+              AsyncStorage.multiRemove(keys, (err) => {
+            });
+
+              console.log("responce",response);
               var userdata = response;
-              console.log("response")
-              let UID234_object = {
-                  body_weight:userdata.body_weight,
-                  first_name: userdata.first_name,
-                  user_id: userdata.user_id,
-                  last_name: userdata.last_name,
-                  gender_user: userdata.gender_user,
-                  email: userdata.email,
-                  phone_number: userdata.phone_number,
-                  Birth_day: userdata.birthday,
-                  social_thumb: userdata.social_thumb,
-                  auth_token: userdata.auth_token,
-                  total_amount: userdata.total_amount,
-                  is_signup: userdata.sign_up,
-                  total_distance: userdata.total_distance,
-                  team_code: userdata.team_code,
-              };
                     // first user, delta values
-              let UID234_delta = {
+              let userData = {
                   body_weight:userdata.body_weight,
                   first_name: userdata.first_name,
                   user_id: userdata.user_id,
@@ -135,34 +143,31 @@ var ProfileForm = React.createClass({
                   team_code: userdata.team_code,
               };
 
-
-              let multi_set_pairs = [
-                  ['UID234', JSON.stringify(UID234_object)],
-
-              ]
-              let multi_merge_pairs = [
-                  ['UID234', JSON.stringify(UID234_delta)],
-
-              ]
-
-              AsyncStorage.multiSet(multi_set_pairs, (err) => {
-                  AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-                      AsyncStorage.multiGet(['UID234'], (err, stores) => {
-                          stores.map((result, i, store) => {
-                              let key = store[i][0];
-                              let val = store[i][1];
-                              this.props.getUserData();
-                              this.goBack();
-                          });
-                      });
-                  });
-              });
-          })
+              AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
+                  AsyncStorage.getItem('USERDATA', (err, result) => {
+                    this.props.getUserData();
+                    this.goBack();  
+                    console.log("userresult ",result);
+                  })
+               })
+          })    
           .catch((err) => {
             console.log('err',err);
           })
+        }else{
+           AlertIOS.alert("Please enter body weight", "Field required* ");
+        }
+        }else{
+          AlertIOS.alert("Please enter birthday","Field required* ");
+        }
+        }else{
+          AlertIOS.alert("Please enter phone number","Field required* ");
+        }
+        }else{
+          AlertIOS.alert("Please enter email","Field required* ");
+        }
     },
-
+    
     LoginView:function(){
       if(this.props.user && Object.keys(this.props.user).length > 0 ){
         this.setState({loaded:true});
@@ -182,7 +187,7 @@ var ProfileForm = React.createClass({
             <Login getUserData={this.props.getUserData}/>
           </View>
           </View>
-        )
+        ) 
       }
     },
 
@@ -218,7 +223,7 @@ var ProfileForm = React.createClass({
             <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
               <Icon3 style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon3>
             </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Edit Profile'}</Text>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Profile'}</Text>
             <TouchableOpacity style={{right:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.putRequestUser()} >
               <Text style={{color:'white'}}>SAVE</Text>
             </TouchableOpacity>
@@ -226,23 +231,23 @@ var ProfileForm = React.createClass({
           <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
 
             <View style={styles.FromWrap}>
-
+             
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Name</Text>
-                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>
+                <Text style={styles.ProfileTitle}>Name</Text> 
+                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>         
               </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Email</Text>
-                <TextInput  onFocus={() => this.setState({showDatePicker:false})}onChangeText={(email) => this.setState({email})}  keyboardType="email-address" value={this.state.email} style={styles.userProfileText}></TextInput>
+                <TextInput  onFocus={() => this.setState({showDatePicker:false})}onChangeText={(email) => this.setState({email})}  keyboardType="email-address" value={this.state.email} style={styles.userProfileText}></TextInput>        
               </View>
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Phone Number</Text>
-                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(number) => this.setState({number})}  maxLength= {10} keyboardType= 'numeric' value={this.state.number} style={styles.userProfileText}></TextInput>
-              </View>
+                <Text style={styles.ProfileTitle}>Phone Number</Text> 
+                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(number) => this.setState({number})}  maxLength= {10} keyboardType= 'numeric' value={this.state.number} style={styles.userProfileText}></TextInput> 
+              </View>    
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Birthday</Text>
                 <TextInput  onChangeText={() => this.setState({showDatePicker:false})}   onFocus={() => this.onBirthDateChange()} value={this.state.date} style={styles.userProfileText}></TextInput>
-              </View>
+              </View>    
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Body weight</Text>
                 <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(body_weight) => this.setState({body_weight})} keyboardType= 'numeric' value={this.state.body_weight} style={styles.userProfileText}></TextInput>
@@ -250,13 +255,13 @@ var ProfileForm = React.createClass({
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Gender</Text>
                 <TextInput onFocus={() => this.setState({showDatePicker:false})}onChangeText={(gender) => this.setState({gender})} value={this.state.gender} style={styles.userProfileText}></TextInput>
-
+                
               </View>
               <View style={styles.ProfileTextInput2}>
                {showDatePicker}
               </View>
-            </View>
-
+            </View> 
+             
           </ScrollView>
              <KeyboardSpacer/>
         </View>

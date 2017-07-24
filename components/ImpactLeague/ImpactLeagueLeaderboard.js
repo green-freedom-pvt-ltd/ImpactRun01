@@ -39,16 +39,16 @@ class ImpactLeagueLeaderBoard extends Component {
       }
 
       componentDidMount() {
-         this.FetchLeaderBoardLocally();
+         this.FetchDataifInternet();
       }
       
       FetchDataifInternet(){
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
-               this.FetchLeaderBoard();
+              this.FetchLeaderBoard();
             }else{
-              AlertIOS.alert('No internet connection', 'Please connect your device to internet connection')
+              this.FetchLeaderBoardLocally();
             } 
           }
         );

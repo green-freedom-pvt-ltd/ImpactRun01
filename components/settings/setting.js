@@ -71,7 +71,7 @@ class Setting extends Component {
          this.handleFBLogout();
            GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
            this.setState({user: null});
-             let keys = ['UID234', 'UID345'];
+             let keys = ['UID234', 'UID345','USERDATA'];
               AsyncStorage.multiRemove(keys, (err) => {
               });
 
@@ -94,23 +94,21 @@ class Setting extends Component {
           if (!error) {
             _this.setState({ user : null});
             _this.props.onLogout && _this.props.onLogout();
-            let keys = ['UID234', 'UID345'];
+            let keys = ['UID234', 'UID345','USERDATA','fetchRunhistoryData'];
               AsyncStorage.multiRemove(keys, (err) => {
               });
-
+       
           } else {
             console.log(error, data);
           }
         });
       }
       componentDidMount() {
-      AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-        stores.map((result, i, store) => {
-            let key = store[i][0];
-            let val = store[i][1];
+          AsyncStorage.getItem('USERDATA', (err, result) => {
+            let user = JSON.parse(result);
             this.setState({
-              user:val,
-              loaded:true,
+              user:user,
+              loaded:true
             })
             if (this.state.user) {
               this.setState({
@@ -118,14 +116,10 @@ class Setting extends Component {
                 IconText: (this.state.user) ? 'md-log-out':'md-log-in'
               })
             };
-        });
-      })  
+          })  
       }
-      removeItem(){
-        let keys = 'Feedcount';
-        AsyncStorage.removeItem(keys, (err) => {
-        }); 
-      }
+
+      
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>

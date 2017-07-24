@@ -10,14 +10,27 @@ import{
     Dimensions,
     TouchableOpacity,
     Text,
+    Linking,
   } from 'react-native';
 import commonStyles from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import styleConfig from '../styleConfig';
-class CauseDetail extends Component {
+import Modal from '../downloadsharemeal/CampaignModal';
+import Icon3 from 'react-native-vector-icons/Ionicons';
 
+var { RNLocation: Location } = require('NativeModules');
+
+class CauseDetail extends Component {
+    
+
+    constructor(props) {
+        super(props);
+        this.state = {
+         isDenied:false,
+        }
+    }
     // Go_Back
     popRoute() {
          this.props.navigator.pop();
@@ -25,14 +38,72 @@ class CauseDetail extends Component {
 
     // Navigate to Run Screen
     NavigateToRunScreen(){
+      var me = this;
       var data = this.props.data;
-       this.props.navigator.push({
+      Location.getAuthorizationStatus(function(authorization) {
+      if (authorization === "authorizedAlways") {
+       me.props.navigator.push({
           title:'RunScreen',
           id:'runlodingscreen',
-          navigator: this.props.navigator,
+          navigator: me.props.navigator,
           passProps: {data: data}
        })
+      }else{
+        if (authorization === "denied") {
+          me.setState({
+            isDenied:true,
+          })                 
+        }else{
+          Location.requestAlwaysAuthorization();
+        }
+      }
+     })
     }
+
+
+    navigateToIOSsetting(){
+     this.closemodel();
+     Linking.canOpenURL('app-settings:{6}').then(supported => {
+
+        if (!supported) {
+          console.log('Can\'t handle settings url');
+        } else {
+          return Linking.openURL('app-settings:');
+        }
+      }).catch(err => console.error('An error occurred', err));
+
+    }
+    
+
+     modelViewdeniedLocationRequest(){
+        return(
+          <Modal
+          onPress={()=>this.closemodel()}
+          style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
+             isOpen={this.state.isDenied}
+               >
+                  <View style={styles.modelWrap}>
+                    <View  style={styles.contentWrap}>
+                    <View style={styles.iconWrapmodel}>
+                      <Icon3 style={{color:"white",fontSize:30,}} name={'md-warning'}></Icon3>
+                    </View>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>DENIED LOCATION REQUEST</Text>
+                     <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>You denied the location request this app use your location to track you run please go > settings > Location > Always</Text>
+                   <View style={styles.modelBtnWrap}>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.navigateToIOSsetting()}><Text style={styles.btntext}>SETTINGS</Text></TouchableOpacity>
+                  </View>
+                   </View>
+                   </View>
+                  </View>
+            </Modal>
+          )
+      }
+      closemodel(){
+        this.setState({
+          isDenied:false,
+        })
+      }
 
     // Render_Screen
     render() {
@@ -63,6 +134,7 @@ class CauseDetail extends Component {
                   <TouchableOpacity style={styles.btnBeginRun} text={'BEGIN RUN'}onPress={() => this.NavigateToRunScreen()}>
                   <Text style={styles.Btntext}>BEGIN RUN</Text></TouchableOpacity>
                 </View>
+                {this.modelViewdeniedLocationRequest()}
               </View>
         )
     }
@@ -166,6 +238,63 @@ class CauseDetail extends Component {
     padding:10,
     paddingBottom:40,
   },
+
+
+   modelStyle:{
+    justifyContent: 'center',
+    alignItems: 'center',
+   },
+   modelWrap:{
+    padding:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"white",
+    paddingBottom:5,
+    borderRadius:5,
+   },
+   iconWrapmodel:{
+     justifyContent: 'center',
+     alignItems: 'center',
+     height:70,
+     width:70,
+     marginTop:-55,
+     borderRadius:35,
+     backgroundColor:styleConfig.bright_blue,
+     shadowColor: '#000000',
+     shadowOpacity: 0.4,
+     shadowRadius: 4,
+     shadowOffset: {
+      height: 2,
+     },
+   },
+   contentWrap:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"white",
+    width:deviceWidth-100,
+   },
+   modelBtnWrap:{
+    marginTop:10,
+    width:deviceWidth-100,
+    flexDirection:'row',
+    justifyContent: 'space-between',
+   },
+    modelbtnEndRun:{
+    flex:1,
+    height:40,
+    margin:5,
+    borderRadius:5,
+    backgroundColor:styleConfig.pale_magenta,
+    justifyContent: 'center',
+    alignItems: 'center',
+   },
+   btntext:{
+    color:"white",
+    textAlign:'center',
+    margin:5,
+    fontWeight:'600',
+    fontFamily: styleConfig.FontFamily,
+   },
 
 
 

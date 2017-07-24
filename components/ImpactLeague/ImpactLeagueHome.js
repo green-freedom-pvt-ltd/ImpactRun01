@@ -19,13 +19,13 @@ import{
 import apis from '../apis';
 import commonStyles from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
-import GiftedListView from 'react-native-gifted-listview';
 import LodingScreen from '../LodingScreen';
 import TimerMixin from 'react-timer-mixin';
 import styleConfig from '../styleConfig'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ImpactLeague extends Component {
+
       constructor(props) {
         super(props);
         this.fetchDataLocally();
@@ -39,25 +39,25 @@ class ImpactLeague extends Component {
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
       }
-       mixins: [TimerMixin]
-       
-      componentDidMount() { 
-          this.getUserData();      
-          setTimeout(() => {this.setState({downrefresh: false})}, 1000)
 
-        }
+      mixins: [TimerMixin]
+       
+
+      componentDidMount() { 
+        this.getUserData();      
+        setTimeout(() => {this.setState({downrefresh: false})}, 1000)
+      }
+
       componentWillMount() {
       }
+
+
       fetchDataLocally(){
-        AsyncStorage.multiGet(['UID234'], (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let val = store[i][1];
-          let user = JSON.parse(val);
-            this.setState({
-              user:user,
-             
-            })
+        AsyncStorage.getItem('USERDATA', (err, result) => {
+          let user = JSON.parse(result);
+          this.setState({
+            user: user,
+          })
           AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
             var boardData = JSON.parse(result);
             if (result != null || undefined) {
@@ -68,40 +68,33 @@ class ImpactLeague extends Component {
                 loaded: true,
               })
             }else{
-               this.getUserData();
-               this.setState({
+              this.getUserData();
+              this.setState({
                 leaguename:'Impact League'
-               })
+              })
             }
           }); 
-        }); 
-        });
+        })
       }
 
       getUserData(){
-        AsyncStorage.multiGet(['UID234'], (err, stores) => {
-          stores.map((result, i, store) => {
-            let key = store[i][0];
-            let val = store[i][1];
-            let user = JSON.parse(val);
-              this.setState({
-                user:user,
-              })
-              NetInfo.isConnected.fetch().done(
-              (isConnected) => { this.setState({isConnected}); 
-                if (isConnected) {
-                   this.fetchLeaderBoardData();
-                };  
-              }
-            );
-            })
+        AsyncStorage.getItem('USERDATA', (err, result) => {
+          let user = JSON.parse(result);
+          this.setState({
+            user: user,
           })
-        
+          NetInfo.isConnected.fetch().done(
+            (isConnected) => { this.setState({isConnected}); 
+              if (isConnected) {
+                 this.fetchLeaderBoardData();
+              };  
+            }
+          );
+        })
       }
 
     
-      fetchLeaderBoardData() {
-        
+      fetchLeaderBoardData() {      
         var token = this.state.user.auth_token;
         var url = apis.ImpactLeagueTeamLeaderBoardApi;
         fetch(url,{
@@ -129,19 +122,19 @@ class ImpactLeague extends Component {
       }
 
       NavigateToleagueend(){
-      this.props.navigator.push({
-         title: 'leaderboard',
-        id:'leaderboard',
-      })
+        this.props.navigator.push({
+          title: 'leaderboard',
+          id:'leaderboard',
+        })
       }
 
   
       NavigateToDetail(rowData){
-       this.props.navigator.push({
-        title: 'impactleaguehome',
-        id:'impactleagueleaderboard',
-        passProps:{user:this.props.user, Team_id:rowData.id}
-      })
+        this.props.navigator.push({
+          title: 'impactleaguehome',
+          id:'impactleagueleaderboard',
+          passProps:{user:this.state.user, Team_id:rowData.id}
+        })
       }
 
       goBack(){

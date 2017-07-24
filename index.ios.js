@@ -14,13 +14,13 @@ import {
   NetInfo,
   AlertIOS,
  } from 'react-native';
- import BackgroundTimer from 'react-native-background-timer';
+ // import BackgroundTimer from 'react-native-background-timer';
  // import crashlytics from 'react-native-fabric-crashlytics';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
-import BackgroundGeolocation from 'react-native-background-geolocation';
+// import BackgroundGeolocation from 'react-native-background-geolocation';
 import LodingScreen from './components/LodingScreen';
-global.bgGeo = BackgroundGeolocation;
+// global.bgGeo = BackgroundGeolocation;
 import Home from './components/homescreen/HomeScreen.ios';
 import RunScreen from './components/gpstracking/home.ios';
 import Login from './components/login/login';
@@ -44,7 +44,7 @@ import RunHistory from './components/profile/runhistory/runHistory';
 import ProfileForm from './components/profile/profileForm';
 import ProfileHeader from './components/profile/profileHeader';
 import Profile from './components/profile/profile';
-import BackgroundFetch from "react-native-background-fetch";
+// import BackgroundFetch from "react-native-background-fetch";
 import apis from './components/apis'
 var REQUEST_URL = 'http://dev.impactrun.com/api/causes/';
 const NoBackSwipe ={
@@ -70,7 +70,6 @@ class Application extends Component{
 
 
       componentDidMount() {
-        this.fetchDataonInternet()
       }
 
 
@@ -80,25 +79,29 @@ class Application extends Component{
           this.setState({
               myCauseNum: JSON.parse(result),
           })
-        })
+        });
+
         AsyncStorage.getItem('runDataAppKill', (err, result) => {
+          console.log("result",result);
           this.setState({
             result:result
           })
-        });
-        AsyncStorage.multiGet(['UID234'], (err, stores) => {
-          stores.map((result, i, store) => {
-            let key = store[i][0];
-            let val = store[i][1];
+        });       
+        AsyncStorage.getItem('USERDATA', (err, result) => {
+          if (result != null) { 
+            var user = JSON.parse(result);
             this.setState({
-              user:val,
+              user:user,
               loding:true,
             })
-          })
-          this.setState({
-            userLogin:this.state.user,
-          })
+          }else{
+            this.setState({
+              user:null,
+              loding:true,
+            })
+          }
           if (this.state.result != null) {
+            console.log("this.state.result",this.state.result);
             this.setState({
               textState:'runscreen',
             })
@@ -107,18 +110,20 @@ class Application extends Component{
              textState:(this.state.user) ? 'tab':'login',
             })
           }
-        });
+        })
+
+          
       }
 
-      fetchDataonInternet(){
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                if (isConnected) {
-                    this.fetchData();
-                }
-            }
-        );
-      }
+      // fetchDataonInternet(){
+      //   NetInfo.isConnected.fetch().done(
+      //       (isConnected) => {
+      //           if (isConnected) {
+      //               this.fetchData();
+      //           }
+      //       }
+      //   );
+      // }
 
 
 
@@ -143,7 +148,9 @@ class Application extends Component{
               AsyncStorage.multiSet(causesData, (err) => {
               })
             })
-            .done();
+           .catch((err)=>{
+             console.log("errorcauseapi ",err)
+            })
       }
 
 
@@ -209,11 +216,11 @@ class Application extends Component{
         runScreenRender(route,navigator){
           if (this.state.result != null) {
             return(
-                <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>
+                <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} />
               )
           }else{
             return(
-                <RunScreen  navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>
+                <RunScreen  navigator={navigator} {...route.passProps} />
               )
           }
         }
@@ -267,7 +274,7 @@ class Application extends Component{
                 return <Profile navigator={navigator} {...route.passProps}/>;
 
                 default :
-                 return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
+                 return <Login navigator={navigator}{...route.passProps} />
             }
 
        }

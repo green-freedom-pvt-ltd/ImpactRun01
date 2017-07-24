@@ -11,6 +11,7 @@ import{
     TouchableOpacity,
     Text,
     NetInfo,
+    AlertIOS,
     ActivityIndicatorIOS,
     AsyncStorage,
   } from 'react-native';
@@ -34,7 +35,7 @@ const dataP = [];
 class Profile extends Component {
       constructor(props) {
         super(props);
-
+        
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       //   console.log("fetchRunhistoryDataerr",err);
       // });
@@ -61,7 +62,7 @@ class Profile extends Component {
      componentDidMount() {
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
-
+     
      }
       fetchRunDataLocally(){
           AsyncStorage.getItem('nextpage', (err, result) => {
@@ -72,10 +73,6 @@ class Profile extends Component {
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
             if (result != null || undefined) {
-<<<<<<< HEAD
-=======
-              // console.log("RunData",RunData);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
               this.setState({
                 rawData: RunData,
               })
@@ -111,6 +108,7 @@ class Profile extends Component {
             RunCount:jsonData.count,
             nextPage:jsonData.next,
           });
+
           if (this.state.nextPage != null) {
           fetch(this.state.nextPage,{
           method: "GET",
@@ -128,22 +126,25 @@ class Profile extends Component {
               nextPage:jsonDataobj.next,
               RunCount:jsonDataobj.count,
             })
+
             let RunCount = this.state.RunCount;
             AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
-               if (jsonData.results != null || undefined) {
+              if (jsonData.results != null || undefined) {
                  AsyncStorage.removeItem('runversion',(err) => {
                 });
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
-                let responceversion = epochtime;
+                let responceversion ={
+                  runversion:epochtime
+                }
                 AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
                  AsyncStorage.getItem('runversion', (err, result) => {
                   this.setState({
-                    runversion:JSON.parse(result),
+                    runversion:JSON.parse(result).runversion,
                   })
                 })
-                });
+            });
               }else{
                 return;
               }
@@ -155,6 +156,12 @@ class Profile extends Component {
               this.LoadmoreView();
           })
           }else{
+            var storepage = this.state.rawData;
+            AsyncStorage.setItem('fetchRunhistoryData',JSON.stringify(storepage));
+             this.fetch7DayData();
+              this.getRunCount();
+              this.fetchAmount();
+              this.fetchTotalDistance();
             this.setState({
               runfeatching:false,
             })
@@ -198,7 +205,9 @@ class Profile extends Component {
           var newDate = new Date();
           var convertepoch = newDate.getTime()/1000
           var epochtime = parseFloat(convertepoch).toFixed(0);
-          let responceversion = epochtime;
+          let responceversion = {
+            runversion:epochtime
+          }
           AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
            this.setState({
              runversion:responceversion
@@ -260,10 +269,6 @@ class Profile extends Component {
         if (result != null || undefined) {
        
         var RunData = JSON.parse(result)
-<<<<<<< HEAD
-=======
-        // console.log("RunDatafetch7DayData",RunData);
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
         var sum = 0;
         var nowdate = new Date();
         var sdate = new Date();
@@ -303,7 +308,7 @@ class Profile extends Component {
           weekday[5] = "FRI";
           weekday[6] = "SAT";
         if(!( counterDate.toLocaleDateString() in dataI)) {
-
+         
           var tempA = [];
           tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
           dataP.push(tempA);
@@ -353,7 +358,7 @@ class Profile extends Component {
         }
         this.setState({
           RunTotalDistance:sum,
-        })
+        })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
         }else{
@@ -364,7 +369,7 @@ class Profile extends Component {
 
 
 
-      getAmountCount(){
+      getAmountCount (){
         AsyncStorage.getItem('RunTotalAmount', (err, result) => {
           var TotalAmount = JSON.parse(result);
             this.setState({
@@ -408,8 +413,8 @@ class Profile extends Component {
         return;
       }
     }
-
-
+     
+    
 
       LodingView(){
         return(
@@ -429,6 +434,17 @@ class Profile extends Component {
           return;
         }
       }
+
+
+
+      removeallRun(){
+          AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+              console.log("fetchRunhistoryDataerr",err);
+         });
+
+      }
+
+      
       ShowRunScreenBtn(){
         if(this.state.runfeatching){
         return(
@@ -442,15 +458,17 @@ class Profile extends Component {
           )
       }else{
         return(
+          <View>
           <TouchableOpacity  style={styles.btnviewRun2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunHistory()}>
+
               <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}} >SEE RUNS</Text>
              </TouchableOpacity>
+             </View>
           )
       }
       }
 
       render() {
-        var km = (this.state.RunTotalDistance <= 1)?"km":"kms";
         if (this.props.user != null ) {
         return (
           <View style={{width:deviceWidth}}>
@@ -470,7 +488,7 @@ class Profile extends Component {
 
           <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
             <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
-            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} >
+            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
             <AnimateNumber value={this.state.RunCountTotal} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
               }} ></AnimateNumber></Text>
@@ -480,22 +498,17 @@ class Profile extends Component {
             <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
               <AnimateNumber value={this.state.RunTotalDistance} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
-              }} ></AnimateNumber><Text style={{fontSize:18}}> {km}</Text></Text>
+              }} ></AnimateNumber><Text style={{fontSize:18}}> km</Text></Text>
             <Text style={{fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
             </View>
             </View>
 
             <View>
-<<<<<<< HEAD
              <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}> 
                 <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raised in last 7 days</Text>
-=======
-             <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-                <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raise last 7 days</Text>
->>>>>>> 7e97565d87b79137bdb8ac37dc28546ca3f5b509
            </View>
             <View style={styles.container2}>
-
+           
             <Chart
               style={styles.chart}
               data={dataP}

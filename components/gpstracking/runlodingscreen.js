@@ -11,6 +11,8 @@ import{
     TouchableOpacity,
     Text,
     WebView,
+    Animated,
+    Easing,
   } from 'react-native';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -23,18 +25,49 @@ class LodingRunScreen extends Component {
     mixins: [TimerMixin]
     constructor(props) {
       super(props);
+
+      this.animatedValue1 = new Animated.Value(0)
+      this.animatedValue2 = new Animated.Value(0)
+      this.animatedValue3 = new Animated.Value(0)
       this.state = {
         seconds: 5
       };
     }
 
     componentDidMount() {
+        this.animate(); 
       this.timeout = setTimeout(() => { 
         this.navigateToRunScreen();
       },5000);
       this.refs.circularProgress.performLinearAnimation(100, 5000);
       this.interval = setInterval(this.tick.bind(this), 1000);
     } 
+
+
+  animate () {
+  this.animatedValue1.setValue(0)
+  this.animatedValue2.setValue(0)
+  this.animatedValue3.setValue(0)
+  const createAnimation = function (value, duration, easing, delay = 0) {
+    return Animated.timing(
+      value,
+      {
+        toValue: 1,
+        duration,
+        easing,
+        delay
+      }
+    )
+  }
+
+
+
+  Animated.parallel([
+    createAnimation(this.animatedValue1, 2000, Easing.ease),
+    createAnimation(this.animatedValue2, 1000, Easing.ease, 1000),
+    createAnimation(this.animatedValue3, 1000, Easing.ease, 2000)        
+  ]).start()
+}
 
     componentWillUnmount() {
       clearInterval(this.interval);    
@@ -59,12 +92,16 @@ class LodingRunScreen extends Component {
     }
 
     render() {
+      const scaleText = this.animatedValue1.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0.7, 1]
+      })
       var data = this.props.data;
       var second = this.state.seconds;
       var _this = this;
         return (    
           <View class={styles.container}>
-            <TouchableOpacity style={styles.overlay} onPress={()=> this.navigateToRunScreen()}>
+            <TouchableOpacity style={[styles.overlay,{transform:[{scale:scaleText}]}]} onPress={()=> this.navigateToRunScreen()}>
               <View style={styles.LoadingWrap}>
               <View style={styles.loadingFlex}>
                  <Image style={styles.sponsorLogo} source={{uri:data.sponsors[0].sponsor_logo}}></Image>

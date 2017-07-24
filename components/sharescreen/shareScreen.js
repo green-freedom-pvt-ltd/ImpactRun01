@@ -13,7 +13,8 @@ import{
     AsyncStorage,
     AlertIOS,
     VibrationIOS,
-    NetInfo
+    NetInfo,
+    ActivityIndicatorIOS,
   } from 'react-native';
   import apis from '../apis';
   import TimerMixin from 'react-timer-mixin';
@@ -36,6 +37,7 @@ import{
     constructor(props) {
       super(props);
       this.getILdata();
+      this.getUserData();           
       var cause = this.props.data;
       var distance = this.props.distance;
       var impact =this.props.impact;
@@ -53,29 +55,28 @@ import{
         loaded:false,
         visible: false,
         user:null,
+        postingRun:false,
        };
-      
+      this.isloading = this.isloading.bind(this);
       this.getUserData = this.getUserData.bind(this);
     }
 
     getUserData(){
-      AsyncStorage.multiGet(['UID234'], (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let val = store[i][1];
-          let user = JSON.parse(val);
-            this.setState({
-              user:user,
-            })
-            console.log("user",this.state.user);
-            this.AddruntoRunHistory();
-            if (this.state.user) {
-            this.ifConnectTonetPost();
-          }else{
-            AlertIOS.alert('Login', 'please login to create impact');
-          }
-          })
+      console.log("this.props.user ",this.props.user);
+      AsyncStorage.getItem('USERDATA', (err, result) => {
+        let user = JSON.parse(result);
+        console.log("userresult ",user);
+        this.setState({
+          user:user,
         })
+        console.log("user",this.state.user);
+        this.AddruntoRunHistory();
+        if (this.state.user) {
+        this.ifConnectTonetPost();
+        }else{
+          AlertIOS.alert('Login', 'please login to create impact');
+        }
+      })
     }
     
     shareLinkWithShareDialog() {
@@ -123,7 +124,7 @@ import{
     }
 
     componentDidMount(){
-
+     
       // var data = this.props.data;
       // setTimeout(function(){
       //   AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
@@ -131,7 +132,6 @@ import{
       // },2000)
 
       this.getSavedRunCount();
-      this.getUserData();           
     } 
 
     getSavedRunCount(){
@@ -158,9 +158,11 @@ import{
     }
 
     ifConnectTonetPost(){
+       console.log("openVersion");
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
+          console.log("openVersion");
            this.PostRun();
           }else{
            this.SaveRunLocally();
@@ -168,6 +170,20 @@ import{
         }
       );
     }
+
+     handleNetworkErrors(response){
+       if(response.ok){
+        return response.json();
+       }else{
+        this.setState({
+          postingRun:false,
+        })
+        this.SaveRunLocally();
+        AlertIOS.alert("Network error","There is some problem connecting to internet");
+        return ;
+       }
+       
+     }
   
     SaveRunLocally(){
       if (this.state.user) {
@@ -253,14 +269,23 @@ import{
     // }
 
     PostRun(){
-      if (this.state.user) {       
+      if (this.props.user) {
+        this.setState({
+          postingRun:true
+        })
+      }else{
+        this.setState({
+          postingRun:false,
+        })
+      }
+      if (this.props.user) {       
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
       var steps = this.props.noOfsteps;
       var time = this.props.time;
       var date = this.props.StartRunTime;
-      var userdata = this.state.user;
+      var userdata = this.props.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
@@ -295,25 +320,37 @@ import{
           is_ios:true,     
           })
        })
-      .then((response) => response.json())
+      .then(this.handleNetworkErrors.bind(this))
       .then((userRunData) => { 
-        var epochtime = userRunData.version;
-        // var newDate = new Date();
-        // var convertepoch = newDate.getTime()/1000
-        // var epochtime = parseFloat(convertepoch).toFixed(0);
-        let responceversion = epochtime;
+         this.setState({
+          postingRun:false,
+         })
+        consol.log("userRunData",userRunData);
         AsyncStorage.removeItem('runversion',(err) => {
-          console.log("removedRunVersionfromsharescreen");
-         });
-        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-         
+           console.log("runversionremoved");
         });
-      })
+        var epochtime = userRunData.version;
+        let responceversion = {
+         runverison:epochtime
+        }
+        AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),(data)=>{
+          console.log("removed version share ",responceversion);
+        })
+        .catch((error)=>{
+         console.log("err",error);
+        })
+       })
       .catch((error)=>{
-        // AlertIOS.alert('error',error);
+
+       console.log("errorPostrunShare ",error);
+       this.setState({
+          postingRun:false,
+        })
       })
     }else{
-      return;
+      this.setState({
+          postingRun:false,
+        })
      }
   }
 
@@ -478,27 +515,34 @@ import{
         <View style={{height:deviceHeight,width:deviceWidth,}}>
           <View style={styles.container}>
             <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
-              <View style={{flexDirection:'row',flex:1}}>
-                <View style={styles.wrapperRunContent}>
-                  <Icon style={{color:'black',fontSize:35,}} name={'ios-walk-outline'}></Icon>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
-                </View>
-                <View style={styles.wrapperRunContentImpact}>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
-                </View>
-                <View style={styles.wrapperRunContent}>
+                <View style={{flexDirection:'column',flex:1,top:70}}>
+              <View style={styles.wrapperRunContentImpact}>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
+              </View>
+
+
+
+              <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>
+              <View style={styles.wrapperRunContent}>
+                <Icon style={{color:'#4a4a4a',fontSize:35,}} name={'ios-walk-outline'}></Icon>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
+              </View>
+              
+              
+               <View style={styles.wrapperRunContent}>
                    <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="whatshot"></Icon2>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{this.props.calories_burnt}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{parseFloat(this.props.calories_burnt).toFixed(1)}</Text>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Cal</Text>
                 </View>
-                <View style={styles.wrapperRunContent}>
-                  <Icon style={{color:'black',fontSize:30,}} name={'md-stopwatch'}></Icon>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Time</Text>
-                </View>
+              <View style={styles.wrapperRunContent}>
+                <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'md-stopwatch'}></Icon>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
               </View>
+              </View>
+            </View>
               <View style={{top:-30, flexDirection:'column',flex:1,alignItems: 'center',}}>
                 <View style={{justifyContent: 'center',alignItems: 'center',}}>
                   <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Please login to </Text>
@@ -517,6 +561,7 @@ import{
               </View>
             </Image>
           </View>
+            {this.isloading()}
         </View>
        )
       }else{
@@ -574,12 +619,35 @@ import{
               </View>
             </View>
           </Image>
+          {this.isloading()}
         </View>  
       )
      }
+   }
+
+    isloading(){
+      if (this.state.postingRun) {
+        return(
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.56)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+            <ActivityIndicatorIOS
+             style={{height: 80}}
+              size="large"
+            >
+            </ActivityIndicatorIOS>
+          </View>
+          )
+      }else{
+        return;
+      }
+    }
+     
     }
 
-  }
+
+
+   
+
+  
   const styles = StyleSheet.create({
     container: {
       height:deviceHeight,

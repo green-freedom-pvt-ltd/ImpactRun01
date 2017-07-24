@@ -17,7 +17,6 @@ import {
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
-var KeyboardEvents = require('react-native-keyboardevents');
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import LodingScreen from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
@@ -78,7 +77,16 @@ class Faqdata extends Component {
       componentWillUnmount() {
         
       }
-
+     
+     handleNeteorkErrors(response){
+       console.log("response",response);
+       if (response.ok) {
+         return response.json()
+       }else{
+         AlertIOS.alert("Network error","There is some problem connecting to internet");
+       }
+     
+     }
 
       fetchFaqData() {
         AsyncStorage.removeItem('faqData',(err) => {
@@ -86,7 +94,7 @@ class Faqdata extends Component {
          });
         var url = apis.faqsApi;
         fetch(url)
-          .then( response => response.json() )
+          .then(this.handleNeteorkErrors.bind(this))
           .then( jsonData => {
             this.setState({
               faqData: this.state.faqData.cloneWithRows(jsonData.results),

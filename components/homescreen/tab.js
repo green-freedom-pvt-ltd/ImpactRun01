@@ -64,15 +64,14 @@ class devdactic_tabs extends Component {
         }
         
         componentDidMount() {
-
           this.removerundata();
           this.getUserData();
-         this.getData();
-        
-          
+          this.getData();       
         }
+
+
         removerundata(){
-        AsyncStorage.getItem('runremovecount', (err, result) => {  
+          AsyncStorage.getItem('runremovecount', (err, result) => {  
             if (result == null) {
                 AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
                     if (err == null ) {
@@ -85,11 +84,11 @@ class devdactic_tabs extends Component {
             }else{
                return;
             }
-        })
+          })
         }
 
         getData(){
-             AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
+            AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
             if (result != null) {
                 this.setState({
                   causeFeatchVersion:JSON.parse(result),
@@ -97,7 +96,7 @@ class devdactic_tabs extends Component {
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
-                var fetchversion = parseInt(this.state.causeFeatchVersion)+3600;
+                var fetchversion = parseInt(this.state.causeFeatchVersion)+(3);
                 console.log('is cause fetch',fetchversion <= epochtime);
                 if (fetchversion <= epochtime) {
                     this.fetchDataonInternet();
@@ -107,18 +106,7 @@ class devdactic_tabs extends Component {
                }
             }
             else{
-             AsyncStorage.multiGet(['UID234'], (err, stores) => {
-              stores.map((result, i, store) => {
-                  let key = store[i][0];
-                  let val = store[i][1];
-                  let user = JSON.parse(val);
-                  this.setState({
-                      user: user,
-                  })
-                  this.fetchDataonInternet();
-                  
-              })
-             })
+               this.fetchDataonInternet();
             }
          })
         }
@@ -145,7 +133,17 @@ class devdactic_tabs extends Component {
             }
         );
       }
-
+   
+     handleNetworkErrors(response){
+        console.log("responce",response);
+       if(response.ok){
+        return response.json();
+       }else{
+        AlertIOS.alert("Network error","There is some problem connecting to internet");
+        return;
+       }
+       
+     }
 
 
       fetchLeaderBoard() {
@@ -160,7 +158,7 @@ class devdactic_tabs extends Component {
             'Content-Type':'application/x-www-form-urlencoded',
           }
         })
-        .then( response => response.json() )
+        .then(this.handleNetworkErrors.bind(this))
         .then( jsonData => {
           this.setState({
             loaded: true,
@@ -180,7 +178,7 @@ class devdactic_tabs extends Component {
 
       fetchData(dataValue) {
           fetch(REQUEST_URL)
-            .then((response) => response.json())
+            .then(this.handleNetworkErrors.bind(this))
             .then((causes) => {
               console.log("fetching....");
               var causes = causes;
@@ -224,7 +222,13 @@ class devdactic_tabs extends Component {
               AsyncStorage.multiSet(causesData, (err) => {
               })
             })
-            .done();
+            .catch((err)=>{
+             console.log("errorcauseapi ",err)
+             if (err != null) {
+              AlertIOS.alert("Network error","There is some problem connecting to internet");
+              this.getCause();
+             };
+            })
       }
 
 
@@ -259,15 +263,13 @@ class devdactic_tabs extends Component {
        }
 
         getUserData() {
-          AsyncStorage.multiGet(['UID234'], (err, stores) => {
-              stores.map((result, i, store) => {
-                  let key = store[i][0];
-                  let val = store[i][1];
-                  let user = JSON.parse(val);
-                  this.setState({
-                      user: user,
-                  })
-              })
+         console.log("tabscreenuser");
+          AsyncStorage.getItem('USERDATA', (err, result) => {
+            let user = JSON.parse(result);
+            this.setState({
+              user: user,
+            })
+            console.log("result",user);
           })
         }
 

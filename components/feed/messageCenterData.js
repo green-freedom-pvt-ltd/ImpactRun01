@@ -15,6 +15,7 @@ import{
     AlertIOS,
     ListView,
     AsyncStorage,
+    Linking,
   } from 'react-native';
 import messageCenter from './messageCenter';
 import LodingScreen from '../../components/LodingScreen';
@@ -50,19 +51,48 @@ class Feed extends Component {
           passProps:{rowData:rowData}
         })
       }
+      
+      getFeedFromlocal(){
+       AsyncStorage.getItem('feedData', (err, result) => { 
+          if (result != null || undefined) {
+          var feeddata = JSON.parse(result);  
+          console.log("faqdata",feeddata.length);
+          this.setState({
+           FeedData: this.state.FeedData.cloneWithRows(feeddata),
+           loaded: true,
+          })
+         let feedCount =  {
+          count:feeddata.length,
+          };
+          AsyncStorage.setItem('Feedcount', JSON.stringify(feedCount), () => {
+        }); 
+        }else{
+          this.fetchifinternet();
+        }
+        });
+      }
 
-      componentDidMount() {
-        NetInfo.isConnected.fetch().done(
+      fetchifinternet(){
+         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
                this.fetchFeedData();
-            };  
+            }else{
+              this.getFeedFromlocal();
+            } 
           }
         );
+      }
+
+      componentDidMount() {
+        
+        this.getFeedFromlocal();
       }
       
       componentWillUnmount() {
       }
+      
+     
 
       fetchFeedData() {
         var url = 'http://139.59.243.245/api/messageCenter/';
@@ -74,20 +104,47 @@ class Feed extends Component {
             loaded: true,
           });
           let feedCount =  {
-          count:jsonData.count,
-        };
+            count:jsonData.count,
+          };
+        AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
+        });
         AsyncStorage.setItem('Feedcount', JSON.stringify(feedCount), () => {
         });
         })
         .catch( error => console.log('Error fetching: ' + error) );
       }
 
-    
-      renderRow(rowData){
-        var me = this;
-        return (
-          <View style={{justifyContent: 'center',alignItems: 'center',}}>
-            <TouchableOpacity onPress={() => this.NavigateToDetail(rowData)} style={styles.card}>
+      renderVideo(rowData){
+        if (rowData.message_video != "") {
+          return(
+            <View  style={styles.card}>
+              <View style={styles.thumb}>
+                 <YouTube
+                ref={(component) => {
+                  this._youTubePlayer = component;
+                }}
+                videoId={rowData.message_video}           
+                play={false}                     
+                fullscreen={true}              
+                loop={false}                    
+                onReady={e => this.setState({ isReady: true })}
+                onChangeState={e => this.setState({ status: e.state })}
+                onChangeQuality={e => this.setState({ quality: e.quality })}
+                onError={e => this.setState({ error: e.error })}
+                onProgress={e => this.setState({ currentTime: e.currentTime, duration: e.duration })}
+                style={styles.thumb}/>
+                <Text style={styles.txt}>{rowData.message_center_id}</Text>
+              </View>
+              <Text style={styles.txtSec}>{rowData.message_brief}</Text>
+              <View style={{flexDirection:'row'}}>
+                <Text style={styles.txtSec}>{rowData.message_date}</Text>
+                <Text style={styles.txtSec}>share</Text>
+              </View>
+            </View>
+              )
+          }else{
+            return(
+               <TouchableOpacity onPress={()=> this.NavigateToDetail(rowData)} style={styles.card}>
               <View style={styles.thumb}>
                 <Image  style={styles.thumb} source={{uri:rowData.message_image}}></Image>
                 <Text style={styles.txt}>{rowData.message_center_id}</Text>
@@ -98,6 +155,16 @@ class Feed extends Component {
                 <Text style={styles.txtSec}>share</Text>
               </View>
             </TouchableOpacity>
+              )
+          }
+      }
+      
+
+      renderRow(rowData){
+        var me = this;
+        return (
+          <View style={{justifyContent: 'center',alignItems: 'center',}}>
+          {this.renderVideo(rowData)}
           </View>
         );
       }
@@ -113,10 +180,9 @@ class Feed extends Component {
         if (!this.state.loaded) {
           return this.renderLoadingView();
         }
-        console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-105,width:deviceWidth,paddingBottom:45,}}>
+            <View style={{height:deviceHeight-105,width:deviceWidth}}>
                <ListView 
                  navigator={this.props.navigator}
                 dataSource={this.state.FeedData}
@@ -134,8 +200,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
     height:deviceHeight,
     width:deviceWidth,
-    bottom:-30,
-    marginTop:-45,
   },
   card:{
     borderRadius:4,
@@ -158,7 +222,6 @@ const styles = StyleSheet.create({
   thumb:{
     width:deviceWidth-20,
     height:deviceHeight/2-100,
-    resizeMode: 'stretch',
   },
   txtSec:{
     paddingTop:10,
