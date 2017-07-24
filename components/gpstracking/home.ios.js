@@ -91,6 +91,7 @@ SettingsService.init('iOS');
       mapWidth: 300,
       zoom: 18,
       open:false,
+      sourceCount:true,
       GpsAccuracyCheck:true,
       openGpsModel:false,
       annotations: [],
@@ -103,6 +104,62 @@ SettingsService.init('iOS');
       },
     };
   },
+  
+
+  
+  componentDidMount:function(){  
+    this.getWeight();
+    this.saveDataperiodcally(); 
+    this._startStepCounterUpdates()
+    var date = this.state.myrundate;
+    this._handleStartStop();
+    this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 1000)
+    this.updatePaceButtonStyle();
+    this.setState({
+      textState:'PAUSE',
+      isRunning:true,
+    });
+     var d = new Date();
+     var mynewDateStart = d.toISOString().substring(0, 10);
+      this.setState({
+        myrundate: mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
+      });
+    return;  
+  },
+ 
+
+
+  componentWillMount: function() { 
+    AsyncStorage.getItem('runDataAppKill', (err, result) => {
+    var datarun =JSON.parse(result);
+      if (datarun != null) { 
+        this.setState({
+          result:result,
+          distanceTravelledsec:datarun.distance,
+          storedRunduration:datarun.time,
+        })
+        distancePriv = this.state.distanceTravelledsec;
+        timepriv = this.state.storedRunduration;
+        calories = datarun.calories_burnt;
+        console.log("distanceTravelledsec12 ",this.state.distanceTravelledsec);
+      }else{
+       
+      }   
+    });    
+
+    AsyncStorage.getItem('USERDATA', (err, result) => {
+      console.log("userresult ",result);
+        var user = JSON.parse(result);
+       this.setState({
+        Storeduserdata:user,
+      })
+    })
+    Location.setDistanceFilter(10);
+    Location.setAllowsBackgroundLocationUpdates(true);
+    this.getLocationUpdate();
+  },
+
+
 
    
    StillDetictiion:function(Location,me){ 
@@ -135,52 +192,31 @@ SettingsService.init('iOS');
        }   
     },
 
-   getLocationUpdate:function(){
-    var me = this;
-    setTimeout(function(){    
-     me.initializePolyline();
-    },3000);
-    Location.startUpdatingLocation();
-    var subscription = DeviceEventEmitter.addListener(
-        'locationUpdated',
-        (location) => {
-        this._onlocation(location);
-        // if (this.state.enabled) {
-        this.addMarker(location);
-        this.setCenter(location);
-        // }else{
-        //   // AlertIOS.alert("location");
-        // }
+    getLocationUpdate:function(){
+      var me = this;
+      setTimeout(function(){    
+       me.initializePolyline();
+      },3000);
+      Location.startUpdatingLocation();
+        var subscription = DeviceEventEmitter.addListener(
+          'locationUpdated',
+          (location) => {
+          // this._onlocation(location);
+          this.addMarker(location);
+          this.setCenter(location);
         }
-    );
-    
-    // this.watchId = navigator.geolocation.watchPosition(
+      );
+    },
 
-    //   (position) => {
-        
-    //     var location = position;
-       
-    //     this.addMarker(location);
-    //     this.setCenter(location);
 
-    //     this.setState({
-    //       location:location,
-    //       latitude: position.coords.latitude,
-    //       longitude: position.coords.longitude,
-    //       error: null,
-    //     });
-    //   },
-    //   (error) => this.setState({ error: error.message }),
-    //   { enableHighAccuracy: true, timeout: 50000, maximumAge: 1000, distanceFilter: 10 },
-    // );
 
-   },
 
-   clearLocationUpdate:function(){
-    // navigator.geolocation.clearWatch(this.watchId);
-    Location.stopUpdatingLocation();
-    // Location.stopMonitoringSignificantLocationChanges();
-   },
+    clearLocationUpdate:function(){
+      Location.stopUpdatingLocation();
+      clearInterval(this.IntervelSaveRun);
+    },
+
+
 
 
     modelViewDriving:function(){
@@ -256,149 +292,6 @@ SettingsService.init('iOS');
 
 
 
-  componentWillMount: function() { 
-      AsyncStorage.getItem('runDataAppKill', (err, result) => {
-       var datarun =JSON.parse(result);
-       if (datarun != null) {
- 
-        this.setState({
-          result:result,
-          distanceTravelledsec:datarun.distance,
-          storedRunduration:datarun.time,
-        })
-        distancePriv = this.state.distanceTravelledsec;
-        timepriv = this.state.storedRunduration;
-        calories = datarun.calories_burnt;
-        console.log("distanceTravelledsec12 ",this.state.distanceTravelledsec);
-      }else{
-       
-      }   
-    });    
-
-
-    
-    // crashlytics.crash();
-    AsyncStorage.getItem('USERDATA', (err, result) => {
-      console.log("userresult ",result);
-        var user = JSON.parse(result);
-       this.setState({
-        Storeduserdata:user,
-      })
-    })
-   // Location.setDesiredAccuracy(45);
-   //  Location.setDistanceFilter(10);
-    // Location.startMonitoringSignificantLocationChanges();
-    Location.setAllowsBackgroundLocationUpdates(true);
-   
-    this.getLocationUpdate();
-    // var me = this;
-
-    // this.locationManager = this.props.locationManager;
-    // this.locationManager.clearDatabase();
-    // location event
-    // this.locationManager.on("location", function(location) {
-    //   console.log('- location: ', JSON.stringify(location, null, 2));
-    //   if (location.sample) {
-      
-    //     console.log('<sample location>');
-    //     return;
-    //   }
-      // if (me.state.StillDecteting) {
-      // me.StillDetictiion(location,me);
-      // }else{
-      // }
-     
-      
-    // });
-      // this.props.getLocationUpdate();
-    //   this.watchId = navigator.geolocation.watchPosition(
-    //   (position) => {
-    //     var location = position;
-    //     me.addMarker(location);
-    //     me.setCenter(location);
-    //     this.setState({
-    //       latitude: position.coords.latitude,
-    //       longitude: position.coords.longitude,
-    //       error: null,
-    //     });
-    //   },
-    //   (error) => this.setState({ error: error.message }),
-    //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
-    // );
-
-    // http event
-    // this.locationManager.on("http", function(response) {
-    //   console.log('- http ' + response.status);
-    //   console.log(response.responseText);
-    // });
-    // geofence event
-    // this.locationManager.on("geofence", function(geofence) {
-    //   console.log('- onGeofence: ', JSON.stringify(geofence));
-    // });
-    // error event
-    // this.locationManager.on("error", function(error) {
-    //   console.log('- ERROR: ', JSON.stringify(error));
-    // });
-    // motionchange event
-    // this.locationManager.on("motionchange", function(event) {
-    //   console.log("- motionchange", JSON.stringify(event, null, 2));
-    //   me.setState({
-    //     isMoving: event.is_moving,
-       
-    //   });
-    //  if (me.state.isMoving) {};
-      
-    //   me.updatePaceButtonStyle()
-    // });
- 
-    // schedule event
-    // this.locationManager.on("schedule", function(state) {
-    //   console.log("- schedule fired: ", state.enabled, state);
-    //   me.setState({
-    //     isMoving: state.isMoving,
-    //     enabled: state.enabled
-    //   });
-    //   me.updatePaceButtonStyle();
-
-    // });
-    // activitychange event
-    // this.locationManager.on("activitychange", function(activityName) {
-    //   console.log("activityName ",activityName);
-    // });
-
-    // getGeofences
-    // this.locationManager.getGeofences(function(rs) {
-    // }, function(error) {
-    // });
- 
-
-    // Fetch settings and configure.
-    // SettingsService.getValues(function(values) {
-
-    // //values.schedule = SettingsService.generateSchedule(24, 1, 1, 1);
-      
-    //   // Configure BackgroundGeolocaiton!
-    //   me.locationManager.configure(values, function(state) {
-    //     console.log("values",values);
-    //     // me.locationManager.startSchedule(function(result) {
-    //     //   console.log("resultsedule ",result,state);
-    //     // });   
-    //   });
-    // });
-    // this.setState({
-    //   enabled: true,
-    // });
-    // if (this.state.enabled) {
-    //   // this.locationManager.start(function() {
-        // this.initializePolyline();
-    //   // });
-    //  var d = new Date();
-    //  var mynewDateStart = d.toISOString().substring(0, 10);
-    //  this.setState({
-    //  myrundate: mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
-    // });
-    // }
-  },
 
 
 
@@ -439,36 +332,8 @@ SettingsService.init('iOS');
 
 
   componentWillUnmount:function() {
-    // this.clearLocationUpdate();
+    this.clearLocationUpdate();
   },
-
-
-  componentDidMount:function(){  
-
-    
-    this.getWeight();
-    this.saveDataperiodcally(); 
-    this._startStepCounterUpdates()
-    var date = this.state.myrundate;
-    this._handleStartStop();
-    // if (this.state.isMoving ) {
-      // this._handleStartStop();}; 
-      this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 1000)
-      // this.locationManager.start();    
-      this.updatePaceButtonStyle();
-      // this.locationManager.changePace(!this.state.isMoving);
-      this.setState({
-        textState:'PAUSE',
-        isRunning:true,
-      });
-      // this.StartGetLocation()
-      // this.updatePaceButtonStyle();
-      return;  
-  },
- 
-
-
-
 
 
 
@@ -479,17 +344,16 @@ SettingsService.init('iOS');
     if(!this.state.isRunning){
       clearInterval(this.interval);
       this.setState({
-          isRunning:false
-
+        isRunning:false
       });
       return;
-      }else{ 
-        if (this.state.isRunning) {
-          this.setState({
-            mainTimerStart:new Date(),
-            lapTimerStart:new Date(),
-            isRunning:true,
-          })
+    }else{ 
+      if (this.state.isRunning) {
+        this.setState({
+          mainTimerStart:new Date(),
+          lapTimerStart:new Date(),
+          isRunning:true,
+        })
         this.interval = setInterval(()=>{
         this.setState({
             mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
@@ -505,112 +369,76 @@ SettingsService.init('iOS');
 
 
   startPause:function(){
-
     var me = this;
     if (this.state.enabled) {
-       // navigator.geolocation.clearWatch(this.watchId);
       this.clearLocationUpdate();
-      clearInterval(this.IntervelSaveRun);
-      // this.locationManager.stop((stop)=>{
-      //   console.log("stop123",stop);
-      // });
       this.setState({
         enabled:false,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
-      });
-        
-      // this.locationManager.removeGeofences();
+      });       
     }else{
       var isMoving = !this.state.isMoving;
-      // this.locationManager.start(function() {
-      // me.initializePolyline();
-         this.getLocationUpdate();
-      // });
+      this.getLocationUpdate();
       this.setState({
         isMoving:isMoving,
         enabled:true,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
-      });
-        
+      });        
     } 
-
     this.updatePaceButtonStyle();
-    this._handleStartStop();
-   
+    this._handleStartStop(); 
   },
 
 
 
 
-   onClickEnable: function(location) {
+  onClickEnable: function(location) {
     var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
-
-      if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
-         AsyncStorage.removeItem('runDataAppKill');
-          clearInterval(this.IntervelSaveRun);
-          this.clearLocationUpdate();
-          // this.locationManager.removeGeofences();
-          this.navigateTOShareScreen();
-          // this.locationManager.stop((stop)=>{
-          //   console.log("stop123",stop);
-          // });
-          // this.locationManager.resetOdometer();
-          this.removeAllAnnotations(mapRef);
-          this.polyline = null;
-          this.setState({
-          enabled: !this.state.enabled,     
-          });
-          this.updatePaceButtonStyle();
-       }else{
-        this.EndRunConfimation();
-        }        
-    },
-
-
-
-  unmountEveryThing:function(){
-   this.locationManager.un("geofence", function(geofence) {
-      console.log('- onGeofence: ', JSON.stringify(geofence));
-      me.locationManager.removeGeofence(geofence.identifier);
-    });
-
+    if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
+      AsyncStorage.removeItem('runDataAppKill');
+      this.clearLocationUpdate();
+      this.navigateTOShareScreen();
+      this.removeAllAnnotations(mapRef);
+      this.polyline = null;
+      this.setState({
+      enabled: !this.state.enabled,     
+      });
+      this.updatePaceButtonStyle();
+     }else{
+      this.EndRunConfimation();
+    }        
   },
+
+
+
+
 
   // Add Marker if check clear
   addMarker :function(location) {
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
+    this.setState({
+      prevDistance: newDistance-distanceTravelled,
+    })
+     var sourceAccuracy = (this.state.sourceCount)?40:25;
+    if (location.coords.accuracy <= sourceAccuracy){
       this.setState({
-            prevDistance: newDistance-distanceTravelled,
-          })
-      
-      // AlertIOS.alert('accuracy',JSON.stringify(location.coords.accuracy));
-      var sourceAccuracy = (this.state.distanceTravelled === 0.0)?65:35;
-      // If Location accuracy is less than 15
-      if (location.coords.accuracy <= sourceAccuracy){
-        // IF Speed More than 35km/hr
-        // AlertIOS.alert('accuracy',JSON.stringify(sourceAccuracy));
+        sourceCount:false,
+      })
       if (location.coords.speed <= 7.5) {
-       
-      var me = this;
-      this.addAnnotations(mapRef, [this.createMarker(location)]);
-      if ( this.polyline) {
-        this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
-        // this.polyline.lengthof.push(this.polyline.oneOf(this.polyline));
-        this.updateAnnotation(mapRef, this.polyline);
-      }
-
-
-
-
-      const {distanceTravelled,prevDistance } = this.state
-      const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
-      const newTimeStamp = location.timestamp;
-      
-      this.setState({
+        var me = this;
+        this.addAnnotations(mapRef, [this.createMarker(location)]);
+        if ( this.polyline) {
+          this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
+          this.updateAnnotation(mapRef, this.polyline);
+        }
+        const {distanceTravelled,prevDistance } = this.state
+        const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
+        const newTimeStamp = location.timestamp;
+        this.setState({
           distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
           prevLatLng: newLatLngs,
           gpsNotAccepatableStepvalue:0,
@@ -618,119 +446,92 @@ SettingsService.init('iOS');
           prevTimeStamp:this.state.newTimeStamp,
           speed:location.coords.speed,
         })
-           var oldtime = new Date(this.state.prevTimeStamp).getTime();
-            var newTime = new Date(this.state.newTimeStamp).getTime();
-            var timeBetweenTwoPoint = newTime - oldtime;
-            if (timeBetweenTwoPoint) {
-            this.previousLocationTime(newTimeStamp);
-            this.caloriCounterStart(newTimeStamp);
-             }else{
-              console.log("Nanvalue")
-            }
-            
-     
+        var oldtime = new Date(this.state.prevTimeStamp).getTime();
+        var newTime = new Date(this.state.newTimeStamp).getTime();
+        var timeBetweenTwoPoint = newTime - oldtime;
+        if (timeBetweenTwoPoint) {
+          this.previousLocationTime(newTimeStamp);
+          this.caloriCounterStart(newTimeStamp);
         }else{
-          console.log("this.state.UssainBoltCount",this.state.HussainBoltCount);
-          if (this.state.HussainBoltCount >= 4) {
-            AlertIOS.alert('On vehicle detected','Your speed is more than running speed . So we are ending your run');
-            this.onClickEnable();
-          }else{
-
+          console.log("Nanvalue")
+        }         
+      }else{
+        console.log("this.state.UssainBoltCount",this.state.HussainBoltCount);
+        if (this.state.HussainBoltCount >= 4) {
+          AlertIOS.alert('On vehicle detected','Your speed is more than running speed . So we are ending your run');
+          this.onClickEnable();
+        }else{
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             open:true,
-
           })
-
           this._onNotification();
           console.log("HussainBoltCount",this.state.HussainBoltCount);
           this.startPause();
-          VibrationIOS.vibrate();
-          // AlertIOS.alert('Too fast','Your speed is more than running speed it seems you are travelling in vehicle');
-           
-          
+          VibrationIOS.vibrate();  
+        }
+      }
+    }else{
+      if (location.coords.speed <= 7.5) {
+        var Prevdistance = this.state.prevDistance*1000;
+        var locationAccuracy=location.coords.accuracy;
+        var thresholdAccuracy = 16;
+        var offset = 1;
+        var thresholdFactor = 5; 
+        var currentDistance = Prevdistance;
+        if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){
+          console.log("true");
+          const {distanceTravelled,prevDistance } = this.state
+          const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
+          const newTimeStamp = location.timestamp;
+          this.setState({
+            distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
+            prevLatLng: newLatLngs,
+            newTimeStamp:location.timestamp,
+            prevTimeStamp:this.state.newTimeStamp,
+            gpsNotAccepatableStepvalue:0,      
+            speed:location.coords.speed,
+          })
+          this.addAnnotations(mapRef, [this.createMarker(location)]);
+          if ( this.polyline) {
+            this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
+            this.updateAnnotation(mapRef, this.polyline);
           }
-         }
-       }else{
-          // else to our algo part
-       if (location.coords.speed <= 7.5) {
-          var Prevdistance = this.state.prevDistance*1000;
-          var locationAccuracy=location.coords.accuracy;
-          var thresholdAccuracy = 16;
-          var offset = 1;
-          var thresholdFactor = 5; 
-          var currentDistance = Prevdistance;
-
-            if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){
-              console.log("true");
-            const {distanceTravelled,prevDistance } = this.state
-            const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
-            const newTimeStamp = location.timestamp;
-            this.setState({
-                distanceTravelled: distanceTravelled + this.calcDistance(newLatLngs),
-                prevLatLng: newLatLngs,
-                newTimeStamp:location.timestamp,
-                prevTimeStamp:this.state.newTimeStamp,
-                gpsNotAccepatableStepvalue:0,      
-                speed:location.coords.speed,
-              })
-              this.addAnnotations(mapRef, [this.createMarker(location)]);
-              if ( this.polyline) {
-                this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
-                // this.polyline.lengthof.push(this.polyline.oneOf(this.polyline));
-                this.updateAnnotation(mapRef, this.polyline);
-              }
-            var oldtime = new Date(this.state.prevTimeStamp).getTime();
-            var newTime = new Date(this.state.newTimeStamp).getTime();
-            var timeBetweenTwoPoint = newTime - oldtime;
-            if (timeBetweenTwoPoint) {
+          var oldtime = new Date(this.state.prevTimeStamp).getTime();
+          var newTime = new Date(this.state.newTimeStamp).getTime();
+          var timeBetweenTwoPoint = newTime - oldtime;
+          if (timeBetweenTwoPoint) {
             this.previousLocationTime(newTimeStamp);
             this.caloriCounterStart(newTimeStamp);
-            }else{
+          }else{
 
-              console.log("Nanvalue")
-            }
-            
-             }else{
-
-            if (this.state.GpsAccuracyCheck) {
-              this._ongpsWeakNotification();
-              this.setState({
-                openGpsModel:true,
-                GpsAccuracyCheck:false,
-              })
-            }else{
-              return;
-            }
-              
-              //  AlertIOS.alert("point not Accepted","unaccepted point");
-              // if (this.state.numberOfSteps > 10) {
-
-              //    this.StartWhenLocationIsNotAcceptable();
-              // }else{
-              //   return;
-              // }
-             }
-           }else{
-            if (this.state.UssainBoltCount > 4) {
-            console.log("location hussain");
-            this.onClickEnable();
-            }else{
+          }     
+        }else{
+          if (this.state.GpsAccuracyCheck) {
+            this._ongpsWeakNotification();
             this.setState({
-              HussainBoltCount:this.state.HussainBoltCount+1,
-              open:true,
+              openGpsModel:true,
+              GpsAccuracyCheck:false,
             })
-            this._onNotification();
-            this.startPause();
-            VibrationIOS.vibrate();
-            // AlertIOS.alert('Too fast','Your speed is more than running speed it seems you are travelling in vehicle');
-             
-            
-            }
-         }
-
+          }else{
+            return;
           }
-
+        }
+      }else{
+        if (this.state.UssainBoltCount > 4) {
+          console.log("location hussain");
+          this.onClickEnable();
+        }else{
+          this.setState({
+            HussainBoltCount:this.state.HussainBoltCount+1,
+            open:true,
+          })
+          this._onNotification();
+          this.startPause();
+          VibrationIOS.vibrate();                 
+        }
+      }
+    }
       
   },
 
@@ -933,14 +734,6 @@ SettingsService.init('iOS');
     Pedometer.startPedometerUpdatesFromDate(today.getTime(), (motionData) => {
       this.setState(motionData);
     });
-    // var startDate = new Date();
-    // startDate.setHours(0,0,0,0);
-    // var endDate = new Date();
-    // Pedometer.queryPedometerUpdatesBetweenDates(startDate.getTime(), endDate.getTime(), (pedometerData) => {
-    //   console.log("motionData: " + motionData);
-    //   this.setState(motionData);
-    // });
-
   },
 
 
@@ -1046,23 +839,21 @@ SettingsService.init('iOS');
         strokeWidth: 5,
         strokeAlpha: 0.5,
         id: "route"
-      };
-      
-      this.addAnnotations(mapRef, [this.polyline]);
-   
+      };    
+      this.addAnnotations(mapRef, [this.polyline]);  
     },
 
 
 
 
 
-     navigateTOHomeScreen:function(){
-        this.props.navigator.push({
-        title: 'Gps',
-        id:'tab',
-        navigator: this.props.navigator,
-       })
-      },
+    navigateTOHomeScreen:function(){
+      this.props.navigator.push({
+      title: 'Gps',
+      id:'tab',
+      navigator: this.props.navigator,
+     })
+    },
 
 
 
@@ -1119,76 +910,29 @@ SettingsService.init('iOS');
         ],
       ); 
     },
+
+
+
     popRoute:function() {
       if (this.state.enabled) { 
       AsyncStorage.removeItem('runDataAppKill');
-      clearInterval(this.IntervelSaveRun);
       this.clearLocationUpdate();
-      // this.locationManager.removeGeofences();
-      // this.locationManager.stop();
       this.navigateTOHomeScreen();
       this.state.distanceTravelled = 0;
-
       this.state.prevDistance = 0;
-      // this.locationManager.resetOdometer();
       this.removeAllAnnotations(mapRef);
       this.polyline = null;
-       this.setState({
+      this.setState({
         enabled: !this.state.enabled, 
-       });
+      });
       this.updatePaceButtonStyle();    
       }else{
         this.navigateTOHomeScreen();
       }
     },
 
-    onClickPace: function() {
-      VibrationIOS.vibrate();
-      if (this.state.enabled)  {
-        this.locationManager.stop((error,result)=>{
-          console.log("stopcallfromstart ",error,result)
-        });
-        
-     }else{
-      this.locationManager.start((success,error)=>{
-       console.log("startfrompause ",success,error);
-      });
 
-     }
-      var isMoving = !this.state.isMoving;
-      
-      this.updatePaceButtonStyle();
-      this.setState({
-        isMoving: isMoving,
-        isRunning:!this.state.isRunning,
-        enabled:!this.state.enabled,
-      });
-      this._handleStartStop();
-    },
 
-    // StartGetLocation: function() { 
-    //    navigator.geolocation.getCurrentPosition(
-    //   (position) => {
-    //     var StartPosition = position;
-    //     this.setState({
-    //       StartPosition});
-    //   },
-    //   (error) => alert(error.message),
-    //   {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    //   )
-    // }, 
-
-    // EndGetLocation: function() { 
-    //    navigator.geolocation.getCurrentPosition(
-    //   (position) => {
-    //     var EndPosition = position;
-    //     this.setState({EndPosition})
-    //     this.navigateTOShareScreen();
-    //   },
-    //   (error) => alert(error.message),
-    //   {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    //   )
-    // },
     onRegionChange: function() {
       console.log("sometimeregion");
     },
@@ -1220,6 +964,21 @@ SettingsService.init('iOS');
     onRightAnnotationTapped:function(e) {
       console.log(e);
     },
+
+
+    caloriesTextView:function(data,priv){
+      if (this.state.result) {
+        return(
+            <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned + JSON.parse(this.state.result).calories_burnt} />
+          )
+      }else{
+        return(
+              <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned } />
+          )
+      }
+    },
+
+
    impactTextView:function(data,priv){
     if (this.state.result) {
       return(
@@ -1228,18 +987,6 @@ SettingsService.init('iOS');
     }else{
       return(
            <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled).toFixed(1)* data.conversion_rate}</Text>
-        )
-    }
-   },
-
-  caloriesTextView:function(data,priv){
-    if (this.state.result) {
-      return(
-          <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned + JSON.parse(this.state.result).calories_burnt} />
-        )
-    }else{
-      return(
-            <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned } />
         )
     }
    },

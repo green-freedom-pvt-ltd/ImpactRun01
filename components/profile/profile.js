@@ -268,7 +268,8 @@ class Profile extends Component {
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
         if (result != null || undefined) {
        
-        var RunData = JSON.parse(result)
+        var RunData = JSON.parse(result);
+        console.log("RunData",RunData);
         var sum = 0;
         var nowdate = new Date();
         var sdate = new Date();

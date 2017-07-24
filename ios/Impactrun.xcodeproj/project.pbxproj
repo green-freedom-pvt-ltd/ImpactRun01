@@ -31,9 +31,6 @@
 		383709731E1A7186006EB024 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 383709721E1A7186006EB024 /* FBSDKCoreKit.framework */; };
 		383709791E1CFA62006EB024 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 383709781E1CFA62006EB024 /* FBSDKShareKit.framework */; };
 		384508DA00184A359FF87CC8 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A46DD3FC37DF420381A94676 /* FontAwesome.ttf */; };
-		3853204E1F1F987C006F493F /* ImpactRunLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3853204D1F1F987B006F493F /* ImpactRunLocationManager.swift */; };
-		385320501F1F98F9006F493F /* ImpactRunLocationManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3853204F1F1F98F9006F493F /* ImpactRunLocationManagerViewController.swift */; };
-		385320551F1F99FC006F493F /* LocationManagerModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 385320541F1F99FC006F493F /* LocationManagerModule.m */; };
 		3867185A1E1D08DA00939934 /* libCocoaLumberjack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 386718511E1D08C500939934 /* libCocoaLumberjack.a */; };
 		386D49621E15353D00BE5D94 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386D49611E15353D00BE5D94 /* CoreData.framework */; };
 		386D498E1E15590300BE5D94 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386D498D1E15590200BE5D94 /* Security.framework */; };
@@ -381,9 +378,6 @@
 		383709721E1A7186006EB024 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../node_modules/react-native-facebook-login/FacebookSDK/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		383709781E1CFA62006EB024 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../Downloads/FacebookSDKs-iOS-4.16.1/FBSDKShareKit.framework"; sourceTree = "<group>"; };
 		38370A161E1D02A0006EB024 /* TSBackgroundFetch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSBackgroundFetch.framework; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.framework"; sourceTree = "<group>"; };
-		3853204D1F1F987B006F493F /* ImpactRunLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpactRunLocationManager.swift; sourceTree = "<group>"; };
-		3853204F1F1F98F9006F493F /* ImpactRunLocationManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImpactRunLocationManagerViewController.swift; sourceTree = "<group>"; };
-		385320541F1F99FC006F493F /* LocationManagerModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManagerModule.m; sourceTree = "<group>"; };
 		3867183B1E1D08C400939934 /* Lumberjack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lumberjack.xcodeproj; path = "../node_modules/cocoa-lumberjack/CocoaLumberjack/Lumberjack.xcodeproj"; sourceTree = "<group>"; };
 		386D49611E15353D00BE5D94 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		386D498D1E15590200BE5D94 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -583,9 +577,6 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				38B00AD51D377DD200863FF0 /* Images.xcassets */,
 				38B00AD21D377D8100863FF0 /* main.m */,
-				3853204D1F1F987B006F493F /* ImpactRunLocationManager.swift */,
-				3853204F1F1F98F9006F493F /* ImpactRunLocationManagerViewController.swift */,
-				385320541F1F99FC006F493F /* LocationManagerModule.m */,
 			);
 			name = ImpactRun;
 			sourceTree = "<group>";
@@ -1491,10 +1482,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3853204E1F1F987C006F493F /* ImpactRunLocationManager.swift in Sources */,
-				385320501F1F98F9006F493F /* ImpactRunLocationManagerViewController.swift in Sources */,
 				38B00AD41D377D8F00863FF0 /* AppDelegate.m in Sources */,
-				385320551F1F99FC006F493F /* LocationManagerModule.m in Sources */,
 				38B00AD31D377D8100863FF0 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1514,7 +1502,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8D4A806460D694386FF28D3F /* Pods-ImpactrunTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1569,7 +1556,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EBD9BFC2767335792B57D624 /* Pods-ImpactrunTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";

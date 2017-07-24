@@ -96,7 +96,7 @@ class devdactic_tabs extends Component {
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
-                var fetchversion = parseInt(this.state.causeFeatchVersion)+(3);
+                var fetchversion = parseInt(this.state.causeFeatchVersion)+(3600*3);
                 console.log('is cause fetch',fetchversion <= epochtime);
                 if (fetchversion <= epochtime) {
                     this.fetchDataonInternet();

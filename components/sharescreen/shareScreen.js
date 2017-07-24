@@ -74,6 +74,7 @@ import{
         if (this.state.user) {
         this.ifConnectTonetPost();
         }else{
+          this.SaveRunLocally();
           AlertIOS.alert('Login', 'please login to create impact');
         }
       })
@@ -171,7 +172,7 @@ import{
       );
     }
 
-     handleNetworkErrors(response){
+    handleNetworkErrors(response){
        if(response.ok){
         return response.json();
        }else{
@@ -183,7 +184,7 @@ import{
         return ;
        }
        
-     }
+    }
   
     SaveRunLocally(){
       if (this.state.user) {
@@ -261,12 +262,7 @@ import{
     componentWillMount() {
       
     }
-    // componentDidMount() {
-    //   setTimeout(function(){
-    //     AlertIOS.alert('Thankyou for Running/Walking',this.props.data.cause_title);
-    //    console.log('after 2 sec');
-    //   },2000)
-    // }
+ 
 
     PostRun(){
       if (this.props.user) {
@@ -325,7 +321,6 @@ import{
          this.setState({
           postingRun:false,
          })
-        consol.log("userRunData",userRunData);
         AsyncStorage.removeItem('runversion',(err) => {
            console.log("runversionremoved");
         });
@@ -341,11 +336,12 @@ import{
         })
        })
       .catch((error)=>{
-
-       console.log("errorPostrunShare ",error);
-       this.setState({
+        console.log("errorPostrunShare ",error);
+        this.SaveRunLocally();
+        this.setState({
           postingRun:false,
         })
+
       })
     }else{
       this.setState({
