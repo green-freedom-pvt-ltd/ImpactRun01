@@ -102,6 +102,7 @@ SettingsService.init('iOS');
         latitude: 40.72052634,
         longitude: -73.97686958312988
       },
+      onCarDetectedEndRunModel:false,
     };
   },
   
@@ -154,7 +155,8 @@ SettingsService.init('iOS');
         Storeduserdata:user,
       })
     })
-    Location.setDistanceFilter(10);
+
+    // Location.setDistanceFilter(10);
     Location.setAllowsBackgroundLocationUpdates(true);
     this.getLocationUpdate();
   },
@@ -197,7 +199,7 @@ SettingsService.init('iOS');
       setTimeout(function(){    
        me.initializePolyline();
       },3000);
-      Location.startUpdatingLocation();
+        Location.startUpdatingLocation();
         var subscription = DeviceEventEmitter.addListener(
           'locationUpdated',
           (location) => {
@@ -237,6 +239,31 @@ SettingsService.init('iOS');
                    <View style={styles.modelBtnWrap}>
                     <TouchableOpacity style={styles.modelbtnResumeRun} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>CLOSE</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.ResumeRunFromPopup()}><Text style={styles.btntext}>RESUME</Text></TouchableOpacity>
+                  </View>
+                   </View>
+                   </View>
+                  </View>
+            </Modal>
+          )
+    },
+
+     modelViewDrivingEndRun:function(){
+        return(
+          <Modal
+          onPress={()=>this.closemodel()}
+          style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
+             isOpen={this.state.onCarDetectedEndRunModel}
+               >
+                  <View style={styles.modelWrap}>
+                    <View  style={styles.contentWrap}>
+                    <View style={styles.iconWrapmodel}>
+                      <Icon style={{color:"white",fontSize:30,}} name={'ios-car'}></Icon>
+                    </View>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>ON VEHILE DETECTED</Text>
+                     <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your speed is more than running speed . So we are ending your run</Text>
+                   <View style={styles.modelBtnWrap}>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.onClickEnable()}><Text style={styles.btntext}>END RUN</Text></TouchableOpacity>
                   </View>
                    </View>
                    </View>
@@ -332,6 +359,7 @@ SettingsService.init('iOS');
 
 
   componentWillUnmount:function() {
+
     this.clearLocationUpdate();
   },
 
@@ -371,21 +399,25 @@ SettingsService.init('iOS');
   startPause:function(){
     var me = this;
     if (this.state.enabled) {
-      this.clearLocationUpdate();
+      
       this.setState({
         enabled:false,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
-      });       
+      });      
+      this.clearLocationUpdate(); 
     }else{
       var isMoving = !this.state.isMoving;
-      this.getLocationUpdate();
+      // Location.setDistanceFilter(10);
+      // Location.setAllowsBackgroundLocationUpdates(true);
+      
       this.setState({
         isMoving:isMoving,
         enabled:true,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
-      });        
+      });     
+      this.getLocationUpdate();   
     } 
     this.updatePaceButtonStyle();
     this._handleStartStop(); 
@@ -403,6 +435,7 @@ SettingsService.init('iOS');
       this.removeAllAnnotations(mapRef);
       this.polyline = null;
       this.setState({
+      onCarDetectedEndRunModel:false,
       enabled: !this.state.enabled,     
       });
       this.updatePaceButtonStyle();
@@ -458,16 +491,28 @@ SettingsService.init('iOS');
       }else{
         console.log("this.state.UssainBoltCount",this.state.HussainBoltCount);
         if (this.state.HussainBoltCount >= 4) {
-          AlertIOS.alert('On vehicle detected','Your speed is more than running speed . So we are ending your run');
-          this.onClickEnable();
+          Location.stopUpdatingLocation();
+          this.setState({
+            HussainBoltCount:0, 
+            onCarDetectedEndRunModel:true, 
+            enabled:false,
+            isRunning:false      
+          })
+          this.updatePaceButtonStyle();
+          this._handleStartStop(); 
+          
         }else{
+          Location.stopUpdatingLocation();     
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             open:true,
-          })
+            enabled:false,
+            isRunning:false
+          })   
+          this.updatePaceButtonStyle();
+          this._handleStartStop(); 
           this._onNotification();
-          console.log("HussainBoltCount",this.state.HussainBoltCount);
-          this.startPause();
+          console.log("HussainBoltCount",this.state.HussainBoltCount);         
           VibrationIOS.vibrate();  
         }
       }
@@ -520,14 +565,25 @@ SettingsService.init('iOS');
       }else{
         if (this.state.UssainBoltCount > 4) {
           console.log("location hussain");
-          this.onClickEnable();
+          Location.stopUpdatingLocation();
+          this.setState({
+            UssainBoltCount:0,
+            enabled:false,
+            isRunning:false,
+          })
+          this.updatePaceButtonStyle();
+          this._handleStartStop(); 
         }else{
+          Location.stopUpdatingLocation();
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             open:true,
+            enabled:false,
+            isRunning:false,
           })
+          this.updatePaceButtonStyle();
+          this._handleStartStop(); 
           this._onNotification();
-          this.startPause();
           VibrationIOS.vibrate();                 
         }
       }
@@ -1082,7 +1138,6 @@ SettingsService.init('iOS');
                    {this.TimeTextView(intime)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
 
-                  <Text style={styles.bottomBarContent}>Distance two points {"\n"}{parseFloat(this.state.prevDistance*1000).toFixed(1)}m</Text>
                 </View>
             
                 
@@ -1099,6 +1154,7 @@ SettingsService.init('iOS');
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableOpacity>
           </View>
+          {this.modelViewDrivingEndRun()}
           {this.modelViewDriving()}
           {this.modelViewGpsWeek()}
         </View>

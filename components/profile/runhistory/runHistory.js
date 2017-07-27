@@ -222,8 +222,8 @@ class RunHistory extends Component {
               this.setState({
                 weight:userWeight,
               });
-          })
-          })    
+          })  
+          })  
           .catch((err) => {
             console.log('err',err);
             if (err != null) {
@@ -593,7 +593,7 @@ class RunHistory extends Component {
                 </TouchableOpacity>
                   <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Run History'}</Text>
               </View>
-              <View style={{height:deviceHeight}}>
+              <View style={{height:deviceHeight-70}}>
                 <ListView
                  renderSectionHeader={this.renderSectionHeader}
                  refreshControl={

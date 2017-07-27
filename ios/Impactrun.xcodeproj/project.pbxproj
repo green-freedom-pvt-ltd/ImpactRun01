@@ -18,7 +18,6 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		149740D5A2A34D55ADEA6E6F /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */; };
 		380EDA011F0435B100AACE4C /* libAppHub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 380ED9FE1F0435A000AACE4C /* libAppHub.a */; };
-		3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */; };
 		3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */; };
 		3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F91E65DC9100DCC7C6 /* UIKit.framework */; };
 		38133CE81ED8809C00ADF687 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38133CD71ED8807900ADF687 /* libRCTOneSignal.a */; };
@@ -362,7 +361,6 @@
 		31E1B80977F5476A8D804A07 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNShare.a; sourceTree = "<group>"; };
 		380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppHub.xcodeproj; path = ../node_modules/apphub/AppHub/AppHub.xcodeproj; sourceTree = "<group>"; };
 		380EDA021F0435B200AACE4C /* libAppHubTestUtils.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAppHubTestUtils.a; path = "../node_modules/apphub/AppHubTestUtils/build/Debug-iphoneos/libAppHubTestUtils.a"; sourceTree = "<group>"; };
-		3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CleverTapSDK.framework; sourceTree = "<group>"; };
 		3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		3810C2F91E65DC9100DCC7C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		38133CBE1ED8807800ADF687 /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
@@ -372,12 +370,10 @@
 		3830D6061D6C63A80028922A /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
 		3830D60D1D6C647C0028922A /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		3830D60F1D6F9CB40028922A /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
-		3837096A1E1A66DE006EB024 /* TSLocationManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSLocationManager.framework; path = "../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/TSLocationManager.framework"; sourceTree = "<group>"; };
 		3837096C1E1A673B006EB024 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../node_modules/react-native-facebook-login/FacebookSDK/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		3837096D1E1A673B006EB024 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../node_modules/react-native-facebook-login/FacebookSDK/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		383709721E1A7186006EB024 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../node_modules/react-native-facebook-login/FacebookSDK/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		383709781E1CFA62006EB024 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../Downloads/FacebookSDKs-iOS-4.16.1/FBSDKShareKit.framework"; sourceTree = "<group>"; };
-		38370A161E1D02A0006EB024 /* TSBackgroundFetch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSBackgroundFetch.framework; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.framework"; sourceTree = "<group>"; };
 		3867183B1E1D08C400939934 /* Lumberjack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lumberjack.xcodeproj; path = "../node_modules/cocoa-lumberjack/CocoaLumberjack/Lumberjack.xcodeproj"; sourceTree = "<group>"; };
 		386D49611E15353D00BE5D94 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		386D498D1E15590200BE5D94 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -502,7 +498,6 @@
 				38C19AAB1D55BA3300E5F990 /* GoogleAppUtilities.framework in Frameworks */,
 				B19105E787364D77BC06ADDD /* libRNShare.a in Frameworks */,
 				C64D22300DE940B3AA3BBDE6 /* libRCTFBSDK.a in Frameworks */,
-				3810C2F61E65D96600DCC7C6 /* CleverTapSDK.framework in Frameworks */,
 				8A9C757976B74038989E643B /* libRNPedometer.a in Frameworks */,
 				F26DCFCFECBC470295165EBB /* libRNLocation.a in Frameworks */,
 			);
@@ -693,14 +688,12 @@
 				3810C2F91E65DC9100DCC7C6 /* UIKit.framework */,
 				3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */,
 				3875BA711E5871F800F880DC /* UserNotifications.framework */,
-				38370A161E1D02A0006EB024 /* TSBackgroundFetch.framework */,
 				8359A6E51CA58BA6008F13B7 /* SystemConfiguration.framework */,
 				3830D60D1D6C647C0028922A /* Bolts.framework */,
 				383709721E1A7186006EB024 /* FBSDKCoreKit.framework */,
 				383709781E1CFA62006EB024 /* FBSDKShareKit.framework */,
 				3837096C1E1A673B006EB024 /* FBSDKCoreKit.framework */,
 				3837096D1E1A673B006EB024 /* FBSDKLoginKit.framework */,
-				3837096A1E1A66DE006EB024 /* TSLocationManager.framework */,
 				386D49931E15595600BE5D94 /* libc++.tbd */,
 				386D49911E15593000BE5D94 /* QuartzCore.framework */,
 				386D498F1E15591100BE5D94 /* CFNetwork.framework */,
@@ -813,7 +806,6 @@
 				38E376A11E57F9ED00D78F58 /* Crashlytics.framework */,
 				38FA6FFE1DCB3F3E00B10D63 /* Impactrun.entitlements */,
 				8350375C1C962ECA000DE4BA /* libsqlite3.tbd */,
-				3810C2F51E65D96600DCC7C6 /* CleverTapSDK.framework */,
 				8350374D1C961801000DE4BA /* Fonts */,
 				13B07FAE1A68108700A75B9A /* ImpactRun */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -1545,6 +1537,7 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
 				PRODUCT_NAME = Impactrun;
 				PROVISIONING_PROFILE = "";
@@ -1569,6 +1562,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1640,9 +1634,7 @@
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 					"$(SRCROOT)/node_modules/react-native/Libraries/**/**",
 					"$(SRCROOT)/../node_modules/react-native-activity-view",
-					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-location",
-					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1677,7 +1669,9 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.impactrun.app$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Impactrun;
@@ -1726,15 +1720,14 @@
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 					"$(SRCROOT)/node_modules/react-native/Libraries/**/**",
 					"$(SRCROOT)/../node_modules/react-native-activity-view",
-					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-location",
-					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1846,6 +1839,7 @@
 					"$(SRCROOT)/../node_modules/react-native-youtube/**",
 					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1918,6 +1912,7 @@
 					"$(SRCROOT)/../node_modules/react-native-youtube/**",
 					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/**",
+					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

@@ -339,7 +339,7 @@ class devdactic_tabs extends Component {
                 </TabBarIOS.Item>
                  <TabBarIOS.Item
                     selected={this.state.selectedTab === 'profile'}
-                    title="me"
+                    title="Me"
                     icon={{uri: Profileicon, scale: 5}}
                     onPress={() => {
                         this.setState({
@@ -375,13 +375,13 @@ class devdactic_tabs extends Component {
                  <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
-                    selected={this.state.selectedTab === 'faq'}
-                    title="Faq"
+                    selected={this.state.selectedTab === 'help'}
+                    title="Help"
                     icon={{uri: FaqImage, scale: 5}}
                     onPress={() => {
 
                         this.setState({
-                            selectedTab: 'faq',
+                            selectedTab: 'help',
                             myFeedStoredCount:this.state.FeedCount
                         });
                   }}>

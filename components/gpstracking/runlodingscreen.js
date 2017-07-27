@@ -63,7 +63,7 @@ class LodingRunScreen extends Component {
 
 
   Animated.parallel([
-    createAnimation(this.animatedValue1, 2000, Easing.ease),
+    createAnimation(this.animatedValue1, 1000, Easing.ease),
     createAnimation(this.animatedValue2, 1000, Easing.ease, 1000),
     createAnimation(this.animatedValue3, 1000, Easing.ease, 2000)        
   ]).start()

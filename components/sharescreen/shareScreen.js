@@ -62,22 +62,18 @@ import{
     }
 
     getUserData(){
-      console.log("this.props.user ",this.props.user);
-      AsyncStorage.getItem('USERDATA', (err, result) => {
-        let user = JSON.parse(result);
-        console.log("userresult ",user);
-        this.setState({
-          user:user,
-        })
-        console.log("user",this.state.user);
-        this.AddruntoRunHistory();
-        if (this.state.user) {
-        this.ifConnectTonetPost();
+      var me = this;
+      setTimeout(function(){    
+       console.log("this.props.user ",me.props.user);
+        me.AddruntoRunHistory();
+        if (me.props.user) {
+        me.ifConnectTonetPost();
         }else{
-          this.SaveRunLocally();
+          me.SaveRunLocally();
           AlertIOS.alert('Login', 'please login to create impact');
         }
-      })
+      },1000);
+        
     }
     
     shareLinkWithShareDialog() {
@@ -187,7 +183,7 @@ import{
     }
   
     SaveRunLocally(){
-      if (this.state.user) {
+      if (this.props.user) {
      var saveRuns = parseInt(this.state.saveRunCountData)+ 1 ;
      // var startPosition = this.props.StartLocation;
      // console.log('starttlocation:',this.props.StartLocation);
@@ -201,7 +197,7 @@ import{
      var time = this.props.time;
      var date = this.props.StartRunTime
      var RunNumber = this.state.RunNumber;
-     var userdata = this.state.user;
+     var userdata = this.props.user;
      var user_id =JSON.stringify(userdata.user_id);
      var token = JSON.stringify(userdata.auth_token);
      var tokenparse = JSON.parse(token);
@@ -218,7 +214,7 @@ import{
         run_duration: time,
         is_flag:false,
         calories_burnt:calories_burnt,
-        team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
+        team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
         // start_location_lat:startPosition.coords.latitude,
         // start_location_long:startPosition.coords.longitude,
         no_of_steps:steps,
@@ -309,7 +305,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
+          team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -355,7 +351,7 @@ import{
     }
 
     AddruntoRunHistory(){
-      if (this.state.user) {
+      if (this.props.user) {
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
@@ -363,7 +359,7 @@ import{
       var time = this.props.time;
       var date = this.props.StartRunTime;
       var cause = this.props.data;
-      var userdata = this.state.user;
+      var userdata = this.props.user;
       var calories_burnt = this.props.calories_burnt;
       var user_id =JSON.stringify(userdata.user_id);
        // var startPosition = this.props.StartLocation;
@@ -382,7 +378,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
+          team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -408,7 +404,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:(this.state.impactleague_is_active)?this.state.user.team_code:'',
+          team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -505,7 +501,7 @@ import{
         subject: "Download ImpactRun Now " //  for email
       };
     
-      if (this.state.user === null) {
+      if (this.props.user === null) {
        
         return(
         <View style={{height:deviceHeight,width:deviceWidth,}}>

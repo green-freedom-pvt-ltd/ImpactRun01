@@ -24,21 +24,15 @@ class LoginBtns extends Component {
     constructor(props) {
       super(props);
       this.state = {
-          visibleHeight: Dimensions.get('window').height,
-          scroll: false,
           loaded: false,
-          LoginCountTotal:null,
+          provider:"",
       };
     }
 
     componentDidMount() {
-      AsyncStorage.getItem('LoginCount', (err, result) => { 
-        var Logincount = JSON.parse(result);
-        this.setState({
-          LoginCountTotal:Logincount,
-        })        
-      })
     } 
+
+
     handleFBLogin(){
      var _this = this;
      FBLoginManager.login(function(error, data){
@@ -86,24 +80,7 @@ class LoginBtns extends Component {
     }
     
     LoginCountFunction(){
-        let TotalLogin = {
-          TotalLoginCount:'1',  
-        }
-        if (this.state.LoginCountTotal === null ) {
-          AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
-            AsyncStorage.getItem('LoginCount', (err, result) => { 
-              var Logincount = JSON.parse(result);
-              this.setState({
-                LoginCountTotal:Logincount,
-              })  
-             AlertIOS.alert('Congrats!', "You've Helped solve hunger.'Zomato' and 'Feeding India' are proud to share a meal with a hungry street kid in Delhi.");
-          })
-        })
-        }else{
-            if (this.state.LoginCountTotal.TotalLoginCount ) {
-             AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
-          };
-        }
+      AlertIOS.alert('Thankyou for login', 'you are successfully logged in');
     }
 
    _signInGoogle() {
