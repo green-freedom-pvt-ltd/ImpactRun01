@@ -143,7 +143,7 @@ class LeaderboardData extends Component {
           <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor}]}>
            <View style={styles.flexbox1}>
             <View style={style}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowData.ranking}</Text>
+              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:'#4a4a4a',}}>{rowData.ranking}</Text>
             </View>
            </View>
             <View style={styles.flexbox}>

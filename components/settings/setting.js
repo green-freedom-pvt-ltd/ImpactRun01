@@ -141,6 +141,7 @@ class Setting extends Component {
                 </TouchableOpacity>
                 </View>
                 <View style={{flex:1}}></View>
+                <Text></Text>
                </View>
               );
           }

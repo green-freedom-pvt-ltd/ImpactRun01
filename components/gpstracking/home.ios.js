@@ -60,7 +60,7 @@ SettingsService.init('iOS');
 
     return {
       startDate: null,
-      endDate: null,
+      // endDate: null,
       numberOfSteps: 0,
       distance: 0,
       floorsAscended: 0,
@@ -103,6 +103,7 @@ SettingsService.init('iOS');
         longitude: -73.97686958312988
       },
       onCarDetectedEndRunModel:false,
+      weakGPSPoints: 0,
     };
   },
   
@@ -178,7 +179,7 @@ SettingsService.init('iOS');
           clearInterval(me.StillDetictiioninterval); 
           if (distance > me.state.distanceTravelled) {
             if (me.state.numberOfSteps < priveSteps) {
-            AlertIOS.alert("still","it seems you are still");
+            AlertIOS.alert("Still","It seems you are still.");
             me.setState({
               StillDecteting:true,
             })
@@ -322,18 +323,6 @@ SettingsService.init('iOS');
 
 
 
-
-  _onlocation:function(location){
-    var accuracy = location.coords.accuracy;
-    PushNotification.localNotificationSchedule({
-      date: new Date(Date.now() + (1000)), // in 60 secs
-      vibrate: true, // (optional) default: true
-      vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      message: "your accuracy "+ accuracy, // (required)
-      playSound: true, // (optional) default: true
-    });
-  },
-
   _onNotification:function(notification) {
       PushNotification.localNotificationSchedule({
       date: new Date(Date.now() + (1000)), // in 60 secs
@@ -429,6 +418,11 @@ SettingsService.init('iOS');
   onClickEnable: function(location) {
     var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
     if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
+      var d = new Date();
+      this.setState({
+        endDate: d.toISOString().substring(0, 10) + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
+      });
+      
       AsyncStorage.removeItem('runDataAppKill');
       this.clearLocationUpdate();
       this.navigateTOShareScreen();
@@ -456,8 +450,18 @@ SettingsService.init('iOS');
     this.setState({
       prevDistance: newDistance-distanceTravelled,
     })
-     var sourceAccuracy = (this.state.sourceCount)?40:25;
+    if (location.coords.accuracy >= 100 && this.state.GpsAccuracyCheck){
+      this.setState({
+        weakGPSPoints: this.state.weakGPSPoints + 1,
+      })
+    }
+    var sourceAccuracy = (this.state.sourceCount)?40:25;
     if (location.coords.accuracy <= sourceAccuracy){
+      if(this.state.weakGPSPoints > 0){
+        this.setState({
+        weakGPSPoints: this.state.weakGPSPoints - 1,
+        })
+      }
       this.setState({
         sourceCount:false,
       })
@@ -500,7 +504,6 @@ SettingsService.init('iOS');
           })
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
-          
         }else{
           Location.stopUpdatingLocation();     
           this.setState({
@@ -553,11 +556,13 @@ SettingsService.init('iOS');
           }     
         }else{
           if (this.state.GpsAccuracyCheck) {
-            this._ongpsWeakNotification();
-            this.setState({
-              openGpsModel:true,
-              GpsAccuracyCheck:false,
-            })
+            if(this.state.weakGPSPoints >= 3){
+              this._ongpsWeakNotification();
+              this.setState({
+                openGpsModel:true,
+                GpsAccuracyCheck:false,
+              })
+            }
           }else{
             return;
           }
@@ -933,6 +938,7 @@ SettingsService.init('iOS');
           time:TimeFormatter(timetotal),
           StartLocation:this.state.StartPosition,
           StartRunTime:this.state.myrundate,
+          EndRunTime:this.state.endDate,
           noOfsteps:this.state.numberOfSteps,
           },
         navigator: this.props.navigator,
@@ -946,10 +952,10 @@ SettingsService.init('iOS');
       VibrationIOS.vibrate();
       AlertIOS.alert(
           'Go Back',
-         'Are you sure you want to go back ',
+         'Are you sure you want to go back ?',
          [
         {text: 'CONFIRM', onPress: () => this.popRoute() },
-        {text: 'CANClE',},
+        {text: 'CANCLE',},
        ],
       ); 
     },
@@ -978,6 +984,7 @@ SettingsService.init('iOS');
       this.state.prevDistance = 0;
       this.removeAllAnnotations(mapRef);
       this.polyline = null;
+
       this.setState({
         enabled: !this.state.enabled, 
       });
@@ -1117,6 +1124,7 @@ SettingsService.init('iOS');
                 fill={circularprogress}
                 prefill={100}
                 tintColor={styleConfig.bright_blue}
+                rotation={0}
                 backgroundColor="#fafafa">                   
               </AnimatedCircularProgress>
                <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>

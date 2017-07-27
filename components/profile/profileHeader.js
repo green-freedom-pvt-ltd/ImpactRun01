@@ -10,6 +10,7 @@ var {
   AsyncStorage,
   Dimensions,
   VibrationIOS,
+  AlertIOS,
   Navigator,
   TouchableOpacity,
   TouchableHighlight,
@@ -40,6 +41,7 @@ var UserProfile = React.createClass({
 
     },
     componentDidMount:function() {
+      // AlertIOS.alert("km",JSON.stringify(this.props.totalKm))
     },
 
     social_thumb:function(){
@@ -138,7 +140,7 @@ var UserProfile = React.createClass({
           <View style={styles.userimagwrap}>
           <View style={styles.UserImageWrap}>{this.social_thumb()}</View>
           <View style={styles.barWrap}>
-          <LevelBar totalKm={this.props.totalKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={deviceWidth-150} totalKm={this.props.totalKm}/>
+          <LevelBar progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={deviceWidth-150} totalKm={this.props.totalKm}/>
           </View>
           </View>
         </View>

@@ -296,6 +296,7 @@ class Homescreen extends Component {
           cause_run_title:RunData.cause_run_title,
           user_id:RunData.user_id,
           start_time:RunData.start_time,
+          end_time:RunData.end_time,
           distance:RunData.distance,
           peak_speed: 1,
           avg_speed:RunData.avg_speed,

@@ -323,7 +323,6 @@ class RunHistory extends Component {
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
                 <View>
-                 <Text style={styles.StartTime}>{day}</Text>
                   <Text style={styles.title}>{rowData.cause_run_title}</Text>
                 </View>
                   <Icon style={{color:'grey',fontSize:20,margin:10,marginRight:20,}} name ={'error'}></Icon>
@@ -356,7 +355,6 @@ class RunHistory extends Component {
               <View style={styles.runDetail}>
                 <View style={styles.cause_run_titleWrap}>
                 <View>
-                 <Text style={styles.StartTime}>{day}</Text>
                   <Text style={styles.title}>{rowData.cause_run_title}</Text>
                   </View>
                 </View>

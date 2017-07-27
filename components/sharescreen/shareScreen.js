@@ -36,8 +36,9 @@ import{
     mixins: [TimerMixin]
     constructor(props) {
       super(props);
-      this.getILdata();
-      this.getUserData();           
+
+      this.getUserData();  
+      this.getILdata();         
       var cause = this.props.data;
       var distance = this.props.distance;
       var impact =this.props.impact;
@@ -62,12 +63,16 @@ import{
     }
 
     getUserData(){
-      var me = this;
-      setTimeout(function(){    
-       console.log("this.props.user ",me.props.user);
-        me.AddruntoRunHistory();
-        if (me.props.user) {
-        me.ifConnectTonetPost();
+      AsyncStorage.getItem('USERDATA', (err, result) => {
+        let user = JSON.parse(result);
+        this.setState({
+          user:user,
+        })
+       
+        console.log("user",this.state.user);
+        this.AddruntoRunHistory();
+        if (this.state.user) {
+        this.ifConnectTonetPost();
         }else{
           me.SaveRunLocally();
           AlertIOS.alert('Login', 'please login to create impact');
@@ -155,7 +160,6 @@ import{
     }
 
     ifConnectTonetPost(){
-       console.log("openVersion");
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
@@ -195,7 +199,8 @@ import{
      var impact =this.props.impact;
      var steps = this.props.noOfsteps;
      var time = this.props.time;
-     var date = this.props.StartRunTime
+     var date = this.props.StartRunTime;
+     var endtime = this.props.EndRunTime;
      var RunNumber = this.state.RunNumber;
      var userdata = this.props.user;
      var user_id =JSON.stringify(userdata.user_id);
@@ -207,6 +212,7 @@ import{
         cause_run_title:cause.cause_title,
         user_id:user_id,
         start_time: date,
+        end_time: endtime,
         distance: distance,
         peak_speed: 1,
         avg_speed:speed,
@@ -214,7 +220,7 @@ import{
         run_duration: time,
         is_flag:false,
         calories_burnt:calories_burnt,
-        team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
+        team_id:this.state.impactleague_team_id,
         // start_location_lat:startPosition.coords.latitude,
         // start_location_long:startPosition.coords.longitude,
         no_of_steps:steps,
@@ -260,7 +266,7 @@ import{
     }
  
 
-    PostRun(){
+    async PostRun(){
       if (this.props.user) {
         this.setState({
           postingRun:true
@@ -277,6 +283,7 @@ import{
       var steps = this.props.noOfsteps;
       var time = this.props.time;
       var date = this.props.StartRunTime;
+      var endtime = this.props.EndRunTime;
       var userdata = this.props.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
@@ -285,8 +292,18 @@ import{
       // var startPosition = this.props.StartLocation;
       // console.log('startPosition.coords.latitude',startPosition.coords.latitude);
       // console.log('startPosition.coords.longitude',startPosition.coords.longitude);
-      
       var cause = this.props.data;
+      // try{
+      //   let response = await fetch('https://mywebsite.com/endpoint/');
+      //   let responseJson = await response.json();
+
+      // }
+      // catch{
+
+      // }
+      var _this = this;
+      setTimeout( function(){
+      try{
       fetch(apis.runApi, {
          method: "POST",
          headers: {  
@@ -298,6 +315,7 @@ import{
           cause_run_title:cause.cause_title,
           user_id:user_id,
           start_time:date,
+          end_time:endtime,
           distance: distance,
           peak_speed: 1,
           avg_speed:speed,
@@ -305,16 +323,16 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
+          team_id:_this.state.impactleague_team_id,
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
           is_ios:true,     
           })
        })
-      .then(this.handleNetworkErrors.bind(this))
+      .then(_this.handleNetworkErrors.bind(_this))
       .then((userRunData) => { 
-         this.setState({
+         _this.setState({
           postingRun:false,
          })
         AsyncStorage.removeItem('runversion',(err) => {
@@ -333,12 +351,17 @@ import{
        })
       .catch((error)=>{
         console.log("errorPostrunShare ",error);
-        this.SaveRunLocally();
-        this.setState({
+        _this.SaveRunLocally();
+        _this.setState({
           postingRun:false,
         })
 
       })
+    }
+    catch (error) {
+      // _this.PostRun()
+    }
+    }, 3000);
     }else{
       this.setState({
           postingRun:false,
@@ -358,6 +381,7 @@ import{
       var steps = this.props.noOfsteps;
       var time = this.props.time;
       var date = this.props.StartRunTime;
+      var endtime = this.props.EndRunTime;
       var cause = this.props.data;
       var userdata = this.props.user;
       var calories_burnt = this.props.calories_burnt;
@@ -371,6 +395,7 @@ import{
           cause_run_title:cause.cause_title,
           user_id:user_id,
           start_time:date,
+          end_time: endtime,
           distance: distance,
           peak_speed: 1,
           avg_speed:speed,
@@ -378,7 +403,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
+          team_id:this.state.impactleague_team_id,
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -397,6 +422,7 @@ import{
           cause_run_title:cause.cause_title,
           user_id:user_id,
           start_time:date,
+          end_time: endtime,
           distance: distance,
           peak_speed: 1,
           avg_speed:speed,
@@ -404,7 +430,7 @@ import{
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:(this.state.impactleague_is_active)?this.props.user.team_code:'',
+          team_id:this.state.impactleague_team_id,
           // start_location_lat:startPosition.coords.latitude,
           // start_location_long:startPosition.coords.longitude,
           no_of_steps:steps,
@@ -431,10 +457,9 @@ import{
 
       AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
         if (result != null || undefined) {
-
         var boardData = JSON.parse(result);
         this.setState({
-          impactleague_is_active:boardData.impactleague_is_active
+          impactleague_team_id:this.props.user.team_code,
         })
         if (boardData.impactleague_is_active) {   
           this.setState({
@@ -447,7 +472,8 @@ import{
         }
         }else{
           this.setState({
-            navigatetopage:'tab'
+            navigatetopage:'tab',
+            impactleague_team_id:'',
           })
         }       
       }); 
@@ -553,7 +579,6 @@ import{
               </View>
             </Image>
           </View>
-            {this.isloading()}
         </View>
        )
       }else{
@@ -611,7 +636,6 @@ import{
               </View>
             </View>
           </Image>
-          {this.isloading()}
         </View>  
       )
      }
