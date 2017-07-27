@@ -49,6 +49,10 @@ class Profile extends Component {
           RunTotalAmount2:0,
           RunCountTotal:0,
           RunTotalDistance:0,
+          level:0,
+          prevKm:0,
+          levelKm:0,
+          progressVal:0,
           navigation: {
             index: 1,
             routes: [],
@@ -359,6 +363,7 @@ class Profile extends Component {
         }
         this.setState({
           RunTotalDistance:sum,
+          level:this.userLevelFunction(sum),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
@@ -367,6 +372,72 @@ class Profile extends Component {
          }
        })
       }
+
+
+
+   userLevelFunction(totalkm){
+   if (totalkm != null) {
+    if (totalkm <= 50 ) { 
+      this.setState({
+        prevKm:0,
+        levelKm:50,
+        progressVal:totalkm/50,
+
+      })
+      return 1;
+    }else if (totalkm <= 250){
+      
+      this.setState({
+        prevKm:50,
+        levelKm:250,
+        progressVal:(totalkm-50)/200,
+        
+      })
+      return 2;
+    }else if (totalkm <= 500) {
+      this.setState({
+        prevKm:250,
+        levelKm:500,
+        progressVal:(totalkm-250)/250,
+      })
+      return 3;
+    }else if (totalkm <= 1000){
+      this.setState({
+        prevKm:500,
+        levelKm:1000,
+        progressVal:(totalkm-500)/500,
+      })
+      return 4;
+      
+    }else if (totalkm <= 2500) {
+      console.log(totalkm/4200)
+      this.setState({
+        prevKm:1000,
+        levelKm:2500,
+        progressVal:(totalkm-1000)/1500,
+      })
+      return 5;
+    }else if (totalkm <= 5000){
+      this.setState({
+        prevKm:2500,
+        levelKm:5000,
+        progressVal:(totalkm-2500)/2500,
+      })
+      return 6;
+      
+    }else if (totalkm <= 10000) {
+      this.setState({
+        prevKm:5000,
+        levelKm:10000,
+        progressVal:(totalkm-5000)/5000,
+      })
+      return 7;
+    }
+
+    }else{
+      return
+    }
+   }
 
 
 
@@ -474,7 +545,7 @@ class Profile extends Component {
         return (
           <View style={{width:deviceWidth}}>
           <View style={styles.container}>
-          <UserProfile fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
+          <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
           </View>
           <View style={{flex: 1, justifyContent:'center' ,alignItems:'center', top:13}}>
             <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>All Time</Text>

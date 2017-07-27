@@ -118,6 +118,7 @@ class LodingRunScreen extends Component {
                     fill={100}
                     prefill={0}
                     tintColor={styleConfig.bright_blue}
+                    rotation={0}
                     backgroundColor="#fafafa">
                     {
                       (fill) => (

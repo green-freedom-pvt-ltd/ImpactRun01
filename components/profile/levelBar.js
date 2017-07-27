@@ -15,25 +15,29 @@ import{
   class levelBar extends Component {
    constructor(props) {
      super(props);
-     this.getKMfunction();
      this.state = {
       prevKm:0,
       levelKm:0,
+      progressVal:0,
      };
    }
 
    componentDidMount() {
-    var totalkm = this.props.totalKm;
-    if (this.props.totalKm != undefined) {
-    this.setState({
-      level:this.userLevelFunction(totalkm),
-      totalKm:this.props.totalKm,
-    })
-   this.userLevelFunction = this.userLevelFunction.bind(this)
-  }else{
+    // var _this = this;
+    // setTimeout(function(){    
+    //   var totalkm = _this.props.totalKm;
+    //   if (_this.props.totalKm != undefined) {
+    //   _this.setState({
+    //     totalKm:_this.props.totalKm,
 
+    //   })
+    //   }else{
+        
 
-   }
+    //   }
+    // },2000);
+    
+   
  }
 
  getKMfunction(){
@@ -46,69 +50,7 @@ import{
    })
  }
    
-   userLevelFunction(totalkm){
-   if (totalkm != null) {
-    if (totalkm <= 50 ) { 
-      this.setState({
-        prevKm:0,
-        levelKm:50,
-        progressVal:totalkm/50,
 
-      })
-      return 1;
-    }else if (totalkm <= 250){
-      
-      this.setState({
-        prevKm:50,
-        levelKm:250,
-        progressVal:(totalkm-50)/200,
-        
-      })
-      return 2;
-    }else if (totalkm <= 500) {
-      this.setState({
-        prevKm:250,
-        levelKm:500,
-        progressVal:(totalkm-250)/250,
-      })
-      return 3;
-    }else if (totalkm <= 1000){
-      this.setState({
-        prevKm:500,
-        levelKm:1000,
-        progressVal:(totalkm-500)/500,
-      })
-      return 4;
-      
-    }else if (totalkm <= 2500) {
-      console.log(totalkm/4200)
-      this.setState({
-        prevKm:1000,
-        levelKm:2500,
-        progressVal:(totalkm-1000)/1500,
-      })
-      return 5;
-    }else if (totalkm <= 5000){
-      this.setState({
-        prevKm:2500,
-        levelKm:5000,
-        progressVal:(totalkm-2500)/2500,
-      })
-      return 6;
-      
-    }else if (totalkm <= 10000) {
-      this.setState({
-        prevKm:5000,
-        levelKm:10000,
-        progressVal:(totalkm-5000)/5000,
-      })
-      return 7;
-    }
-
-    }else{
-      return
-    }
-   }
    
 
    capitalizeFirstLetter () {
@@ -121,10 +63,10 @@ import{
     		<View style={styles.Maincontainer}>
           <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.props.userName +" "+this.props.lastname}</Text>
           <View style={[styles.wrapLevelKm,{width:this.props.widthBar}]}>
-           <Text style={styles.kmtext}>{this.state.prevKm}km</Text><Text  style={styles.kmtext2}>{this.state.levelKm}km</Text>
+           <Text style={styles.kmtext}>{this.props.prevKm}km</Text><Text  style={styles.kmtext2}>{this.props.levelKm}km</Text>
          </View>
-    		 <LevelBarComponent unfilledColor={'grey'} height={6} width={this.props.widthBar} progress={this.state.progressVal}  />
-         <Text style = {[styles.leveltext,{width:this.props.widthBar}]}>Level {this.state.level}</Text>
+    		 <LevelBarComponent unfilledColor={'grey'} height={6} width={this.props.widthBar} progress={this.props.progressVal}  />
+         <Text style = {[styles.leveltext,{width:this.props.widthBar}]}>Level {this.props.level}</Text>
     		</View>
     		)
     }
