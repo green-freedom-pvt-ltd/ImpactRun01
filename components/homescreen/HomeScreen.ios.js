@@ -406,7 +406,7 @@ class Homescreen extends Component {
           cause = {}
         }
 
-        Location.startUpdatingLocation();
+        // Location.startUpdatingLocation();
         me.props.navigator.replace({
         title: 'Gps',
         id:'runlodingscreen',

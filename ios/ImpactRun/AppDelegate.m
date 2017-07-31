@@ -17,7 +17,7 @@
 #import <Crashlytics/Crashlytics.h>
 #import <asl.h>
 #import "RCTLog.h"
-//#import "RCTPushNotificationManager.h"
+#import "RCTPushNotificationManager.h"
 #import "RCTPushNotificationManager.h"
 #import "RCTOneSignal.h"
 #import "AppHub/AppHub.h"
@@ -79,10 +79,10 @@
   [self.window makeKeyAndVisible];
   
     
-//  [[NSNotificationCenter defaultCenter] addObserver:self
-//                                        selector:@selector(newBuildDidBecomeAvailable:)
-//                                            name:AHBuildManagerDidMakeBuildAvailableNotification
-//                                          object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                        selector:@selector(newBuildDidBecomeAvailable:)
+                                            name:AHBuildManagerDidMakeBuildAvailableNotification
+                                          object:nil];
   //  return YES;
   return [[FBSDKApplicationDelegate sharedInstance] application:application
                                   didFinishLaunchingWithOptions:launchOptions];
@@ -198,7 +198,7 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      * on the same Wi-Fi network.
      */
 //    
-     sourceURL = [NSURL URLWithString:@"http://192.168.2.6:8081/index.ios.bundle?platform=ios&dev=true"];
+     sourceURL = [NSURL URLWithString:@"http://192.168.0.107:8081/index.ios.bundle?platform=ios&dev=true"];
     
     /**
      * OPTION 2 - AppHub
@@ -212,7 +212,7 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      * $ react-native bundle --entry-file index.ios.js --platform ios --dev true --bundle-output iOS/main.jsbundle
      *
      */
-//    
+//
 //   AHBuild *build = [[AppHub buildManager] currentBuild];
 //  sourceURL = [build.bundle URLForResource:@"main"
 //                         withExtension:@"jsbundle"];
@@ -228,24 +228,24 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
                            
 #pragma mark - NSNotificationCenter
                            
-//   -(void) newBuildDidBecomeAvailable:(NSNotification *)notification {
-//     // Show an alert view when a new build becomes available. The user can choose to "Update" the app, or "Cancel".
-//     // If the user presses "Cancel", their app will update when they close the app.
-//     
-//     AHBuild *build = notification.userInfo[AHBuildManagerBuildKey];
-//     NSString *alertMessage = [NSString stringWithFormat:@"There's a new update available.\n\nUpdate description:\n\n %@", build.buildDescription];
-//     
-//     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Great news!"
-//                                                     message:alertMessage
-//                                                    delegate:self
-//                                           cancelButtonTitle:@"Cancel"
-//                                           otherButtonTitles:@"Update", nil];
-//     
-//     dispatch_async(dispatch_get_main_queue(), ^{
-//       // Show the alert on the main thread.
-//       [alert show];
-//     });
-//   }
+   -(void) newBuildDidBecomeAvailable:(NSNotification *)notification {
+     // Show an alert view when a new build becomes available. The user can choose to "Update" the app, or "Cancel".
+     // If the user presses "Cancel", their app will update when they close the app.
+     
+     AHBuild *build = notification.userInfo[AHBuildManagerBuildKey];
+     NSString *alertMessage = [NSString stringWithFormat:@"There's a new update available.\n\nUpdate description:\n\n %@", build.buildDescription];
+     
+     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Great news!"
+                                                     message:alertMessage
+                                                    delegate:self
+                                           cancelButtonTitle:@"Cancel"
+                                           otherButtonTitles:@"Update", nil];
+     
+     dispatch_async(dispatch_get_main_queue(), ^{
+       // Show the alert on the main thread.
+       [alert show];
+     });
+   }
 
 #pragma mark - UIAlertViewDelegate
    

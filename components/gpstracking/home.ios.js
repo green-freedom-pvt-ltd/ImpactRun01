@@ -18,7 +18,7 @@ var {
  } = ReactNative;
  var PushNotification = require('react-native-push-notification');
  var { RNLocation: Location } = require('NativeModules');
-
+ var moment = require('moment');
 import TimeFormatter from '../counterRuntime.js';
 const { SampleView } = require('react-native').NativeModules;
 import Modal from '../downloadsharemeal/CampaignModal'
@@ -33,7 +33,9 @@ import SettingDetail from './SettingDetail';
 import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
-import CaloriCounter from './caloriCounter'
+import CaloriCounter from './caloriCounter';
+ var moment = require('moment');
+
 var Pedometer = require('react-native-pedometer');
 var mapRef = 'mapRef';
 var deviceWidth = Dimensions.get('window').width;
@@ -121,11 +123,14 @@ SettingsService.init('iOS');
       textState:'PAUSE',
       isRunning:true,
     });
-     var d = new Date();
-     var mynewDateStart = d.toISOString().substring(0, 10);
+     var d = moment().format('YYYY-MM-DD HH:mm:ss');
+     AlertIOS.alert("date1",JSON.stringify(d));
+     // var mynewDateStart = d.toISOString().substring(0, 10);
+     //  AlertIOS.alert("date2",JSON.stringify(mynewDateStart));
       this.setState({
-        myrundate: mynewDateStart + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
+        myrundate:d,
       });
+     //   AlertIOS.alert("date3",JSON.stringify(this.state.myrundate));
     return;  
   },
  
@@ -394,7 +399,7 @@ SettingsService.init('iOS');
         isRunning:!this.state.isRunning,
         prevLatLng:null,
       });      
-      this.clearLocationUpdate(); 
+      // this.clearLocationUpdate(); 
     }else{
       var isMoving = !this.state.isMoving;
       // Location.setDistanceFilter(10);
@@ -406,7 +411,7 @@ SettingsService.init('iOS');
         isRunning:!this.state.isRunning,
         prevLatLng:null,
       });     
-      this.getLocationUpdate();   
+      // this.getLocationUpdate();   
     } 
     this.updatePaceButtonStyle();
     this._handleStartStop(); 
@@ -418,9 +423,9 @@ SettingsService.init('iOS');
   onClickEnable: function(location) {
     var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
     if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
-      var d = new Date();
+      var d = moment().format('YYYY-MM-DD HH:mm:ss');
       this.setState({
-        endDate: d.toISOString().substring(0, 10) + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(),
+        endDate:d,
       });
       
       AsyncStorage.removeItem('runDataAppKill');
@@ -444,6 +449,7 @@ SettingsService.init('iOS');
 
   // Add Marker if check clear
   addMarker :function(location) {
+    if (this.state.enabled) {
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -494,7 +500,7 @@ SettingsService.init('iOS');
         }         
       }else{
         console.log("this.state.UssainBoltCount",this.state.HussainBoltCount);
-        if (this.state.HussainBoltCount >= 4) {
+        if (this.state.HussainBoltCount >= 3) {
           Location.stopUpdatingLocation();
           this.setState({
             HussainBoltCount:0, 
@@ -505,7 +511,7 @@ SettingsService.init('iOS');
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
         }else{
-          Location.stopUpdatingLocation();     
+          // Location.stopUpdatingLocation();     
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             open:true,
@@ -568,7 +574,7 @@ SettingsService.init('iOS');
           }
         }
       }else{
-        if (this.state.UssainBoltCount > 4) {
+        if (this.state.UssainBoltCount > 3) {
           console.log("location hussain");
           Location.stopUpdatingLocation();
           this.setState({
@@ -593,6 +599,7 @@ SettingsService.init('iOS');
         }
       }
     }
+  }
       
   },
 
