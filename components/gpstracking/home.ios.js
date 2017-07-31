@@ -387,6 +387,7 @@ SettingsService.init('iOS');
 
   startPause:function(){
     var me = this;
+    console.log("Enabled", this.state.enabled);
     if (this.state.enabled) {
       
       this.setState({
@@ -394,7 +395,7 @@ SettingsService.init('iOS');
         isRunning:!this.state.isRunning,
         prevLatLng:null,
       });      
-      this.clearLocationUpdate(); 
+      // this.clearLocationUpdate(); 
     }else{
       var isMoving = !this.state.isMoving;
       // Location.setDistanceFilter(10);
@@ -406,7 +407,7 @@ SettingsService.init('iOS');
         isRunning:!this.state.isRunning,
         prevLatLng:null,
       });     
-      this.getLocationUpdate();   
+      // this.getLocationUpdate();   
     } 
     this.updatePaceButtonStyle();
     this._handleStartStop(); 
@@ -425,6 +426,7 @@ SettingsService.init('iOS');
       
       AsyncStorage.removeItem('runDataAppKill');
       this.clearLocationUpdate();
+      PushNotification.cancelAllLocalNotifications();
       this.navigateTOShareScreen();
       this.removeAllAnnotations(mapRef);
       this.polyline = null;
@@ -435,6 +437,7 @@ SettingsService.init('iOS');
       this.updatePaceButtonStyle();
      }else{
       this.EndRunConfimation();
+      PushNotification.cancelAllLocalNotifications();
     }        
   },
 
@@ -444,6 +447,7 @@ SettingsService.init('iOS');
 
   // Add Marker if check clear
   addMarker :function(location) {
+    if (this.state.enabled) {
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -494,8 +498,8 @@ SettingsService.init('iOS');
         }         
       }else{
         console.log("this.state.UssainBoltCount",this.state.HussainBoltCount);
-        if (this.state.HussainBoltCount >= 4) {
-          Location.stopUpdatingLocation();
+        if (this.state.HussainBoltCount >= 3 && !(this.state.onCarDetectedEndRunModel)) {
+          // Location.stopUpdatingLocation();
           this.setState({
             HussainBoltCount:0, 
             onCarDetectedEndRunModel:true, 
@@ -505,7 +509,7 @@ SettingsService.init('iOS');
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
         }else{
-          Location.stopUpdatingLocation();     
+          // Location.stopUpdatingLocation();     
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             open:true,
@@ -556,7 +560,7 @@ SettingsService.init('iOS');
           }     
         }else{
           if (this.state.GpsAccuracyCheck) {
-            if(this.state.weakGPSPoints >= 3){
+            if(this.state.weakGPSPoints >= 10){
               this._ongpsWeakNotification();
               this.setState({
                 openGpsModel:true,
@@ -570,7 +574,7 @@ SettingsService.init('iOS');
       }else{
         if (this.state.UssainBoltCount > 4) {
           console.log("location hussain");
-          Location.stopUpdatingLocation();
+          // Location.stopUpdatingLocation();
           this.setState({
             UssainBoltCount:0,
             enabled:false,
@@ -579,7 +583,7 @@ SettingsService.init('iOS');
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
         }else{
-          Location.stopUpdatingLocation();
+          // Location.stopUpdatingLocation();
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             open:true,
@@ -593,6 +597,7 @@ SettingsService.init('iOS');
         }
       }
     }
+  }
       
   },
 
@@ -1016,7 +1021,7 @@ SettingsService.init('iOS');
       this.setState({ currentZoom: location.zoom });
     },
     onRegionWillChange:function(location) {
-      console.log('regionChange :'+JSON.stringify(location));
+      // console.log('regionChange :'+JSON.stringify(location));
     },
     onUpdateUserLocation:function(location) {
       console.log('UpdateLocation :'+location);

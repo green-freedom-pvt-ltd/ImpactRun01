@@ -459,7 +459,7 @@ import{
         if (result != null || undefined) {
         var boardData = JSON.parse(result);
         this.setState({
-          impactleague_team_id:this.props.user.team_code,
+          impactleague_team_id:this.state.user.team_code,
         })
         if (boardData.impactleague_is_active) {   
           this.setState({
