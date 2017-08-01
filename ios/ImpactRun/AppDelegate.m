@@ -198,8 +198,7 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
      * on the same Wi-Fi network.
      */
 //    
-     sourceURL = [NSURL URLWithString:@"http://192.168.0.107:8081/index.ios.bundle?platform=ios&dev=true"];
-    
+     sourceURL = [NSURL URLWithString:@"http://192.168.1.2:8081/index.ios.bundle?platform=ios&dev=true"];
     /**
      * OPTION 2 - AppHub
      *

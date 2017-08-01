@@ -73,7 +73,8 @@ class Profile extends Component {
             this.setState({
               nextPage:JSON.parse(result),
             })
-          })
+          
+          if (this.state.nextPage === null) {
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
             if (result != null || undefined) {
@@ -88,6 +89,23 @@ class Profile extends Component {
                this.fetchRunhistoryData();
             }
           });
+        }else{
+           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+            var RunData = JSON.parse(result);
+            if (result != null || undefined) {
+              this.setState({
+                rawData: RunData,
+              })
+              this.fetch7DayData();
+              this.getRunCount();
+              this.fetchAmount();
+              this.fetchTotalDistance();
+              this.LoadmoreView();
+            }
+          })
+          
+        }
+        })
       }
 
 
@@ -176,13 +194,13 @@ class Profile extends Component {
       }
 
 
-      LoadmoreView(){
+      async LoadmoreView(){
         this.nextPage();
       }
 
 
 
-      nextPage(){
+     async nextPage(){
         if (this.state.nextPage != null) {
         var token = this.props.user.auth_token;
         var url = this.state.nextPage;
