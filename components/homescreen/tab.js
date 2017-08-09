@@ -327,12 +327,12 @@ class devdactic_tabs extends Component {
                 navigator={this.props.navigator}>
 
                 <TabBarIOS.Item
-                  selected={this.state.selectedTab === 'setting'}
+                  selected={this.state.selectedTab === 'settings'}
                   icon={{uri: settingicon, scale: 5.5}}
-                  title="Setting"
+                  title="Settings"
                   onPress={() => {
                       this.setState({
-                          selectedTab: 'setting',
+                          selectedTab: 'settings',
                       });
                   }}>
                     <Setting navigator={this.props.navigator} />

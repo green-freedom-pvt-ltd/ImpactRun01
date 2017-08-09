@@ -19,39 +19,45 @@ var {
 import styleConfig from '../styleConfig';
 import Login from '../login/LoginBtns';
 import LodingView from '../LodingScreen';
+import ValidationComponent from 'react-native-form-validator';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../styles';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import NavBar from '../navBarComponent';
 import apis from '../apis';
 var dismissKeyboard = require('dismissKeyboard');
  var moment = require('moment');
-var ProfileForm = React.createClass({
 
-    getInitialState: function(){
-      return {
+export default class ProfileForm extends ValidationComponent {
+
+    constructor(props) {
+      super(props);
+      this.state = {
         loaded:false,
         user:this.props.user,
+        checkedfemale:false,
+        checkedmale:false,
         showDatePicker:false,
       };
-    },
-    _refresh: function() {
+    }
+    _refresh() {
       return new Promise((resolve) => {
         setTimeout(()=>{resolve()}, 2000)
       });
-    },
-    onDateChange:function(date) {
+    }
+    onDateChange(date) {
       this.setState({date: date});
-    },
+    }
     
-    goBack:function(){
+    goBack(){
         this.props.navigator.pop({});
-    },
+    }
 
-    componentDidMount:function() {
+    componentDidMount() {
       var user = this.props.user;
-      if (user.Birthday != null) {
+      if (user.Birth_day != null) {
         var date = moment(user.Birth_day).format('MM/DD/YYYY');
       }else{
         var date = moment(new Date()).format('MM/DD/YYYY');
@@ -77,27 +83,58 @@ var ProfileForm = React.createClass({
       first_name:"",
       last_name:"",
       email:emailuser,
+      birthday:date,
       number:phoneno,
       body_weight:weight,
       gender:user.gender_user,
       date:date,
      }) 
-    },
+     if (user.gender_user === "male") {
+      this.setState({
+        checkedmale:true,
+        gender:'male',
+      })
+     }else if (user.gender_user === "female") {
+      this.setState({
+        checkedfemale:true,
+        gender:'female',
+      })
+     }else if (user.gender_user === "other") {
+        this.setState({
+        checkedfemale:false,
+        gender:'other',
+        checkedmale:false
+      })
+     }
+    }
 
-  
+  handleNetworkErrors(response){
+        console.log("response",response);
+       if(response.ok){
+        console.log("response",response);
+        return response.json()
+       }else{
+        AlertIOS.alert("Please fill the empty field");
+        console.log("responce",response.json());
+        return;
+       }
+       return response.json()
+      }
 
-    putRequestUser:function(){
+    putRequestUser(){
       if(this.state.email != " "  ){
-        if(this.state.number != " " ){
+        if(this.state.number != " " && (this.state.number.length > 9)){
           if (this.state.birthday != " " ){
           if (this.state.body_weight != " " ) {
         var user_id = this.props.user.user_id;
         var auth_token = this.props.user.auth_token;
+        console.log("auth_token",auth_token);
         var nameArr = this.state.name.split(/\s+/);
         this.state.first_name = nameArr.slice(0, -1).join(" ");
         this.state.last_name = nameArr.pop();
         var date = moment(this.state.date).format('MM/DD/YYYY');
         var number = parseInt(this.state.number);
+        console.log('number',number);
         var weight = parseInt(this.state.body_weight);
         fetch(apis.userDataapi + user_id + "/", {
             method: "put",
@@ -110,13 +147,13 @@ var ProfileForm = React.createClass({
             "email":this.state.email,
             "phone_number":number,
             "birthday":date,
-            "gender":this.state.gender,
             "first_name":this.state.first_name,
             "last_name":this.state.last_name,
             "body_weight":weight,
+            "gender_user":this.state.gender,
             })
           })
-          .then((response) => response.json())
+          .then(this.handleNetworkErrors.bind(this))
           .then((response) => { 
             console.log('submited',response);
             let keys = ['UID234', 'UID345','USERDATA',];
@@ -161,25 +198,29 @@ var ProfileForm = React.createClass({
           AlertIOS.alert("Please enter birthday","Field required* ");
         }
         }else{
+         if (this.state.number.length <= 9) {
+          AlertIOS.alert("Please enter 10 digit mobile number");
+         }else{
           AlertIOS.alert("Please enter phone number","Field required* ");
         }
+      }
         }else{
           AlertIOS.alert("Please enter email","Field required* ");
         }
-    },
+    }
     
-    LoginView:function(){
+    LoginView(){
       if(this.props.user && Object.keys(this.props.user).length > 0 ){
         this.setState({loaded:true});
       }else{
         return (
           <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:"red"}}>
           <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+            <TouchableOpacity style={{left:0,position:'absolute',height:styleConfig.navBarHeight,width:styleConfig.navBarHeight,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
               <Icon3 style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon3>
             </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Run History'}</Text>
-            <TouchableOpacity style={{right:10,position:'absolute',height:160,width:160,backgroundColor:'red',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>PROFILE</Text>
+            <TouchableOpacity style={{right:10,position:'absolute',height:styleConfig.navBarHeight,width:styleConfig.navBarHeight,backgroundColor:'red',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
               <Text>SAVE</Text>
             </TouchableOpacity>
           </View>
@@ -189,75 +230,118 @@ var ProfileForm = React.createClass({
           </View>
         ) 
       }
-    },
+    }
 
-    LodingView:function(){
+    LodingView(){
       return(
         <LodingView/>
       )
-    },
+    }
 
-    NavigatetoLoginScreen:function(){
+    NavigatetoLoginScreen(){
       this.props.navigator.push({
         title: 'Gps',
         id:'login',
         navigator: this.props.navigator,
       });
-    },
-    onBirthDateChange:function(){
+    }
+    onBirthDateChange(){
       dismissKeyboard()
       this.setState({showDatePicker:true})
-    },
+    }
+    
+    leftIconRender(){
+     return(
+      <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent', height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+        <Icon3 style={{color:'white',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon3>
+      </TouchableOpacity>
+      )
+    }
 
-    render: function() {
+    rightIconRender(){
+      return(
+        <TouchableOpacity style={{height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.putRequestUser()} >
+          <Text style={{color:'white'}}>SAVE</Text>
+        </TouchableOpacity>
+      )
+    }
+
+    radioButtonMale(){
+      var colorBackground = (this.state.checkedmale)?styleConfig.pale_magenta:'grey';
+      var colorBackgroundinner = (this.state.checkedmale)?styleConfig.pale_magenta:'#f4f4f4';
+      return(
+        <TouchableOpacity style ={{paddingRight:10,}} onPress={()=>this.setState({checkedfemale:false,gender:'male', checkedmale:true})}>
+         <View style={{justifyContent: 'center',alignItems: 'center', height:20,width:20,borderRadius:10,backgroundColor:colorBackground}}>
+         <View style={{justifyContent: 'center',alignItems: 'center', height:15,width:15,borderRadius:7.5,backgroundColor:"white"}} >
+         <View style={{height:10,width:10,borderRadius:5,backgroundColor:colorBackgroundinner}}>
+         </View>
+          </View>
+        </View>
+         </TouchableOpacity>
+        )
+    }
+    radioButtonFemale(){
+      var colorBackground = (this.state.checkedfemale)?styleConfig.pale_magenta:'grey';
+      var colorBackgroundinner = (this.state.checkedfemale)?styleConfig.pale_magenta:'#f4f4f4';
+      return(
+        <TouchableOpacity style ={{paddingRight:10,}}onPress={()=>this.setState({checkedfemale:true,gender:'female', checkedmale:false})}>
+         <View style={{justifyContent: 'center',alignItems: 'center', height:20,width:20,borderRadius:10,backgroundColor:colorBackground}}>
+         <View style={{justifyContent: 'center',alignItems: 'center', height:15,width:15,borderRadius:7.5,backgroundColor:"white"}} >
+         <View style={{height:10,width:10,borderRadius:5,backgroundColor:colorBackgroundinner}}>
+         </View>
+          </View>
+        </View>
+         </TouchableOpacity>
+        )
+    }
+
+    render() {
       var user = this.props.user;
       if (this.props.user != null) {
          var showDatePicker = this.state.showDatePicker ?
             <DatePickerIOS
                 style={{position:"absolute",width:deviceWidth,right:0,bottom:0,backgroundColor:"white"}}
-                date={new Date(this.props.user.birthday)} onChangeText={() => this.setState({showDatePicker:false})} onEndEditing={()=> this.setState({showDatePicker:false})} onDateChange={(date)=>this.setState({date:date.toLocaleDateString()})}
+                date={this.props.user.birthday} onEndEditing={()=> this.setState({showDatePicker:false})} onDateChange={(date)=>this.setState({date:date.toLocaleDateString()})}
                 mode="date"/> : <View />
-        return (
+         return (
           <View>
-          <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon3 style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon3>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Profile'}</Text>
-            <TouchableOpacity style={{right:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.putRequestUser()} >
-              <Text style={{color:'white'}}>SAVE</Text>
-            </TouchableOpacity>
-            </View>
+          <NavBar title = {'PROFILE'} leftIcon = {this.leftIconRender()} rightIcon={this.rightIconRender()}/>
           <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
 
             <View style={styles.FromWrap}>
              
               <View style={styles.ProfileTextInput}>
+               <Text>
+                {this.getErrorMessages()}
+               </Text>
                 <Text style={styles.ProfileTitle}>Name</Text> 
-                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>         
+                <TextInput ref="name" onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>         
               </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Email</Text>
-                <TextInput  onFocus={() => this.setState({showDatePicker:false})}onChangeText={(email) => this.setState({email})}  keyboardType="email-address" value={this.state.email} style={styles.userProfileText}></TextInput>        
+                <TextInput  ref="email" onFocus={() => this.setState({showDatePicker:false})}onChangeText={(email) => this.setState({email:email})}  keyboardType="email-address" value={this.state.email} style={styles.userProfileText}></TextInput>        
               </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Phone Number</Text> 
-                <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(number) => this.setState({number})}  maxLength= {10} keyboardType= 'numeric' value={this.state.number} style={styles.userProfileText}></TextInput> 
+                <TextInput ref="number" onFocus={() => this.setState({showDatePicker:false})} onChangeText={(number) => this.setState({number})}  minLength={10} maxLength= {11} keyboardType= 'numeric' value={this.state.number} style={styles.userProfileText}></TextInput> 
               </View>    
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Birthday</Text>
-                <TextInput  onChangeText={() => this.setState({showDatePicker:false})}   onFocus={() => this.onBirthDateChange()} value={this.state.date} style={styles.userProfileText}></TextInput>
+                <TextInput onFocus={() => this.onBirthDateChange()}  ref="date" value={this.state.date} style={styles.userProfileText}></TextInput>
               </View>    
               <View style={styles.ProfileTextInput}>
-                <Text style={styles.ProfileTitle}>Body weight</Text>
+                <Text style={styles.ProfileTitle}>Body weight in KGs</Text>
                 <TextInput onFocus={() => this.setState({showDatePicker:false})} onChangeText={(body_weight) => this.setState({body_weight})} keyboardType= 'numeric' value={this.state.body_weight} style={styles.userProfileText}></TextInput>
               </View>
               <View style={styles.ProfileTextInput}>
                 <Text style={styles.ProfileTitle}>Gender</Text>
-                <TextInput onFocus={() => this.setState({showDatePicker:false})}onChangeText={(gender) => this.setState({gender})} value={this.state.gender} style={styles.userProfileText}></TextInput>
-                
+                <View style={{flexDirection:'row',alignItems: 'center',padding:5,}}>
+                   {this.radioButtonMale()}<Text style = {{color:'#4a4a4a',paddingRight:15,fontFamily:styleConfig.FontFamily,}}> Male</Text>
+                   {this.radioButtonFemale()}<Text style = {{color:'#4a4a4a',fontFamily:styleConfig.FontFamily,}}> Female</Text>
+                </View>
               </View>
               <View style={styles.ProfileTextInput2}>
+
                {showDatePicker}
               </View>
             </View> 
@@ -275,7 +359,7 @@ var ProfileForm = React.createClass({
       }
     }
 
-});
+}
 
 
 var styles = StyleSheet.create({
@@ -325,4 +409,3 @@ var styles = StyleSheet.create({
 
 });
 
-module.exports = ProfileForm;

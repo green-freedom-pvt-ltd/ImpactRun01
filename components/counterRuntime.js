@@ -32,17 +32,23 @@
 
   function convert(length) {
     if(!length) {
-      return '00:00.00'
+      return '00'
     }
 
     var duration = moment.duration(length);
     var formattedDuration = '';
-
+    var formattedDurationcustom = '00';
     formattedDuration += hours(duration) + ':';
     formattedDuration += minutes(duration) + ':';
     formattedDuration += seconds(duration)
-
-    return formattedDuration;
+    if (formattedDuration.slice(0,2) != "00") {
+      formattedDurationcustom = formattedDuration;
+    }else if(formattedDuration.slice(3,5) != "00"){
+      formattedDurationcustom = formattedDuration.slice(3,8);
+    }else if(formattedDuration.slice(6,8) != "00"){
+      formattedDurationcustom = formattedDuration.slice(6,8);
+    } 
+    return formattedDurationcustom;
   }
 
   module.exports = convert;

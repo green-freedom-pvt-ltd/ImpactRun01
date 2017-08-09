@@ -23,6 +23,15 @@
   import styleConfig from '../styleConfig'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+var iphone5 = 568;
+var iphone5s = 568;
+var iphone6 = 667;
+var iphone6s = 667;
+var iphone7 = 667;
+var iphone6Plus = 736;
+var iphone6SPlus = 736;
+var iphone7Plus = 736;
+
 class LeaderboardData extends Component {
   
       constructor(props) {
@@ -118,12 +127,26 @@ class LeaderboardData extends Component {
         this.setState({refreshing: true});
         this.fetchLeaderBoard();
       }
-
+     
+      borderBottomWidth(){
+        if (Dimensions.get('window').height === iphone6) {
+         return  0.8
+        }else if (Dimensions.get('window').height === iphone5){
+          return  0.5
+        }
+        else if (Dimensions.get('window').height === iphone6SPlus){
+          return  1
+        }
+        else if (Dimensions.get('window').height < iphone5){
+          return  0.5
+        }
+      }
 
       renderRow(rowData, index,rowID){
         rowID++       
         var myflex = (this.props.user.user_id === rowData.user_id)?1:0;
         // console.log('rodatacount',this.state.userCount,this.state.responce);
+        var textColor = (this.props.user.user_id === rowData.user_id)?"white":"#4a4a4a";
         var backgroundcolor=(this.props.user.user_id === rowData.user_id)?'#ffcd4d':"white";
         var myposition = (this.props.user.user_id === rowData.user_id)?'absolute':'relative';
         var mytop = (this.props.user.user_id === rowData.user_id)?-100:0;
@@ -132,28 +155,25 @@ class LeaderboardData extends Component {
           styles.row, 
           {
             'alignItems': 'center',
-            'right':5,
             'justifyContent': 'center',
             'alignItems': 'center',
-            'height':25,
-            'width':25,
           }
         ];
         return (
-          <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor}]}>
+          <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor,borderBottomWidth:this.borderBottomWidth()}]}>
            <View style={styles.flexbox1}>
             <View style={style}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:'#4a4a4a',}}>{rowData.ranking}</Text>
+              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:styleConfig.fontSizer4,color:textColor,}}>{rowData.ranking}</Text>
             </View>
            </View>
             <View style={styles.flexbox}>
             <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             </View>
             <View style={styles.flexbox2}>
-            <Text style={styles.txt}>{rowData.first_name} {rowData.last_name}</Text>
+            <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
             </View >
             <View style={styles.flexbox3}>
-            <Text style={styles.txtSec}>{parseFloat(rowData.last_week_distance.last_week_distance).toFixed(2)} Km</Text>
+            <Text style={[styles.txtSec,{color:textColor}]}>{parseFloat(rowData.last_week_distance.last_week_distance).toFixed(0)} Km</Text>
             </View>
           </View>
         );
@@ -212,9 +232,9 @@ class LeaderboardData extends Component {
 const styles = StyleSheet.create({
 
   thumb: {
-    height:50,
-    width:50,
-    borderRadius:25,
+    height:styleConfig.navBarHeight-30,
+    width:styleConfig.navBarHeight-30,
+    borderRadius:(styleConfig.navBarHeight-30)/2,
     backgroundColor:'#ffcd4d',
     borderColor:'#ccc',
     borderWidth:2,
@@ -228,27 +248,26 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     padding:10,
     width:deviceWidth,
-    borderBottomWidth:1,
+    
     borderColor:'#CCC',
   },
   txt: {
-    color:'#4a4a4a',
-    fontSize: 14,
-    fontWeight:'400',
+    fontSize:styleConfig.fontSizerleaderBoardContent+2,
+    fontWeight:'600',
     textAlign: 'left',
     marginLeft:10,
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{
-   color:'#4a4a4a',
-   fontSize:14,
+   color:styleConfig.warm_grey_three,
+   fontSize:styleConfig.fontSizerleaderBoardContent+2,
    fontWeight:'400',
    fontFamily: 'Montserrat-Regular',
   },
   txtSec2:{
-   color:'#4a4a4a',
-   fontSize:14,
-   fontWeight:'400',
+   color:'black',
+   fontSize:styleConfig.fontSizerleaderBoardContent+2,
+   fontWeight:'600',
    fontFamily: 'Montserrat-Regular',
   },
   mycardLeaderBoard:{
@@ -261,8 +280,6 @@ const styles = StyleSheet.create({
     backgroundColor:'#ffcd4d'
   },
   flexbox:{
-    height:50,
-    width:50,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -275,15 +292,15 @@ const styles = StyleSheet.create({
   },
   flexbox2:{
     height:50,
-    width:50,
-    flex:1,
+    width:deviceWidth-170,
+    flex:-1,
     alignItems: 'flex-start',
     justifyContent: 'center',
 
   },
   flexbox1:{
-    height:50,
-    width:40,
+    height:30,
+    width:30,
     alignItems: 'center',
     justifyContent: 'center',
   },

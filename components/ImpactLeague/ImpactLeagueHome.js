@@ -22,6 +22,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import LodingScreen from '../LodingScreen';
 import TimerMixin from 'react-timer-mixin';
 import styleConfig from '../styleConfig'
+
+import NavBar from '../navBarComponent';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ImpactLeague extends Component {
@@ -133,7 +135,7 @@ class ImpactLeague extends Component {
         this.props.navigator.push({
           title: 'impactleaguehome',
           id:'impactleagueleaderboard',
-          passProps:{user:this.state.user, Team_id:rowData.id}
+          passProps:{user:this.state.user, Team_id:rowData.id,team_name:rowData.team_name}
         })
       }
 
@@ -155,14 +157,15 @@ class ImpactLeague extends Component {
       renderRow(rowData,index,rowID){
         rowID++
         var me = this;
+        var textColor=(me.state.user.team_code === rowData.id)?'#fff':"#4a4a4a";
         var backgroundColor =(me.state.user.team_code === rowData.id)?'#ffcd4d':'#fff';
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
             <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:17,color:'#4a4a4a',}}>{rowID}</Text>
-              <Text numberOfLines={1} style={styles.txt}>{rowData.team_name}</Text>
-              <View style={{width:deviceWidth/2-20, alignItems:'flex-end'}}>
-              <Text style={styles.txtSec}>{parseFloat(rowData.total_distance.total_distance).toFixed(2)} Km</Text> 
+              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:styleConfig.fontSizerleaderBoardContent+2,color:textColor,}}>{rowID}</Text>
+              <Text numberOfLines={1} style={[styles.txt,{color:textColor,flex:1}]}>{rowData.team_name}</Text>
+              <View style={{justifyContent: 'center',alignItems: 'center',}}>
+               <Text style={[styles.txtSec,{color:textColor}]}>{parseFloat(rowData.total_distance.total_distance).toFixed(0)} Km</Text> 
               </View>             
             </TouchableOpacity>
           </View>
@@ -172,12 +175,7 @@ class ImpactLeague extends Component {
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
-          <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
-            </View>
+            <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
             <LodingScreen style={{height:deviceHeight-50}}/>
           </View>
         );
@@ -192,19 +190,23 @@ class ImpactLeague extends Component {
           return;
         }
       }
+
+      leftIconRender(){
+          return(
+            <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+            </TouchableOpacity>
+          )
+        }
+      
       render(rowData,jsonData) {
         if (!this.state.loaded) {
           return this.renderLoadingView();
         }
-      
+
         return (
           <View>
-           <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.leaguename}</Text>
-            </View>
+            <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
             <View>
            
              <Image source={{uri:this.state.BannerData}} style={styles.bannerimage}>
@@ -262,8 +264,8 @@ const styles = StyleSheet.create({
   txt: {
     width:deviceWidth-200,
     color:'#4a4a4a',
-    fontSize: 15,
-    fontWeight:'400',
+    fontSize: styleConfig.fontSizerleaderBoardContent+2,
+    fontWeight:'600',
     textAlign: 'left',
     marginLeft:10,
     fontFamily: 'Montserrat-Regular',
@@ -275,12 +277,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{
-   color:'#4a4a4a',
-   fontSize:17,
+   fontSize:styleConfig.fontSizerleaderBoardContent+2,
    fontWeight:'400',
-   right:deviceWidth/4-50,
-   textAlign:'right',
-   alignItems:'flex-end',
+   textAlign:'center',
    fontFamily: 'Montserrat-Regular',
   },
 });

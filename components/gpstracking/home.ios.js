@@ -12,6 +12,7 @@ var {
   AsyncStorage,
   TouchableOpacity,
   Image,
+  Animated,
   VibrationIOS,
   DeviceEventEmitter,
   PushNotificationIOS,
@@ -26,10 +27,7 @@ import TimerMixin from 'react-timer-mixin';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import Mapbox from 'react-native-mapbox-gl';
-// import BackgroundGeolocation from 'react-native-background-geolocation';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SettingsService from './SettingsService';
-import SettingDetail from './SettingDetail';
 import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
@@ -37,26 +35,19 @@ import CaloriCounter from './caloriCounter';
  var moment = require('moment');
 
 var Pedometer = require('react-native-pedometer');
-var mapRef = 'mapRef';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
 var distancePriv = 0;
 var timepriv = 0;
 var calories = 0;
-SettingsService.init('iOS');
-  var Home = React.createClass({
+
+
+
+
+var Home = React.createClass({
     mixins: [TimerMixin],
-    mixins: [Mapbox.Mixin],
-    annotations: [],
-    locationIcon: 'green-circle.png',
-    currentLocation: undefined,
-    locationManager: undefined,
-  // InitilialStates
-
-
-
-
-
+   
+ 
 
   getInitialState: function() {
 
@@ -100,6 +91,7 @@ SettingsService.init('iOS');
       HussainBoltCount:0,
       StillDecteting:true,
       location:{},
+      pressAction: new Animated.Value(0),
       center: {
         latitude: 40.72052634,
         longitude: -73.97686958312988
@@ -124,12 +116,10 @@ SettingsService.init('iOS');
       isRunning:true,
     });
      var d = moment().format('YYYY-MM-DD HH:mm:ss');
-     // var mynewDateStart = d.toISOString().substring(0, 10);
-     //  AlertIOS.alert("date2",JSON.stringify(mynewDateStart));
+    
       this.setState({
         myrundate:d,
       });
-     //   AlertIOS.alert("date3",JSON.stringify(this.state.myrundate));
     return;  
   },
  
@@ -161,7 +151,6 @@ SettingsService.init('iOS');
       })
     })
 
-    // Location.setDistanceFilter(10);
     Location.setAllowsBackgroundLocationUpdates(true);
     this.getLocationUpdate();
   },
@@ -201,16 +190,11 @@ SettingsService.init('iOS');
 
     getLocationUpdate:function(){
       var me = this;
-      setTimeout(function(){    
-       me.initializePolyline();
-      },3000);
         Location.startUpdatingLocation();
         var subscription = DeviceEventEmitter.addListener(
           'locationUpdated',
           (location) => {
-          // this._onlocation(location);
           this.addMarker(location);
-          this.setCenter(location);
         }
       );
     },
@@ -238,12 +222,12 @@ SettingsService.init('iOS');
                     <View style={styles.iconWrapmodel}>
                       <Icon style={{color:"white",fontSize:30,}} name={'ios-car'}></Icon>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>TOO FAST</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>Too Fast</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your speed is more than running speed it seems you are travelling in vehicle</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>It seems you are in a vehicle. Pausing workout</Text>
                    <View style={styles.modelBtnWrap}>
-                    <TouchableOpacity style={styles.modelbtnResumeRun} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>CLOSE</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.ResumeRunFromPopup()}><Text style={styles.btntext}>RESUME</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtnResumeRun} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.ResumeRunFromPopup()}><Text style={styles.btntext}>Resume</Text></TouchableOpacity>
                   </View>
                    </View>
                    </View>
@@ -264,11 +248,11 @@ SettingsService.init('iOS');
                     <View style={styles.iconWrapmodel}>
                       <Icon style={{color:"white",fontSize:30,}} name={'ios-car'}></Icon>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>ON VEHILE DETECTED</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>On-vehicle detected</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your speed is more than running speed . So we are ending your run</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>It seems you are in a moving vehicle. So we are ending your workout.</Text>
                    <View style={styles.modelBtnWrap}>
-                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.onClickEnable()}><Text style={styles.btntext}>END RUN</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.ConfirmRunEnd()}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
                   </View>
                    </View>
                    </View>
@@ -295,11 +279,11 @@ SettingsService.init('iOS');
                         <View style={[styles.signalline,{backgroundColor:"white",height:17}]}></View>
                       </View>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>WEAK GPS SIGNAL</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>Weak GPS Signal</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your gps signals are weak your run can take time to record distance</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>GPS signal is weak on your phone. So tracking may be inaccurate. </Text>
                    <View style={styles.modelBtnWrap}>
-                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.closemodel()}><Text style={styles.btntext}>CONTINUE</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.closemodel()}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
                   </View>
                    </View>
                    </View>
@@ -332,7 +316,7 @@ SettingsService.init('iOS');
       date: new Date(Date.now() + (1000)), // in 60 secs
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      message: "It seems you are on vehicle. pausing your run", // (required)
+      message: "Seems you are in a vehicle. Pausing workout", // (required)
       playSound: true, // (optional) default: true
     });
   },
@@ -343,7 +327,7 @@ SettingsService.init('iOS');
       date: new Date(Date.now() + (1000)), // in 60 secs
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      message: "It seems your gps signals are weak.", // (required)
+      message: "Seems your GPS signals are weak", // (required)
       playSound: true, // (optional) default: true
     });
   },
@@ -399,19 +383,15 @@ SettingsService.init('iOS');
         isRunning:!this.state.isRunning,
         prevLatLng:null,
       });      
-      // this.clearLocationUpdate(); 
     }else{
       var isMoving = !this.state.isMoving;
-      // Location.setDistanceFilter(10);
-      // Location.setAllowsBackgroundLocationUpdates(true);
-      
+
       this.setState({
         isMoving:isMoving,
         enabled:true,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
       });     
-      // this.getLocationUpdate();   
     } 
     this.updatePaceButtonStyle();
     this._handleStartStop(); 
@@ -423,7 +403,15 @@ SettingsService.init('iOS');
   onClickEnable: function(location) {
     var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
     if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
-      var d = moment().format('YYYY-MM-DD HH:mm:ss');
+      this.EndRunConfimationForlongRun();  
+     }else{
+      this.EndRunConfimation();
+      PushNotification.cancelAllLocalNotifications();
+    }        
+  },
+
+  ConfirmRunEnd:function(){
+     var d = moment().format('YYYY-MM-DD HH:mm:ss');
       this.setState({
         endDate:d,
       });
@@ -432,20 +420,12 @@ SettingsService.init('iOS');
       this.clearLocationUpdate();
       PushNotification.cancelAllLocalNotifications();
       this.navigateTOShareScreen();
-      this.removeAllAnnotations(mapRef);
-      this.polyline = null;
       this.setState({
       onCarDetectedEndRunModel:false,
       enabled: !this.state.enabled,     
       });
       this.updatePaceButtonStyle();
-     }else{
-      this.EndRunConfimation();
-      PushNotification.cancelAllLocalNotifications();
-    }        
   },
-
-
 
 
 
@@ -458,6 +438,7 @@ SettingsService.init('iOS');
     this.setState({
       prevDistance: newDistance-distanceTravelled,
     })
+    console.log("location",location);
     if (location.coords.accuracy >= 100 && this.state.GpsAccuracyCheck){
       this.setState({
         weakGPSPoints: this.state.weakGPSPoints + 1,
@@ -469,17 +450,22 @@ SettingsService.init('iOS');
         this.setState({
         weakGPSPoints: this.state.weakGPSPoints - 1,
         })
+      } 
+      if (this.state.sourceCount) {
+        this.setState({
+          StartLocation:location.coords, 
+        })
       }
       this.setState({
         sourceCount:false,
       })
       if (location.coords.speed <= 7.5) {
         var me = this;
-        this.addAnnotations(mapRef, [this.createMarker(location)]);
-        if ( this.polyline) {
-          this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
-          this.updateAnnotation(mapRef, this.polyline);
-        }
+        // this.addAnnotations(mapRef, [this.createMarker(location)]);
+        // if ( this.polyline) {
+        //   this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
+        //   this.updateAnnotation(mapRef, this.polyline);
+        // }
         const {distanceTravelled,prevDistance } = this.state
         const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
         const newTimeStamp = location.timestamp;
@@ -490,6 +476,7 @@ SettingsService.init('iOS');
           newTimeStamp:location.timestamp,
           prevTimeStamp:this.state.newTimeStamp,
           speed:location.coords.speed,
+          newlatlong:newLatLngs,
         })
         var oldtime = new Date(this.state.prevTimeStamp).getTime();
         var newTime = new Date(this.state.newTimeStamp).getTime();
@@ -507,23 +494,31 @@ SettingsService.init('iOS');
           // Location.stopUpdatingLocation();
           this.setState({
             HussainBoltCount:0, 
-            onCarDetectedEndRunModel:true, 
             enabled:false,
             isRunning:false      
           })
+          setTimeout(()=>{ 
+            this.setState({
+              onCarDetectedEndRunModel:true,
+            })
+           },1000) ;
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
         }else{
           // Location.stopUpdatingLocation();     
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
-            open:true,
             enabled:false,
             isRunning:false
           })   
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
-          this._onNotification();
+           setTimeout(()=>{ 
+            this.setState({
+              open:true,
+            })
+            this._onNotification();
+           },1000) ;
           console.log("HussainBoltCount",this.state.HussainBoltCount);         
           VibrationIOS.vibrate();  
         }
@@ -548,12 +543,13 @@ SettingsService.init('iOS');
             prevTimeStamp:this.state.newTimeStamp,
             gpsNotAccepatableStepvalue:0,      
             speed:location.coords.speed,
+            newlatlong:newLatLngs,
           })
-          this.addAnnotations(mapRef, [this.createMarker(location)]);
-          if ( this.polyline) {
-            this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
-            this.updateAnnotation(mapRef, this.polyline);
-          }
+          // this.addAnnotations(mapRef, [this.createMarker(location)]);
+          // if ( this.polyline) {
+          //   this.polyline.coordinates.push([location.coords.latitude, location.coords.longitude]);
+          //   this.updateAnnotation(mapRef, this.polyline);
+          // }
           var oldtime = new Date(this.state.prevTimeStamp).getTime();
           var newTime = new Date(this.state.newTimeStamp).getTime();
           var timeBetweenTwoPoint = newTime - oldtime;
@@ -585,19 +581,28 @@ SettingsService.init('iOS');
             enabled:false,
             isRunning:false,
           })
+          setTimeout(()=>{ 
+            this.setState({
+              onCarDetectedEndRunModel:true,
+            })
+           },1000) ;
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
         }else{
           // Location.stopUpdatingLocation();
           this.setState({
-            HussainBoltCount:this.state.HussainBoltCount+1,
-            open:true,
+            HussainBoltCount:this.state.HussainBoltCount+1,   
             enabled:false,
             isRunning:false,
           })
           this.updatePaceButtonStyle();
-          this._handleStartStop(); 
-          this._onNotification();
+          this._handleStartStop();
+           setTimeout(()=>{ 
+            this.setState({
+              open:true,
+            })
+            this._onNotification();
+           },1000) ;
           VibrationIOS.vibrate();                 
         }
       }
@@ -823,7 +828,8 @@ SettingsService.init('iOS');
         impact:parseFloat(this.state.distance * this.props.data.conversion_rate).toFixed(0),
         speed:this.state.speed,
         time:this.state.mainTimer + timepriv,
-        // StartLocation:this.state.StartPosition,
+        StartLocation:this.state.StartLocation,
+        EndLocation:this.state.newlatlong,
         calories_burnt:this.state.calorieBurned + calories,
         StartRunTime:this.state.myrundate,
         noOfsteps:this.state.numberOfSteps,
@@ -841,7 +847,8 @@ SettingsService.init('iOS');
       speed:this.state.speed,
       time:this.state.mainTimer,
       calories_burnt:this.state.calorieBurned,
-      // StartLocation:this.state.StartPosition,
+      StartLocation:this.state.StartLocation,
+      EndLocation:this.state.newlatlong,
       StartRunTime:this.state.myrundate,
       noOfsteps:this.state.numberOfSteps,
      }
@@ -876,48 +883,6 @@ SettingsService.init('iOS');
    },
 
 
-
-
-
-
-
- 
-   //create marker details 
-   createMarker: function(location) {
-      return {
-          id: JSON.stringify(location.timestamp),
-          type: 'point',
-          title: JSON.stringify(location.coords.accuracy),
-          coordinates: [location.coords.latitude, location.coords.longitude]
-        };
-    },
-
-
-
-
-
-
-
-
-    // initialize polyline
-    initializePolyline: function() {
-      this.polyline = {
-        lengthof:{},
-        type: "polyline",
-        coordinates: [],
-        title: "Route",
-        strokeColor:'#2677FF',
-        strokeWidth: 5,
-        strokeAlpha: 0.5,
-        id: "route"
-      };    
-      this.addAnnotations(mapRef, [this.polyline]);  
-    },
-
-
-
-
-
     navigateTOHomeScreen:function(){
       this.props.navigator.push({
       title: 'Gps',
@@ -946,7 +911,8 @@ SettingsService.init('iOS');
           isUserlogin:user,
           calories_burnt:this.state.calorieBurned + caloridata,
           time:TimeFormatter(timetotal),
-          StartLocation:this.state.StartPosition,
+          StartLocation:this.state.StartLocation,
+          EndLocation:this.state.newlatlong,
           StartRunTime:this.state.myrundate,
           EndRunTime:this.state.endDate,
           noOfsteps:this.state.numberOfSteps,
@@ -983,6 +949,18 @@ SettingsService.init('iOS');
       ); 
     },
 
+    EndRunConfimationForlongRun:function() {
+     VibrationIOS.vibrate();
+      AlertIOS.alert(
+         'Are you sure you want to end workout',
+         '',
+        [
+          {text: 'Continue',},
+          {text: 'End', onPress: () => this.ConfirmRunEnd()},
+        ],
+      ); 
+    },
+
 
 
     popRoute:function() {
@@ -992,9 +970,6 @@ SettingsService.init('iOS');
       this.navigateTOHomeScreen();
       this.state.distanceTravelled = 0;
       this.state.prevDistance = 0;
-      this.removeAllAnnotations(mapRef);
-      this.polyline = null;
-
       this.setState({
         enabled: !this.state.enabled, 
       });
@@ -1005,13 +980,6 @@ SettingsService.init('iOS');
     },
 
 
-
-    onRegionChange: function() {
-      console.log("sometimeregion");
-    },
-    setCenter: function(location) {
-      this.setCenterCoordinateAnimated(mapRef, location.coords.latitude, location.coords.longitude)
-    },
     updatePaceButtonStyle: function() {
       var style = (this.state.enabled) ? commonStyles.redButton : commonStyles.greenButton;
       this.setState({
@@ -1021,23 +989,7 @@ SettingsService.init('iOS');
         EndRun:(this.state.enabled) ? 'END RUN':'END RUN', 
       });
     },
-    // MapBox
-    onRegionChange: function(location) {
-      this.setState({ currentZoom: location.zoom });
-    },
-    onRegionWillChange:function(location) {
-      // console.log('regionChange :'+JSON.stringify(location));
-    },
-    onUpdateUserLocation:function(location) {
-      console.log('UpdateLocation :'+location);
-    },
-    onOpenAnnotation:function(annotation) {
-      console.log('annotation:'+annotation);
-    },
-    onRightAnnotationTapped:function(e) {
-      console.log(e);
-    },
-
+ 
 
     caloriesTextView:function(data,priv){
       if (this.state.result) {
@@ -1098,27 +1050,7 @@ SettingsService.init('iOS');
         <View style={commonStyles.container}>
            <View ref="workspace" style={styles.workspace}>           
                         
-          <Mapbox
-            style={styles.map}
-            direction={0}
-            rotateEnabled={true}
-            scrollEnabled={true}
-            zoomEnabled={true}
-            showsUserLocation={false}
-            ref={mapRef}
-            accessToken={'pk.eyJ1IjoiY2hyaXN0b2NyYWN5IiwiYSI6ImVmM2Y2MDA1NzIyMjg1NTdhZGFlYmZiY2QyODVjNzI2In0.htaacx3ZhE5uAWN86-YNAQ'}
-            styleURL={this.mapStyles.emerald}
-            userTrackingMode={this.userTrackingMode.none}
-            centerCoordinate={this.state.center}
-            zoomLevel={this.state.zoom}
-            onRegionChange={this.onRegionChange}
-            onRegionWillChange={this.onRegionWillChange}
-            annotations={this.state.annotations}
-            onOpenAnnotation={this.onOpenAnnotation}
-            onRightAnnotationTapped={this.onRightAnnotationTapped}
-            onUpdateUserLocation={this.onUpdateUserLocation}>           
-            </Mapbox>
-
+          
             <View style={styles.WrapCompany}>
               <Image style={{resizeMode: 'contain',height:styleConfig.LogoHeight,width:styleConfig.LogoWidth,}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
               <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>
@@ -1154,7 +1086,7 @@ SettingsService.init('iOS');
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
                    {this.TimeTextView(intime)}
-                  <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>HRS:MIN:SEC</Text>
+                  <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>TIME</Text>
 
                 </View>
             
@@ -1170,7 +1102,11 @@ SettingsService.init('iOS');
             <Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
             </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}><Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text></TouchableOpacity>
+            <TouchableOpacity   
+                 onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}>
+                <Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text>
+            </TouchableOpacity>
+               
           </View>
           {this.modelViewDrivingEndRun()}
           {this.modelViewDriving()}
@@ -1178,7 +1114,9 @@ SettingsService.init('iOS');
         </View>
       );
 
-    }
+    },
+
+    
 });
 
 
@@ -1217,8 +1155,8 @@ var styles = StyleSheet.create({
     height:50,
     width:deviceWidth/2-20,
     borderRadius:30,
-   backgroundColor:styleConfig.pale_magenta,
-    margin:10,
+    backgroundColor:styleConfig.pale_magenta,
+    marginLeft:10,
   },
   ResumePause:{
     justifyContent: 'center',      
@@ -1349,7 +1287,19 @@ var styles = StyleSheet.create({
    weaksignalWrap:{
     alignItems:'flex-end',
     flexDirection:"row",
-   }
+   },
+   button:{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+   },
+   bgFill: {
+    position: 'absolute',
+    height:60,
+    width:200,
+    top: 0,
+    left: 0,
+  }
 });
 
 

@@ -18,6 +18,7 @@ import{
   import ScrollableTabView, { ScrollableTabBarLeaderBoard, } from 'react-native-scrollable-tab-view';
   import Icon from 'react-native-vector-icons/FontAwesome';
   import commonStyles from '../styles';
+  import NavBar from '../navBarComponent';
   var deviceWidth = Dimensions.get('window').width;
   import LoginBtn from '../login/LoginBtns';
   var deviceHeight = Dimensions.get('window').height;
@@ -80,8 +81,8 @@ import{
       renderImpactLeagueIcon(){
         if (this.props.user != null) {
         return(
-           <TouchableOpacity style={{height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToImpactLeague()} >
-             <Image style={{height:20,width:20,top:5}} source={{uri: base64Icon, scale:3}} ></Image>
+           <TouchableOpacity style={{height:styleConfig.navBarHeight,width:styleConfig.navBarHeight-20,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToImpactLeague()} >
+             <Image style={{height:20,width:20,}} source={{uri: base64Icon, scale:3}} ></Image>
             </TouchableOpacity>
           );
          }else{
@@ -92,11 +93,8 @@ import{
 		  render() {
 		    return (
           <View>
-         
-            <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Leaderboard</Text>
-              <View style={{position:'absolute',right:0,top:0,}}>{this.renderImpactLeagueIcon()}</View>
-            </View>
+            <NavBar title={'LEADERBOARD'} rightIcon = {this.renderImpactLeagueIcon()}/>
+            
             <View style= {styles.textlast7daysWrap}>
               <Text style={styles.last7dayText}>Most Kms last 7 days </Text>
             </View>

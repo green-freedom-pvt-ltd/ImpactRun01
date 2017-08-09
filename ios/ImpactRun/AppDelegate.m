@@ -18,14 +18,12 @@
 #import <asl.h>
 #import "RCTLog.h"
 #import "RCTPushNotificationManager.h"
-#import "RCTPushNotificationManager.h"
 #import "RCTOneSignal.h"
 #import "AppHub/AppHub.h"
 #import "RCTBridge.h"
 #import "RCTJavaScriptLoader.h"
 
 
-//#import <CleverTapSDK/CleverTap.h>
 @interface AppDelegate() <RCTBridgeDelegate, UIAlertViewDelegate>
 
 @end
@@ -37,10 +35,11 @@
 @synthesize oneSignal = _oneSignal;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [AppHub setApplicationID:@"IMQoz5u1MtkMFFmTSi5K"];
+
+   [AppHub setApplicationID:@"IMQoz5u1MtkMFFmTSi5K"];
   
   [Fabric with:@[[Crashlytics class]]];
-//  [CleverTap autoIntegrate];
+  
   RCTSetLogThreshold(RCTLogLevelInfo);
   RCTSetLogFunction(CrashlyticsReactLogFunction);
   [AppHub buildManager].automaticPollingEnabled = YES;

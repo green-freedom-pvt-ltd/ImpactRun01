@@ -19,7 +19,7 @@ var deviceHeight = Dimensions.get('window').height;
 import styleConfig from '../styleConfig';
 import Modal from '../downloadsharemeal/CampaignModal';
 import Icon3 from 'react-native-vector-icons/Ionicons';
-
+import NavBar from '../navBarComponent';
 var { RNLocation: Location } = require('NativeModules');
 
 class CauseDetail extends Component {
@@ -104,18 +104,20 @@ class CauseDetail extends Component {
           isDenied:false,
         })
       }
-
+    
+    leftIconRender(){
+      return(
+         <TouchableOpacity style={{height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
+           <Icon style={{color:'white',fontSize:40,fontWeight:'600'}}name={'ios-close'}></Icon>
+          </TouchableOpacity>
+      )
+     }
     // Render_Screen
     render() {
       var data = this.props.data
         return (
-              <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}>  
-                  <View style={commonStyles.Navbar}>
-                    <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
-                     <Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-close'}></Icon>
-                    </TouchableOpacity>
-                    <Text style={commonStyles.menuTitle}>Overview</Text>
-                  </View>
+              <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}> 
+                  <NavBar title = {'OVERVIEW'} leftIcon = {this.leftIconRender()}/>
                   <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
                       <View style={styles.container}>

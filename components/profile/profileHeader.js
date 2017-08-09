@@ -24,6 +24,7 @@ import LevelBar from './levelBar';
 import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import commonStyles from '../styles';
+import NavBar from '../navBarComponent';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 var deviceHeight = Dimensions.get('window').height;
 var deviceWidth = Dimensions.get('window').width;
@@ -107,7 +108,7 @@ var UserProfile = React.createClass({
       title: 'Gps',
       id:'profileform',
       index: 0,
-      passProps:{fetchRunData:this.onFetch,user:this.props.user,getUserData:this.props.getUserData,getRunCount:this.getRunCount,fetchAmount:this.fetchAmount},
+      passProps:{fetch7DayData:this.props.fetch7DayData,fetchTotalDistance:this.props.fetchTotalDistance,fetchRunData:this.onFetch,user:this.props.user,getUserData:this.props.getUserData,getRunCount:this.getRunCount,fetchAmount:this.fetchAmount},
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       navigator: this.props.navigator,
       });
@@ -115,10 +116,9 @@ var UserProfile = React.createClass({
 
       renderEditProfileIcon(){
         if (this.props.user != null) {
-
         return(
-           <TouchableOpacity style={{height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToProfileForm()} >
-             <Icon style={{fontSize:22, height:40,width:40,top:18, color:'white'}} name={'pencil'} ></Icon>
+           <TouchableOpacity style={{height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToProfileForm()} >
+             <Icon style={{fontSize:22,color:'white'}} name={'pencil'} ></Icon>
             </TouchableOpacity>
           );
          }else{
@@ -130,12 +130,7 @@ var UserProfile = React.createClass({
       if (this.props.user != null) {
         return (
       <View>
-
-          <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Profile</Text>
-              <View style={{position:'absolute',right:0,top:0,}}>{this.renderEditProfileIcon()}</View>
-          </View>
-
+        <NavBar title = {"PROFILE"} rightIcon = {this.renderEditProfileIcon()}/>
         <View>
           <View style={styles.userimagwrap}>
           <View style={styles.UserImageWrap}>{this.social_thumb()}</View>

@@ -19,6 +19,7 @@ import IconSec from 'react-native-vector-icons/Ionicons';
 import commonStyles from '../styles';
 import styleConfig from '../styleConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import NavBar from '../navBarComponent';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class OpenURLButton extends React.Component {
@@ -40,8 +41,8 @@ class OpenURLButton extends React.Component {
     return (
       <TouchableOpacity style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:1}}
         onPress={this.handleClick}>
-         <Icon style={{color:'black',fontSize:22,margin:7.5}}name={'grade'}></Icon>
-         <View><Text style={{color:'#4a4a4a'}}>Rate us</Text></View>   
+         <Icon style={{color:'black',fontSize:styleConfig.fontSizerlabe+10,margin:7.5,paddingRight:14}}name={'grade'}></Icon>
+         <View><Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>RATE US</Text></View>   
       </TouchableOpacity>
     );
   }
@@ -56,7 +57,7 @@ class Setting extends Component {
             visibleHeight: Dimensions.get('window').height,
             user:null,
             loaded: false,
-            text:'Login',
+            text:'LOGIN',
             IconText:'md-log-in'
 
         };
@@ -112,7 +113,7 @@ class Setting extends Component {
             })
             if (this.state.user) {
               this.setState({
-                text:(this.state.user) ? 'Logout':'Login',
+                text:(this.state.user) ? 'LOGOUT':'LOGIN',
                 IconText: (this.state.user) ? 'md-log-out':'md-log-in'
               })
             };
@@ -123,9 +124,8 @@ class Setting extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-                <View style={commonStyles.Navbar}>
-                    <Text style={commonStyles.menuTitle}>Settings</Text>
-                </View>
+                <NavBar title = {'SETTINGS'}/>
+                <View style={{paddingLeft:10,paddingTop:10,}}>
                 <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:0.2,}}>
                   <SocialShare/>
                 </View>
@@ -134,14 +134,15 @@ class Setting extends Component {
                 </View> 
                 <View style={{justifyContent:'flex-start',flex:0.2}}>      
                 <TouchableOpacity onPress={()=>this._signOut()} style={{marginLeft:1,alignItems:'center',flexDirection:'row',flex:1}}>
-                  <IconSec style={{color:'black',fontSize:20,margin:10}}name={this.state.IconText}></IconSec>
-                  <View>
-                    <Text style={{color:'#4a4a4a'}}>{this.state.text}</Text>
-                  </View>
+                  <IconSec style={{color:'black',fontSize:styleConfig.fontSizerlabel+4,margin:10,paddingRight:10}}name={this.state.IconText}></IconSec>
+                    <Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>{this.state.text}</Text>
                 </TouchableOpacity>
                 </View>
-                <View style={{flex:1}}></View>
-                <Text></Text>
+               
+                </View>
+                 <View style={{ position:'absolute',bottom:50,height:100,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+                <Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>Version 2.7.7</Text>
+                </View>
                </View>
               );
           }

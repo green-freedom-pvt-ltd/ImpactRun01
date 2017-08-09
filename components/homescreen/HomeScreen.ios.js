@@ -33,13 +33,20 @@ import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/Ionicons';
-
+import NavBar from '../navBarComponent';
 import ProgressBar from './causeprogressbar';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
-
+var iphone5 = 568;
+var iphone5s = 568;
+var iphone6 = 667;
+var iphone6s = 667;
+var iphone7 = 667;
+var iphone6Plus = 736;
+var iphone6SPlus = 736;
+var iphone7Plus = 736;
 
 class Homescreen extends Component {
       constructor(props) {
@@ -96,11 +103,11 @@ class Homescreen extends Component {
                     <View style={styles.iconWrapmodel}>
                       <Icon3 style={{color:"white",fontSize:30,}} name={'md-warning'}></Icon3>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>DENIED LOCATION REQUEST</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>Share location access</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>You denied the location request this app use your location to track you run please go > settings > Location > Always</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>We need GPS location to track your walks/jogs. Please go to Location and click on > While Using the App </Text>
                    <View style={styles.modelBtnWrap}>
-                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.navigateToIOSsetting()}><Text style={styles.btntext}>SETTINGS</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.navigateToIOSsetting()}><Text style={styles.btntext}>Allow</Text></TouchableOpacity>
                   </View>
                    </View>
                    </View>
@@ -207,6 +214,21 @@ class Homescreen extends Component {
          }
       }
 
+
+      cardImageheight(){
+        if (deviceheight === iphone6) {
+         return deviceheight/2-110
+        }else if (Dimensions.get('window').height === iphone5){
+          return deviceheight/2-110
+        }
+        else if (Dimensions.get('window').height === iphone6SPlus){
+          return deviceheight/2-140
+        }
+        else if (Dimensions.get('window').height < iphone5){
+         return deviceheight/2-110
+        }
+      }
+
      
 
       showImage(route){
@@ -216,9 +238,9 @@ class Homescreen extends Component {
             )
         }else{
           return(
-            <Image source={{uri:this.state.album[route.key][0]}} style={styles.cover}>
-                <View style={{position:'absolute',bottom:5,backgroundColor:'rgba(255, 255, 255, 0.75)',width:deviceWidth,padding:5}}>
-                  <Text style={{fontWeight:'400',color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+            <Image source={{uri:this.state.album[route.key][0]}} style={[styles.cover,{height:this.cardImageheight()}]}>
+                <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
+                  <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3, justifyContent: 'center',alignItems: 'center', color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {this.state.album[route.key][2]}
                   </Text>
                 </View>
@@ -304,8 +326,10 @@ class Homescreen extends Component {
           run_duration:RunData.run_duration,
           is_flag:false,
           calories_burnt:RunData.calories_burnt,
-          // start_location_lat:RunData.start_location_lat,
-          // start_location_long:RunData.start_location_long,
+          start_location_lat:RunData.start_location_lat,
+          start_location_long:RunData.start_location_long,
+          end_location_lat:RunData.end_location_lat,
+          end_location_long:RunData.end_location_long,
           no_of_steps:RunData.no_of_steps,
           is_ios:RunData.is_ios,
         })
@@ -319,7 +343,6 @@ class Homescreen extends Component {
          }
         AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),()=>{   
           console.log("removed version",responceversion);
-
         });      
         this.RemoveStoredRun(runNumber);
        })
@@ -335,6 +358,40 @@ class Homescreen extends Component {
       });
 
     }
+    
+
+    distancebetweenCards(width){
+      if (deviceheight === iphone6) {
+       return width-deviceWidth+80
+      }else if (Dimensions.get('window').height === iphone5){
+        return width-deviceWidth+62
+      }
+      else if (Dimensions.get('window').height === iphone6SPlus){
+        return width-deviceWidth+95
+      }
+      else if (Dimensions.get('window').height < iphone5){
+        return width-deviceWidth+70
+      }
+    }
+     cardWidth(){
+      if (deviceheight === iphone6) {
+       return  deviceWidth-80
+      }else if (Dimensions.get('window').height === iphone5){
+        return  deviceWidth-65
+      }
+      else if (Dimensions.get('window').height === iphone6SPlus){
+        return  deviceWidth-100
+      }
+      else if (Dimensions.get('window').height < iphone5){
+        return  deviceWidth-65
+      }
+    }
+
+   
+
+
+
+
      // SLIDER_COVERFLOW_STYLE
     _buildCoverFlowStyle = ({ layout, position, route, navigationState,data }) => {
       var data = data;
@@ -343,7 +400,7 @@ class Homescreen extends Component {
       const currentIndex = routes.indexOf(route);
       const inputRange = routes.map((x, i) => i);
       const translateOutputRange = inputRange.map(i => {
-        return width * (currentIndex - i) - ((width-deviceWidth+70) * (currentIndex - i));
+        return width * (currentIndex - i) - (this.distancebetweenCards(width) * (currentIndex - i));
       });
       const scaleOutputRange = inputRange.map(i => {
         if (currentIndex === i) {
@@ -395,7 +452,7 @@ class Homescreen extends Component {
     navigateToRunScreen(cause) {
       var me = this;
       Location.getAuthorizationStatus(function(authorization) {
-        if (authorization === "authorizedAlways") {
+        if (authorization === "authorizedWhenInUse") {
         // authorization is a string which is either "authorizedAlways",
         // "authorizedWhenInUse", "denied", "notDetermined" or "restricted"
       
@@ -421,7 +478,7 @@ class Homescreen extends Component {
             isDenied:true,
           })                 
         }else{
-          Location.requestAlwaysAuthorization();
+          Location.requestWhenInUseAuthorization();
         }
       }
      });
@@ -456,17 +513,27 @@ class Homescreen extends Component {
     };
 
     functionForIphone4Brief(route){
-      if (deviceheight >= 667) {
+      if (Dimensions.get('window').height === 667) {
       return(
         <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
         )
-      }else{
-        if (deviceheight <= 568) {
+      }else if(Dimensions.get('window').height === 568){
+      
           return(
-          <Text  numberOfLines={2} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+          <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
           )
-        }
-    }
+    
+      }else if(Dimensions.get('window').height > 667){
+          return(
+          <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+          )
+    
+      }else if(Dimensions.get('window').height < 568){
+          return(
+          <View style={{height:30,backgroundColor:"transparent"}}></View>
+          )
+    
+      }
     };
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
@@ -505,13 +572,14 @@ class Homescreen extends Component {
         return (
           <View style={styles.page}>
             <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
-            <View style={styles.album}>
+            <View style={[styles.album,{width:this.cardWidth()}]}>
               {this.showImage(route)}
-              <View style={styles.borderhide}></View>
-              <View style={{width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
-                <View style={{width:deviceWidth-105}}>
+              <View style={[styles.borderhide,{width:this.cardWidth()}]}></View>
+              <View style = {styles.cardTexwrap}>
+              <View>
+                <View style={{flex:1,}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',width:200,marginBottom:10,}}>By {this.state.album[route.key][3]}</Text>
+                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize4,fontWeight:'400',paddingTop:2}}>By {this.state.album[route.key][3]}</Text>
                   <View>
                     {this.functionForIphone4Brief(route)}
                   </View>
@@ -519,15 +587,15 @@ class Homescreen extends Component {
               </View>
               <View style={styles.barWrap}>
                 <View style = {styles.wraptext}>
-                  <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
-                  <Text style = {styles.textMoneyraised}>{parseFloat((this.state.album[route.key][6])/this.state.album[route.key][7]*100).toFixed(0)}%</Text>
+                  <Text style = {styles.textMoneyraised2}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
+                  <Text style = {styles.textMoneyraised2}>{parseFloat((this.state.album[route.key][6])/this.state.album[route.key][7]*100).toFixed(0)}%</Text>
                 </View>
-                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
+                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={this.cardWidth()-30} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
                 <View style = {styles.wraptext2}>
                   <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
                 </View>      
               </View>
-             
+             </View>
             </View>
             </TouchableWithoutFeedback>
 
@@ -590,9 +658,7 @@ class Homescreen extends Component {
       return (
         <View style={{height:deviceheight,width:deviceWidth,backgroundColor:'white'}}>
         <View>
-          <View style={commonStyles.Navbar}>
-            <Text style={commonStyles.menuTitle}>Impactrun</Text>
-          </View>
+          <NavBar title = {'IMPACTRUN'}/>
           <View style={styles.tabwrap}>
            <TabViewAnimated
              style={[ styles.container, this.props.style ]}
@@ -600,12 +666,13 @@ class Homescreen extends Component {
              renderScene={this._renderPage}
              onRequestChangeTab={this._handleChangeTab}>
              </TabViewAnimated>
-             </View>
-             <View style={{top:-65,width:deviceWidth,height:50, justifyContent: 'center',alignItems: 'center',}}>
-              <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
+             <View style={{top:styleConfig.runbtntop,width:deviceWidth,height:styleConfig.beginRunBtnHeight, justifyContent: 'center',alignItems: 'center',}}>
+              <TouchableOpacity  style={[styles.btnbegin2,{width:this.cardWidth()}]} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
                 <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Lets Go </Text>
                </TouchableOpacity>
               </View>
+             </View>
+             
              </View>
             {this.modelViewdeniedLocationRequest()}
           </View>
@@ -622,8 +689,10 @@ class Homescreen extends Component {
   }
 
   var styles = StyleSheet.create({
+     
     tabwrap:{
-      height:deviceheight-120,
+      position:'absolute',
+      height:deviceheight,
       width:deviceWidth,
       justifyContent: 'center',
     },
@@ -648,10 +717,10 @@ class Homescreen extends Component {
       height:deviceheight,
       width:deviceWidth,
      },
+
      album: {
-      paddingBottom:30,
+
       backgroundColor: '#fff',
-      width: deviceWidth-65,
       elevation: 12,
       shadowColor: '#000000',
       shadowOpacity: 0.2,
@@ -661,18 +730,27 @@ class Homescreen extends Component {
       },
       borderRadius:5,
      },
+     
      cover: {
-      width: deviceWidth-65,
-      height:deviceheight/2-110,
+      flex:-1,
       borderRadius:5,
-      resizeMode: 'cover',
+      resizeMode:'cover',
+      justifyContent:'flex-end',
      },
+
+     cardTexwrap:{
+      flex:1,
+      padding:15,
+      paddingTop:0,
+      paddingBottom:0,
+     },
+
      borderhide:{
-      width: deviceWidth-65,
       height:5,
       backgroundColor:'white',
       top:-5,
      },
+
      label: {
       margin: 16,
       color: '#fff',
@@ -692,48 +770,55 @@ class Homescreen extends Component {
         height: 3,
       },
     },
+
     causeTitle:{
+      marginLeft:-1,
+      backgroundColor:'transparent',
       color:styleConfig.greyish_brown_two,
       fontSize:styleConfig.FontSizeTitle,
       fontWeight:'400',
       fontFamily:styleConfig.FontFamily,
-      marginBottom:0,
     },
+
     causeBrief:{
-      marginBottom:10,
+      marginTop:styleConfig.functionPadding,
       color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSizeDisc,
+      fontSize:styleConfig.FontSize4,
       fontWeight:'400',
       fontFamily:styleConfig.FontFamily3,
     },
   
     barWrap:{
-      width: deviceWidth-65,
+      paddingBottom:15,
+      paddingTop:styleConfig.functionPadding,
       justifyContent: 'center',
-      alignItems: 'center',
     },
     wraptext:{
-      height:20,
       justifyContent: 'space-between',
-      width: deviceWidth-105,
       flexDirection:'row',
+      paddingBottom:5,
     },
     wraptext2:{
-      top:15,
-      height:20,
+      paddingTop:styleConfig.functionPadding,
       justifyContent: 'space-between',
-      width: deviceWidth-105,
       flexDirection:'row',
     },
     textMoneyraised:{
+      left:0,
       color:styleConfig.greyish_brown_two,
       fontSize:styleConfig.FontSize3,
       fontWeight:'600',
       fontFamily:styleConfig.FontFamily,
     },
+    textMoneyraised2:{
+      left:0,
+      color:styleConfig.greyish_brown_two,
+      fontSize:styleConfig.FontSize4,
+      fontWeight:'600',
+      fontFamily:styleConfig.FontFamily,
+    },
     btnbegin2:{
-      width:deviceWidth-65,
-      height:50,
+      height:styleConfig.beginRunBtnHeight,
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',

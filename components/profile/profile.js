@@ -28,10 +28,14 @@ import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-ta
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import AnimateNumber from 'react-native-animate-number';
-import commonStyles from '../styles'
+import commonStyles from '../styles';
+import NavBar from '../navBarComponent';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 const dataP = [];
+
+
+
 class Profile extends Component {
       constructor(props) {
         super(props);
@@ -52,6 +56,7 @@ class Profile extends Component {
           level:0,
           prevKm:0,
           levelKm:0,
+
           progressVal:0,
           navigation: {
             index: 1,
@@ -60,20 +65,28 @@ class Profile extends Component {
           },
           counterDate:new Date(),
         };
+        this.getRunCount = this.getRunCount.bind(this);
+        this.fetch7DayData = this.fetch7DayData.bind(this);
+        this.fetchAmount =  this.fetchAmount.bind(this);
+        this.fetchTotalDistance = this.fetchTotalDistance.bind(this);
       }
 
 
-     componentDidMount() {
+     componentWillMount() {
+      
+     
+
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
      
      }
+
+
       fetchRunDataLocally(){
           AsyncStorage.getItem('nextpage', (err, result) => {
             this.setState({
               nextPage:JSON.parse(result),
-            })
-          
+          })     
           if (this.state.nextPage === null) {
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
@@ -180,7 +193,7 @@ class Profile extends Component {
           }else{
             var storepage = this.state.rawData;
             AsyncStorage.setItem('fetchRunhistoryData',JSON.stringify(storepage));
-             this.fetch7DayData();
+              this.fetch7DayData();
               this.getRunCount();
               this.fetchAmount();
               this.fetchTotalDistance();
@@ -288,6 +301,7 @@ class Profile extends Component {
 
       fetch7DayData(){
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+          console.log('result',JSON.parse(result));
         if (result != null || undefined) {
        
         var RunData = JSON.parse(result);
@@ -299,7 +313,10 @@ class Profile extends Component {
         var i;
         var dataI = [];
         dataP = [];
-        var counterDate = nowdate;
+        var counterDate = nowdate.getDate()-7;
+
+        counterDate = new Date();
+        console.log('counterDate',counterDate);
         for (i = 0; i < RunData.length; i++) {
           console.log()
           var somedate =  RunData[i].start_time.slice(0,10);
@@ -330,17 +347,26 @@ class Profile extends Component {
           weekday[4] = "THU";
           weekday[5] = "FRI";
           weekday[6] = "SAT";
+          console.log('dataI',dataI,counterDate.toLocaleDateString());
         if(!( counterDate.toLocaleDateString() in dataI)) {
          
           var tempA = [];
           tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
-          dataP.push(tempA);
+          dataP.unshift(tempA);
+          console.log('counterDate.getDate() - 1',counterDate.getDate() - 1,dataP);
           counterDate.setDate(counterDate.getDate() - 1);
+         
         }
         else{
+          var tempB=[];
           var tempA = [];
-          tempA.push(weekday[counterDate.getDay()], dataI[counterDate.toLocaleDateString()]);
-          dataP.push(tempA);
+
+          tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
+          // tempB.push(tempA)
+          dataP.unshift(tempA);
+          // tempA.concat(dataP);
+         
+          console.log("tempA",dataP);
 
           //  this.setState({
 
@@ -359,6 +385,7 @@ class Profile extends Component {
         this.setState({
           RunTotalAmount7:dataI,
         })
+        console.log("RunTotalAmount7",this.state.RunTotalAmount7);
         }else{
         return;
          }
@@ -563,33 +590,33 @@ class Profile extends Component {
         return (
           <View style={{width:deviceWidth}}>
           <View style={styles.container}>
-          <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
+          <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
           </View>
           <View style={{flex: 1, justifyContent:'center' ,alignItems:'center', top:13}}>
             <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>All Time</Text>
-            <Text style={{fontSize:36, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:32,fontWeight:'400'}}name="inr"></Icon2>
+            <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name="inr"></Icon2>
             <AnimateNumber value={this.state.RunTotalAmount2} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
               }} ></AnimateNumber>
             </Text>
-            <Text style={{fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
+            <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
 
           </View>
 
           <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
             <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
-            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
+            <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
             <AnimateNumber value={this.state.RunCountTotal} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
               }} ></AnimateNumber></Text>
-            <Text style={{fontFamily: styleConfig.FontFamily, color:'grey'}}> ImpactRuns </Text>
+            <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> ImpactRuns </Text>
             </View>
             <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
-            <Text style={{fontSize:24, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
+            <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
               <AnimateNumber value={this.state.RunTotalDistance} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
-              }} ></AnimateNumber><Text style={{fontSize:18}}> km</Text></Text>
-            <Text style={{fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
+              }} ></AnimateNumber><Text style={{fontSize:styleConfig.FontSizeTitle}}> km</Text></Text>
+            <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
             </View>
             </View>
 
@@ -599,28 +626,33 @@ class Profile extends Component {
            </View>
             <View style={styles.container2}>
            
-            <Chart
+             <Chart
+
               style={styles.chart}
               data={dataP}
-              height={(deviceHeight/2)-120}
+              height={styleConfig.barChatHight}
               type='bar'
               hideVerticalGridLines={true}
               showYAxisLabels={false}
               cornerRadius = {2}
-               />
+              labelFontSize = {styleConfig.barChatFontSize}
+
+              />
+               
+
+         
             </View>
             <View style={{width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
             {this.ShowRunScreenBtn()}
              </View>
              </View>
+             {this.isloading()}
           </View>
         );
       }else{
         return(
           <View>
-          <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Profile</Text>
-          </View>
+           <NavBar title={"PROFILE"}/>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
            <LoginBtn getUserData={this.props.getUserData}/>
            </View>
@@ -629,6 +661,23 @@ class Profile extends Component {
           )
       }
       }
+
+
+      isloading(){
+      if (this.state.runfeatching) {
+        return(
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+            <ActivityIndicatorIOS
+             style={{height: 80}}
+              size="large"
+            >
+            </ActivityIndicatorIOS>
+          </View>
+          )
+      }else{
+        return;
+      }
+    }
 
    }
 // userTotalAmount={this.state.RunTotalAmount.TotalRupeesCount}
@@ -706,7 +755,7 @@ var styles = StyleSheet.create({
   },
   chart: {
     width: deviceWidth-20,
-    height:styleConfig.GraphHeight,
+    height:styleConfig.barChatHight,
   },
 
 })

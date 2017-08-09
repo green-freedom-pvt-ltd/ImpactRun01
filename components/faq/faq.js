@@ -12,6 +12,7 @@ import{
     Text,
   } from 'react-native';
 import FaqData from './faqData';
+import NavBar from '../navBarComponent';
 import commonStyles from '../../components/styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
@@ -29,9 +30,7 @@ class Faq extends Component {
   		render() {
   		  return (
           <View>
-            <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Faqs</Text>
-            </View>
+            <NavBar title={'HELP'}/>
   			    <FaqData user = {this.props.user}/>
           </View>
   			);

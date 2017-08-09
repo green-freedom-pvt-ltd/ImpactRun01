@@ -18,6 +18,7 @@ import{
   } from 'react-native';
 import commonStyles from '../styles';
 import apis from '../apis';
+import NavBar from '../navBarComponent'
 import styleConfig from '../styleConfig';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -185,15 +186,18 @@ class ImpactLeagueCode extends Component {
       }
     }
 
+    leftIconRender(){
+      return(
+        <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+           <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+        </TouchableOpacity>
+        )
+    }
+    
     render() {
 		  return (
         <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
-        <View style={commonStyles.Navbar}>
-          <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-           <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-          </TouchableOpacity>
-          <Text style={commonStyles.menuTitle}>Impact League</Text>
-        </View>
+        <NavBar title = {'IMPACT LEAGUE'} leftIcon={this.leftIconRender()}/>
         <View style={styles.container}>
         <View style={styles.ContentWrap}>
         <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>

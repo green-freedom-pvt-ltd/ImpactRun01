@@ -26,6 +26,8 @@ import{
   import LoginBtns from '../login/LoginBtns';
   import Share, {ShareSheet, Button} from 'react-native-share';
   const FBSDK = require('react-native-fbsdk');
+   var moment = require('moment');
+
   const {
     ShareDialog,
   } = FBSDK;
@@ -63,6 +65,7 @@ import{
     }
 
     getUserData(){
+      var me = this;
       AsyncStorage.getItem('USERDATA', (err, result) => {
         let user = JSON.parse(result);
         this.setState({
@@ -70,11 +73,10 @@ import{
         })
        
         console.log("user",this.state.user);
-        this.AddruntoRunHistory();
         if (this.state.user) {
         this.ifConnectTonetPost();
         }else{
-          me.SaveRunLocally();
+          this.SaveRunLocally();
           AlertIOS.alert('Login', 'please login to create impact');
         }
       },1000);
@@ -132,8 +134,19 @@ import{
       //   AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
       //  console.log('after 2 sec');
       // },2000)
-
+       var time2 = this.props.time;
+       console.log('time2.length',time2.length);
+      if (time2.length <= 2) {
+       var time = '00:'+'00:'+time2;
+      }else if (time2.length == 5) {
+        console.log('time2',time2);
+       var time = '00:'+time2;
+      }else if (time2.length > 5 ) {
+       var time = time2;
+      };
       this.getSavedRunCount();
+      this.AddruntoRunHistory(time);
+
     } 
 
     getSavedRunCount(){
@@ -189,8 +202,9 @@ import{
     SaveRunLocally(){
       if (this.props.user) {
      var saveRuns = parseInt(this.state.saveRunCountData)+ 1 ;
-     // var startPosition = this.props.StartLocation;
-     // console.log('starttlocation:',this.props.StartLocation);
+     var startPosition = this.props.StartLocation;
+     var endPosition = this.props.EndLocation;
+     console.log('starttlocation:',this.props.StartLocation);
      AsyncStorage.setItem("SaveRunCount",JSON.stringify(saveRuns));
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
@@ -221,8 +235,10 @@ import{
         is_flag:false,
         calories_burnt:calories_burnt,
         team_id:this.state.impactleague_team_id,
-        // start_location_lat:startPosition.coords.latitude,
-        // start_location_long:startPosition.coords.longitude,
+        start_location_lat:startPosition.latitude,
+        start_location_long:startPosition.longitude,
+        end_location_lat:endPosition.latitude,
+        end_location_long:endPosition.longitude,
         no_of_steps:steps,
         is_ios:true,
        
@@ -289,9 +305,8 @@ import{
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       var calories_burnt = this.props.calories_burnt;
-      // var startPosition = this.props.StartLocation;
-      // console.log('startPosition.coords.latitude',startPosition.coords.latitude);
-      // console.log('startPosition.coords.longitude',startPosition.coords.longitude);
+      var startPosition = this.props.StartLocation;
+      var endPosition = this.props.EndLocation;
       var cause = this.props.data;
       // try{
       //   let response = await fetch('https://mywebsite.com/endpoint/');
@@ -324,8 +339,10 @@ import{
           is_flag:false,
           calories_burnt:calories_burnt,
           team_id:_this.state.impactleague_team_id,
-          // start_location_lat:startPosition.coords.latitude,
-          // start_location_long:startPosition.coords.longitude,
+          start_location_lat:startPosition.latitude,
+          start_location_long:startPosition.longitude,
+          end_location_lat:endPosition.latitude,
+          end_location_long:endPosition.longitude,
           no_of_steps:steps,
           is_ios:true,     
           })
@@ -340,7 +357,7 @@ import{
         });
         var epochtime = userRunData.version;
         let responceversion = {
-         runverison:epochtime
+         runversion:epochtime
         }
         AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),(data)=>{
           console.log("removed version share ",responceversion);
@@ -359,7 +376,7 @@ import{
       })
     }
     catch (error) {
-      // _this.PostRun()
+       _this.SaveRunLocally();
     }
     }, 3000);
     }else{
@@ -373,84 +390,84 @@ import{
       return this.navigateTOhome();
     }
 
-    AddruntoRunHistory(){
-      if (this.props.user) {
+    AddruntoRunHistory(time){
+
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
       var steps = this.props.noOfsteps;
-      var time = this.props.time;
+
       var date = this.props.StartRunTime;
       var endtime = this.props.EndRunTime;
       var cause = this.props.data;
-      var userdata = this.props.user;
       var calories_burnt = this.props.calories_burnt;
-      var user_id =JSON.stringify(userdata.user_id);
-       // var startPosition = this.props.StartLocation;
-      AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-        // if (rundata != null) {
-        var rundata = JSON.parse(result);
-        if (rundata != null) {
-        var newRun = {
-          cause_run_title:cause.cause_title,
-          user_id:user_id,
-          start_time:date,
-          end_time: endtime,
-          distance: distance,
-          peak_speed: 1,
-          avg_speed:speed,
-          run_amount:impact,
-          run_duration: time,
-          is_flag:false,
-          calories_burnt:calories_burnt,
-          team_id:this.state.impactleague_team_id,
-          // start_location_lat:startPosition.coords.latitude,
-          // start_location_long:startPosition.coords.longitude,
-          no_of_steps:steps,
-          is_ios:true,  
-        }
-        var newRunArray = [];
-        var runSavedata = newRunArray.push(newRun);
-        var newtoprun =newRunArray.concat(rundata);
-        AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-        });
-        let fetchRunhistoryData = newtoprun;
-        AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
-        })
-       }else{
-        var newRun = {
-          cause_run_title:cause.cause_title,
-          user_id:user_id,
-          start_time:date,
-          end_time: endtime,
-          distance: distance,
-          peak_speed: 1,
-          avg_speed:speed,
-          run_amount:impact,
-          run_duration: time,
-          is_flag:false,
-          calories_burnt:calories_burnt,
-          team_id:this.state.impactleague_team_id,
-          // start_location_lat:startPosition.coords.latitude,
-          // start_location_long:startPosition.coords.longitude,
-          no_of_steps:steps,
-          is_ios:true,  
-        }
-        var newRunArray = [];
-        var runSavedata = newRunArray.push(newRun);
-        var newtoprun = newRunArray;
-        AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-        });
-        let fetchRunhistoryData = newtoprun;
-        AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
-        })
-       
-       }
-      })
+      var startPosition = this.props.StartLocation;
+      var endPosition = this.props.EndLocation;
+      var me = this;
       
-      }else{
-      return;
-     }       
+     setTimeout( function(){ AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        console.log('distance',time);
+             var rundata = JSON.parse(result);
+             if (rundata != null) {
+             var newRun = {
+               cause_run_title:cause.cause_title,
+               start_time:date,
+               end_time: endtime,
+               distance: distance,
+               peak_speed: 1,
+               avg_speed:speed,
+               run_amount:impact,
+               run_duration: time,
+               is_flag:false,
+               calories_burnt:calories_burnt,
+               team_id:me.state.impactleague_team_id,
+               start_location_lat:startPosition.latitude,
+               start_location_long:startPosition.longitude,
+               end_location_lat:endPosition.latitude,
+               end_location_long:endPosition.longitude,
+               no_of_steps:steps,
+               is_ios:true,  
+             }
+             var newRunArray = [];
+             var runSavedata = newRunArray.push(newRun);
+             var newtoprun =newRunArray.concat(rundata);
+             AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+             });
+             let fetchRunhistoryData = newtoprun;
+             AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
+             })
+            }else{
+             var newRun = {
+               cause_run_title:cause.cause_title,
+               start_time:date,
+               end_time: endtime,
+               distance: distance,
+               peak_speed: 1,
+               avg_speed:speed,
+               run_amount:impact,
+               run_duration: time,
+               is_flag:false,
+               calories_burnt:calories_burnt,
+               team_id:me.state.impactleague_team_id,
+               start_location_lat:startPosition.latitude,
+               start_location_long:startPosition.longitude,
+               end_location_lat:endPosition.latitude,
+               end_location_long:endPosition.longitude,
+               no_of_steps:steps,
+               is_ios:true,  
+             }
+             var newRunArray = [];
+             var runSavedata = newRunArray.push(newRun);
+             var newtoprun = newRunArray;
+             AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
+             });
+             let fetchRunhistoryData = newtoprun;
+             AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), (data) => {
+             })
+            
+            }
+           })
+           },3000);    
     }
     
     getILdata(){
@@ -458,9 +475,11 @@ import{
       AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
         if (result != null || undefined) {
         var boardData = JSON.parse(result);
-        this.setState({
-          impactleague_team_id:this.state.user.team_code,
-        })
+        if (this.state.user) {
+          this.setState({
+            impactleague_team_id:this.state.user.team_code,
+          })
+        }
         if (boardData.impactleague_is_active) {   
           this.setState({
             navigatetopage:'impactleaguehome'
@@ -520,6 +539,23 @@ import{
       var distance = this.props.distance;
       var impact =this.props.impact;
       var time = this.props.time;
+
+      console.log('time',time.slice(0,2));
+      var hr = time.slice(0,2);
+      var min = time.slice(3,5);
+      console.log("min",min);
+      var sec = time.slice(6,8);
+      if (hr != "00") {
+       var timelable = "HRS:MIN:SEC"; 
+       var timeDuration =  time.slice(0,8);
+       console.log("timeDuration",timeDuration);
+      }else if(min != "00"){
+        var timelable = "MIN:SEC";
+        var timeDuration =  time.slice(3,8);
+      }else if( sec != "00"){
+        var timeDuration =  time.slice(6,8);
+        var timelable = "SEC";
+      }
       let shareOptions = {
         title: "ImpactRun",
         message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
@@ -535,8 +571,8 @@ import{
             <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
                 <View style={{flexDirection:'column',flex:1,top:70}}>
               <View style={styles.wrapperRunContentImpact}>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>IMPACT</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{impact} RS</Text>
               </View>
 
 
@@ -544,20 +580,20 @@ import{
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>
               <View style={styles.wrapperRunContent}>
                 <Icon style={{color:'#4a4a4a',fontSize:35,}} name={'ios-walk-outline'}></Icon>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{distance}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}> KMs</Text>
               </View>
               
               
                <View style={styles.wrapperRunContent}>
                    <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="whatshot"></Icon2>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{parseFloat(this.props.calories_burnt).toFixed(1)}</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Cal</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}>CAL</Text>
                 </View>
               <View style={styles.wrapperRunContent}>
                 <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'md-stopwatch'}></Icon>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{timeDuration}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}>TIME</Text>
               </View>
               </View>
             </View>
@@ -572,8 +608,7 @@ import{
                 <View style={styles.skip}>
                   <Text style={{color:styleConfig.grey_70,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
                   <TouchableOpacity onPress={()=> this.PopForRunNOtSubmit()}>
-                    <Text style={{left:5,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>
-                   
+                    <Text style={{left:5,color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>SKIP</Text>  
                   </TouchableOpacity>
                 </View>
               </View>
@@ -588,8 +623,8 @@ import{
           <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
             <View style={{flexDirection:'column',flex:1,top:70}}>
               <View style={styles.wrapperRunContentImpact}>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>IMPACT</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{impact} RS</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}>IMPACT</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{impact} RS</Text>
               </View>
 
 
@@ -597,20 +632,20 @@ import{
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>
               <View style={styles.wrapperRunContent}>
                 <Icon style={{color:'#4a4a4a',fontSize:35,}} name={'ios-walk-outline'}></Icon>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{distance}</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}> Kms</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{distance}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}> KMs</Text>
               </View>
               
               
                <View style={styles.wrapperRunContent}>
                    <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="whatshot"></Icon2>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{parseFloat(this.props.calories_burnt).toFixed(1)}</Text>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Cal</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}</Text>
+                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}>CAL</Text>
                 </View>
               <View style={styles.wrapperRunContent}>
                 <Icon style={{color:'#4a4a4a',fontSize:30,}} name={'md-stopwatch'}></Icon>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>{time}</Text>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',}}>Min</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular' ,fontSize:styleConfig.fontSizerImpact-10,}}>{timeDuration}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular'}}>{"TIME"}</Text>
               </View>
               </View>
             </View>

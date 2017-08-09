@@ -16,6 +16,7 @@
   import commonStyles from '../styles';
   import Icon from 'react-native-vector-icons/Ionicons';
   var deviceWidth = Dimensions.get('window').width;
+  import NavBar from '../navBarComponent';
   var deviceHeight = Dimensions.get('window').height;
   import styleConfig from '../styleConfig';
   import SubmitBtn from '../submitbtn';
@@ -191,9 +192,7 @@
         console.log('data',data);
   		  return (
           <View>
-            <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Impact League</Text>
-            </View>
+            <NavBar title = {'IMPACT LEAGUE'}/>
             <View style ={styles.container}>
               <Image source={{uri:data.impactleague_banner}} style={styles.bannerimage}>
               </Image>

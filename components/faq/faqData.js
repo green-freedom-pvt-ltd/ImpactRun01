@@ -179,12 +179,14 @@ class Faqdata extends Component {
                 style={styles.container}>
               </ListView>
               <View style={styles.FaqSubmitWrap}>
+              <View>
                 <TextInput
                 ref={component => this._textInput = component} 
                 style={styles.textEdit}
                 onChangeText={(moreText) => this.setState({moreText})}
                 placeholder="If you have any question ask us!"
                 />
+                </View>
                 <TouchableOpacity onPress={() => this.SubmitFaq()} style={styles.submitFaqbtn}>
                   <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
@@ -229,33 +231,29 @@ const styles = StyleSheet.create({
    color:'#4a4a4a',
   },
   FaqSubmitWrap:{
-    paddingLeft:10,
+    paddingTop:7,
     height:styleConfig.navBarHeight,
     width:deviceWidth,
     flexDirection: 'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
+    justifyContent:'center',
+    alignItems:'flex-start',
     backgroundColor:'#e1e1e8',
     borderBottomWidth:2,
     borderBottomColor:'#e1e1e8',
   },
   textEdit: {
-    marginLeft:-5,
-    height:48, 
+    height:40, 
     borderColor: '#e1e1e8', 
     backgroundColor: 'white',
-    borderWidth:5 ,
     borderRadius:8,
     width:deviceWidth-100,
     color:'#4a4a4a',
     padding:10,
-    top:4,
+    marginRight:5,
   },
   submitFaqbtn:{
     height:40, 
     width:85,
-    right:-4,
-    top:-6,
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',

@@ -22,7 +22,7 @@ import{
      };
    }
 
-   componentDidMount() {
+  componentDidMount() {
     // var _this = this;
     // setTimeout(function(){    
     //   var totalkm = _this.props.totalKm;
@@ -38,7 +38,7 @@ import{
     // },2000);
     
    
- }
+  }
 
  getKMfunction(){
    AsyncStorage.getItem('totalkm', (err, result) => {

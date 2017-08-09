@@ -17,10 +17,11 @@ import{
     AsyncStorage,
     RefreshControl,
   } from 'react-native';
-
+import styleConfig from '../styleConfig';
 import apis from '../apis';
 import LodingScreen from '../LodingScreen';
 import commonStyles from '../styles';
+import NavBar from '../navBarComponent';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -34,12 +35,16 @@ class ImpactLeagueLeaderBoard extends Component {
           ImpactLeagueLeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
           refreshing:false,
+          teamname:'Impact League'
         };
         this.renderRow = this.renderRow.bind(this);
       }
 
       componentDidMount() {
          this.FetchDataifInternet();
+         this.setState({
+          teamname:this.props.team_name
+         })
       }
       
       FetchDataifInternet(){
@@ -67,14 +72,10 @@ class ImpactLeagueLeaderBoard extends Component {
             this.setState({
               ImpactLeagueLeaderBoardData:this.state.ImpactLeagueLeaderBoardData.cloneWithRows(boardData.results),
               BannerData:boardData.results,
-              teamname:boardData.results[0].team,
               loaded: true,
             })
           }else{
              this.FetchDataifInternet();
-             this.setState({
-              teamname:'Impact League'
-             })
           }
         }); 
       }
@@ -169,27 +170,32 @@ class ImpactLeagueLeaderBoard extends Component {
             'width':25,
           }
         ];
+        var textColor=(this.props.user.user_id === rowData.user.user_id)?'#fff':"#4a4a4a";
         var backgroundColor = (this.props.user.user_id === rowData.user.user_id)?'#ffcd4d':'#fff';
         return (
           <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <View style={style}>
-                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
+                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:textColor,}}>{rowID}</Text>
               </View> 
               <View>{this.socialthumb(rowData)}</View>       
-              <Text style={styles.txt}>{rowData.user.first_name} {rowData.user.last_name}</Text>
-              <Text style={styles.txtSec}>{parseFloat(totalkms).toFixed(2)} Km</Text>
+              <Text style={[styles.txt,{color:textColor}]}>{rowData.user.first_name} {rowData.user.last_name}</Text>
+              <View style={{justifyContent: 'center',alignItems: 'center',}}>
+                <Text style={[styles.txtSec,{color:textColor}]}>{parseFloat(totalkms).toFixed(0)} Km</Text>
+              </View>
           </View>
         );
+      }
+      leftIconRender(){
+        return(
+          <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+            </TouchableOpacity>
+        )
       }
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
-          <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
-            </View>     
+            <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>    
             <LodingScreen style={{ height:deviceHeight-150}}/>
           </View>
         );
@@ -202,12 +208,7 @@ class ImpactLeagueLeaderBoard extends Component {
         console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-           <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
-            </View>
+           <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>
             <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,}}>
                <ListView 
                 refreshControl={
@@ -242,27 +243,24 @@ const styles = StyleSheet.create({
     borderColor:'#CCC',
   },
   txt: {
-    width:deviceWidth-200,
+    flex:1,
     color:'#4a4a4a',
-    fontSize: 14,
-    fontWeight:'400',
+    fontSize: styleConfig.fontSizerleaderBoardContent+2,
+    fontWeight:'600',
     textAlign: 'left',
     marginLeft:10,
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{
     color:'#4a4a4a',
-    fontSize:14,
+    fontSize:styleConfig.fontSizerleaderBoardContent+2,
     fontWeight:'400',
-    position:'absolute',
-    right:15,
-    top:30,
     fontFamily: 'Montserrat-Regular',
   },
    thumb: {
-    height:50,
-    width:50,
-    borderRadius:25,
+    height:styleConfig.navBarHeight-30,
+    width:styleConfig.navBarHeight-30,
+    borderRadius:(styleConfig.navBarHeight-30)/2,
     backgroundColor:'#ffcd4d',
     marginBottom: 5,
      borderColor:'#ccc',
