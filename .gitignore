@@ -35,10 +35,8 @@ local.properties
 node_modules/*
 !node_modules/react-native-tab-view/
 
-node_modules/*
 !node_modules/react-native-chart/
 
-node_modules/*
 !node_modules/react-native-location/
 
 npm-debug.log
