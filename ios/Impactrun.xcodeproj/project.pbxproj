@@ -12,12 +12,12 @@
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		103E428137A24DEFB15027F0 /* libRCTYouTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A49DD3B74CF42189769C8F3 /* libRCTYouTube.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		149740D5A2A34D55ADEA6E6F /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B665F2B1440A44F38F9EE83D /* MaterialIcons.ttf */; };
-		380984111F32043E00E44279 /* RNiOSCharts in Resources */ = {isa = PBXBuildFile; fileRef = 380984101F32043E00E44279 /* RNiOSCharts */; };
 		380EDA011F0435B100AACE4C /* libAppHub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 380ED9FE1F0435A000AACE4C /* libAppHub.a */; };
 		3810C2F81E65DC7100DCC7C6 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F71E65DC7100DCC7C6 /* CoreTelephony.framework */; };
 		3810C2FA1E65DC9100DCC7C6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3810C2F91E65DC9100DCC7C6 /* UIKit.framework */; };
@@ -52,9 +52,11 @@
 		38D5C7611D915F7F00AB528B /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38D5C7601D915F7F00AB528B /* Montserrat-Regular.ttf */; };
 		38E376A21E57F9ED00D78F58 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38E376A01E57F9ED00D78F58 /* Fabric.framework */; };
 		38E376A31E57F9ED00D78F58 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38E376A11E57F9ED00D78F58 /* Crashlytics.framework */; };
+		4EA2EF5C75784C2BAA33967F /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 304DED41A7404119A176ED59 /* libRNViewShot.a */; };
 		583CC830C90E44E0BB8989A5 /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B669F2874B2748039E4F9B0C /* libRNGoogleSignin.a */; };
 		5B2DAD3A5B854327A411E96F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9D25947B431419BB2CEFF8B /* Zocial.ttf */; };
 		5B60DF2E2BE54B0292982577 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC7B40852745BAB761C6FA /* SafariServices.framework */; };
+		609ACFB1113E4FED8A4418C9 /* libActivityView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F16EFAEFC0A4B7D8AAC74EA /* libActivityView.a */; };
 		7C36DDF2314540AC8B8DB616 /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B269B95BADB7494CA998A954 /* Montserrat-Thin.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		835037441C96176B000DE4BA /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 835037381C961738000DE4BA /* libRNDeviceInfo.a */; };
@@ -327,6 +329,27 @@
 			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
 			remoteInfo = RCTMapboxGLTests;
 		};
+		B6A5DBF11F41FBE800E6E1BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95818065A15444EBB8FCCCEB /* ActivityView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = ActivityView;
+		};
+		B6A5DC111F41FBE800E6E1BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 438EF37DE2C7476D8FE1D76D /* RCTYouTube.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8BDB9BC91B4289AE00EF9FEF;
+			remoteInfo = RCTYouTube;
+		};
+		B6A5DC1B1F41FBE800E6E1BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA7EB4C6BA0F4B5F9140E304 /* RNViewShot.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNViewShot;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -351,6 +374,7 @@
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* Impactrun.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Impactrun.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A49DD3B74CF42189769C8F3 /* libRCTYouTube.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTYouTube.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Impactrun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Impactrun.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -358,6 +382,7 @@
 		2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPedometer.xcodeproj; path = "../node_modules/react-native-pedometer/RNPedometer.xcodeproj"; sourceTree = "<group>"; };
 		2DA757BBDB80A94C5E7D25E2 /* Pods-Impactrun.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.release.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.release.xcconfig"; sourceTree = "<group>"; };
 		2F81B07EEC3849D491066E24 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		304DED41A7404119A176ED59 /* libRNViewShot.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNViewShot.a; sourceTree = "<group>"; };
 		31E1B80977F5476A8D804A07 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNShare.a; sourceTree = "<group>"; };
 		380984101F32043E00E44279 /* RNiOSCharts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = RNiOSCharts; path = "../node_modules/react-native-ios-charts/RNiOSCharts"; sourceTree = "<group>"; };
 		380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppHub.xcodeproj; path = ../node_modules/apphub/AppHub/AppHub.xcodeproj; sourceTree = "<group>"; };
@@ -402,6 +427,7 @@
 		38E376A11E57F9ED00D78F58 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		38FA6FFE1DCB3F3E00B10D63 /* Impactrun.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Impactrun.entitlements; path = Impactrun/Impactrun.entitlements; sourceTree = "<group>"; };
 		3DCB2538134749B6888AD41A /* RNShare.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
+		438EF37DE2C7476D8FE1D76D /* RCTYouTube.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTYouTube.xcodeproj; path = "../node_modules/react-native-youtube/RCTYouTube.xcodeproj"; sourceTree = "<group>"; };
 		46B022307871A444B187C1DB /* Pods-Impactrun.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impactrun.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Impactrun/Pods-Impactrun.debug.xcconfig"; sourceTree = "<group>"; };
 		48862F61DFF945B7AAC005D8 /* RNLocation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNLocation.xcodeproj; path = "../node_modules/react-native-location/RNLocation.xcodeproj"; sourceTree = "<group>"; };
 		54885F245294403CBAD6B5A5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -419,7 +445,9 @@
 		8356DDC21CC922F000FCCEFB /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
 		8359A6E51CA58BA6008F13B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8D4A806460D694386FF28D3F /* Pods-ImpactrunTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpactrunTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8F16EFAEFC0A4B7D8AAC74EA /* libActivityView.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libActivityView.a; sourceTree = "<group>"; };
 		8F782FCA323E48E1BC92237A /* YTPlayerView-iframe-player.html */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "YTPlayerView-iframe-player.html"; path = "../node_modules/react-native-youtube/assets/YTPlayerView-iframe-player.html"; sourceTree = "<group>"; };
+		95818065A15444EBB8FCCCEB /* ActivityView.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ActivityView.xcodeproj; path = "../node_modules/react-native-activity-view/ActivityView.xcodeproj"; sourceTree = "<group>"; };
 		958BADC6FB8A4B0A971BB1F6 /* libRNPedometer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNPedometer.a; sourceTree = "<group>"; };
 		A46DD3FC37DF420381A94676 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		A5331CA9760849C0898EAF04 /* Montserrat-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.otf"; path = "../node_modules/react-native-vector-icons/Fonts/Montserrat-Light.otf"; sourceTree = "<group>"; };
@@ -433,6 +461,7 @@
 		C6360484A033C5FF6FD42072 /* libPods-ImpactrunTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ImpactrunTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D08051B8B9CB49E2BE0ADF94 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		E21C3DEB979148679E9EA78E /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
+		EA7EB4C6BA0F4B5F9140E304 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
 		EBD9BFC2767335792B57D624 /* Pods-ImpactrunTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImpactrunTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ImpactrunTests/Pods-ImpactrunTests.release.xcconfig"; sourceTree = "<group>"; };
 		EC1A3BC49DA74FA3A1E076E0 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGoogleSignin.xcodeproj; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; };
 		F39C9CF476F145E7968AC7C0 /* AddressBook.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
@@ -501,6 +530,9 @@
 				C64D22300DE940B3AA3BBDE6 /* libRCTFBSDK.a in Frameworks */,
 				8A9C757976B74038989E643B /* libRNPedometer.a in Frameworks */,
 				F26DCFCFECBC470295165EBB /* libRNLocation.a in Frameworks */,
+				609ACFB1113E4FED8A4418C9 /* libActivityView.a in Frameworks */,
+				4EA2EF5C75784C2BAA33967F /* libRNViewShot.a in Frameworks */,
+				103E428137A24DEFB15027F0 /* libRCTYouTube.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -764,6 +796,9 @@
 				3DCB2538134749B6888AD41A /* RNShare.xcodeproj */,
 				2860F23CDC7C4EB985A8888C /* RNPedometer.xcodeproj */,
 				48862F61DFF945B7AAC005D8 /* RNLocation.xcodeproj */,
+				95818065A15444EBB8FCCCEB /* ActivityView.xcodeproj */,
+				EA7EB4C6BA0F4B5F9140E304 /* RNViewShot.xcodeproj */,
+				438EF37DE2C7476D8FE1D76D /* RCTYouTube.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -825,6 +860,30 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* Impactrun.app */,
 				00E356EE1AD99517003FC87E /* Impactrun.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B6A5DBEA1F41FBE800E6E1BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B6A5DBF21F41FBE800E6E1BD /* libActivityView.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B6A5DBEC1F41FBE800E6E1BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B6A5DC1C1F41FBE800E6E1BD /* libRNViewShot.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B6A5DBEE1F41FBE800E6E1BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B6A5DC121F41FBE800E6E1BD /* libRCTYouTube.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -951,6 +1010,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = B6A5DBEA1F41FBE800E6E1BD /* Products */;
+					ProjectRef = 95818065A15444EBB8FCCCEB /* ActivityView.xcodeproj */;
+				},
+				{
 					ProductGroup = 380ED9F71F04359E00AACE4C /* Products */;
 					ProjectRef = 380ED9F61F04359E00AACE4C /* AppHub.xcodeproj */;
 				},
@@ -1019,6 +1082,10 @@
 					ProjectRef = 139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */;
 				},
 				{
+					ProductGroup = B6A5DBEE1F41FBE800E6E1BD /* Products */;
+					ProjectRef = 438EF37DE2C7476D8FE1D76D /* RCTYouTube.xcodeproj */;
+				},
+				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
@@ -1045,6 +1112,10 @@
 				{
 					ProductGroup = 8350372E1C961726000DE4BA /* Products */;
 					ProjectRef = 8350372D1C961726000DE4BA /* RNVectorIcons.xcodeproj */;
+				},
+				{
+					ProductGroup = B6A5DBEC1F41FBE800E6E1BD /* Products */;
+					ProjectRef = EA7EB4C6BA0F4B5F9140E304 /* RNViewShot.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1294,6 +1365,27 @@
 			remoteRef = 835037561C962E40000DE4BA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		B6A5DBF21F41FBE800E6E1BD /* libActivityView.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libActivityView.a;
+			remoteRef = B6A5DBF11F41FBE800E6E1BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B6A5DC121F41FBE800E6E1BD /* libRCTYouTube.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTYouTube.a;
+			remoteRef = B6A5DC111F41FBE800E6E1BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B6A5DC1C1F41FBE800E6E1BD /* libRNViewShot.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNViewShot.a;
+			remoteRef = B6A5DC1B1F41FBE800E6E1BD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1311,7 +1403,6 @@
 				38D5C7611D915F7F00AB528B /* Montserrat-Regular.ttf in Resources */,
 				38B00AD61D377DD200863FF0 /* Images.xcassets in Resources */,
 				8350374E1C961801000DE4BA /* Fonts in Resources */,
-				380984111F32043E00E44279 /* RNiOSCharts in Resources */,
 				38D5C75F1D915F6800AB528B /* Montserrat-Regular.ttf in Resources */,
 				FDDC4DF7C8064048B5DA9D4F /* Entypo.ttf in Resources */,
 				CF4BA4422FF24907B6497A9E /* EvilIcons.ttf in Resources */,
@@ -1542,6 +1633,9 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 				);
 				PRODUCT_NAME = Impactrun;
 				PROVISIONING_PROFILE = "";
@@ -1566,6 +1660,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
@@ -1632,16 +1729,15 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios",
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
-					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
-					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/apphub/AppHub",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 					"$(SRCROOT)/node_modules/react-native/Libraries/**/**",
 					"$(SRCROOT)/../node_modules/react-native-activity-view",
 					"$(SRCROOT)/../node_modules/react-native-location",
-					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-activity-view",
+					"$(SRCROOT)/../node_modules/react-native-youtube/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1679,6 +1775,9 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"$(PROJECT_DIR)/build/Debug-iphoneos/Analytics",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
@@ -1722,16 +1821,15 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios",
 					"$(SRCROOT)/../node_modules/react-native-pedometer/RNPedometer",
 					"$(SRCROOT)/../node_modules/react-native-keyboardevents",
-					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/**",
-					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/apphub/AppHub",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 					"$(SRCROOT)/node_modules/react-native/Libraries/**/**",
 					"$(SRCROOT)/../node_modules/react-native-activity-view",
 					"$(SRCROOT)/../node_modules/react-native-location",
-					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-activity-view",
+					"$(SRCROOT)/../node_modules/react-native-youtube/**",
 				);
 				INFOPLIST_FILE = ImpactRun/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1769,6 +1867,9 @@
 					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 					"$(PROJECT_DIR)/build/Debug-iphoneos/Analytics",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
+					"\"$(SRCROOT)/Impactrun\"",
 					"\"$(SRCROOT)/Impactrun\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -1856,6 +1957,9 @@
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-activity-view",
+					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
+					"$(SRCROOT)/../node_modules/react-native-youtube/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1931,6 +2035,9 @@
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase-analytics/ios",
 					"$(SRCROOT)/../node_modules/clevertap-react-native/ios/CleverTapReact/**",
+					"$(SRCROOT)/../node_modules/react-native-activity-view",
+					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
+					"$(SRCROOT)/../node_modules/react-native-youtube/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

@@ -14,12 +14,12 @@ var {
   DatePickerIOS,
   TouchableOpacity,
   Keyboard,
-  AlertIOS
+  AlertIOS,
+  Component
 } = ReactNative;
 import styleConfig from '../styleConfig';
 import Login from '../login/LoginBtns';
 import LodingView from '../LodingScreen';
-import ValidationComponent from 'react-native-form-validator';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../styles';
@@ -30,7 +30,7 @@ import apis from '../apis';
 var dismissKeyboard = require('dismissKeyboard');
  var moment = require('moment');
 
-export default class ProfileForm extends ValidationComponent {
+export default class ProfileForm  extends Component{
 
     constructor(props) {
       super(props);
@@ -301,8 +301,11 @@ export default class ProfileForm extends ValidationComponent {
          var showDatePicker = this.state.showDatePicker ?
             <DatePickerIOS
                 style={{position:"absolute",width:deviceWidth,right:0,bottom:0,backgroundColor:"white"}}
-                date={this.props.user.birthday} onEndEditing={()=> this.setState({showDatePicker:false})} onDateChange={(date)=>this.setState({date:date.toLocaleDateString()})}
-                mode="date"/> : <View />
+                date={moment(this.state.date, moment.ISO_8601)}
+                mode="date"
+                maximumDate = {moment(new Date(),moment.ISO_8601)}
+                onEndEditing={()=> this.setState({showDatePicker:false})} onDateChange={(date)=>this.setState({date:date.toLocaleDateString()})}
+                /> : <View />
          return (
           <View>
           <NavBar title = {'PROFILE'} leftIcon = {this.leftIconRender()} rightIcon={this.rightIconRender()}/>
@@ -311,9 +314,6 @@ export default class ProfileForm extends ValidationComponent {
             <View style={styles.FromWrap}>
              
               <View style={styles.ProfileTextInput}>
-               <Text>
-                {this.getErrorMessages()}
-               </Text>
                 <Text style={styles.ProfileTitle}>Name</Text> 
                 <TextInput ref="name" onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>         
               </View>

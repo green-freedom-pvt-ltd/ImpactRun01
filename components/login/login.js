@@ -60,7 +60,7 @@ class Profile extends Component {
               })
           })
           GoogleSignin.configure({
-                  iosClientId: "437150569320-tspec7u60hjbbcesp7df80fk8lrd2enn.apps.googleusercontent.com", // only for iOS
+                  iosClientId: "437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
               })
               .then((user) => {
                   console.log('Token:' + user);
