@@ -26,7 +26,7 @@ import Modal from '../downloadsharemeal/CampaignModal'
 import TimerMixin from 'react-timer-mixin';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
-import Mapbox from 'react-native-mapbox-gl';
+// import Mapbox from 'react-native-mapbox-gl';
 import Icon from 'react-native-vector-icons/Ionicons';
 import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
@@ -91,7 +91,7 @@ var Home = React.createClass({
       HussainBoltCount:0,
       StillDecteting:true,
       location:{},
-      pressAction: new Animated.Value(0),
+      pressAction: new Animated.Value(0,{ useNativeDriver: true }),
       center: {
         latitude: 40.72052634,
         longitude: -73.97686958312988
@@ -104,6 +104,7 @@ var Home = React.createClass({
 
   
   componentDidMount:function(){  
+    Location.startMonitoringSignificantLocationChanges();
     this.getWeight();
     this.saveDataperiodcally(); 
     this._startStepCounterUpdates()
@@ -402,7 +403,7 @@ var Home = React.createClass({
 
   onClickEnable: function(location) {
     var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
-    if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.1) {
+    if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.0) {
       this.EndRunConfimationForlongRun();  
      }else{
       this.EndRunConfimation();
@@ -438,7 +439,6 @@ var Home = React.createClass({
     this.setState({
       prevDistance: newDistance-distanceTravelled,
     })
-    console.log("location",location);
     if (location.coords.accuracy >= 100 && this.state.GpsAccuracyCheck){
       this.setState({
         weakGPSPoints: this.state.weakGPSPoints + 1,
@@ -928,6 +928,7 @@ var Home = React.createClass({
       VibrationIOS.vibrate();
       AlertIOS.alert(
           'Go Back',
+
          'Are you sure you want to go back ?',
          [
         {text: 'CONFIRM', onPress: () => this.popRoute() },
@@ -952,8 +953,8 @@ var Home = React.createClass({
     EndRunConfimationForlongRun:function() {
      VibrationIOS.vibrate();
       AlertIOS.alert(
-         'Are you sure you want to end workout',
-         '',
+         ' End workout ',
+         'Are you sure you want to end your workout.',
         [
           {text: 'Continue',},
           {text: 'End', onPress: () => this.ConfirmRunEnd()},
@@ -1243,6 +1244,7 @@ var styles = StyleSheet.create({
      },
    },
    contentWrap:{
+    height:deviceheight/3,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:"white",

@@ -12,6 +12,8 @@ import{
     AsyncStorage,
     Text,
     Linking,
+    RefreshControl,
+    ListView,
     SegmentedControlIOS,
   } from 'react-native';
 import SocialShare from '../socialShare';
@@ -53,14 +55,18 @@ import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 class Setting extends Component {
      constructor(props) {
         super(props);
+        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             visibleHeight: Dimensions.get('window').height,
             user:null,
             loaded: false,
             text:'LOGIN',
-            IconText:'md-log-in'
+            IconText:'md-log-in',
+            SettingTabs: ds.cloneWithRows([]),
+
 
         };
+        this.renderRow = this.renderRow.bind(this);
       }
       // Go_Back
     popRoute() {
@@ -105,6 +111,37 @@ class Setting extends Component {
         });
       }
       componentDidMount() {
+        var settingsLists = [
+          {'name':'share',
+          'iconName':'share',
+          'functionName':'',
+         },
+          {
+          'name':'rate',
+          'iconName':'grade',
+          'functionName':'',
+         },
+          {
+          'name':'feedback',
+          'iconName':'feedback',
+          'functionName':'',
+         },
+          {
+          'name':'help',
+          'iconName':'help',
+          'functionName':'',
+         },
+         {
+          'name':'logout',
+          'iconName':'thumbs-up-down',
+          'functionName':'',
+         },
+        ]
+
+
+        this.setState({
+           SettingTabs: this.state.SettingTabs.cloneWithRows(settingsLists),
+        })
           AsyncStorage.getItem('USERDATA', (err, result) => {
             let user = JSON.parse(result);
             this.setState({
@@ -120,29 +157,32 @@ class Setting extends Component {
           })  
       }
 
-      
+      renderRow(rowData) {
+        console.log('rowData',rowData);
+        var marginTop = (rowData.name === 'logout')?100:0;
+        var borderBottomWidth = (rowData.name === 'logout' || rowData.name === 'help')?0:0.5;
+        return (
+          <TouchableOpacity style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
+            <View style={{flex:-1,width:50,justifyContent: 'center',alignItems: 'center',}}>
+                <Icon style={{color:'#595c5d',fontSize:20,}}name={rowData.iconName}></Icon>
+            </View>
+            <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
+              <Text style={{color:'#595c5d'}}>{rowData.name}</Text>
+            </View>
+            <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
+                <IconSec style={{color:'#c1c6c7',fontSize:20,}}name={'ios-arrow-forward'}></IconSec>
+            </View>
+          </TouchableOpacity>
+        );
+      }
+
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-                <NavBar title = {'SETTINGS'}/>
-                <View style={{paddingLeft:10,paddingTop:10,}}>
-                <View style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:0.2,}}>
-                  <SocialShare/>
-                </View>
-                <View style={{flex:0.2}}>
-                  <OpenURLButton  url={'https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8'}/> 
-                </View> 
-                <View style={{justifyContent:'flex-start',flex:0.2}}>      
-                <TouchableOpacity onPress={()=>this._signOut()} style={{marginLeft:1,alignItems:'center',flexDirection:'row',flex:1}}>
-                  <IconSec style={{color:'black',fontSize:styleConfig.fontSizerlabel+4,margin:10,paddingRight:10}}name={this.state.IconText}></IconSec>
-                    <Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>{this.state.text}</Text>
-                </TouchableOpacity>
-                </View>
-               
-                </View>
-                 <View style={{ position:'absolute',bottom:50,height:100,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-                <Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>Version 2.7.7</Text>
-                </View>
+                <ListView
+                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',paddingTop:50}}
+                renderRow={this.renderRow}
+                dataSource={this.state.SettingTabs}/>
                </View>
               );
           }

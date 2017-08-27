@@ -9,11 +9,12 @@ import {
   StatusBar,
   PushNotificationIOS,
   Text,
-  Navigator,
   AsyncStorage,
   NetInfo,
   AlertIOS,
  } from 'react-native';
+ import {Navigator} from 'react-native-deprecated-custom-components';
+
  // import BackgroundTimer from 'react-native-background-timer';
  // import crashlytics from 'react-native-fabric-crashlytics';
 import TimerMixin from 'react-timer-mixin';
@@ -21,15 +22,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 // import BackgroundGeolocation from 'react-native-background-geolocation';
 import LodingScreen from './components/LodingScreen';
 // global.bgGeo = BackgroundGeolocation;
-import Home from './components/homescreen/HomeScreen.ios';
 import RunScreen from './components/gpstracking/home.ios';
 import Login from './components/login/login';
-import Tab from './components/homescreen/tab';
+import Tabs from './components/homescreen/tab.js';
 import CauseDetail from './components/homescreen/CauseDetail';
 import Setting from './components/settings/setting';
 import Runlogingscreen from './components/gpstracking/runlodingscreen';
 import ShareScreen from './components/sharescreen/shareScreen';
-import ThankyouScreen from './components/thankyouScreen';
 import ImpactLeagueForm2 from './components/ImpactLeague/ImpactLeagueForm2';
 import ImpactLeagueCode from './components/ImpactLeague/ImpactLeagueCode';
 import ImpactLeagueHome from './components/ImpactLeague/ImpactLeagueHome';
@@ -191,6 +190,15 @@ class Application extends Component{
            break;
            case 'impactleagueform2':
            return Navigator.SceneConfigs.FloatFromRight
+           break;
+           case 'runlodingscreen':
+           return Navigator.SceneConfigs.FloatFromBottom
+           break;
+           case 'runhistory':
+           return Navigator.SceneConfigs.FloatFromRight
+           break;
+           case 'profileform':
+
        }
     };
 
@@ -228,53 +236,23 @@ class Application extends Component{
 
         renderScene(route, navigator, user,causeLength) {
            switch (route.id) {
-                case 'home':
-                return <Home navigator={navigator} {...route.passProps}/>;
-                case 'messagecenter':
-                return <MessageCenter navigator={navigator} {...route.passProps}/>;
-                case 'messagecenterdata':
-                return <MessageCenterData navigator={navigator} {...route.passProps}/>;
                 case 'tab':
-                return <Tab dataCauseNum={this.state.myCauseNum} navigator={navigator} {...route.passProps}/>;
+                return <Tabs dataCauseNum={this.state.myCauseNum} navigator={navigator} {...route.passProps}/>;
                 case 'causedetail':
                 return <CauseDetail navigator={navigator} {...route.passProps}/>;
-                case 'messagedetail':
-                return <MessageDetail navigator={navigator} {...route.passProps}/>;
                 case 'runscreen':
                 return this.runScreenRender(route,navigator);
                 case 'login':
                 return <Login navigator={navigator} {...route.passProps}/>;
-                case 'setting':
-                return <Setting navigator={navigator} {...route.passProps}/>;
                 case 'runlodingscreen':
                 return <Runlogingscreen navigator={navigator} {...route.passProps}/>;
                 case 'sharescreen':
                 return <ShareScreen navigator={navigator} {...route.passProps}/>;
-                case 'thankyouscreen':
-                return <ThankyouScreen navigator={navigator} {...route.passProps}/>;
-                case 'faq':
-                return <Faq navigator={navigator} {...route.passProps}/>;
                 case 'leaderboard':
                 return <Leaderboard navigator={navigator} {...route.passProps}/>;
-                case 'impactleagueform2':
-                return <ImpactLeagueForm2 navigator={navigator} {...route.passProps}/>;
-                case 'impactleaguecode':
-                return <ImpactLeagueCode navigator={navigator} {...route.passProps}/>;
-                case 'impactleaguehome':
-                return <ImpactLeagueHome navigator={navigator} {...route.passProps}/>;
-                case 'impactleagueleaderboard':
-                return <ImpactLeagueLeaderBoard navigator={navigator} {...route.passProps}/>;
-                case 'runhistory':
-                return <RunHistory navigator={navigator} {...route.passProps}/>;
-                case 'profileform':
-                return <ProfileForm navigator={navigator} {...route.passProps}/>;
-                case 'profileheader':
-                return <ProfileHeader navigator={navigator} {...route.passProps}/>;
-                case 'profile':
-                return <Profile navigator={navigator} {...route.passProps}/>;
 
                 default :
-                 return <Login navigator={navigator}{...route.passProps} />
+                return <Login navigator={navigator}{...route.passProps} />
             }
 
        }

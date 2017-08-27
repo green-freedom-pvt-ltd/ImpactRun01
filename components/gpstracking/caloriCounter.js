@@ -55,7 +55,7 @@ import{
         );
       }else{
         return(
-          <View></View>
+          <View><Text>0</Text></View>
           )
       }
       }

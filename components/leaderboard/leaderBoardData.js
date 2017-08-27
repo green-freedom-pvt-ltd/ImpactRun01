@@ -15,12 +15,11 @@
     RefreshControl,
     AsyncStorage,
   } from 'react-native';
-  import Icon from 'react-native-vector-icons/Ionicons';
-  import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
-  import LodingScreen from '../LodingScreen';
-  import apis from '../apis';
-  import BackgroundFetch from "react-native-background-fetch";
-  import styleConfig from '../styleConfig'
+import Icon from 'react-native-vector-icons/Ionicons';
+import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
+import LodingScreen from '../LodingScreen';
+import apis from '../apis';
+import styleConfig from '../styleConfig'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var iphone5 = 568;

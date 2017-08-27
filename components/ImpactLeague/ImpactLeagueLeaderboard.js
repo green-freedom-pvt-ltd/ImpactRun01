@@ -195,7 +195,6 @@ class ImpactLeagueLeaderBoard extends Component {
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
-            <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>    
             <LodingScreen style={{ height:deviceHeight-150}}/>
           </View>
         );
@@ -208,7 +207,6 @@ class ImpactLeagueLeaderBoard extends Component {
         console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-           <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>
             <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,}}>
                <ListView 
                 refreshControl={

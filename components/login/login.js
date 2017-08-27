@@ -46,9 +46,39 @@ class Profile extends Component {
               loaded: false,
               mycauseDatatCount: null,
           };
+          this._handleConnectivityChange = this._handleConnectivityChange.bind(this);
       }
+
+
       componentDidMount() {
-          this.fetchDataonInternet();
+        NetInfo.isConnected.addEventListener(
+            'change',
+            this._handleConnectivityChange
+        );
+        NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+            this.setState({isConnected});
+              
+            }
+        );
+          
+      }
+
+      componentWilliUnmount(){
+        NetInfo.removeEventListener(
+            'change',
+            this._handleConnectivityChange
+        );
+      }
+
+
+      _handleConnectivityChange(isConnected) {
+        var _this = this;
+        _this.setState({
+          isConnected,
+        });
+         this.fetchDataonInternet(isConnected);
+       
       }
      
 
@@ -60,7 +90,7 @@ class Profile extends Component {
               })
           })
           GoogleSignin.configure({
-                  iosClientId: "437150569320-tspec7u60hjbbcesp7df80fk8lrd2enn.apps.googleusercontent.com", // only for iOS
+                  iosClientId: "437150569320-v8jsqrfnbe07g7omdh4b1h5tn78m0omo.apps.googleusercontent.com", // only for iOS
               })
               .then((user) => {
                   console.log('Token:' + user);
@@ -74,14 +104,13 @@ class Profile extends Component {
          
       }
 
-      fetchDataonInternet(){
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                if (isConnected) {
-                    this.fetchData();
-                }
-            }
-        );
+      fetchDataonInternet(isConnected){
+        console.log('isConnected',isConnected);
+
+        if (isConnected) {
+           console.log('isConnected2',isConnected);
+            this.fetchData();
+        }
       }
 
       handleNetworkErrors(response){
@@ -96,15 +125,17 @@ class Profile extends Component {
        return response.json()
       }
 
-      fetchData(dataValue) {
+      fetchData() {
+        console.log('fetching');
         fetch(apis.causeListapi)
-            .then(this.handleNetworkErrors.bind(this))
+            .then(response => response.json())
             .then((causes) => {
               var causes = causes;
+              console.log('causes',causes);
               let causesData = []
               let newData = []
               causes.results.forEach((item, i) => {
-                  if (item.is_active) {
+                  if (item.is_active || item.is_completed) {
                       causesData.push(['cause' + i, JSON.stringify(item)])
                       newData.push('cause' + i);
                   };

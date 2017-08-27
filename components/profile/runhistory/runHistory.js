@@ -25,7 +25,6 @@ import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import LoginBtns from '../../login/LoginBtns';
 import commonStyles from '../../styles';
-import BackgroundFetch from "react-native-background-fetch";
 import Modal from '../../downloadsharemeal/CampaignModal'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
@@ -625,27 +624,19 @@ class RunHistory extends Component {
         if (Object.keys(user).length) {
           return (
             <View>
-              <View style={commonStyles.Navbar}>
-                <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-                  <Icon3 style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
-                </TouchableOpacity>
-                  <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50,paddingRight:50}]}>{'RUN HISTORY'}</Text>
-              </View>
-              <View style={{height:deviceHeight-styleConfig.navBarHeight}}>
-                <ListView
-                 renderSectionHeader={this.renderSectionHeader}
-                 refreshControl={
-                  <RefreshControl
-                    refreshing={this.state.refreshing}
-                    onRefresh={this._onRefresh.bind(this)}
-                  />}
+              <View>
+                 <ListView
+                    renderSectionHeader={this.renderSectionHeader}
+                    refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this._onRefresh.bind(this)}
+                    />}
                   style={styles.listView}
                   dataSource={this.state.runHistoryData}
                   renderRow={this.renderRunsRow}/>
-                  {this.runLodingFirstTime()}
                   {this.modelView()}
                   {this.modelViewEnterWeight()}
-
               </View>
             </View>
 
@@ -661,18 +652,6 @@ class RunHistory extends Component {
          };
         }
 
-      runLodingFirstTime(){
-        if (this.state.loadingFirst) {
-        return(
-          <View style={styles.RunlodingFirstTimeView}>
-          <ActivityIndicatorIOS color={'white'} size="small" ></ActivityIndicatorIOS>
-          <Text style={styles.btntext} >Loading all runs ...</Text>
-          </View>
-          )
-        }else{
-          return;
-        }
-      }
 
   };
 
@@ -768,12 +747,7 @@ const styles = StyleSheet.create({
     marginBottom:5,
     marginLeft:5,
     borderColor:'#e1e1e8',
-    shadowColor: '#000000',
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      shadowOffset: {
-        height: 3,
-      },
+    
   },
   rightContainer: {
     flex: 1,
@@ -831,6 +805,7 @@ const styles = StyleSheet.create({
     height: 81,
   },
   listView: {
+    height:deviceHeight,
     backgroundColor: 'white',
   },
   ListViewPage:{

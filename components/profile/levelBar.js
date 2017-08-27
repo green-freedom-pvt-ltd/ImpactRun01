@@ -74,7 +74,7 @@ import{
 
   var styles = StyleSheet.create({
     Maincontainer:{
-      height:70,
+
     },
     wrapLevelKm:{
       flexDirection:'row',
@@ -86,14 +86,14 @@ import{
       color:styleConfig.greyish_brown_two,
       fontFamily:styleConfig.FontFamily,
       fontWeight:"600",
-      fontSize:styleConfig.FontSizeDisc+5,
+      fontSize:styleConfig.FontSizeDisc+7,
       marginBottom:5,
     },
     kmtext:{
       fontWeight:'500',
       color:styleConfig.greyish_brown_two,
       fontFamily:styleConfig.FontFamily,
-      fontSize:styleConfig.FontSizeDisc-4,
+      fontSize:styleConfig.fontSizerlabel-2,
       flex:1,
 
     },
@@ -101,15 +101,16 @@ import{
       fontWeight:'500',
       color:styleConfig.greyish_brown_two,
       fontFamily:styleConfig.FontFamily,
-      fontSize:styleConfig.FontSizeDisc-4,
+      fontSize:styleConfig.fontSizerlabel-2,
       flex:1,
       alignItems: 'flex-end',
       justifyContent: 'flex-end',
       textAlign:'right',
     },
     leveltext:{
+      top:3,
       color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSizeDisc,
+      fontSize:styleConfig.fontSizerlabel,
       fontWeight:'500',
       fontFamily:styleConfig.FontFamily3,
     }

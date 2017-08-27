@@ -16,7 +16,6 @@ import{
     AsyncStorage,
   } from 'react-native';
 var {FBLoginManager} = require('react-native-facebook-login');
-import Chart from 'react-native-chart';
 import apis from '../apis';
 import ProfileForm from './profileForm';
 import RunHistory from './runhistory/runHistory';
@@ -24,7 +23,6 @@ import LodingView from '../LodingScreen';
 import LoginBtn from '../login/LoginBtns'
 import styleConfig from '../../components/styleConfig';
 import UserProfile from './profileHeader';
-import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import AnimateNumber from 'react-native-animate-number';
@@ -74,8 +72,7 @@ class Profile extends Component {
 
      componentWillMount() {
       
-     
-
+    
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
      
@@ -197,9 +194,9 @@ class Profile extends Component {
               this.getRunCount();
               this.fetchAmount();
               this.fetchTotalDistance();
-            this.setState({
-              runfeatching:false,
-            })
+              this.setState({
+               runfeatching:false,
+              })
           }
         })
          .catch( error => console.log('Error fetching: ' + error) );
@@ -305,7 +302,6 @@ class Profile extends Component {
         if (result != null || undefined) {
        
         var RunData = JSON.parse(result);
-        console.log("RunData",RunData);
         var sum = 0;
         var nowdate = new Date();
         var sdate = new Date();
@@ -316,9 +312,7 @@ class Profile extends Component {
         var counterDate = nowdate.getDate()-7;
 
         counterDate = new Date();
-        console.log('counterDate',counterDate);
         for (i = 0; i < RunData.length; i++) {
-          console.log()
           var somedate =  RunData[i].start_time.slice(0,10);
           var currDate = new Date(somedate);
           var flag = RunData[i].is_flag;
@@ -347,13 +341,11 @@ class Profile extends Component {
           weekday[4] = "THU";
           weekday[5] = "FRI";
           weekday[6] = "SAT";
-          console.log('dataI',dataI,counterDate.toLocaleDateString());
         if(!( counterDate.toLocaleDateString() in dataI)) {
          
           var tempA = [];
           tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
           dataP.unshift(tempA);
-          console.log('counterDate.getDate() - 1',counterDate.getDate() - 1,dataP);
           counterDate.setDate(counterDate.getDate() - 1);
          
         }
@@ -366,7 +358,6 @@ class Profile extends Component {
           dataP.unshift(tempA);
           // tempA.concat(dataP);
          
-          console.log("tempA",dataP);
 
           //  this.setState({
 
@@ -385,7 +376,6 @@ class Profile extends Component {
         this.setState({
           RunTotalAmount7:dataI,
         })
-        console.log("RunTotalAmount7",this.state.RunTotalAmount7);
         }else{
         return;
          }
@@ -455,7 +445,6 @@ class Profile extends Component {
       return 4;
       
     }else if (totalkm <= 2500) {
-      console.log(totalkm/4200)
       this.setState({
         prevKm:1000,
         levelKm:2500,
@@ -520,12 +509,9 @@ class Profile extends Component {
     navigateToRunHistory() {
       if (!this.state.runfeatching) {
       this.props.navigator.push({
-      title: 'Gps',
-      id:'runhistory',
-      index: 0,
+      title: 'RunHistory',
+      component:RunHistory,
       passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      navigator: this.props.navigator,
       });}else{
         return;
       }
@@ -608,7 +594,8 @@ class Profile extends Component {
             <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
             <AnimateNumber value={this.state.RunCountTotal} formatter={(val) => {
                 return ' ' + parseFloat(val).toFixed(0)
-              }} ></AnimateNumber></Text>
+              }} ></AnimateNumber>
+            </Text>
             <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> ImpactRuns </Text>
             </View>
             <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
@@ -623,11 +610,10 @@ class Profile extends Component {
             <View>
              <View style={{height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}> 
                 <Text style={{textAlign:"center",fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Rupees raised in last 7 days</Text>
-           </View>
+             </View>
             <View style={styles.container2}>
            
-             <Chart
-
+             <BarChart
               style={styles.chart}
               data={dataP}
               height={styleConfig.barChatHight}
@@ -652,7 +638,6 @@ class Profile extends Component {
       }else{
         return(
           <View>
-           <NavBar title={"PROFILE"}/>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
            <LoginBtn getUserData={this.props.getUserData}/>
            </View>
@@ -754,7 +739,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   chart: {
-    width: deviceWidth-20,
+    width: deviceWidth-30,
     height:styleConfig.barChatHight,
   },
 

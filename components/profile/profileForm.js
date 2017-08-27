@@ -1,6 +1,7 @@
 'use strict';
-var React = require('react');
 var ReactNative = require('react-native');
+import React, { Component } from 'react';
+
 
 var {
   StyleSheet,
@@ -14,12 +15,12 @@ var {
   DatePickerIOS,
   TouchableOpacity,
   Keyboard,
-  AlertIOS
+  AlertIOS,
+  Animated
 } = ReactNative;
 import styleConfig from '../styleConfig';
 import Login from '../login/LoginBtns';
 import LodingView from '../LodingScreen';
-import ValidationComponent from 'react-native-form-validator';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../styles';
@@ -28,9 +29,9 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import NavBar from '../navBarComponent';
 import apis from '../apis';
 var dismissKeyboard = require('dismissKeyboard');
- var moment = require('moment');
-
-export default class ProfileForm extends ValidationComponent {
+var moment = require('moment');
+var heightInpersentage = (deviceHeight-114)/100;
+class ProfileForm extends Component {
 
     constructor(props) {
       super(props);
@@ -40,6 +41,8 @@ export default class ProfileForm extends ValidationComponent {
         checkedfemale:false,
         checkedmale:false,
         showDatePicker:false,
+        SuccessfullySaved:false,
+         fadeAnim: new Animated.Value(1),
       };
     }
     _refresh() {
@@ -56,6 +59,14 @@ export default class ProfileForm extends ValidationComponent {
     }
 
     componentDidMount() {
+    //  var route = this.props.navigator.navigationContext.currentRoute;
+    // // update onRightButtonPress func
+    // route.onRightButtonPress =  () => {
+    //     this._onRightButtonClicked();
+    // };
+    // this.props.navigator.replace(route);
+
+     // this.props.events.addListener('saveButtonPressed', this._onRightButtonClicked.bind(this));
       var user = this.props.user;
       if (user.Birth_day != null) {
         var date = moment(user.Birth_day).format('MM/DD/YYYY');
@@ -121,6 +132,33 @@ export default class ProfileForm extends ValidationComponent {
        return response.json()
       }
 
+
+
+    faddingAnimation(){
+       Animated.timing(                  // Animate over time
+      this.state.fadeAnim,            // The animated value to drive
+      {
+        toValue: 0,                   // Animate to opacity: 1 (opaque)
+        duration: 1000,              // Make it take a while
+      }
+    ).start();  
+    }
+
+    faddingAnimationDispaly(){
+        Animated.timing(                  // Animate over time
+      this.state.fadeAnim,            // The animated value to drive
+      {
+        toValue: 1,                   // Animate to opacity: 1 (opaque)
+        duration: 300,              // Make it take a while
+      }
+    ).start(); 
+    }
+    
+
+  _onRightButtonClicked() {
+    this.putRequestUser();
+  }
+
     putRequestUser(){
       if(this.state.email != " "  ){
         if(this.state.number != " " && (this.state.number.length > 9)){
@@ -154,7 +192,11 @@ export default class ProfileForm extends ValidationComponent {
             })
           })
           .then(this.handleNetworkErrors.bind(this))
-          .then((response) => { 
+          .then((response) => {
+          this.faddingAnimationDispaly(); 
+            this.setState({
+              SuccessfullySaved:true,
+            })
             console.log('submited',response);
             let keys = ['UID234', 'UID345','USERDATA',];
               AsyncStorage.multiRemove(keys, (err) => {
@@ -183,7 +225,15 @@ export default class ProfileForm extends ValidationComponent {
               AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
                   AsyncStorage.getItem('USERDATA', (err, result) => {
                     this.props.getUserData();
-                    this.goBack();  
+                    var _this = this;
+                    setTimeout(function(){
+                    _this.faddingAnimation();
+                    },1000)
+                    setTimeout(function(){  
+                    _this.setState({
+                      SuccessfullySaved:false,
+                    });
+                  },2000);
                     console.log("userresult ",result);
                   })
                })
@@ -285,14 +335,35 @@ export default class ProfileForm extends ValidationComponent {
       var colorBackgroundinner = (this.state.checkedfemale)?styleConfig.pale_magenta:'#f4f4f4';
       return(
         <TouchableOpacity style ={{paddingRight:10,}}onPress={()=>this.setState({checkedfemale:true,gender:'female', checkedmale:false})}>
-         <View style={{justifyContent: 'center',alignItems: 'center', height:20,width:20,borderRadius:10,backgroundColor:colorBackground}}>
-         <View style={{justifyContent: 'center',alignItems: 'center', height:15,width:15,borderRadius:7.5,backgroundColor:"white"}} >
-         <View style={{height:10,width:10,borderRadius:5,backgroundColor:colorBackgroundinner}}>
-         </View>
+             <View style={{justifyContent: 'center',alignItems: 'center', height:20,width:20,borderRadius:10,backgroundColor:colorBackground}}>
+             <View style={{justifyContent: 'center',alignItems: 'center', height:15,width:15,borderRadius:7.5,backgroundColor:"white"}} >
+             <View style={{height:10,width:10,borderRadius:5,backgroundColor:colorBackgroundinner}}>
+             </View>
           </View>
         </View>
          </TouchableOpacity>
         )
+    }
+    onSavesuccessView(){
+      let { fadeAnim } = this.state;
+      if (this.state.SuccessfullySaved) {
+      return(
+         <Animated.View                 
+            style={{
+              ...this.props.style,
+              opacity: fadeAnim, 
+              position:'absolute',
+              top:0,
+            }}
+          >
+        <View style={{backgroundColor:styleConfig.pale_magenta,width:deviceWidth,height:40,justifyContent: 'center',alignItems: 'center',}}>
+          <Text style={{fontSize:15,color:'white'}}>Successfully saved</Text>
+        </View>
+         </Animated.View>
+        )
+      }else{
+        return;
+      }
     }
 
     render() {
@@ -305,15 +376,12 @@ export default class ProfileForm extends ValidationComponent {
                 mode="date"/> : <View />
          return (
           <View>
-          <NavBar title = {'PROFILE'} leftIcon = {this.leftIconRender()} rightIcon={this.rightIconRender()}/>
           <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
-
+          
             <View style={styles.FromWrap}>
              
               <View style={styles.ProfileTextInput}>
-               <Text>
-                {this.getErrorMessages()}
-               </Text>
+              
                 <Text style={styles.ProfileTitle}>Name</Text> 
                 <TextInput ref="name" onFocus={() => this.setState({showDatePicker:false})} onChangeText={(name) => this.setState({name})} value={this.state.name}style={styles.userProfileText}></TextInput>         
               </View>
@@ -341,14 +409,17 @@ export default class ProfileForm extends ValidationComponent {
                 </View>
               </View>
               <View style={styles.ProfileTextInput2}>
-
+              
                {showDatePicker}
               </View>
+
             </View> 
              
+            
           </ScrollView>
-             <KeyboardSpacer/>
-        </View>
+           {this.onSavesuccessView()}
+          </View>
+           
         );
       }else{
         if (this.state.loaded) {
@@ -364,8 +435,8 @@ export default class ProfileForm extends ValidationComponent {
 
 var styles = StyleSheet.create({
   container:{
+    height:heightInpersentage*100,
     backgroundColor:'#f4f4f4',
-    height:deviceHeight,
   },
   ProfileTextInput2:{
     width:deviceWidth,
@@ -374,8 +445,6 @@ var styles = StyleSheet.create({
   },
   FromWrap:{
     borderRadius:5,
-    height:deviceHeight-70,
-    marginBottom:70,
     backgroundColor:'#f4f4f4',
   },
   ProfileTextInput:{
@@ -409,3 +478,4 @@ var styles = StyleSheet.create({
 
 });
 
+export default ProfileForm;

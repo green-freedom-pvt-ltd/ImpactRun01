@@ -30,6 +30,7 @@ class CauseDetail extends Component {
         this.state = {
          isDenied:false,
         }
+        this.NavigateToRunScreen = this.NavigateToRunScreen.bind(this);
     }
     // Go_Back
     popRoute() {
@@ -41,12 +42,14 @@ class CauseDetail extends Component {
       var me = this;
       var data = this.props.data;
       Location.getAuthorizationStatus(function(authorization) {
-      if (authorization === "authorizedAlways") {
+      if (authorization === "authorizedWhenInUse") {
        me.props.navigator.push({
           title:'RunScreen',
           id:'runlodingscreen',
-          navigator: me.props.navigator,
-          passProps: {data: data}
+          passProps: {data: data},
+           navigationOptions: {
+              gesturesEnabled: false,
+            },
        })
       }else{
         if (authorization === "denied") {
@@ -54,7 +57,7 @@ class CauseDetail extends Component {
             isDenied:true,
           })                 
         }else{
-          Location.requestAlwaysAuthorization();
+          Location.requestWhenInUseAuthorization();
         }
       }
      })
@@ -112,6 +115,40 @@ class CauseDetail extends Component {
           </TouchableOpacity>
       )
      }
+
+     DiscriptionImage(data){
+      if(data.is_completed){
+        return(
+           <Image source={{uri:data.cause_completed_description_image}} style={styles.image}>
+          </Image>
+        )
+      }else{
+        return(
+           <Image source={{uri:data.cause_image}} style={styles.image}>
+           <View style={styles.overlaytext}>
+             <Text style={styles.categorytext}>{data.cause_category}</Text>
+           </View>
+          </Image>
+          )
+      }
+     }
+
+     CauseDetailpageBtn(data){
+      if (data.is_completed) {
+        return(
+          <TouchableOpacity style={styles.btnBeginRun} >
+              <Text style={styles.Btntext}>TELL YOUR FRIENDS</Text>
+          </TouchableOpacity>
+        )
+      }else{
+        return(
+          <TouchableOpacity style={styles.btnBeginRun} text={'BEGIN RUN'}onPress={() => this.NavigateToRunScreen()}>
+            <Text style={styles.Btntext}>BEGIN RUN</Text>
+          </TouchableOpacity>
+        )
+      }
+      
+     }
     // Render_Screen
     render() {
       var data = this.props.data
@@ -121,11 +158,7 @@ class CauseDetail extends Component {
                   <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
                       <View style={styles.container}>
-                      <Image source={{uri:data.cause_image}} style={styles.image}>
-                       <View style={styles.overlaytext}>
-                         <Text style={styles.categorytext}>{data.cause_category}</Text>
-                       </View>
-                      </Image>
+                     {this.DiscriptionImage(data)}
                       <View style={styles.textwraper}>
                         <Text style={styles.causeTitle}>{data.cause_title}</Text>
                         <Text style={styles.slidesponser}>By {data.sponsors[0].sponsor_company} </Text>
@@ -133,8 +166,7 @@ class CauseDetail extends Component {
                       </View>
                   </View>
                   </ScrollView>
-                  <TouchableOpacity style={styles.btnBeginRun} text={'BEGIN RUN'}onPress={() => this.NavigateToRunScreen()}>
-                  <Text style={styles.Btntext}>BEGIN RUN</Text></TouchableOpacity>
+                  {this.CauseDetailpageBtn(data)}
                 </View>
                 {this.modelViewdeniedLocationRequest()}
               </View>

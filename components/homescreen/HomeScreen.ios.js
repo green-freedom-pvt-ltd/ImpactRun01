@@ -10,7 +10,6 @@ import {
   Dimensions,
   ToastAndroid,
   Platform,
-  Navigator,
   Animated,
   Image,
   AlertIOS,
@@ -58,7 +57,7 @@ class Homescreen extends Component {
           navigation: {
             index: 0,
             routes: [],
-            loadingimage:true,
+            loadingimage:false,
             FeedCount:0,
             localfeedCount:0,
           },
@@ -125,7 +124,7 @@ class Homescreen extends Component {
       componentWillMount() {
         this.getfeedCount();
 
-        // this.fetchifinternet();
+        this.fetchifinternet();
       // PushNotificationIOS.addListener('register', this._onRegistered);
       // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
       // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
@@ -231,23 +230,39 @@ class Homescreen extends Component {
 
      
 
-      showImage(route){
+      showImage(cause){
         if (this.state.loadingimage === true) {
           return(
             <Image style={styles.cover}></Image>
             )
         }else{
           return(
-            <Image source={{uri:this.state.album[route.key][0]}} style={[styles.cover,{height:this.cardImageheight()}]}>
+            <Image source={{uri:cause.cause_image}} style={[styles.cover,{height:this.cardImageheight()}]}>
                 <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
                   <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3, justifyContent: 'center',alignItems: 'center', color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
-                    {this.state.album[route.key][2]}
+                    {cause.cause_category}
                   </Text>
                 </View>
             </Image>
             )
         }
       }
+
+
+      //  _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
+      //   // Should we become active when the user presses down on the circle?
+      
+      //   console.log('myparesesponced');
+      //   return false;
+      // }
+
+      // _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
+      //   // Should we become active when the user moves a touch over the circle?\
+        
+      //   console.log('myparesesponced');
+      //   return true;
+      // }
+
 
       componentDidMount() {       
         var provider = this.props.provider;
@@ -264,9 +279,10 @@ class Homescreen extends Component {
                     let val = JSON.parse(item[1]);
                    
                     let causesArr = _this.state.causes.slice()
-                    causesArr.push(val)                  
+                    causesArr.push(val)  
+                    console.log('causesArr',causesArr);                
                     _this.setState({causes: causesArr})
-                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.cause_image,val.cause_brief,val.cause_category,val.partners[0].partner_ngo,val.is_active,val.pk,val.amount_raised,val.amount,val.total_runs]})})
+                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
                 });
               this.setState({
@@ -364,13 +380,13 @@ class Homescreen extends Component {
       if (deviceheight === iphone6) {
        return width-deviceWidth+80
       }else if (Dimensions.get('window').height === iphone5){
-        return width-deviceWidth+62
+        return width-deviceWidth+82
       }
       else if (Dimensions.get('window').height === iphone6SPlus){
         return width-deviceWidth+95
       }
       else if (Dimensions.get('window').height < iphone5){
-        return width-deviceWidth+70
+        return width-deviceWidth+90
       }
     }
      cardWidth(){
@@ -455,21 +471,13 @@ class Homescreen extends Component {
         if (authorization === "authorizedWhenInUse") {
         // authorization is a string which is either "authorizedAlways",
         // "authorizedWhenInUse", "denied", "notDetermined" or "restricted"
-      
-        var cause;
-        if (!!me.state.causes.length && me.state.navigation.index+1) {
-          cause = me.state.causes[me.state.navigation.index]
-        } else {
-          cause = {}
-        }
-
         // Location.startUpdatingLocation();
         me.props.navigator.replace({
         title: 'Gps',
         id:'runlodingscreen',
         index: 0,
         passProps:{data:cause,user:me.props.user,getUserData:me.props.getUserData},
-        sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+        // sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
         navigator: me.props.navigator,
         });
       }else{
@@ -496,13 +504,8 @@ class Homescreen extends Component {
 
     }
 
-    navigateToCauseDetail() {
-      var cause;
-      if (!!this.state.causes.length && this.state.navigation.index+1) {
-        cause = this.state.causes[this.state.navigation.index]
-      } else {
-        cause = {}
-      }
+    navigateToCauseDetail(cause,some) {
+      console.log('some',some);
       this.props.navigator.push({
       title: 'Gps',
       id:'causedetail',
@@ -512,20 +515,20 @@ class Homescreen extends Component {
       });
     };
 
-    functionForIphone4Brief(route){
+    functionForIphone4Brief(cause){
       if (Dimensions.get('window').height === 667) {
       return(
-        <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+        <Text  numberOfLines={4} style={styles.causeBrief}>{cause.cause_brief}</Text>
         )
       }else if(Dimensions.get('window').height === 568){
       
           return(
-          <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+          <Text  numberOfLines={4} style={styles.causeBrief}>{cause.cause_brief}</Text>
           )
     
       }else if(Dimensions.get('window').height > 667){
           return(
-          <Text  numberOfLines={4} style={styles.causeBrief}>{this.state.album[route.key][1]}</Text>
+          <Text  numberOfLines={4} style={styles.causeBrief}>{cause.cause_brief}</Text>
           )
     
       }else if(Dimensions.get('window').height < 568){
@@ -535,32 +538,39 @@ class Homescreen extends Component {
     
       }
     };
+
+
+
+
+    measureView=(event)=>{
+        console.log('event peroperties: ', event);
+        this.setState({
+            x: event.nativeEvent.layout.x,
+            y: event.nativeEvent.layout.y,
+            width: event.nativeEvent.layout.width,
+            height: event.nativeEvent.layout.height
+        })
+        console.log('height',this.state.height);
+    };
+
+
+
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
-        var cause;
-
-        if (!!this.state.causes.length && this.state.navigation.index+1) {
-          cause = this.state.causes[this.state.navigation.index]
-
-        } else {
-          cause = {}
+        var cause = this.state.album[route.key][5]
+        console.log('cause',cause);
+        var money = JSON.stringify(parseFloat(this.state.album[route.key][0]).toFixed(0));
+        if (money.length > 5) {
+          var lenth = money.length;
+          var commmaplace = lenth-4;
+          var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
+        }else{
+          // AlertIOS.alert("someval");
+          var Moneyfinalvalue = JSON.parse(money);
         }
-
-
-        var money = JSON.stringify(parseFloat(this.state.album[route.key][6]).toFixed(0));
-       
-      if (money.length > 5) {
-        var lenth = money.length;
-        var commmaplace = lenth-4;
-        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
-      }else{
-        // AlertIOS.alert("someval");
-         var Moneyfinalvalue = JSON.parse(money);
-      }
         // var moneyslice = money.slice(0,2);
-        var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ;
         var moneyslice = money.slice(0,2);
-        var Runs = JSON.stringify(parseFloat(this.state.album[route.key][8]).toFixed(0));
+        var Runs = JSON.stringify(parseFloat(this.state.album[route.key][2]).toFixed(0));
         if (Runs.length > 5) {
         var runlength = Runs.length;
         var commmaplacerun =runlength-4;
@@ -568,39 +578,50 @@ class Homescreen extends Component {
         }else{
           var runFinalvalue = JSON.parse(Runs);
         }
+        if (cause.is_completed != true) {
         // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
         return (
-          <View style={styles.page}>
-            <TouchableWithoutFeedback accessible={false} onPress={()=>this.navigateToCauseDetail()} >
-            <View style={[styles.album,{width:this.cardWidth()}]}>
-              {this.showImage(route)}
-              <View style={[styles.borderhide,{width:this.cardWidth()}]}></View>
-              <View style = {styles.cardTexwrap}>
-              <View>
-                <View style={{flex:1,}}>
+          
+          <View onLayout={(event) => this.measureView(event)} style={styles.page}>        
+           <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause,this.state.album[route.key][9])} >
+            <View  style={styles.album}>
+              {this.showImage(cause)}
+              <View style={styles.borderhide}></View>
+              <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                <View style={{width:deviceWidth-105}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize4,fontWeight:'400',paddingTop:2}}>By {this.state.album[route.key][3]}</Text>
+                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',width:200,marginBottom:10,}}>By {cause.partners[0].partner_ngo}</Text>
                   <View>
-                    {this.functionForIphone4Brief(route)}
+                    {this.functionForIphone4Brief(cause)}
                   </View>
                 </View>
               </View>
               <View style={styles.barWrap}>
                 <View style = {styles.wraptext}>
-                  <Text style = {styles.textMoneyraised2}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
-                  <Text style = {styles.textMoneyraised2}>{parseFloat((this.state.album[route.key][6])/this.state.album[route.key][7]*100).toFixed(0)}%</Text>
+                  <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
+                  <Text style = {styles.textMoneyraised}>{parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
                 </View>
-                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={this.cardWidth()-30} progress={(this.state.album[route.key][6])/this.state.album[route.key][7]}/> 
+                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={cause.amount_raised/cause.amount}/>
                 <View style = {styles.wraptext2}>
                   <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
-                </View>      
+                </View>
               </View>
-             </View>
             </View>
             </TouchableWithoutFeedback>
-
           </View>
         );
+       }else{
+        return(
+          <View style={styles.page}>        
+            <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause)} >
+            <View style={styles.album}>
+              <Image source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5,}}>
+              </Image>
+            </View>
+            </TouchableWithoutFeedback>
+          </View>
+          )
+       }
       
     };
    
@@ -630,7 +651,7 @@ class Homescreen extends Component {
 
      notificationIcon(){
         // this.state.notificationCount > this.state.localStorenotificationCount
-        if (this.state.notificationCount > this.state.localfeedCount) {
+        if (this.state.notificationCount> this.state.localfeedCount) {
           return(
             <View style={styles.notificationBatch}><Text style={{fontSize:7,color:"white",fontWeight:"600"}}>1</Text></View>
             )
@@ -651,30 +672,45 @@ class Homescreen extends Component {
     //       );
     //   };
 
-
+   BiginRunBtn(cause){
+    if (cause.is_completed) {
+      return(
+         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
+            <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >TELL YOUR FRIENDS</Text>
+          </TouchableOpacity>
+      )
+    }else{
+      return(
+        <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
+          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET`'`S GO> </Text>
+        </TouchableOpacity>
+      )
+    }
+   }
     // RENDER_FUNCTION
     render(route) { 
+       var cause;
+        if (!!this.state.causes.length && this.state.navigation.index+1) {
+          cause = this.state.causes[this.state.navigation.index]
+        } else {
+          cause = {}
+        }
       if (this.props.myCauseNum != null ) {
       return (
-        <View style={{height:deviceheight,width:deviceWidth,backgroundColor:'white'}}>
-        <View>
-          <NavBar title = {'IMPACTRUN'}/>
-          <View style={styles.tabwrap}>
-           <TabViewAnimated
+          <View style={{height:deviceheight,width:deviceWidth}}>
+             <NavBar title = {'IMPACTRUN'}/>
+             <TabViewAnimated
              style={[ styles.container, this.props.style ]}
              navigationState={this.state.navigation}
              renderScene={this._renderPage}
              onRequestChangeTab={this._handleChangeTab}>
              </TabViewAnimated>
-             <View style={{top:styleConfig.runbtntop,width:deviceWidth,height:styleConfig.beginRunBtnHeight, justifyContent: 'center',alignItems: 'center',}}>
-              <TouchableOpacity  style={[styles.btnbegin2,{width:this.cardWidth()}]} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-                <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >Lets Go </Text>
-               </TouchableOpacity>
+             <View style={styles.BtnWraperWrap}>
+              <View style={styles.btnWrap}>
+               {this.BiginRunBtn(cause)}
               </View>
-             </View>
-             
-             </View>
-            {this.modelViewdeniedLocationRequest()}
+              </View>
+                {this.modelViewdeniedLocationRequest()}
           </View>
       );
     }else{
@@ -696,32 +732,35 @@ class Homescreen extends Component {
       width:deviceWidth,
       justifyContent: 'center',
     },
-   container: {
+
+    BtnWraperWrap:{
+      height:((deviceheight-120)/100)*15,
       width:deviceWidth,
-      backgroundColor:'blue',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    btnWrap:{
+      flex:1,
+      width:deviceWidth-100,
+      paddingBottom:((deviceheight-120)/100)*5,
+    },
+
+    container: {
+      padding:((deviceheight-120)/100)*5,
+      paddingLeft:0,
+      height:((deviceheight-120)/100)*85,
       justifyContent: 'center',
     },
-    page: {
-      width:deviceWidth,
+
+    page:{
+      marginLeft:50,
+      flex:-1,
+      width:deviceWidth-100,
+      backgroundColor:'white',
+      paddingLeft:10,
+      paddingRight:10,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-     homebgoverlay:{
-      height:deviceheight,
-      width:deviceWidth,
-      opacity:1,
-     },
-     homebg:{    
-      flexDirection: 'row',
-      position:'absolute',
-      height:deviceheight,
-      width:deviceWidth,
-     },
-
-     album: {
-
-      backgroundColor: '#fff',
-      elevation: 12,
       shadowColor: '#000000',
       shadowOpacity: 0.2,
       shadowRadius: 3,
@@ -729,10 +768,29 @@ class Homescreen extends Component {
         height: 4,
       },
       borderRadius:5,
-     },
+    },
+
+    homebgoverlay:{
+      height:deviceheight,
+      width:deviceWidth,
+      opacity:1,
+    },
+
+    homebg:{    
+      flexDirection: 'row',
+      position:'absolute',
+      height:deviceheight,
+      width:deviceWidth,
+    },
+
+    album: {
+      backgroundColor:'white',
+      elevation: 12,
+     
+    },
      
      cover: {
-      flex:-1,
+      flex:1,
       borderRadius:5,
       resizeMode:'cover',
       justifyContent:'flex-end',
@@ -746,9 +804,9 @@ class Homescreen extends Component {
      },
 
      borderhide:{
+      top:-5,
       height:5,
       backgroundColor:'white',
-      top:-5,
      },
 
      label: {
@@ -756,9 +814,10 @@ class Homescreen extends Component {
       color: '#fff',
       left:deviceWidth/2-60,
      },
-     btnbegin:{
-      width:styleConfig.beginRunBtnWidth,
-      height:styleConfig.beginRunBtnHeight,
+
+
+    btnbegin:{   
+      flex:1,
       backgroundColor:'#ffcd4d',
       justifyContent: 'center',
       alignItems: 'center',
@@ -818,7 +877,7 @@ class Homescreen extends Component {
       fontFamily:styleConfig.FontFamily,
     },
     btnbegin2:{
-      height:styleConfig.beginRunBtnHeight,
+      flex:1,
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',

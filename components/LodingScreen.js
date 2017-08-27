@@ -10,7 +10,7 @@ import{
     Dimensions,
     TouchableOpacity,
     Text,
-    ActivityIndicatorIOS,
+    ActivityIndicator,
   } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
@@ -27,11 +27,12 @@ class Loding extends Component {
 		return (
 			     <View style={styles.LodingWrap}>
              <Image source={require('../images/backgroundLodingscreen.png')} style={styles.LodingBackgroundImg}>
-              <ActivityIndicatorIOS
-                style={{height: 80}}
+              
+             </Image>
+             <ActivityIndicator
+                style={{height: 80,position:'absolute'}}
                 size="large"
               />
-             </Image>
            </View>
 					);
 	    }

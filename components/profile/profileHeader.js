@@ -1,7 +1,6 @@
 'use strict';
-var React = require('react');
 var ReactNative = require('react-native');
-
+import React, { Component } from 'react';
 var {
   StyleSheet,
   Image,
@@ -11,7 +10,6 @@ var {
   Dimensions,
   VibrationIOS,
   AlertIOS,
-  Navigator,
   TouchableOpacity,
   TouchableHighlight,
   ActivityIndicatorIOS
@@ -29,36 +27,36 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 var deviceHeight = Dimensions.get('window').height;
 var deviceWidth = Dimensions.get('window').width;
 var RupeeImage = 'data:image/png;base64,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';
-var UserProfile = React.createClass({
-    getInitialState: function(){
-      return {
-        user:null,
-        Circlefill:0,
+class UserProfile extends Component {
+   constructor(props) {
+        super(props);
+        this.state = {
+          user:null,
+          Circlefill:0,
+        }
+   }
+    componentWillMount() {
 
-      };
-      this.fetchUserData = this.fetchUserData.bind(this);
-    },
-    componentWillMount:function() {
-
-    },
-    componentDidMount:function() {
+    }
+    componentDidMount(){
       // AlertIOS.alert("km",JSON.stringify(this.props.totalKm))
-    },
+    }
 
-    social_thumb:function(){
+    social_thumb(height){
+      console.log('height123',this.props.height,height);
       if (this.props.user.first_name != '') {
         return(
-          <Image  style={styles.UserImage} source={{uri:this.props.user.social_thumb}}></Image>
+          <Image style={[styles.UserImage,{width:height,width:height,borderRadius:height/2}]} source={{uri:this.props.user.social_thumb}}></Image>
         )
       };
       return(
         <View>
-          <Image style={styles.UserImage} source={require('../../images/profile_placeholder.jpg')}></Image>
+          <Image style={[styles.UserImage,{width:this.props.height,width:this.props.height}]} source={require('../../images/profile_placeholder.jpg')}></Image>
         </View>
       )
-    },
+    }
 
-    fullname:function(){
+    fullname(){
       if (this.props.user != null) {
         return(
         <View>
@@ -69,8 +67,9 @@ var UserProfile = React.createClass({
       return(
         <Text></Text>
       )
-    },
-    TotalAmount:function(){
+    }
+
+    TotalAmount(){
 
       if (this.props.userTotalAmount != null) {
         return(
@@ -84,9 +83,9 @@ var UserProfile = React.createClass({
               />
           )
       }
-    },
+    }
 
-    TotalRuns:function(){
+    TotalRuns(){
       if (this.props.RunCount != null) {
         return(
           <Text style={styles.totalcontentText}>{this.props.RunCount}</Text>
@@ -99,20 +98,21 @@ var UserProfile = React.createClass({
               />
         )
       }
-    },
-    fetchUserData:function(){
+    }
+
+    fetchUserData(){
       this.props.fetchUserData();
-    },
+    }
+
     navigateToProfileForm() {
       this.props.navigator.push({
       title: 'Gps',
       id:'profileform',
       index: 0,
       passProps:{fetch7DayData:this.props.fetch7DayData,fetchTotalDistance:this.props.fetchTotalDistance,fetchRunData:this.onFetch,user:this.props.user,getUserData:this.props.getUserData,getRunCount:this.getRunCount,fetchAmount:this.fetchAmount},
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       navigator: this.props.navigator,
       });
-    },
+    }
 
       renderEditProfileIcon(){
         if (this.props.user != null) {
@@ -124,26 +124,37 @@ var UserProfile = React.createClass({
          }else{
           return;
          }
-      },
+      }
 
-    render: function() {
+    measureView(event) {
+        console.log('event peroperties: ', event);
+        this.setState({
+            x: event.nativeEvent.layout.x,
+            y: event.nativeEvent.layout.y,
+            width: event.nativeEvent.layout.width,
+            height: event.nativeEvent.layout.height
+        })
+        
+    }
+
+    render() {
+      console.log('height',this.state.height);
       if (this.props.user != null) {
         return (
-      <View>
-        <NavBar title = {"PROFILE"} rightIcon = {this.renderEditProfileIcon()}/>
-        <View>
           <View style={styles.userimagwrap}>
-          <View style={styles.UserImageWrap}>{this.social_thumb()}</View>
-          <View style={styles.barWrap}>
-          <LevelBar progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={deviceWidth-150} totalKm={this.props.totalKm}/>
+              <View style={styles.UserImageWrap}>
+              <View style={{height:this.props.height-10,width:this.props.height-10,borderRadius:(this.props.height-5)/10}}>
+                {this.social_thumb(this.props.height-10)}
+                </View>
+                </View>
+              <View style={styles.barWrap}>
+              <LevelBar progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={((deviceWidth-20)/100)*75} totalKm={this.props.totalKm}/>
+            </View>
           </View>
-          </View>
-        </View>
-        </View>
         );
       };
     }
-});
+};
 
 
 var styles = StyleSheet.create({
@@ -155,8 +166,8 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
   },
   barWrap:{
-  width:deviceWidth-120,
-  justifyContent: 'center',
+    width:(deviceWidth/100)*75,
+    justifyContent: 'center',
   },
   bottomBump: {
     marginBottom: 15,
@@ -165,17 +176,16 @@ var styles = StyleSheet.create({
    flex:1,
    justifyContent: 'center',
    alignItems: 'center',
+   backgroundColor:'white',
   },
   UserImage:{
-    width:70,
-    height:70,
-    borderRadius:35,
+    flex:1
   },
   userimagwrap:{
     flexDirection:'row',
-    height:80,
+    backgroundColor:'white',
     width:deviceWidth,
-    top:10,
+    justifyContent: 'center',
   },
   userContentwrap:{
     width:deviceWidth,
@@ -211,4 +221,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = UserProfile;
+export default UserProfile;

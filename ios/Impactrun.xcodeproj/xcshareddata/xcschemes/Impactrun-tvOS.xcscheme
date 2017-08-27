@@ -3,7 +3,7 @@
    LastUpgradeVersion = "0820"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
+      parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
@@ -14,9 +14,37 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Impactrun.app"
-               BlueprintName = "Impactrun"
+               BlueprintIdentifier = "2D2A28121D9B038B00D4039D"
+               BuildableName = "libReact.a"
+               BlueprintName = "React-tvOS"
+               ReferencedContainer = "container:../node_modules/react-native/React/React.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+               BuildableName = "Impactrun-tvOS.app"
+               BlueprintName = "Impactrun-tvOS"
+               ReferencedContainer = "container:Impactrun.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
+               BuildableName = "Impactrun-tvOSTests.xctest"
+               BlueprintName = "Impactrun-tvOSTests"
                ReferencedContainer = "container:Impactrun.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,13 +56,23 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
+               BuildableName = "Impactrun-tvOSTests.xctest"
+               BlueprintName = "Impactrun-tvOSTests"
+               ReferencedContainer = "container:Impactrun.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Impactrun.app"
-            BlueprintName = "Impactrun"
+            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+            BuildableName = "Impactrun-tvOS.app"
+            BlueprintName = "Impactrun-tvOS"
             ReferencedContainer = "container:Impactrun.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,9 +93,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Impactrun.app"
-            BlueprintName = "Impactrun"
+            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+            BuildableName = "Impactrun-tvOS.app"
+            BlueprintName = "Impactrun-tvOS"
             ReferencedContainer = "container:Impactrun.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -74,9 +112,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Impactrun.app"
-            BlueprintName = "Impactrun"
+            BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
+            BuildableName = "Impactrun-tvOS.app"
+            BlueprintName = "Impactrun-tvOS"
             ReferencedContainer = "container:Impactrun.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -86,7 +124,6 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
-      customArchiveName = "Impactrun"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

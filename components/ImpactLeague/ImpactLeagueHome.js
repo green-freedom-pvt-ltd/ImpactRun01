@@ -26,6 +26,7 @@ import styleConfig from '../styleConfig'
 import NavBar from '../navBarComponent';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import impactleagueleaderboard from '../ImpactLeague/ImpactLeagueLeaderboard';
 class ImpactLeague extends Component {
 
       constructor(props) {
@@ -133,8 +134,8 @@ class ImpactLeague extends Component {
   
       NavigateToDetail(rowData){
         this.props.navigator.push({
-          title: 'impactleaguehome',
-          id:'impactleagueleaderboard',
+          title: rowData.team_name,
+          component:impactleagueleaderboard,
           passProps:{user:this.state.user, Team_id:rowData.id,team_name:rowData.team_name}
         })
       }
@@ -175,7 +176,6 @@ class ImpactLeague extends Component {
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
-            <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
             <LodingScreen style={{height:deviceHeight-50}}/>
           </View>
         );
@@ -206,12 +206,8 @@ class ImpactLeague extends Component {
 
         return (
           <View>
-            <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
             <View>
-           
-             <Image source={{uri:this.state.BannerData}} style={styles.bannerimage}>
-             
-              </Image>
+             <Image source={{uri:this.state.BannerData}} style={styles.bannerimage}/>
                {this.swwipeDowntoRefress()}
               <ListView 
                refreshControl={

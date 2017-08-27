@@ -26,9 +26,9 @@ class LodingRunScreen extends Component {
     constructor(props) {
       super(props);
 
-      this.animatedValue1 = new Animated.Value(0)
-      this.animatedValue2 = new Animated.Value(0)
-      this.animatedValue3 = new Animated.Value(0)
+      this.animatedValue1 = new Animated.Value(0,{ useNativeDriver: true })
+      this.animatedValue2 = new Animated.Value(0,{ useNativeDriver: true })
+      this.animatedValue3 = new Animated.Value(0,{ useNativeDriver: true })
       this.state = {
         seconds: 5
       };
@@ -45,9 +45,9 @@ class LodingRunScreen extends Component {
 
 
   animate () {
-  this.animatedValue1.setValue(0)
-  this.animatedValue2.setValue(0)
-  this.animatedValue3.setValue(0)
+  this.animatedValue1.setValue(0,{ useNativeDriver: true })
+  this.animatedValue2.setValue(0,{ useNativeDriver: true })
+  this.animatedValue3.setValue(0,{ useNativeDriver: true })
   const createAnimation = function (value, duration, easing, delay = 0) {
     return Animated.timing(
       value,
