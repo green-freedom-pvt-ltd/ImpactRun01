@@ -20,6 +20,7 @@ import styleConfig from '../styleConfig';
 import Modal from '../downloadsharemeal/CampaignModal';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import NavBar from '../navBarComponent';
+import LodingRunScreen from '../gpstracking/runlodingscreen'
 var { RNLocation: Location } = require('NativeModules');
 
 class CauseDetail extends Component {
@@ -43,10 +44,10 @@ class CauseDetail extends Component {
       var data = this.props.data;
       Location.getAuthorizationStatus(function(authorization) {
       if (authorization === "authorizedWhenInUse") {
-       me.props.navigator.push({
-          title:'RunScreen',
-          id:'runlodingscreen',
-          passProps: {data: data},
+      me.props.navigator.push({
+         component:LodingRunScreen,
+         navigationBarHidden: true,
+         passProps: {data: data},
            navigationOptions: {
               gesturesEnabled: false,
             },
@@ -154,7 +155,6 @@ class CauseDetail extends Component {
       var data = this.props.data
         return (
               <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}> 
-                  <NavBar title = {'OVERVIEW'} leftIcon = {this.leftIconRender()}/>
                   <View style={{height:deviceHeight,width:deviceWidth}}>
                     <ScrollView>
                       <View style={styles.container}>
@@ -233,7 +233,7 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    bottom:styleConfig.navBarHeight,
+    bottom:64,
     width:deviceWidth,
     height:50,
     justifyContent: 'center',

@@ -9,49 +9,24 @@ import {
   StatusBar,
   PushNotificationIOS,
   Text,
+  NavigatorIOS,
   AsyncStorage,
   NetInfo,
   AlertIOS,
  } from 'react-native';
  import {Navigator} from 'react-native-deprecated-custom-components';
-
- // import BackgroundTimer from 'react-native-background-timer';
- // import crashlytics from 'react-native-fabric-crashlytics';
+import styleConfig from './components/styleConfig'
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
-// import BackgroundGeolocation from 'react-native-background-geolocation';
 import LodingScreen from './components/LodingScreen';
-// global.bgGeo = BackgroundGeolocation;
+
 import RunScreen from './components/gpstracking/home.ios';
 import Login from './components/login/login';
 import Tabs from './components/homescreen/tab.js';
-import CauseDetail from './components/homescreen/CauseDetail';
-import Setting from './components/settings/setting';
-import Runlogingscreen from './components/gpstracking/runlodingscreen';
-import ShareScreen from './components/sharescreen/shareScreen';
-import ImpactLeagueForm2 from './components/ImpactLeague/ImpactLeagueForm2';
-import ImpactLeagueCode from './components/ImpactLeague/ImpactLeagueCode';
-import ImpactLeagueHome from './components/ImpactLeague/ImpactLeagueHome';
-import ImpactLeagueLeaderBoard from './components/ImpactLeague/ImpactLeagueLeaderboard';
-import Faq from './components/faq/faq';
-import MessageCenter from './components/feed/messageCenter';
-import MessageCenterData from './components/feed/messageCenterData';
-import MessageDetail from './components/feed/messageDetail';
-import DownloadShareMeal from './components/downloadsharemeal/downloadShareMeal';
-import Leaderboard  from'./components/leaderboard/leaderBoard';
-import RunHistory from './components/profile/runhistory/runHistory';
-import ProfileForm from './components/profile/profileForm';
-import ProfileHeader from './components/profile/profileHeader';
-import Profile from './components/profile/profile';
-// import BackgroundFetch from "react-native-background-fetch";
+
 import apis from './components/apis'
 var REQUEST_URL = 'http://dev.impactrun.com/api/causes/';
-const NoBackSwipe ={
-  ...Navigator.SceneConfigs.FloatFromRight,
-    gestures: {
-      pop: {}
-    }
-};
+
 class Application extends Component{
 
       mixins: [TimerMixin]
@@ -106,7 +81,7 @@ class Application extends Component{
             })
           }else{
             this.setState({
-             textState:(this.state.user) ? 'tab':'login',
+             textState:(this.state.user) ? Tabs:Login,
             })
           }
         })
@@ -165,42 +140,45 @@ class Application extends Component{
         <LodingScreen/>
        )
       }
-      _configureScene(route){
-       switch (route.id){
-           case 'tab':
-           return NoBackSwipe
-           break;
-           case 'sharescreen':
-           return NoBackSwipe
-           break;
-           case 'causedetail':
-           return Navigator.SceneConfigs.FloatFromBottom
-           break;
-           case 'messagedetail':
-           return Navigator.SceneConfigs.FloatFromBottom
-           break;
-           case 'setting':
-           return Navigator.SceneConfigs.FloatFromLeft
-           break;
-           case 'thankyouscreen':
-           return Navigator.SceneConfigs.FloatFromRight
-           break;
-           case 'impactleaguehome':
-           return Navigator.SceneConfigs.FloatFromRight
-           break;
-           case 'impactleagueform2':
-           return Navigator.SceneConfigs.FloatFromRight
-           break;
-           case 'runlodingscreen':
-           return Navigator.SceneConfigs.FloatFromBottom
-           break;
-           case 'runhistory':
-           return Navigator.SceneConfigs.FloatFromRight
-           break;
-           case 'profileform':
+    //   _configureScene(route){
+    //    switch (route.id){
+    //        case 'tab':
+    //        return NoBackSwipe
+    //        break;
+    //        case 'sharescreen':
+    //        return NoBackSwipe
+    //        break;
+    //        case 'causedetail':
+    //        return Navigator.SceneConfigs.FloatFromBottom
+    //        break;
+    //        case 'messagedetail':
+    //        return Navigator.SceneConfigs.FloatFromBottom
+    //        break;
+    //        case 'setting':
+    //        return Navigator.SceneConfigs.FloatFromLeft
+    //        break;
+    //        case 'thankyouscreen':
+    //        return Navigator.SceneConfigs.FloatFromRight
+    //        break;
+    //        case 'impactleaguehome':
+    //        return Navigator.SceneConfigs.FloatFromRight
+    //        break;
+    //        case 'impactleagueform2':
+    //        return Navigator.SceneConfigs.FloatFromRight
+    //        break;
+    //        case 'runlodingscreen':
+    //        return Navigator.SceneConfigs.FloatFromBottom
+    //        break;
+    //        case 'runhistory':
+    //        return Navigator.SceneConfigs.FloatFromRight
+    //        break;
+    //        case 'MessageCenter':
+    //        return Navigator.SceneConfigs.FloatFromRight
+    //        break;
+    //        case 'profileform':
 
-       }
-    };
+    //    }
+    // };
 
       render() {
         if(this.state.textState != null)
@@ -208,54 +186,73 @@ class Application extends Component{
         var mycausecount = this.state.mycauseDataCount;
         return (
           <View  style={{flex: 1}} >
-
-            <Navigator
-                ref={(ref) => this._navigator = ref}
-                configureScene={ this._configureScene }
-                initialRoute={{id:this.state.textState}}
-                renderScene={this.renderScene.bind(this)}
-                passProps={this.state.mycauseDataCount}
-                />
+           {this.renderScene()}
            </View>);
         }
         return this.LodingFunction();
         }
 
-        runScreenRender(route,navigator){
+        runScreenRender(){
           if (this.state.result != null) {
             return(
-                <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} />
+                <RunScreen data={JSON.parse(this.state.result).data}  />
               )
           }else{
             return(
-                <RunScreen  navigator={navigator} {...route.passProps} />
+                <RunScreen/>
               )
           }
         }
 
 
-        renderScene(route, navigator, user,causeLength) {
-           switch (route.id) {
-                case 'tab':
-                return <Tabs dataCauseNum={this.state.myCauseNum} navigator={navigator} {...route.passProps}/>;
-                case 'causedetail':
-                return <CauseDetail navigator={navigator} {...route.passProps}/>;
-                case 'runscreen':
-                return this.runScreenRender(route,navigator);
-                case 'login':
-                return <Login navigator={navigator} {...route.passProps}/>;
-                case 'runlodingscreen':
-                return <Runlogingscreen navigator={navigator} {...route.passProps}/>;
-                case 'sharescreen':
-                return <ShareScreen navigator={navigator} {...route.passProps}/>;
-                case 'leaderboard':
-                return <Leaderboard navigator={navigator} {...route.passProps}/>;
-
-                default :
-                return <Login navigator={navigator}{...route.passProps} />
-            }
-
-       }
+        renderScene() {
+         if (this.state.result != null ) {
+           return ( <NavigatorIOS
+                    ref="Help"
+                    translucent={false}
+                    navigationBarHidden={true}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.bright_blue}
+                    initialRoute={{
+                        showTabBar: false,
+                        component:RunScreen,
+                        passProps:{data:JSON.parse(this.state.result).data}
+                    }}/>)
+         }else if (this.state.user != null){
+            return ( <NavigatorIOS
+                    ref="Help"
+                    translucent={false}
+                    navigationBarHidden={true}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.bright_blue}
+                    initialRoute={{
+                        showTabBar: false,
+                        component:Tabs,
+                        passProps:{dataCauseNum:this.state.myCauseNum}
+                    }}/>)
+         }else {
+            
+            return ( <NavigatorIOS
+                    ref="Help"
+                    translucent={false}
+                    navigationBarHidden={true}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.bright_blue}
+                    initialRoute={{
+                        showTabBar: false,
+                        component:Login,
+                    }}/>)
+         }
+        }
 }
 
 AppRegistry.registerComponent('Impactrun', () => Application);

@@ -70,8 +70,8 @@ import{
         thankYouimageIndex:0,
         userLoaded:false,
         Duration:'00:00:00',
-        previewSource: '',
         openlikeUnlike:false,
+        previewSource: '',
         error: null,
         res: null,
         value: {
@@ -80,6 +80,8 @@ import{
           result: "base64",
           snapshotContentContainer: false,
         },
+
+        sadFeedbackText:'enter your feedback'
        };
       this.viewData = this.viewData.bind(this);
       this.isloading = this.isloading.bind(this);
@@ -393,6 +395,7 @@ import{
           },
           body:JSON.stringify({
           cause_run_title:cause.cause_title,
+          cause_id:cause.pk,
           user_id:user_id,
           start_time:date,
           end_time:endtime,
@@ -477,6 +480,7 @@ import{
                cause_run_title:cause.cause_title,
                start_time:date,
                end_time: endtime,
+               cause_id:cause.pk,
                distance: distance,
                peak_speed: 1,
                avg_speed:speed,
@@ -506,6 +510,7 @@ import{
                start_time:date,
                end_time: endtime,
                distance: distance,
+               cause_id:cause.pk,
                peak_speed: 1,
                avg_speed:speed,
                run_amount:impact,
@@ -603,14 +608,22 @@ import{
      })
     }
 
+    HappyIconClick(){
+      this.setState({
+      sadView:false,
+      happyView:true,
+      firstModel:false,
+     })
+    }
+
     viewData(){
       if (this.state.happyView) {
         return(
           <View  style={styles.contentWrap}>
-            <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>How was you run ?</Text>
-            <View style={styles.modelBtnWrap}>
-              <TouchableOpacity style={styles.modelbtnSad} onPress ={()=>this.SadIconClick()}><Icon style={{color:styleConfig.bright_blue,fontSize:((deviceHeight/3)/100)*40,}} name={'md-sad'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily}}>NOT GOOD!</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.modelbtnHappy}onPress ={()=>this.HappyIconClick()}><Icon style={{color:styleConfig.bright_blue,fontSize:((deviceHeight/3)/100)*40,}} name={'md-happy'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily}}>I LOVED IT!</Text></TouchableOpacity>
+            <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
+            <View style={styles.modelBtnWrapsad}>
+              <Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,bottom:10}}>Thank You ! Rate us on  App store, tell others about your experience.</Text>
+              <TouchableOpacity style={styles.modelbtnsadFeedback} onPress ={()=>this.HappyIconClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>RATE US</Text></TouchableOpacity>
             </View>
           </View>
           )
@@ -620,9 +633,10 @@ import{
             <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
             <View style={styles.modelBtnWrapsad}>
             <TextInput  
+               style={{height:100,borderWidth:1,width:deviceWidth-150}}
                multiline = {true}
                numberOfLines = {10}
-               onChangeText={(text) => this.setState({text})}
+               onChangeText={(text) => this.setState({sadFeedbackText:text})}
                value={this.state.sadFeedbackText}>
              </TextInput>
               <TouchableOpacity style={styles.modelbtnsadFeedback}onPress ={()=>this.HappyIconClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>SUBMIT</Text></TouchableOpacity>

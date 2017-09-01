@@ -27,7 +27,7 @@ import LoginBtns from '../../login/LoginBtns';
 import commonStyles from '../../styles';
 import Modal from '../../downloadsharemeal/CampaignModal'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
+import QuestionLists from '../../Helpcenter/listviewQuestions.js';
 class RunHistory extends Component {
 
      constructor(props) {
@@ -57,7 +57,7 @@ class RunHistory extends Component {
 
 
 
-      componentDidMount() {
+        componentDidMount() {
             AsyncStorage.getItem('runversion', (err, result) => {
               console.log("result",result);
 
@@ -315,6 +315,45 @@ class RunHistory extends Component {
             )
       }
 
+      navigateBackToHelp(rowData){
+        if (this.props.helpcenter) {
+        this.props.navigator.push({
+          title:'Select issue',         
+          component:QuestionLists,
+          navigationBarHidden: false,
+          showTabBar: true,
+          passProps:{
+            rowData:this.props.rowData,
+            runData:rowData,
+            data:this.props.rowList,
+            getUserData:this.props.getUserData,
+            user:this.props.user,
+          }
+        })
+      }else{
+        return;
+      }
+      }
+
+      navigateBackToHelpFlaged(rowData){
+        if (this.props.helpcenter) {
+        this.props.navigator.push({
+          title:'Select issue',         
+          component:QuestionLists,
+          navigationBarHidden: false,
+          showTabBar: true,
+          passProps:{
+            rowData:rowData,
+            data:this.props.rowList,
+          }
+        })
+      }else{
+       this.onPressFlagedRun(rowData);
+      }
+      }
+
+      
+
       renderRunsRow(rowData) {
         if (rowData) {
         if (this.state.weight != null) {
@@ -338,7 +377,7 @@ class RunHistory extends Component {
         var textDecoration = (rowData.is_flag)?'line-through':'none';
         if (rowData.is_flag) {
         return (
-          <TouchableHighlight onPress={()=> this.onPressFlagedRun(rowData)}underlayColor="#dddddd">
+          <TouchableHighlight onPress={()=> this.navigateBackToHelpFlaged(rowData)}underlayColor="#dddddd">
             <View style={[styles.container,{backgroundColor:backgroundColor}]}>
               <View style={styles.rightContainer}>          
               <View style={styles.runDetail}>
@@ -369,8 +408,8 @@ class RunHistory extends Component {
         );
        }else{
 
-          return (
-          <TouchableHighlight underlayColor="#dddddd">
+        return (
+          <TouchableHighlight onPress = {()=>this.navigateBackToHelp(rowData)} underlayColor="#dddddd">
             <View style={[styles.container,{backgroundColor:backgroundColor}]}>
               <View style={styles.rightContainer}>          
               <View style={styles.runDetail}>
@@ -618,13 +657,22 @@ class RunHistory extends Component {
           this.props.navigator.pop({});
       }
 
+      headerFromHelp(){
+        if (this.props.EmptyText) {
+          return(
+            <View style={{width:deviceWidth,height:50,justifyContent: 'center',alignItems: 'center',}}><Text>{this.props.EmptyText}</Text></View>
+            )
+        }else{
+          return;
+        }
+      }
+
       render(rowData) {
         var fetchingRun = this.props.fetchRunData;
-        var user = this.props.user || 0;
-        if (Object.keys(user).length) {
           return (
             <View>
               <View>
+              {this.headerFromHelp()}
                  <ListView
                     renderSectionHeader={this.renderSectionHeader}
                     refreshControl={
@@ -639,18 +687,10 @@ class RunHistory extends Component {
                   {this.modelViewEnterWeight()}
               </View>
             </View>
-
-              )
-
-        }else {
-            return (
-            <View style={{paddingTop:10,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-               {this.NotLoginView()}
-            </View>
           )
 
-         };
-        }
+      }
+        
 
 
   };

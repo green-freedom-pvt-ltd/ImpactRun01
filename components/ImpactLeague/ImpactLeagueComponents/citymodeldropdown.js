@@ -26,7 +26,7 @@ import {
 var deviceWidth = Dimensions.get('window').width;
 const TOUCHABLE_ELEMENTS = ['TouchableHighlight', 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableWithNativeFeedback'];
 
-export default class ModalDropdown extends Component {
+export default class ModalDropdownCity extends Component {
   static propTypes = {
     disabled: PropTypes.bool,
     defaultIndex: PropTypes.number,

@@ -107,7 +107,7 @@ var styles = StyleSheet.create({
   Navbar:{
     paddingTop:20,
     position:'relative',
-    height:styleConfig.navBarHeight,
+    height:64,
     width:width,
     flexDirection: 'row',
     justifyContent:'center',

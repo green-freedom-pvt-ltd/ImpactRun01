@@ -14,6 +14,8 @@ var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../../components/styles';
 import MessageCenterData from './messageCenterData';
+  
+
 class MessageCenter extends Component {
     constructor(props) {
       super(props);
@@ -28,6 +30,7 @@ class MessageCenter extends Component {
         index:0,
         navigator: this.props.navigator,
         passProps:{data:rowData},
+       
       })
     }
     goBack(){
@@ -36,13 +39,7 @@ class MessageCenter extends Component {
 
   render() {
     return (
-    <View >
-      <View style={commonStyles.Navbar}>
-       <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=> this.goBack()} >
-          <Icon style={{color:'white',fontSize:40,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-        </TouchableOpacity>
-        <Text style={commonStyles.menuTitle}>Feed</Text>
-      </View>
+    <View>
       <MessageCenterData getfeedCount={this.props.getfeedCount} navigator={this.props.navigator} />
     </View>
     );

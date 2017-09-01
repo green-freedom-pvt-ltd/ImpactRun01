@@ -166,8 +166,8 @@ class Faqdata extends Component {
           return this.renderLoadingView();
         }
         return (
-          <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-105,width:deviceWidth}}>
+          <View style={{height:deviceHeight-114,width:deviceWidth}}>
+            <View style={{height:deviceHeight-114,width:deviceWidth}}>
               <ListView
               refreshControl={
                 <RefreshControl
@@ -190,8 +190,9 @@ class Faqdata extends Component {
                 <TouchableOpacity onPress={() => this.SubmitFaq()} style={styles.submitFaqbtn}>
                   <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
+
               </View>
-                 <KeyboardSpacer/>
+                  <KeyboardSpacer/>
             </View>
           </View> 
         );
@@ -202,11 +203,6 @@ class Faqdata extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f2f2f2',
-    height:deviceHeight,
-    width:deviceWidth,
-    marginTop:-45,
-    bottom:-45,
-    marginBottom:45,
   },
   thumb: {
     backgroundColor: 'white',
@@ -232,7 +228,7 @@ const styles = StyleSheet.create({
   },
   FaqSubmitWrap:{
     paddingTop:7,
-    height:styleConfig.navBarHeight,
+    height:50,
     width:deviceWidth,
     flexDirection: 'row',
     justifyContent:'center',

@@ -562,11 +562,10 @@ class Profile extends Component {
       }else{
         return(
           <View>
-          <TouchableOpacity  style={styles.btnviewRun2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunHistory()}>
-
-              <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}} >SEE RUNS</Text>
-             </TouchableOpacity>
-             </View>
+            <TouchableOpacity  style={styles.btnviewRun2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunHistory()}>
+                <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}} >SEE RUNS</Text>
+            </TouchableOpacity>
+          </View>
           )
       }
       }
@@ -652,11 +651,11 @@ class Profile extends Component {
       if (this.state.runfeatching) {
         return(
           <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-            <ActivityIndicatorIOS
+            <ActivityIndicator
              style={{height: 80}}
               size="large"
             >
-            </ActivityIndicatorIOS>
+            </ActivityIndicator>
           </View>
           )
       }else{

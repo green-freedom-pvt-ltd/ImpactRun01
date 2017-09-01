@@ -12,10 +12,10 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-import styleConfig from '../../components/styleConfig';
 var deviceheight = Dimensions.get('window').height;
 const INDETERMINATE_WIDTH_FACTOR = 0.1;
 const BAR_WIDTH_ZERO_POSITION = INDETERMINATE_WIDTH_FACTOR / (1 + INDETERMINATE_WIDTH_FACTOR);
+import styleConfig from '../../components/styleConfig';
 
 class levelBarComponent extends Component {
   static propTypes = {
@@ -128,7 +128,7 @@ class levelBarComponent extends Component {
     };
     const progressStyle = {
       backgroundColor: color,
-      height,
+      height:styleConfig.barHeight,
       borderRadius:10,
       width: innerWidth,
       transform: [{

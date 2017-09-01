@@ -18,8 +18,11 @@ import{
     Linking,
   } from 'react-native';
 import messageCenter from './messageCenter';
+import CauseDetail from './messageDetail'
 import LodingScreen from '../../components/LodingScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
+import YouTube from 'react-native-youtube';
+import styleConfig from '../styleConfig';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var DetailScreen = require('./messageDetail');
@@ -46,9 +49,10 @@ class Feed extends Component {
 
       NavigateToDetail(rowData){
         this.props.navigator.push({
-          title: 'feeds',
-          id:'messagedetail', 
-          passProps:{rowData:rowData}
+          title: 'Detail',
+          component:CauseDetail, 
+          navigationBarHidden: false,
+          passProps:{data:rowData}
         })
       }
       
@@ -56,7 +60,7 @@ class Feed extends Component {
        AsyncStorage.getItem('feedData', (err, result) => { 
           if (result != null || undefined) {
           var feeddata = JSON.parse(result);  
-          console.log("faqdata",feeddata.length);
+          console.log("faqdata",feeddata);
           this.setState({
            FeedData: this.state.FeedData.cloneWithRows(feeddata),
            loaded: true,
@@ -99,6 +103,7 @@ class Feed extends Component {
         fetch(url)
         .then( response => response.json() )
         .then( jsonData => {
+          console.log('data',jsonData);
           this.setState({
             FeedData: this.state.FeedData.cloneWithRows(jsonData.results),
             loaded: true,
@@ -150,7 +155,7 @@ class Feed extends Component {
                 <Text style={styles.txt}>{rowData.message_center_id}</Text>
               </View>
               <Text style={styles.txtSec}>{rowData.message_brief}</Text>
-              <View style={{flexDirection:'row'}}>
+              <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                 <Text style={styles.txtSec}>{rowData.message_date}</Text>
                 <Text style={styles.txtSec}>share</Text>
               </View>
@@ -182,7 +187,7 @@ class Feed extends Component {
         }
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-105,width:deviceWidth}}>
+            <View style={{height:deviceHeight-65,width:deviceWidth}}>
                <ListView 
                  navigator={this.props.navigator}
                 dataSource={this.state.FeedData}
@@ -224,10 +229,11 @@ const styles = StyleSheet.create({
     height:deviceHeight/2-100,
   },
   txtSec:{
+    color:'#4a4a4a',
     paddingTop:10,
     paddingBottom:10,
-    fontSize:15,
-    fontWeight:'600',
+    fontSize:styleConfig.fontSizerlabel,
+    fontWeight:'400',
     fontFamily: 'Montserrat-Regular',
   },
  

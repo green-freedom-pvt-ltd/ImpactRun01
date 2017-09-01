@@ -10,7 +10,7 @@
     Dimensions,
     TouchableOpacity,
     Text,
-    ActivityIndicatorIOS,
+    ActivityIndicator,
     AsyncStorage
   } from 'react-native';
   import commonStyles from '../styles';
@@ -21,9 +21,9 @@
   import styleConfig from '../styleConfig';
   import SubmitBtn from '../submitbtn';
   import apis from '../apis';
-  import ModalDropdown from './ImpactLeagueComponents/modelindex.js';
-  import ModalDropdown2 from './ImpactLeagueComponents/modelindex2.js';
-
+  import ModalDropdownCity from './ImpactLeagueComponents/modelindex.js';
+  import ModalDropdownDepartment from './ImpactLeagueComponents/modelindex2.js';
+  import ImpactLeague from './ImpactLeagueHome';
 
   class ImpactLeagueForm2 extends Component {
       
@@ -35,13 +35,15 @@
         city:'',
         errtext:'',
         loading:false,
+        data:null,
         animating: true,
+        Home:false,
       };
     }
 
 
       componentDidMount() {
-        this.props.getUserData();
+        // this.props.getUserData();
       }
 
 
@@ -112,8 +114,10 @@
         .then((responseJson) => {
           this.setState({
             loding:false,
+            data:responseJson,
+            Home:true,
           })
-          this.navigateTOhome(responseJson);
+
           this.RouteChangeField(responseJson)
 
         })
@@ -121,7 +125,6 @@
           console.error(error);
         });
       }
-
 
       RouteChangeField(responseJson){
         var userdata = this.props.user;
@@ -133,7 +136,8 @@
         // first user, delta values
         AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
          AsyncStorage.getItem('USERDATA', (err, result) => {
-          console.log("userresult ",result);
+                this.props.getUserData();
+
         })
         })    
       }
@@ -158,11 +162,11 @@
         if (this.state.loading) {
           return(
             <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.56)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-              <ActivityIndicatorIOS
+              <ActivityIndicator
                style={{height: 80}}
                 size="large"
               >
-              </ActivityIndicatorIOS>
+              </ActivityIndicator>
             </View>
             )
         }else{
@@ -188,35 +192,38 @@
   
 
   		render(cities) {
+        if (this.state.Home != true) {
         var data = this.props.data;
         console.log('data',data);
   		  return (
           <View>
-            <NavBar title = {'IMPACT LEAGUE'}/>
             <View style ={styles.container}>
               <Image source={{uri:data.impactleague_banner}} style={styles.bannerimage}>
               </Image>
               <Text style={{padding:20, paddingTop:25,color:styleConfig.purplish_brown,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.fontSizer3}}>Just a couple of more questions</Text>
-              <View>
               <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
               <View>
                <Text style={styles.Errtext}>{this.state.errtext}</Text>
                </View>
-               <TouchableOpacity onPress={() => this.submitCityDepartment()} style={styles.submitbtn}>
+               <TouchableOpacity onPress={() => this.putRequestCityDepartment()} style={styles.submitbtn}>
                   <Text style={{color:'white'}}>SUBMIT</Text>
               </TouchableOpacity>
               </View>
-              <View style = {{top:-50,width:deviceWidth,justifyContent: 'center',alignItems:'center'}}>
-              <ModalDropdown onSelect={(idx, value) => this.onSelectCity(idx, value)} showsVerticalScrollIndicator={true} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown} defaultIndex ={1} animated={true} options={this.props.cities}>
-              </ModalDropdown>    
-              <ModalDropdown2 onSelect={(idx,value) => this.onSelectDepartment(idx,value)} defaultIndex ={3} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown}   options={this.props.departments}>
-              </ModalDropdown2>  
+              <View style = {{top:-300,height:deviceHeight/2-200, width:deviceWidth,justifyContent: 'center',alignItems:'center'}}>
+              <ModalDropdownCity onSelect={(idx, value) => this.onSelectCity(idx, value)} showsVerticalScrollIndicator={true} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown} defaultIndex ={1} animated={true} options={this.props.cities}>
+              </ModalDropdownCity>    
+              <ModalDropdownDepartment onSelect={(idx,value) => this.onSelectDepartment(idx,value)} defaultIndex ={3} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown}   options={this.props.departments}>
+              </ModalDropdownDepartment>  
               </View>  
-              </View>
             </View>
            {this.isloading()}
           </View>
   			);
+       }else{
+        return(
+           <ImpactLeague user={this.props.user} data={this.state.data} getUserData={this.props.getUserData}/>   
+        )
+       }
   	  }
   }
 

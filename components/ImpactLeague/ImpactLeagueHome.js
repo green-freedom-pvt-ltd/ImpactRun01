@@ -22,8 +22,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import LodingScreen from '../LodingScreen';
 import TimerMixin from 'react-timer-mixin';
 import styleConfig from '../styleConfig'
-
+import ImpactLeagueCode from './ImpactLeagueCode';
 import NavBar from '../navBarComponent';
+import LoginBtns from '../login/LoginBtns';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import impactleagueleaderboard from '../ImpactLeague/ImpactLeagueLeaderboard';
@@ -39,6 +40,7 @@ class ImpactLeague extends Component {
           refreshing: false,
           downrefresh:true,
         };
+        this.getUserData = this.getUserData.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
       }
@@ -86,6 +88,7 @@ class ImpactLeague extends Component {
           this.setState({
             user: user,
           })
+          console.log('user',this.state.user);
           NetInfo.isConnected.fetch().done(
             (isConnected) => { this.setState({isConnected}); 
               if (isConnected) {
@@ -136,6 +139,7 @@ class ImpactLeague extends Component {
         this.props.navigator.push({
           title: rowData.team_name,
           component:impactleagueleaderboard,
+          showTabBar: true,
           passProps:{user:this.state.user, Team_id:rowData.id,team_name:rowData.team_name}
         })
       }
@@ -156,6 +160,7 @@ class ImpactLeague extends Component {
       }
 
       renderRow(rowData,index,rowID){
+
         rowID++
         var me = this;
         var textColor=(me.state.user.team_code === rowData.id)?'#fff':"#4a4a4a";
@@ -200,6 +205,9 @@ class ImpactLeague extends Component {
         }
       
       render(rowData,jsonData) {
+        console.log('user',this.state.user);
+        if (this.state.user) {
+        if (this.state.user.team_code != 0) {
         if (!this.state.loaded) {
           return this.renderLoadingView();
         }
@@ -215,7 +223,6 @@ class ImpactLeague extends Component {
                   refreshing={this.state.refreshing}
                   onRefresh={this._onRefresh.bind(this)}
                 />}
-                navigator={this.props.navigator}
                 dataSource={this.state.LeaderBoardData}
                 renderRow={this.renderRow}
                 style={styles.container}>
@@ -224,7 +231,20 @@ class ImpactLeague extends Component {
             </View>
           </View>
         );
+        }else{
+          return(
+            <View>
+             <ImpactLeagueCode user = {this.state.user} getUserData = {this.getUserData} />
+             </View>
+            )
+        }
+       }else{
+          return(
+            <LoginBtns/>
+            )
+       }
       }
+
 }
 
 const styles = StyleSheet.create({

@@ -43,7 +43,7 @@ const dataRupees = [];
 class Profile extends Component {
       constructor(props) {
         super(props);
-        
+         this.fetchRunDataLocally();
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       //   console.log("fetchRunhistoryDataerr",err);
       // });
@@ -77,7 +77,7 @@ class Profile extends Component {
 
 
      componentWillMount() {
-        this.fetchRunDataLocally();
+       
     
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
@@ -284,9 +284,13 @@ class Profile extends Component {
         var RunData = JSON.parse(result)
         var sum = 0;
         var i;
+        var data3 = [];
         for (i = 0; i < RunData.length; i++) {
           var flag = RunData[i].is_flag;
           if (flag != true) {
+
+          data3.push(RunData[i].run_amount);
+          console.log('data3',data3);
            sum += parseInt(RunData[i].run_amount);
             };
         }
@@ -397,10 +401,13 @@ class Profile extends Component {
         var RunData = JSON.parse(result)
         var sum = 0;
         var i;
+        var data2 = [];
         for (i = 0; i < RunData.length; i++) {
           var flag = RunData[i].is_flag;
           if (flag != true) {
-           sum += parseFloat(RunData[i].distance);
+            data2.push(RunData[i].distance);
+            console.log('data',data2);
+            sum += RunData[i].distance;
             };
         }
         this.setState({
@@ -576,7 +583,6 @@ class Profile extends Component {
       }
       
     measureView(event) {
-        console.log('event peroperties: ', event);
         this.setState({
             x: event.nativeEvent.layout.x,
             y: event.nativeEvent.layout.y,

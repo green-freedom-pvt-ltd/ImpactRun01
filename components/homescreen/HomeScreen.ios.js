@@ -2,7 +2,7 @@
 'use strict';
 
 import React,{Component} from 'react';
-import {
+import ReactNative,{
   AppRegistry,
   StyleSheet,
   Text,
@@ -23,6 +23,8 @@ import {
   Linking,
   TouchableWithoutFeedback
 } from 'react-native';
+ import {Navigator} from 'react-native-deprecated-custom-components';
+import LodingRunScreen from '../gpstracking/runlodingscreen'
 import Modal from '../downloadsharemeal/CampaignModal'
 var { RNLocation: Location } = require('NativeModules');
 import apis from '../../components/apis';
@@ -34,7 +36,10 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import NavBar from '../navBarComponent';
 import ProgressBar from './causeprogressbar';
+import CauseDetail from './CauseDetail';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
+import { takeSnapshot } from "react-native-view-shot";
+import Share, {ShareSheet, Button} from 'react-native-share';
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
@@ -46,10 +51,12 @@ var iphone7 = 667;
 var iphone6Plus = 736;
 var iphone6SPlus = 736;
 var iphone7Plus = 736;
+import MessageCenter from '../feed/messageCenter';
 
 class Homescreen extends Component {
       constructor(props) {
         super(props);
+        this.rows=[];
         this.state = {
           dataSource : null,
           album : {},
@@ -57,13 +64,25 @@ class Homescreen extends Component {
           navigation: {
             index: 0,
             routes: [],
-            loadingimage:false,
-            FeedCount:0,
-            localfeedCount:0,
+            
+          },
+          loadingimage:false,
+          FeedCount:0,
+          localfeedCount:0,
+          previewSource: '',
+          error: null,
+          res: null,
+          value: {
+            format: "png",
+            quality: 0.9,
+            result: "base64",
+            snapshotContentContainer: false,
           },
           isDenied:false,
         };
         this.getfeedCount = this.getfeedCount.bind(this);
+        this.renderFeedIcon = this.renderFeedIcon.bind(this);
+        this.navigateToFeed = this.navigateToFeed.bind(this);
       }
 
       locationManager: undefined
@@ -86,6 +105,44 @@ class Homescreen extends Component {
           })
         }
         })
+      }
+
+
+      snapshot(){
+         var ref = this.list;
+        takeSnapshot(ref, this.state.value)
+        .then(res =>
+          this.state.value.result !== "file"
+          ? res
+          : new Promise((success, failure) =>
+          // just a test to ensure res can be used in Image.getSize
+          Image.getSize(
+            res,
+            (width, height) => (console.log(res,width,height), success(res)),
+            failure
+          )
+          )
+            
+        )
+        .then((res) => {
+          this.setState({
+            error: null,
+            res,
+            previewSource: { uri:
+              this.state.value.result === "base64"
+              ? "data:image/"+this.state.value.format+";base64,"+res
+              : res }
+          })
+
+          var shareOptions = {
+            // title: "ImpactRun",
+            // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+            url:"data:image/"+this.state.value.format+";base64,"+res,
+            // subject: "Download ImpactRun Now " //  for email
+          }
+          Share.open(shareOptions)
+        })
+        .catch(error => (console.warn(error), this.setState({ error, res: null, previewSource: null })));
       }
 
 
@@ -156,14 +213,12 @@ class Homescreen extends Component {
 
 
       getFeedFromlocal(){
-
        AsyncStorage.getItem('feedData', (err, result) => { 
           if (result != null || undefined) {
           var feeddata = JSON.parse(result);  
           console.log("faqdata",feeddata);
           AlertIOS.alert("result",JSON.stringify(feeddata));
           this.setState({
-           FeedData: this.state.FeedData.cloneWithRows(feeddata),
            loaded: true,
           }) 
         }else{
@@ -194,7 +249,7 @@ class Homescreen extends Component {
           loaded: true,
           notificationCount:jsonData.count,
         });
-        console.log("jsonData.results",jsonData.results);
+        console.log("jsonData.results",jsonData);
         AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
         });
         })
@@ -237,7 +292,7 @@ class Homescreen extends Component {
             )
         }else{
           return(
-            <Image source={{uri:cause.cause_image}} style={[styles.cover,{height:this.cardImageheight()}]}>
+            <Image source={{uri:cause.cause_image}} style={styles.cover}>
                 <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
                   <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3, justifyContent: 'center',alignItems: 'center', color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {cause.cause_category}
@@ -472,13 +527,11 @@ class Homescreen extends Component {
         // authorization is a string which is either "authorizedAlways",
         // "authorizedWhenInUse", "denied", "notDetermined" or "restricted"
         // Location.startUpdatingLocation();
-        me.props.navigator.replace({
-        title: 'Gps',
-        id:'runlodingscreen',
-        index: 0,
+        me.props.navigator.push({
+        component:LodingRunScreen,
+        navigationBarHidden: true,
         passProps:{data:cause,user:me.props.user,getUserData:me.props.getUserData},
         // sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-        navigator: me.props.navigator,
         });
       }else{
         if (authorization === "denied") {
@@ -507,11 +560,10 @@ class Homescreen extends Component {
     navigateToCauseDetail(cause,some) {
       console.log('some',some);
       this.props.navigator.push({
-      title: 'Gps',
-      id:'causedetail',
-      index: 0,
+      title: 'Causedetail',
+      component:CauseDetail,
+      navigationBarHidden: false,
       passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
-      navigator: this.props.navigator,
       });
     };
 
@@ -543,7 +595,6 @@ class Homescreen extends Component {
 
 
     measureView=(event)=>{
-        console.log('event peroperties: ', event);
         this.setState({
             x: event.nativeEvent.layout.x,
             y: event.nativeEvent.layout.y,
@@ -582,28 +633,30 @@ class Homescreen extends Component {
         // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
         return (
           
-          <View onLayout={(event) => this.measureView(event)} style={styles.page}>        
+          <View onLayout={(event) => this.measureView(event)} style={styles.page}  >        
            <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause,this.state.album[route.key][9])} >
             <View  style={styles.album}>
               {this.showImage(cause)}
               <View style={styles.borderhide}></View>
-              <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                <View style={{width:deviceWidth-105}}>
+              <View style={{flex:1,justifyContent: 'center',alignItems: 'center'}}>
+                <View style={{width:deviceWidth-125}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400',width:200,marginBottom:10,}}>By {cause.partners[0].partner_ngo}</Text>
-                  <View>
-                    {this.functionForIphone4Brief(cause)}
-                  </View>
+                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400'}}>By {cause.partners[0].partner_ngo}</Text>      
                 </View>
               </View>
+              <View style={{flex:1.5,justifyContent: 'flex-end',alignItems: 'center'}}>
+                    {this.functionForIphone4Brief(cause)}
+               </View>
               <View style={styles.barWrap}>
+              <View style={{width:deviceWidth-125}}>
                 <View style = {styles.wraptext}>
                   <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
                   <Text style = {styles.textMoneyraised}>{parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
                 </View>
-                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-110} progress={cause.amount_raised/cause.amount}/>
+                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-125} progress={cause.amount_raised/cause.amount}/>
                 <View style = {styles.wraptext2}>
                   <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
+                </View>
                 </View>
               </View>
             </View>
@@ -612,9 +665,9 @@ class Homescreen extends Component {
         );
        }else{
         return(
-          <View style={styles.page}>        
+          <View style={styles.page} ref={(instance) => this.list = instance}>        
             <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause)} >
-            <View style={styles.album}>
+            <View style={styles.album} >
               <Image source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5,}}>
               </Image>
             </View>
@@ -639,54 +692,55 @@ class Homescreen extends Component {
     };
 
     navigateToFeed() {
-      this.props.navigator.push({
-      title: 'Gps',
-      id:'messagecenter',
-      index: 0,
-      passProps:{getfeedCount:this.getfeedCount},
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      navigator: this.props.navigator,
-      });
-    };
+          this.props.navigator.push({
+            title: 'Feed',
+            component:MessageCenter,
+             navigationBarHidden: false,
+            passProps:{user:this.state.user,getUserData:this.getUserData,}
+        })
+        }
 
      notificationIcon(){
         // this.state.notificationCount > this.state.localStorenotificationCount
-        if (this.state.notificationCount> this.state.localfeedCount) {
+        if (this.state.notificationCount > this.state.localfeedCount) {
           return(
             <View style={styles.notificationBatch}><Text style={{fontSize:7,color:"white",fontWeight:"600"}}>1</Text></View>
             )
         }else{
           return;
         }
-      }
+      };
 
     
-    // renderFeedIcon(){
+    renderFeedIcon(){
 
-    //     return(
-    //        <TouchableOpacity style={{height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToFeed()} >
-         
-    //          <Icon2 style={{fontSize:22,top:5, color:'white'}} name={'notifications'} ></Icon2>
-    //            {this.notificationIcon()}
-    //         </TouchableOpacity>
-    //       );
-    //   };
+        return(
+           <TouchableOpacity style={{justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToFeed()} >         
+             <Icon2 style={{fontSize:22,top:5, color:'white'}} name={'notifications'} ></Icon2>
+               {this.notificationIcon()}
+            </TouchableOpacity>
+          );
+      };
 
    BiginRunBtn(cause){
+   
     if (cause.is_completed) {
       return(
-         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
+         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=> this.snapshot()}>
             <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >TELL YOUR FRIENDS</Text>
           </TouchableOpacity>
       )
     }else{
       return(
         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET`'`S GO> </Text>
+          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LETS GO> </Text>
         </TouchableOpacity>
       )
     }
    }
+
+
+
     // RENDER_FUNCTION
     render(route) { 
        var cause;
@@ -698,8 +752,9 @@ class Homescreen extends Component {
       if (this.props.myCauseNum != null ) {
       return (
           <View style={{height:deviceheight,width:deviceWidth}}>
-             <NavBar title = {'IMPACTRUN'}/>
+          <NavBar title={'Impactrun'}rightIcon = {this.renderFeedIcon()}/>
              <TabViewAnimated
+             
              style={[ styles.container, this.props.style ]}
              navigationState={this.state.navigation}
              renderScene={this._renderPage}
@@ -784,13 +839,11 @@ class Homescreen extends Component {
     },
 
     album: {
-      backgroundColor:'white',
-      elevation: 12,
-     
     },
      
      cover: {
-      flex:1,
+      height:((deviceheight-120)/100)*35,
+      width:deviceWidth-100,
       borderRadius:5,
       resizeMode:'cover',
       justifyContent:'flex-end',
@@ -831,8 +884,6 @@ class Homescreen extends Component {
     },
 
     causeTitle:{
-      marginLeft:-1,
-      backgroundColor:'transparent',
       color:styleConfig.greyish_brown_two,
       fontSize:styleConfig.FontSizeTitle,
       fontWeight:'400',
@@ -840,7 +891,7 @@ class Homescreen extends Component {
     },
 
     causeBrief:{
-      marginTop:styleConfig.functionPadding,
+      width:deviceWidth-125,
       color:styleConfig.greyish_brown_two,
       fontSize:styleConfig.FontSize4,
       fontWeight:'400',
@@ -848,9 +899,10 @@ class Homescreen extends Component {
     },
   
     barWrap:{
-      paddingBottom:15,
-      paddingTop:styleConfig.functionPadding,
       justifyContent: 'center',
+      flex:2,
+      alignItems: 'center',
+
     },
     wraptext:{
       justifyContent: 'space-between',
@@ -892,7 +944,7 @@ class Homescreen extends Component {
     },
     notificationBatch:{
       marginTop:-18,
-      marginLeft:35,
+      left:23,
       position:"absolute",
       justifyContent: 'center',
       alignItems: 'center',

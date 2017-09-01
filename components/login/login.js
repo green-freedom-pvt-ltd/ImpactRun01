@@ -22,7 +22,7 @@ var {
 
 import Lodingscreen from '../../components/LodingScreen';
 import styleConfig from '../../components/styleConfig';
-
+import Tabs from '../homescreen/tab'
 import {
     GoogleSignin,
     GoogleSigninButton
@@ -30,7 +30,7 @@ import {
 var deviceHeight = Dimensions.get('window').height;
 var deviceWidth = Dimensions.get('window').width;
 
-class Profile extends Component {
+class Login extends Component {
     propTypes: {
         onPress: React.PropTypes.func,
         onLogin: React.PropTypes.func,
@@ -261,13 +261,13 @@ class Profile extends Component {
 
       navigateToHome() {
         this.props.navigator.push({
-            title: 'Gps',
-            id: 'tab',
+            title: 'Homescreen',
+            component:Tabs,
+            navigationBarHidden: true,
             passProps: {
               dataCauseCount: this.state.mycauseDataCount,
               dataCauseNum: this.state.myCauseNum,
             },
-            navigator: this.props.navigator,
         })
       }
 
@@ -390,4 +390,4 @@ var styles = StyleSheet.create({
     }
 })
 
-export default Profile;
+export default Login;

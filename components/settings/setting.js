@@ -16,39 +16,16 @@ import{
     ListView,
     SegmentedControlIOS,
   } from 'react-native';
-import SocialShare from '../socialShare';
+import Share, {ShareSheet, Button} from 'react-native-share';
 import IconSec from 'react-native-vector-icons/Ionicons';
 import commonStyles from '../styles';
 import styleConfig from '../styleConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavBar from '../navBarComponent';
+import Login from '../login/login.js';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-class OpenURLButton extends React.Component {
-  static propTypes = {
-    url: React.PropTypes.string,
-  };
 
-  handleClick = () => {
-    Linking.canOpenURL(this.props.url).then(supported => {
-      if (supported) {
-        Linking.openURL(this.props.url);
-      } else {
-        console.log('Don\'t know how to open URI: ' + this.props.url);
-      }
-    });
-  };
-
-  render() {
-    return (
-      <TouchableOpacity style={{justifyContent:'flex-start',alignItems:'center',flexDirection:'row',flex:1}}
-        onPress={this.handleClick}>
-         <Icon style={{color:'black',fontSize:styleConfig.fontSizerlabe+10,margin:7.5,paddingRight:14}}name={'grade'}></Icon>
-         <View><Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>RATE US</Text></View>   
-      </TouchableOpacity>
-    );
-  }
-}
 
 var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -68,6 +45,18 @@ class Setting extends Component {
         };
         this.renderRow = this.renderRow.bind(this);
       }
+
+
+
+    handleClick = () => {
+      Linking.canOpenURL('https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8').then(supported => {
+        if (supported) {
+          Linking.openURL('https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8');
+        } else {
+          console.log('Don\'t know how to open URI: ' + 'https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8');
+        }
+      });
+    };
       // Go_Back
     popRoute() {
          this.props.navigator.pop();
@@ -87,15 +76,17 @@ class Setting extends Component {
           console.log('WRONG SIGNIN', err);
          })
         }
+
         navigateToLogin(){
            this.props.navigator.push({
-            title: 'Gps',
-            id:'login',
-            index: 0,
-            navigator: this.props.navigator,
+            component:Login,
+            navigationBarHidden: true,
+            showTabBar: false,
            })
         }
-      handleFBLogout(){
+
+
+       handleFBLogout(){
         var _this = this;
         FBLoginManager.logout(function(error, data){
           if (!error) {
@@ -110,7 +101,9 @@ class Setting extends Component {
           }
         });
       }
+
       componentDidMount() {
+        
         var settingsLists = [
           {'name':'share',
           'iconName':'share',
@@ -121,23 +114,13 @@ class Setting extends Component {
           'iconName':'grade',
           'functionName':'',
          },
-          {
-          'name':'feedback',
-          'iconName':'feedback',
-          'functionName':'',
-         },
-          {
-          'name':'help',
-          'iconName':'help',
-          'functionName':'',
-         },
          {
           'name':'logout',
           'iconName':'thumbs-up-down',
           'functionName':'',
          },
         ]
-
+       
 
         this.setState({
            SettingTabs: this.state.SettingTabs.cloneWithRows(settingsLists),
@@ -157,20 +140,63 @@ class Setting extends Component {
           })  
       }
 
+
+
+
+
+      onClickLi(rowData){
+        let shareOptions = {
+          title: "ImpactRun",
+          message: "I use ImpactRun to track my daily runs and 'do good' for society with every step. Check it out. It's amazing!",
+          url: "http://www.impactrun.com/#",
+          subject: "Download ImpactRun Now " //  for email
+        };
+        if (rowData.name === 'share') {
+         return Share.open(shareOptions);
+        }else if(rowData.name === 'rate'){
+         return this.handleClick();
+        }else if(rowData.name === 'logout'){
+          return this._signOut();
+        }else if(rowData.name === 'help'){
+          return this.navigateToHelp();
+        }
+      }
+
+      navigateToHelp(){
+        this.props.navigator.push({
+          title:'Help',         
+          component:HelpCenter,
+          navigationBarHidden: false,
+          showTabBar: false,
+        })
+      }
+      
+ 
+      ListIconfirst(rowData){
+        if(rowData.name === 'logout'){
+          return;
+        }else{
+          return(
+            <Icon style={{color:'#595c5d',fontSize:20,}}name={rowData.iconName}></Icon>
+          )
+        }   
+      }
+
+
       renderRow(rowData) {
+        var alignItems = (rowData.name === 'logout')? 'center':'flex-start';
         console.log('rowData',rowData);
         var marginTop = (rowData.name === 'logout')?100:0;
         var borderBottomWidth = (rowData.name === 'logout' || rowData.name === 'help')?0:0.5;
         return (
-          <TouchableOpacity style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
+          <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
             <View style={{flex:-1,width:50,justifyContent: 'center',alignItems: 'center',}}>
-                <Icon style={{color:'#595c5d',fontSize:20,}}name={rowData.iconName}></Icon>
+               {this.ListIconfirst(rowData)}
             </View>
-            <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
+            <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',alignItems:alignItems}}>
               <Text style={{color:'#595c5d'}}>{rowData.name}</Text>
             </View>
             <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
-                <IconSec style={{color:'#c1c6c7',fontSize:20,}}name={'ios-arrow-forward'}></IconSec>
             </View>
           </TouchableOpacity>
         );

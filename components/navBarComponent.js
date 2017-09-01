@@ -46,11 +46,11 @@ class ThankyouScreen extends Component {
       var data = this.props.data;
 	    return (
 		    <View style={commonStyles.Navbar}>
-          <TouchableOpacity style={styles.RightButton} onPress={()=>this.leftBtnfunction()}>
+          <TouchableOpacity style={styles.LeftButton} onPress={()=>this.leftBtnfunction()}>
            {this.leftIcon()}
           </TouchableOpacity>        
             <Text  numberOfLines={1} style={commonStyles.menuTitle}>{this.props.title}</Text>
-           <TouchableOpacity style={styles.LeftButton} onPress={()=>this.rightBtnfunction()} >
+           <TouchableOpacity style={styles.RightButton} onPress={()=>this.rightBtnfunction()} >
            {this.rightIcon()}
           </TouchableOpacity> 
         </View>
@@ -62,8 +62,10 @@ class ThankyouScreen extends Component {
 var styles = StyleSheet.create({
 
   RightButton: {
-   height:styleConfig.navBarHeight,
+   height:64,
    width:50,
+   paddingTop:15,
+
       
   },
   LeftButton: {

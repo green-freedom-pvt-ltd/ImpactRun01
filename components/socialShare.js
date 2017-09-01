@@ -9,7 +9,7 @@ import {
   AlertIOS,
   Platform
 } from 'react-native';
-import Share, {ShareSheet, Button} from 'react-native-share';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 import styleConfig from './styleConfig';
 

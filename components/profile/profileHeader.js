@@ -148,7 +148,7 @@ class UserProfile extends Component {
                 </View>
                 </View>
               <View style={styles.barWrap}>
-              <LevelBar progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={((deviceWidth-20)/100)*75} totalKm={this.props.totalKm}/>
+              <LevelBar height={styleConfig.barHeight+10} progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={((deviceWidth-20)/100)*75} totalKm={this.props.totalKm}/>
             </View>
           </View>
         );

@@ -30,7 +30,6 @@ class Faq extends Component {
   		render() {
   		  return (
           <View>
-            <NavBar title={'HELP'}/>
   			    <FaqData user = {this.props.user}/>
           </View>
   			);
@@ -40,10 +39,8 @@ class Faq extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f2f2f2',
-    height:deviceHeight,
+    height:deviceHeight-114,
     width:deviceWidth,
-    bottom:-45,
-    marginTop:-45,
   },
   thumb: {
     backgroundColor: '#5bb75b',

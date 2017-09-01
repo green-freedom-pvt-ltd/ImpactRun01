@@ -27,6 +27,7 @@ import TimerMixin from 'react-timer-mixin';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 // import Mapbox from 'react-native-mapbox-gl';
+import ShareScreen from '../sharescreen/shareScreen.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
@@ -110,7 +111,6 @@ var Home = React.createClass({
     this._startStepCounterUpdates()
     var date = this.state.myrundate;
     this._handleStartStop();
-    this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 1000)
     this.updatePaceButtonStyle();
     this.setState({
       textState:'PAUSE',
@@ -127,6 +127,14 @@ var Home = React.createClass({
 
 
   componentWillMount: function() { 
+    // MusicFiles.get(
+    //   (success) => {
+    //      console.log('success',success);
+    //   },
+    //   (error) => {
+    //        console.log(error)
+    //   }
+    // );
     AsyncStorage.getItem('runDataAppKill', (err, result) => {
     var datarun =JSON.parse(result);
       if (datarun != null) { 
@@ -313,8 +321,7 @@ var Home = React.createClass({
 
 
   _onNotification:function(notification) {
-      PushNotification.localNotificationSchedule({
-      date: new Date(Date.now() + (1000)), // in 60 secs
+      PushNotification.localNotification({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
       message: "Seems you are in a vehicle. Pausing workout", // (required)
@@ -324,8 +331,7 @@ var Home = React.createClass({
 
 
  _ongpsWeakNotification:function(notification) {
-     PushNotification.localNotificationSchedule({
-      date: new Date(Date.now() + (1000)), // in 60 secs
+     PushNotification.localNotification({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
       message: "Seems your GPS signals are weak", // (required)
@@ -493,19 +499,18 @@ var Home = React.createClass({
         if (this.state.HussainBoltCount >= 3 && !(this.state.onCarDetectedEndRunModel)) {
           // Location.stopUpdatingLocation();
           this.setState({
-            HussainBoltCount:0, 
             enabled:false,
             isRunning:false      
           })
+          this.updatePaceButtonStyle();
+          this._handleStartStop(); 
           setTimeout(()=>{ 
             this.setState({
               onCarDetectedEndRunModel:true,
             })
            },1000) ;
-          this.updatePaceButtonStyle();
-          this._handleStartStop(); 
+          
         }else{
-          // Location.stopUpdatingLocation();     
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,
             enabled:false,
@@ -513,13 +518,12 @@ var Home = React.createClass({
           })   
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
-           setTimeout(()=>{ 
+          setTimeout(()=>{ 
             this.setState({
               open:true,
             })
             this._onNotification();
-           },1000) ;
-          console.log("HussainBoltCount",this.state.HussainBoltCount);         
+          },1000) ;
           VibrationIOS.vibrate();  
         }
       }
@@ -575,9 +579,7 @@ var Home = React.createClass({
       }else{
         if (this.state.UssainBoltCount > 3) {
           console.log("location hussain");
-          // Location.stopUpdatingLocation();
           this.setState({
-            UssainBoltCount:0,
             enabled:false,
             isRunning:false,
           })
@@ -589,7 +591,6 @@ var Home = React.createClass({
           this.updatePaceButtonStyle();
           this._handleStartStop(); 
         }else{
-          // Location.stopUpdatingLocation();
           this.setState({
             HussainBoltCount:this.state.HussainBoltCount+1,   
             enabled:false,
@@ -899,8 +900,9 @@ var Home = React.createClass({
       var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
       var user = this.state.Storeduserdata;
       var timetotal = (this.state.result != null)?Number(this.state.mainTimer )+ Number(this.state.storedRunduration):this.state.mainTimer;
-      this.props.navigator.push({
-        id:'sharescreen',
+      this.props.navigator.replace({
+        component:ShareScreen,
+        navigationBarHidden: true,
         passProps:{
           data:data,
           getUserData:this.props.getUserData,
@@ -917,7 +919,6 @@ var Home = React.createClass({
           EndRunTime:this.state.endDate,
           noOfsteps:this.state.numberOfSteps,
           },
-        navigator: this.props.navigator,
        })
      },
 
@@ -1043,7 +1044,6 @@ var Home = React.createClass({
    
     render: function(location) {
 
-      var circularprogress =  ((parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2 >= 100)?(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/7:(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2;
       var intime = TimeFormatter( this.state.mainTimer + this.state.storedRunduration );
       var data = this.props.data;
       var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
@@ -1059,17 +1059,6 @@ var Home = React.createClass({
             <View style={{justifyContent: 'center',alignItems: 'center', flex:1}}>
                 
             <Text style={{fontSize:20,marginTop:30,marginBottom:20,color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,backgroundColor:'transparent',}}>IMPACT</Text> 
-             <AnimatedCircularProgress
-                style={{justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
-                ref='circularProgress'
-                size={130}
-                width={5}
-                fill={circularprogress}
-                prefill={100}
-                tintColor={styleConfig.bright_blue}
-                rotation={0}
-                backgroundColor="#fafafa">                   
-              </AnimatedCircularProgress>
                <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
                 {this.impactTextView(data,priv)}
                 <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>RUPEES</Text>

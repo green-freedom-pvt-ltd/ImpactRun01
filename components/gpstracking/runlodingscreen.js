@@ -18,7 +18,7 @@ import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import styleConfig from '../../components/styleConfig';
-
+import Home from './home.ios.js'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LodingRunScreen extends Component {
@@ -26,9 +26,9 @@ class LodingRunScreen extends Component {
     constructor(props) {
       super(props);
 
-      this.animatedValue1 = new Animated.Value(0,{ useNativeDriver: true })
-      this.animatedValue2 = new Animated.Value(0,{ useNativeDriver: true })
-      this.animatedValue3 = new Animated.Value(0,{ useNativeDriver: true })
+      this.animatedValue1 = new Animated.Value(0)
+      this.animatedValue2 = new Animated.Value(0)
+      this.animatedValue3 = new Animated.Value(0)
       this.state = {
         seconds: 5
       };
@@ -45,9 +45,9 @@ class LodingRunScreen extends Component {
 
 
   animate () {
-  this.animatedValue1.setValue(0,{ useNativeDriver: true })
-  this.animatedValue2.setValue(0,{ useNativeDriver: true })
-  this.animatedValue3.setValue(0,{ useNativeDriver: true })
+  this.animatedValue1.setValue(0)
+  this.animatedValue2.setValue(0)
+  this.animatedValue3.setValue(0)
   const createAnimation = function (value, duration, easing, delay = 0) {
     return Animated.timing(
       value,
@@ -55,7 +55,8 @@ class LodingRunScreen extends Component {
         toValue: 1,
         duration,
         easing,
-        delay
+        delay,
+        useNativeDriver: true,
       }
     )
   }
@@ -83,10 +84,10 @@ class LodingRunScreen extends Component {
       var cause = this.props.data;
       this.props.navigator.replace({
         title: 'Gps',
-        id:'runscreen',
-        index: 0,
+        component:Home,
+        navigationBarHidden: true,
+        showTabBar: false,
         passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
-        navigator: this.props.navigator,
       });
       clearTimeout(this.timeout);
     }

@@ -13,7 +13,7 @@ import{
     Text,
     AlertIOS,
     Platform,
-    ActivityIndicatorIOS,
+    ActivityIndicator,
     AsyncStorage
   } from 'react-native';
 import commonStyles from '../styles';
@@ -22,6 +22,7 @@ import NavBar from '../navBarComponent'
 import styleConfig from '../styleConfig';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ImpactLeagueForm2 from './ImpactLeagueForm2'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 
@@ -45,6 +46,10 @@ class ImpactLeagueCode extends Component {
         moreText:'',
         codenotextist:'',
         loading:false,
+        FormScreen:false,
+        city:null,
+        department:null,
+        data:null,
       };
       this.codeDoesnotExistCheck = this.codeDoesnotExistCheck.bind(this);
     }
@@ -138,35 +143,34 @@ class ImpactLeagueCode extends Component {
         }
 
       }
-      console.log('text',department);
-
-      this.props.navigator.replace({
-      id:'impactleagueform2',
-        passProps:{
-          cities:city,
-          departments:department,
-          user:this.props.user,
-          data:responseJson,
-          getUserData:this.props.getUserData,
-        },
-      navigator: this.props.navigator,
-      })
+    
+     this.setState({
+      city:city,
+      department:department,
+      data:responseJson,
+      FormScreen:true,
+     })
     }
-  
+     
+
     codeDoesnotExistCheck(responseJson){
-      console.log('responcedatacode',responseJson);
       var valueReturn = "Object with team_code="+this.state.moreText+" does not exist.";
-      var valueReturn2 = "The fields user, team must make a unique set";
+      var valueReturn2 = "The fields user, team must make a unique set.";
+      // console.log('responcedatacode',JSON.stringify(responseJson.non_field_errors[0])==valueReturn2);
       if (responseJson) {
-        if (responseJson.team[0] === valueReturn) {
+        if (responseJson.non_field_errors) {
+        if (JSON.stringify(responseJson.non_field_errors[0]) != null) {
+          console.log('react2');
           this.setState({
-            codenotextist:'Sorry, that’s not the code.',
+            codenotextist:JSON.stringify(responseJson.non_field_errors[0]),
           })
         }else{
-
-            this.Navigate_To_nextpage(responseJson);
-
+          console.log('react3');
+          this.Navigate_To_nextpage(responseJson);
         }
+      }else{
+        this.Navigate_To_nextpage(responseJson);
+      }
       }
     }
      
@@ -174,11 +178,11 @@ class ImpactLeagueCode extends Component {
       if (this.state.loading) {
         return(
           <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.56)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-            <ActivityIndicatorIOS
-             style={{height: 80}}
+            <ActivityIndicator
+              style={{height: 80}}
               size="large"
             >
-            </ActivityIndicatorIOS>
+            </ActivityIndicator>
           </View>
           )
       }else{
@@ -195,31 +199,36 @@ class ImpactLeagueCode extends Component {
     }
     
     render() {
-		  return (
-        <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
-        <NavBar title = {'IMPACT LEAGUE'} leftIcon={this.leftIconRender()}/>
-        <View style={styles.container}>
-        <View style={styles.ContentWrap}>
-        <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
-        <View style ={ styles.InputUnderLine}>
-         <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          placeholder="DFG3456"
-          />
+      if (this.state.FormScreen!= true) {
+  		  return (
+          <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
+          <View style={styles.container}>
+          <View style={styles.ContentWrap}>
+          <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
+          <View style ={ styles.InputUnderLine}>
+           <TextInput
+            ref={component => this._textInput = component} 
+            style={styles.textEdit}
+            onChangeText={(moreText) => this.setState({moreText})}
+            placeholder="DFG3456"
+            />
+            </View>
+            <View style={{marginBottom:20}}><Text style={styles.Errtext}>{this.state.codenotextist}</Text></View>
+            <View style={styles.BtnWrap}>
+            <TouchableOpacity onPress={() => this.SubmitCode()} style={styles.submitbtn}>
+              <Text style={{color:'white'}}>SUBMIT</Text>
+            </TouchableOpacity>
+            </View>
           </View>
-          <View style={{marginBottom:20}}><Text style={styles.Errtext}>{this.state.codenotextist}</Text></View>
-          <View style={styles.BtnWrap}>
-          <TouchableOpacity onPress={() => this.SubmitCode()} style={styles.submitbtn}>
-            <Text style={{color:'white'}}>SUBMIT</Text>
-          </TouchableOpacity>
           </View>
-        </View>
-        </View>
-        {this.isloading()}
-        </View>
-			);
+          {this.isloading()}
+          </View>
+  			);
+      }else{
+        return(
+          <ImpactLeagueForm2 cities={this.state.city} departments={this.state.department} data={this.state.data} user={this.props.user} getUserData = {this.props.getUserData} />
+        )
+      }
 	  }
   }
 
