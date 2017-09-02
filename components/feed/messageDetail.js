@@ -21,7 +21,8 @@ import Modal from '../downloadsharemeal/CampaignModal';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import NavBar from '../navBarComponent';
 import LodingRunScreen from '../gpstracking/runlodingscreen'
-var { RNLocation: Location } = require('NativeModules');
+import Share, {ShareSheet, Button} from 'react-native-share';
+ import { takeSnapshot } from "react-native-view-shot";
 
 class FeedDetail extends Component {
     
@@ -30,74 +31,55 @@ class FeedDetail extends Component {
         super(props);
         this.state = {
          isDenied:false,
+          previewSource: '',
+          error: null,
+          res: null,
+          value: {
+            format: "png",
+            quality: 0.9,
+            result: "base64",
+            snapshotContentContainer: false,
+          },
         }
-        this.NavigateToRunScreen = this.NavigateToRunScreen.bind(this);
-    }
-    // Go_Back
-    popRoute() {
-         this.props.navigator.pop();
-    }
-
-    // Navigate to Run Screen
-    NavigateToRunScreen(){
-      var me = this;
-      var data = this.props.data;
-      Location.getAuthorizationStatus(function(authorization) {
-      if (authorization === "authorizedWhenInUse") {
-      me.props.navigator.push({
-         component:LodingRunScreen,
-         navigationBarHidden: true,
-         passProps: {data: data},
-           navigationOptions: {
-              gesturesEnabled: false,
-            },
-       })
-      }else{
-        if (authorization === "denied") {
-          me.setState({
-            isDenied:true,
-          })                 
-        }else{
-          Location.requestWhenInUseAuthorization();
-        }
-      }
-     })
     }
 
 
-
-     modelViewdeniedLocationRequest(){
-        return(
-          <Modal
-          onPress={()=>this.closemodel()}
-          style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
-             isOpen={this.state.isDenied}
-               >
-                  <View style={styles.modelWrap}>
-                    <View  style={styles.contentWrap}>
-                    <View style={styles.iconWrapmodel}>
-                      <Icon3 style={{color:"white",fontSize:30,}} name={'md-warning'}></Icon3>
-                    </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>DENIED LOCATION REQUEST</Text>
-                     <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>You denied the location request this app use your location to track you run please go > settings > Location > Always</Text>
-                   <View style={styles.modelBtnWrap}>
-                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.navigateToIOSsetting()}><Text style={styles.btntext}>SETTINGS</Text></TouchableOpacity>
-                  </View>
-                   </View>
-                   </View>
-                  </View>
-            </Modal>
-          )
-      }
-      closemodel(){
+    snapshot(captureScreenShot){
+      takeSnapshot(this.refs[captureScreenShot], this.state.value)
+      .then(res =>
+        this.state.value.result !== "file"
+        ? res
+        : new Promise((success, failure) =>
+        // just a test to ensure res can be used in Image.getSize
+        Image.getSize(
+          res,
+          (width, height) => (console.log(res,width,height), success(res)),
+          failure
+        )
+        )
+          
+      )
+      .then((res) => {
         this.setState({
-          isDenied:false,
+          error: null,
+          res,
+          previewSource: { uri:
+            this.state.value.result === "base64"
+            ? "data:image/"+this.state.value.format+";base64,"+res
+            : res }
         })
-      }
-    
-  
 
+        var shareOptions = {
+          // title: "ImpactRun",
+          // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+          url:"data:image/"+this.state.value.format+";base64,"+res,
+          // subject: "Download ImpactRun Now " //  for email
+        }
+        Share.open(shareOptions)
+      })
+      .catch(error => (console.warn(error), this.setState({ error, res: null, previewSource: null })));
+    }
+   
 
     // Render_Screen
     render() {
@@ -105,18 +87,20 @@ class FeedDetail extends Component {
         return (
               <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}> 
                   <View style={{height:deviceHeight,width:deviceWidth}}>
-                    <ScrollView>
+                    <ScrollView ref={'captureScreenShot'}>
                       <View style={styles.container}>
                      <Image source={{uri:data.message_image}} style={styles.image}>
                      </Image>
                       <View style={styles.textwraper}>
+                      <View style={{borderLeftWidth:7,borderColor:'#4a4a4a',paddingLeft:10,}}>
                         <Text style={styles.causeTitle}>{data.message_title}</Text>
+                      </View>
                         <Text  style={styles.Disctext} >{data.message_description}</Text>
                       </View>
                   </View>
                   </ScrollView>
-                  <TouchableOpacity style={styles.btnBeginRun} >
-                      <Text style={styles.Btntext}>TELL YOUR FRIENDS</Text>
+                  <TouchableOpacity onPress={()=> this.snapshot('captureScreenShot')}style={styles.btnBeginRun} >
+                      <Text style={styles.Btntext}>SHARE WITH FRIENDS</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -165,6 +149,7 @@ class FeedDetail extends Component {
     fontSize:20,
     fontWeight:'400',
     letterSpacing:1,
+    
     color:styleConfig.greyish_brown_two,
     fontFamily:styleConfig.FontFamily,
   },
@@ -172,7 +157,7 @@ class FeedDetail extends Component {
     fontSize:14,
     letterSpacing:0.5,
     marginBottom:100,
-    color:styleConfig.black_two,
+    color:'#4a4a4a',
     top:10,
     fontFamily:styleConfig.FontFamily,
   },

@@ -109,8 +109,9 @@ class Homescreen extends Component {
 
 
       snapshot(){
+        var selectedRow = this.rows[this.state.navigation.index-1];
          var ref = this.list;
-        takeSnapshot(ref, this.state.value)
+        takeSnapshot(selectedRow, this.state.value)
         .then(res =>
           this.state.value.result !== "file"
           ? res
@@ -665,7 +666,7 @@ class Homescreen extends Component {
         );
        }else{
         return(
-          <View style={styles.page} ref={(instance) => this.list = instance}>        
+          <View style={styles.page} ref={(instance) => this.rows.push(instance)}>        
             <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause)} >
             <View style={styles.album} >
               <Image source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5,}}>
@@ -683,6 +684,7 @@ class Homescreen extends Component {
     _renderPage = (props,data,route) => {
       return (
         <TabViewPage
+          ref={(instance) => this.list = instance}
           topcard={300}
           {...props}
           style={this._buildCoverFlowStyle(props)}
@@ -789,6 +791,7 @@ class Homescreen extends Component {
     },
 
     BtnWraperWrap:{
+      backgroundColor:'#e2e5e6',
       height:((deviceheight-120)/100)*15,
       width:deviceWidth,
       justifyContent: 'center',
@@ -801,6 +804,7 @@ class Homescreen extends Component {
     },
 
     container: {
+      backgroundColor:'#e2e5e6',
       padding:((deviceheight-120)/100)*5,
       paddingLeft:0,
       height:((deviceheight-120)/100)*85,

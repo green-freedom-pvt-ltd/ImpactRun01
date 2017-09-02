@@ -23,6 +23,8 @@ import LodingScreen from '../../components/LodingScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import YouTube from 'react-native-youtube';
 import styleConfig from '../styleConfig';
+import Share, {ShareSheet, Button} from 'react-native-share';
+import { takeSnapshot } from "react-native-view-shot";
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var DetailScreen = require('./messageDetail');
@@ -34,7 +36,18 @@ class Feed extends Component {
         this.state = {
           FeedData: ds.cloneWithRows([]),
           loaded: false,
+          previewSource: '',
+          error: null,
+          res: null,
+          value: {
+            format: "png",
+            quality: 0.9,
+            result: "base64",
+            snapshotContentContainer: false,
+          },
+           
         };
+        this.rows = [];
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
       }
@@ -95,6 +108,44 @@ class Feed extends Component {
       
       componentWillUnmount() {
       }
+
+      snapshot(rowID){
+        var selectedRow = this.rows[rowID];
+       console.log('selectedRow',selectedRow,rowID);
+        takeSnapshot(selectedRow, this.state.value)
+        .then(res =>
+          this.state.value.result !== "file"
+          ? res
+          : new Promise((success, failure) =>
+          // just a test to ensure res can be used in Image.getSize
+          Image.getSize(
+            res,
+            (width, height) => (console.log(res,width,height), success(res)),
+            failure
+          )
+          )
+            
+        )
+        .then((res) => {
+          this.setState({
+            error: null,
+            res,
+            previewSource: { uri:
+              this.state.value.result === "base64"
+              ? "data:image/"+this.state.value.format+";base64,"+res
+              : res }
+          })
+
+          var shareOptions = {
+            // title: "ImpactRun",
+            // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+            url:"data:image/"+this.state.value.format+";base64,"+res,
+            // subject: "Download ImpactRun Now " //  for email
+          }
+          Share.open(shareOptions)
+        })
+        .catch(error => (console.warn(error), this.setState({ error, res: null, previewSource: null })));
+      }
       
      
 
@@ -119,7 +170,7 @@ class Feed extends Component {
         .catch( error => console.log('Error fetching: ' + error) );
       }
 
-      renderVideo(rowData){
+      renderVideo(rowData,sectionID,rowID){
         if (rowData.message_video != "") {
           return(
             <View  style={styles.card}>
@@ -138,26 +189,35 @@ class Feed extends Component {
                 onError={e => this.setState({ error: e.error })}
                 onProgress={e => this.setState({ currentTime: e.currentTime, duration: e.duration })}
                 style={styles.thumb}/>
-                <Text style={styles.txt}>{rowData.message_center_id}</Text>
               </View>
+              <View style={{padding:10,}}>
+              <View style={{borderLeftWidth:7,borderColor:'#4a4a4a',paddingLeft:10,marginTop:10,marginBottom:10,}}>
               <Text style={styles.txtSec}>{rowData.message_brief}</Text>
+              </View>
               <View style={{flexDirection:'row'}}>
                 <Text style={styles.txtSec}>{rowData.message_date}</Text>
                 <Text style={styles.txtSec}>share</Text>
+              </View>
               </View>
             </View>
               )
           }else{
             return(
-               <TouchableOpacity onPress={()=> this.NavigateToDetail(rowData)} style={styles.card}>
+               <TouchableOpacity ref={(instance) => this.rows.push(instance)} onPress={()=> this.NavigateToDetail(rowData)} style={styles.card}>
               <View style={styles.thumb}>
                 <Image  style={styles.thumb} source={{uri:rowData.message_image}}></Image>
-                <Text style={styles.txt}>{rowData.message_center_id}</Text>
               </View>
-              <Text style={styles.txtSec}>{rowData.message_brief}</Text>
-              <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                <Text style={styles.txtSec}>{rowData.message_date}</Text>
-                <Text style={styles.txtSec}>share</Text>
+
+              <View style={{padding:10,}}>
+                <View style={{borderLeftWidth:7,borderColor:'#4a4a4a',paddingLeft:10,marginTop:10,marginBottom:10,}}>
+                <Text style={styles.txtSec}>{rowData.message_brief}</Text>
+                </View>
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                  <Text style={styles.txtSec}>{rowData.message_date}</Text>
+                  <TouchableOpacity onPress={()=>this.snapshot(rowID)}>
+                  <Text style={styles.txtSec}>share</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </TouchableOpacity>
               )
@@ -165,11 +225,11 @@ class Feed extends Component {
       }
       
 
-      renderRow(rowData){
+      renderRow(rowData,sectionID,rowID){
         var me = this;
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
-          {this.renderVideo(rowData)}
+          {this.renderVideo(rowData,sectionID,rowID)}
           </View>
         );
       }
@@ -189,6 +249,7 @@ class Feed extends Component {
           <View style={{height:deviceHeight,width:deviceWidth}}>
             <View style={{height:deviceHeight-65,width:deviceWidth}}>
                <ListView 
+                 ref={(instance) => this.list = instance}
                  navigator={this.props.navigator}
                 dataSource={this.state.FeedData}
                 renderRow={this.renderRow}
@@ -202,7 +263,7 @@ class Feed extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f4f4f4',
+    backgroundColor: '#e2e5e6',
     height:deviceHeight,
     width:deviceWidth,
   },
@@ -210,28 +271,19 @@ const styles = StyleSheet.create({
     borderRadius:4,
     width:deviceWidth-10,
     backgroundColor:'white',
-    padding:5,
-    marginBottom:5,
     marginTop:5,
-    shadowColor: '#000000',
-    shadowOpacity: 0.6,
-    shadowRadius: 3,
-    shadowOffset: {
-      height: 4,
-    },
+    marginBottom:5,
   },
   txt:{
     fontSize:15,
     fontFamily: 'Montserrat-Regular',
   },
   thumb:{
-    width:deviceWidth-20,
+    width:deviceWidth-10,
     height:deviceHeight/2-100,
   },
   txtSec:{
     color:'#4a4a4a',
-    paddingTop:10,
-    paddingBottom:10,
     fontSize:styleConfig.fontSizerlabel,
     fontWeight:'400',
     fontFamily: 'Montserrat-Regular',

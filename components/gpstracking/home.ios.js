@@ -45,66 +45,66 @@ var calories = 0;
 
 
 
-var Home = React.createClass({
-    mixins: [TimerMixin],
+class Home extends Component {
+    mixins: [TimerMixin]
    
- 
-
-  getInitialState: function() {
-
-    return {
-      startDate: null,
-      // endDate: null,
-      numberOfSteps: 0,
-      distance: 0,
-      floorsAscended: 0,
-      floorsDescended: 0,
-      currentPace: 0,
-      currentCadence: 0,
-      isRunning:true,
-      mainTimer:0,
-      speed:0,
-      prevLatLng: {},
-      distanceTravelled: 0,
-      prevDistance:0,
-      textState:'PAUSE',
-      Enbtn:'END RUN',
-      enabled: true,
-      isMoving: false,
-      distanceTravelledsec:0,
-      paceButtonIcon: 'md-pause',
-      navigateButtonIcon: 'md-locate',
-      MetsValue:0,
-      weight:null,
-      calorieBurned:0.0,
-      storedRunduration:0,
-      timeBetweenTwoPoint:0,
-      permissions:null,
-      gpsNotAccepatableStepvalue:0,
-      mapHeight: 280,
-      mapWidth: 300,
-      zoom: 18,
-      open:false,
-      sourceCount:true,
-      GpsAccuracyCheck:true,
-      openGpsModel:false,
-      annotations: [],
-      HussainBoltCount:0,
-      StillDecteting:true,
-      location:{},
-      pressAction: new Animated.Value(0,{ useNativeDriver: true }),
-      center: {
-        latitude: 40.72052634,
-        longitude: -73.97686958312988
-      },
-      onCarDetectedEndRunModel:false,
-      weakGPSPoints: 0,
-    };
-  },
-  
+   constructor(props) {
+        super(props);
+        
+        this.state = {
+          startDate: null,
+        // endDate: null,
+        numberOfSteps: 0,
+        distance: 0,
+        floorsAscended: 0,
+        floorsDescended: 0,
+        currentPace: 0,
+        currentCadence: 0,
+        isRunning:true,
+        mainTimer:0,
+        speed:0,
+        prevLatLng: {},
+        distanceTravelled: 0,
+        prevDistance:0,
+        textState:'PAUSE',
+        Enbtn:'END RUN',
+        enabled: true,
+        isMoving: false,
+        distanceTravelledsec:0,
+        paceButtonIcon: 'md-pause',
+        navigateButtonIcon: 'md-locate',
+        MetsValue:0,
+        weight:null,
+        calorieBurned:0.0,
+        storedRunduration:0,
+        timeBetweenTwoPoint:0,
+        permissions:null,
+        gpsNotAccepatableStepvalue:0,
+        mapHeight: 280,
+        mapWidth: 300,
+        zoom: 18,
+        open:false,
+        sourceCount:true,
+        GpsAccuracyCheck:true,
+        openGpsModel:false,
+        annotations: [],
+        HussainBoltCount:0,
+        StillDecteting:true,
+        location:{},
+        pressAction: new Animated.Value(0,{ useNativeDriver: true }),
+        center: {
+          latitude: 40.72052634,
+          longitude: -73.97686958312988
+        },
+        onCarDetectedEndRunModel:false,
+        weakGPSPoints: 0,
+      };
+    }
 
   
-  componentDidMount:function(){  
+
+  
+  componentDidMount(){  
     Location.startMonitoringSignificantLocationChanges();
     this.getWeight();
     this.saveDataperiodcally(); 
@@ -122,11 +122,11 @@ var Home = React.createClass({
         myrundate:d,
       });
     return;  
-  },
+  }
  
 
 
-  componentWillMount: function() { 
+  componentWillMount() { 
     // MusicFiles.get(
     //   (success) => {
     //      console.log('success',success);
@@ -162,12 +162,12 @@ var Home = React.createClass({
 
     Location.setAllowsBackgroundLocationUpdates(true);
     this.getLocationUpdate();
-  },
+  }
 
 
 
    
-   StillDetictiion:function(Location,me){ 
+   StillDetictiion(Location,me){ 
     if (Location.coords.speed < 0 ) {  
       var priveSteps = this.state.numberOfSteps+10;
       var distance = this.state.distanceTravelled+0.01;
@@ -195,9 +195,9 @@ var Home = React.createClass({
        }else{
         return;
        }   
-    },
+    }
 
-    getLocationUpdate:function(){
+    getLocationUpdate(){
       var me = this;
         Location.startUpdatingLocation();
         var subscription = DeviceEventEmitter.addListener(
@@ -206,20 +206,20 @@ var Home = React.createClass({
           this.addMarker(location);
         }
       );
-    },
+    }
 
 
 
 
-    clearLocationUpdate:function(){
+    clearLocationUpdate(){
       Location.stopUpdatingLocation();
       clearInterval(this.IntervelSaveRun);
-    },
+    }
 
 
 
 
-    modelViewDriving:function(){
+    modelViewDriving(){
         return(
           <Modal
           onPress={()=>this.closemodel()}
@@ -243,9 +243,9 @@ var Home = React.createClass({
                   </View>
             </Modal>
           )
-    },
+    }
 
-     modelViewDrivingEndRun:function(){
+     modelViewDrivingEndRun(){
         return(
           <Modal
           onPress={()=>this.closemodel()}
@@ -268,9 +268,9 @@ var Home = React.createClass({
                   </View>
             </Modal>
           )
-    },
+    }
 
-    modelViewGpsWeek:function(){
+    modelViewGpsWeek(){
         return(
           <Modal
 
@@ -299,59 +299,59 @@ var Home = React.createClass({
                   </View>
             </Modal>
           )
-    },
+    }
     
-    closemodel:function(){
+    closemodel(){
       this.setState({
         open:false,
         openGpsModel:false,
       })
-    },
+    }
 
-    ResumeRunFromPopup:function(){
+    ResumeRunFromPopup(){
       this.setState({
         open:false,
       })
       this.startPause();
-    },
+    }
 
 
 
 
 
 
-  _onNotification:function(notification) {
+  _onNotification(notification) {
       PushNotification.localNotification({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
       message: "Seems you are in a vehicle. Pausing workout", // (required)
       playSound: true, // (optional) default: true
     });
-  },
+  }
 
 
- _ongpsWeakNotification:function(notification) {
+ _ongpsWeakNotification(notification) {
      PushNotification.localNotification({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
       message: "Seems your GPS signals are weak", // (required)
       playSound: true, // (optional) default: true
     });
-  },
+  }
 
 
 
 
-  componentWillUnmount:function() {
+  componentWillUnmount() {
 
     this.clearLocationUpdate();
-  },
+  }
 
 
 
 
 
-  _handleStartStop:function(){
+  _handleStartStop(){
     let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
     if(!this.state.isRunning){
       clearInterval(this.interval);
@@ -374,13 +374,13 @@ var Home = React.createClass({
         },30);
       }; 
     }
-  },
+  }
   
 
 
 
 
-  startPause:function(){
+  startPause(){
     var me = this;
     console.log("Enabled", this.state.enabled);
     if (this.state.enabled) {
@@ -402,22 +402,21 @@ var Home = React.createClass({
     } 
     this.updatePaceButtonStyle();
     this._handleStartStop(); 
-  },
+  }
 
 
 
 
-  onClickEnable: function(location) {
-    var priv = parseFloat(this.state.distanceTravelledsec).toFixed(1);
-    if (parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1)>= 0.0) {
+  onClickEnable(location) {
+    if (Number(parseFloat(this.state.distanceTravelled).toFixed(1))>= 0.1) {
       this.EndRunConfimationForlongRun();  
      }else{
       this.EndRunConfimation();
       PushNotification.cancelAllLocalNotifications();
     }        
-  },
+  }
 
-  ConfirmRunEnd:function(){
+  ConfirmRunEnd(){
      var d = moment().format('YYYY-MM-DD HH:mm:ss');
       this.setState({
         endDate:d,
@@ -432,12 +431,12 @@ var Home = React.createClass({
       enabled: !this.state.enabled,     
       });
       this.updatePaceButtonStyle();
-  },
+  }
 
 
 
   // Add Marker if check clear
-  addMarker :function(location) {
+  addMarker (location) {
     if (this.state.enabled) {
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
@@ -610,7 +609,7 @@ var Home = React.createClass({
     }
   }
       
-  },
+  }
 
 
 
@@ -618,7 +617,7 @@ var Home = React.createClass({
 
 
 
-  getMetsValue:function(speed){
+  getMetsValue(speed){
      // deltaSpeed is in m/s
      if (speed != NaN) {
      var speed = speed*1000;
@@ -724,7 +723,7 @@ var Home = React.createClass({
             // For speeds greater than 15 mph (23 kmph) we assume that the person is driving so we don't add calories
         }
     }
-  },
+  }
 
 
 
@@ -734,7 +733,7 @@ var Home = React.createClass({
 
 
  
-  getWeight:function(){
+  getWeight(){
     AsyncStorage.getItem('USERDATA',(err,result)=>{
       if (result != null) {
       var userData = JSON.parse(result);
@@ -751,7 +750,7 @@ var Home = React.createClass({
       return;
      }
     })
-  } ,
+  } 
 
 
 
@@ -762,7 +761,7 @@ var Home = React.createClass({
 
 
       
-  caloriCounterStart:function(){
+  caloriCounterStart(){
         // Start activity detection
     var totalCaloriesBurned = this.state.calorieBurned;
     var timeinHr = ((this.state.mainTimer + this.state.storedRunduration)/1000)/3600;
@@ -775,7 +774,7 @@ var Home = React.createClass({
     this.setState({
       calorieBurned:totalCaloriesBurned,
     })     
-  },
+  }
 
 
 
@@ -783,7 +782,7 @@ var Home = React.createClass({
 
 
 
-  previousLocationTime:function(){
+  previousLocationTime(){
     var oldtime = new Date(this.state.prevTimeStamp).getTime();
     var newTime = new Date(this.state.newTimeStamp).getTime();
     var timeBetweenTwoPoint = newTime - oldtime;
@@ -797,7 +796,7 @@ var Home = React.createClass({
     }else{
       console.log("speednana");
     }
-  },
+  }
 
 
 
@@ -806,17 +805,17 @@ var Home = React.createClass({
 
 
 
- _startStepCounterUpdates:function() {
+ _startStepCounterUpdates() {
     const today = new Date();
     Pedometer.startPedometerUpdatesFromDate(today.getTime(), (motionData) => {
       this.setState(motionData);
     });
-  },
+  }
 
 
 
 
-  saveDataperiodcally:function(){    
+  saveDataperiodcally(){    
     this.IntervelSaveRun = setInterval(()=>{
       if (distancePriv != 0) { 
 
@@ -865,7 +864,7 @@ var Home = React.createClass({
     
   },30000)
 
-  },
+  }
 
 
 
@@ -874,27 +873,27 @@ var Home = React.createClass({
 
   
    // function for calculating new and previous latlag
-   calcDistance:function(newLatLng) {
+   calcDistance(newLatLng) {
     if (this.state.prevLatLng != null) {
       const { prevLatLng } = this.state
       return (haversine(prevLatLng, newLatLng) || 0)
     } else{
       return 0;
     }
-   },
+   }
 
 
-    navigateTOHomeScreen:function(){
+    navigateTOHomeScreen(){
       this.props.navigator.push({
       title: 'Gps',
       id:'tab',
       navigator: this.props.navigator,
      })
-    },
+    }
 
 
 
-     navigateTOShareScreen:function(){
+     navigateTOShareScreen(){
       var caloridata = (this.state.result != null)?JSON.parse(this.state.result).calories_burnt:0;
       var data = this.props.data;
       var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
@@ -920,12 +919,13 @@ var Home = React.createClass({
           noOfsteps:this.state.numberOfSteps,
           },
        })
-     },
+      alert(JSON.stringify(this.state.newlatlong));
+     }
 
 
 
     
-    Confimation:function() {
+    Confimation() {
       VibrationIOS.vibrate();
       AlertIOS.alert(
           'Go Back',
@@ -936,10 +936,10 @@ var Home = React.createClass({
         {text: 'CANCLE',},
        ],
       ); 
-    },
+    }
 
 
-    EndRunConfimation:function() {
+    EndRunConfimation() {
      VibrationIOS.vibrate();
       AlertIOS.alert(
          'Too short',
@@ -949,9 +949,9 @@ var Home = React.createClass({
           {text: 'End', onPress: () => this.popRoute()},
         ],
       ); 
-    },
+    }
 
-    EndRunConfimationForlongRun:function() {
+    EndRunConfimationForlongRun() {
      VibrationIOS.vibrate();
       AlertIOS.alert(
          ' End workout ',
@@ -961,11 +961,11 @@ var Home = React.createClass({
           {text: 'End', onPress: () => this.ConfirmRunEnd()},
         ],
       ); 
-    },
+    }
 
 
 
-    popRoute:function() {
+    popRoute() {
       if (this.state.enabled) { 
       AsyncStorage.removeItem('runDataAppKill');
       this.clearLocationUpdate();
@@ -979,10 +979,10 @@ var Home = React.createClass({
       }else{
         this.navigateTOHomeScreen();
       }
-    },
+    }
 
 
-    updatePaceButtonStyle: function() {
+    updatePaceButtonStyle() {
       var style = (this.state.enabled) ? commonStyles.redButton : commonStyles.greenButton;
       this.setState({
         paceButtonStyle: style,
@@ -990,10 +990,10 @@ var Home = React.createClass({
         textState:(this.state.enabled) ? 'PAUSE':'RESUME', 
         EndRun:(this.state.enabled) ? 'END RUN':'END RUN', 
       });
-    },
+    }
  
 
-    caloriesTextView:function(data,priv){
+    caloriesTextView(data,priv){
       if (this.state.result) {
         return(
             <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned + JSON.parse(this.state.result).calories_burnt} />
@@ -1003,10 +1003,10 @@ var Home = React.createClass({
               <CaloriCounter weight = {this.state.weight} calories = {this.state.calorieBurned } />
           )
       }
-    },
+    }
 
 
-   impactTextView:function(data,priv){
+   impactTextView(data,priv){
     if (this.state.result) {
       return(
           <Text style={styles.Impact}>{parseFloat(parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate).toFixed(0)}</Text>
@@ -1016,9 +1016,9 @@ var Home = React.createClass({
            <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled).toFixed(1)* data.conversion_rate}</Text>
         )
     }
-   },
+   }
 
-   KmTextView:function(priv){
+   KmTextView(priv){
     if (this.state.result) {
       return(
           <Text style={styles.distance}>{parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ Number(priv)).toFixed(1)}</Text>
@@ -1028,9 +1028,9 @@ var Home = React.createClass({
            <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled).toFixed(1)}</Text>
         )
     }
-   },
+   }
 
-   TimeTextView:function(intime){
+   TimeTextView(intime){
     if (this.state.result) {
       return(
          <Text style={styles.distance}>{intime}</Text>
@@ -1040,13 +1040,13 @@ var Home = React.createClass({
           <Text style={styles.distance}>{TimeFormatter(this.state.mainTimer)}</Text>
         )
     }
-   },
+   }
    
-    render: function(location) {
+    render(location) {
 
-      var intime = TimeFormatter( this.state.mainTimer + this.state.storedRunduration );
+      // var intime = TimeFormatter( this.state.mainTimer + this.state.storedRunduration );
       var data = this.props.data;
-      var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
+      // var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
       return (
         <View style={commonStyles.container}>
            <View ref="workspace" style={styles.workspace}>           
@@ -1060,22 +1060,22 @@ var Home = React.createClass({
                 
             <Text style={{fontSize:20,marginTop:30,marginBottom:20,color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,backgroundColor:'transparent',}}>IMPACT</Text> 
                <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
-                {this.impactTextView(data,priv)}
+                
                 <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>RUPEES</Text>
               </View>
               </View>
               <View style={{flex:1,flexDirection:'row',backgroundColor:'transparent'}}>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,}} name={'ios-walk-outline'}></Icon>
-                   {this.KmTextView(priv)}
+                  
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
                 </View>
                  <View style={styles.timeDistanceWrap2}>
-                 {this.caloriesTextView()}
+              
                 </View>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
-                   {this.TimeTextView(intime)}
+                 
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>TIME</Text>
 
                 </View>
@@ -1104,10 +1104,10 @@ var Home = React.createClass({
         </View>
       );
 
-    },
+    }
 
     
-});
+};
 
 
 
@@ -1296,7 +1296,7 @@ var styles = StyleSheet.create({
 
 
 
-module.exports = Home;
+export default Home;
 
 
 

@@ -46,20 +46,19 @@ import{
       super(props);
 
            
-      var cause = this.props.data;
-      var distance = this.props.distance;
-      var impact =this.props.impact;
-      var time = this.props.time;
-      const shareLinkContent = {
-          contentType: 'link',
-          contentUrl: cause.cause_image,
-          contentDescription: "I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
-          contentTitle:cause.cause_title,
-          imageUrl:cause.cause_image,
-      };
+      // var cause = this.props.data;
+      // var distance = this.props.distance;
+      // var impact =this.props.impact;
+      // var time = this.props.time;
+      // const shareLinkContent = {
+      //     contentType: 'link',
+      //     contentUrl: cause.cause_image,
+      //     contentDescription: "I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+      //     contentTitle:cause.cause_title,
+      //     imageUrl:cause.cause_image,
+      // };
 
       this.state = {
-        shareLinkContent: shareLinkContent,
         loaded:false,
         visible: false,
         user:null,
@@ -87,6 +86,7 @@ import{
       this.isloading = this.isloading.bind(this);
       this.getUserData = this.getUserData.bind(this);
     }
+
 
     snapshot(captureScreenShot){
 
