@@ -12,4 +12,6 @@
     ImpactLeagueTeamLeaderBoardApi:'http://dev.impactrun.com/api/teamboard/',
     ImpactLeagueLeaderboardApi:'http://dev.impactrun.com/api/teamleaderboard/',
     UserFeedBack:'http://dev.impactrun.com/api/userFeedback/',
+    ImpactLeagueTeamLeaderBoardV2Api:'http://dev.impactrun.com/api/teamboardv2/',
+    ImpactLeagueLeaderboardV2Api:'http://dev.impactrun.com/api/teamleaderboardv2/',
   }

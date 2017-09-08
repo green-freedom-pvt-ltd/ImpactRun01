@@ -343,12 +343,7 @@ class Homescreen extends Component {
                 });
               this.setState({
                 loadingimage:false,
-                navigation: Object.assign({}, this.state.navigation, {
-                index: 0,
-                routes: Object.keys(this.state.album).map(key => ({ key })),
-
-              })
-
+                navigation: Object.assign({}, this.state.navigation, {index: 0, routes: Object.keys(this.state.album).map(key => ({ key })), })
               })
           });
           } catch (err) {

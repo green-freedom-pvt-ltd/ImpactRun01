@@ -56,7 +56,7 @@ export default class ModalDropdown extends Component {
   static defaultProps = {
     disabled: false,
     defaultIndex: 0,
-    defaultValue: 'Most Kms Last 7 days',
+    defaultValue: '',
     options: null,
     animated: true,
     showsVerticalScrollIndicator: true
