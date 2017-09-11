@@ -9,6 +9,7 @@ import{
   } from 'react-native';
   import LevelBarComponent from './levelBarComponent';
   import styleConfig from '../styleConfig';
+  import Icon from 'react-native-vector-icons/FontAwesome';
   var deviceWidth = Dimensions.get('window').width;
   var deviceHeight = Dimensions.get('window').height;
 
@@ -63,7 +64,7 @@ import{
     		<View style={styles.Maincontainer}>
           <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.props.userName +" "+this.props.lastname}</Text>
           <View style={[styles.wrapLevelKm,{width:this.props.widthBar}]}>
-           <Text style={styles.kmtext}>{this.props.prevKm}km</Text><Text  style={styles.kmtext2}>{this.props.levelKm}km</Text>
+           <Text style={styles.kmtext}><Icon name="inr"></Icon> {this.props.prevKm}</Text><Text  style={styles.kmtext2}><Icon name="inr"></Icon> {this.props.levelKm}</Text>
          </View>
     		 <LevelBarComponent unfilledColor={'grey'} height={6} width={this.props.widthBar} progress={this.props.progressVal}  />
          <Text style = {[styles.leveltext,{width:this.props.widthBar}]}>Level {this.props.level}</Text>
