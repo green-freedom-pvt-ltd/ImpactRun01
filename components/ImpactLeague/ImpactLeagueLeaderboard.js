@@ -23,6 +23,7 @@ import LodingScreen from '../LodingScreen';
 import commonStyles from '../styles';
 import NavBar from '../navBarComponent';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ImpactLeagueLeaderBoard extends Component {
@@ -81,7 +82,7 @@ class ImpactLeagueLeaderBoard extends Component {
 
       FetchLeaderBoard() {     
            
-        var url = apis.ImpactLeagueLeaderboardApi;
+        var url = apis.ImpactLeagueLeaderboardV2Api;
         var token = this.props.user.auth_token;
         if (this.props.user.team_code == this.props.Team_id) {
           fetch(url,{
@@ -135,9 +136,9 @@ class ImpactLeagueLeaderBoard extends Component {
       })
       }
       socialthumb(rowData){
-        if (rowData.user.social_thumb) {
+        if (rowData.social_thumb) {
           return(
-            <Image style={styles.thumb} source={{uri:rowData.user.social_thumb}}></Image>
+            <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             )
         }else{
           return(
@@ -154,7 +155,7 @@ class ImpactLeagueLeaderBoard extends Component {
 
 
       renderRow(rowData,index,rowID){
-        var totalkms = (rowData.league_total_distance.total_distance == null)?'0':rowData.league_total_distance.total_distance;
+        var totalkms = (rowData.amount == null)?'0':rowData.amount;
         rowID++
         var me = this;
         let style = [
@@ -167,17 +168,18 @@ class ImpactLeagueLeaderBoard extends Component {
             'width':25,
           }
         ];
-        var textColor=(this.props.user.user_id === rowData.user.user_id)?'#fff':"#4a4a4a";
-        var backgroundColor = (this.props.user.user_id === rowData.user.user_id)?'#ffcd4d':'#fff';
+        var textColor=(this.props.user.user_id === rowData.user_id)?'#fff':"#4a4a4a";
+        var backgroundColor = (this.props.user.user_id === rowData.user_id)?'#ffcd4d':'#fff';
         return (
           <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <View style={style}>
-                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:textColor,}}>{rowID}</Text>
+                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:textColor,}}>{rowID} </Text> 
               </View> 
               <View>{this.socialthumb(rowData)}</View>       
-              <Text style={[styles.txt,{color:textColor}]}>{rowData.user.first_name} {rowData.user.last_name}</Text>
+              <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
               <View style={{justifyContent: 'center',alignItems: 'center',}}>
-                <Text style={[styles.txtSec,{color:textColor}]}>{parseFloat(totalkms).toFixed(0)} Km</Text>
+              <Text style={[styles.txtSec,{color:textColor}]}>
+              <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name="inr"></Icon2> {parseFloat(totalkms).toFixed(0)} </Text>
               </View>
           </View>
         );
@@ -205,7 +207,7 @@ class ImpactLeagueLeaderBoard extends Component {
         console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,}}>
+            <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,paddingBottom:53}}>
                <ListView 
                 refreshControl={
                 <RefreshControl

@@ -19,15 +19,27 @@ import{
 import apis from '../apis';
 import commonStyles from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 import LodingScreen from '../LodingScreen';
 import TimerMixin from 'react-timer-mixin';
 import styleConfig from '../styleConfig'
 import ImpactLeagueCode from './ImpactLeagueCode';
 import NavBar from '../navBarComponent';
 import LoginBtns from '../login/LoginBtns';
+import AnimateNumber from 'react-native-animate-number';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import impactleagueleaderboard from '../ImpactLeague/ImpactLeagueLeaderboard';
+import Swiper from 'react-native-swiper';
+
+var iphone5 = 568;
+var iphone5s = 568;
+var iphone6 = 667;
+var iphone6s = 667;
+var iphone7 = 667;
+var iphone6Plus = 736;
+var iphone6SPlus = 736;
+var iphone7Plus = 736;
 class ImpactLeague extends Component {
 
       constructor(props) {
@@ -59,7 +71,6 @@ class ImpactLeague extends Component {
       }
 
       componentWillMount() {
-
       }
 
 
@@ -74,8 +85,11 @@ class ImpactLeague extends Component {
             if (result != null || undefined) {
               this.setState({
                 LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(boardData.results),
-                BannerData:boardData.results[0].impactleague_banner,
-                leaguename:boardData.results[0].impactleague,
+                BannerData:boardData.impactleague_banner,
+                leaguename:boardData.impactleague_name,
+                total_amount:boardData.total_amount,
+                total_members: boardData.total_members,
+                total_runs: boardData.total_runs,
                 loaded: true,
               })
             }else{
@@ -108,7 +122,7 @@ class ImpactLeague extends Component {
     
       fetchLeaderBoardData() {      
         var token = this.state.user.auth_token;
-        var url = apis.ImpactLeagueTeamLeaderBoardApi;
+        var url = apis.ImpactLeagueTeamLeaderBoardV2Api;
         fetch(url,{
           method: "GET",
           headers: {  
@@ -122,7 +136,10 @@ class ImpactLeague extends Component {
             LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
             refreshing:false,
-            BannerData:jsonData.results[0].impactleague_banner,
+            BannerData:jsonData.impactleague_banner,
+            total_amount:jsonData.total_amount,
+            total_members:jsonData.total_members,
+            total_runs:jsonData.total_runs,
           });
            AsyncStorage.removeItem('teamleaderBoardData',(err) => {
          
@@ -145,8 +162,8 @@ class ImpactLeague extends Component {
         this.props.navigator.push({
           title: rowData.team_name,
           component:impactleagueleaderboard,
-          showTabBar: false,
-          passProps:{user:this.state.user, Team_id:rowData.id,team_name:rowData.team_name}
+          showTabBar: true,
+          passProps:{user:this.state.user, Team_id:rowData.team_id,team_name:rowData.team_name}
         })
       }
 
@@ -169,15 +186,16 @@ class ImpactLeague extends Component {
 
         rowID++
         var me = this;
-        var textColor=(me.state.user.team_code === rowData.id)?'#fff':"#4a4a4a";
-        var backgroundColor =(me.state.user.team_code === rowData.id)?'#ffcd4d':'#fff';
+        var textColor=(me.state.user.team_code === rowData.team_id)?'#fff':"#4a4a4a";
+        var backgroundColor =(me.state.user.team_code === rowData.team_id)?'#ffcd4d':'#fff';
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
             <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:styleConfig.fontSizerleaderBoardContent+2,color:textColor,}}>{rowID}</Text>
               <Text numberOfLines={1} style={[styles.txt,{color:textColor,flex:1}]}>{rowData.team_name}</Text>
               <View style={{justifyContent: 'center',alignItems: 'center',}}>
-               <Text style={[styles.txtSec,{color:textColor}]}>{parseFloat(rowData.total_distance.total_distance).toFixed(0)} Km</Text> 
+          
+               <Text style={[styles.txtSec,{color:textColor}]}> <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name="inr"></Icon2> {parseFloat(rowData.amount).toFixed(0)} </Text> 
               </View>             
             </TouchableOpacity>
           </View>
@@ -209,7 +227,8 @@ class ImpactLeague extends Component {
             </TouchableOpacity>
           )
         }
-      
+
+
       render(rowData,jsonData) {
         if (this.state.isMounted) {
         console.log('user',this.state.user);
@@ -219,11 +238,49 @@ class ImpactLeague extends Component {
           return this.renderLoadingView();
         }
 
+
         return (
+        <View style={{height:deviceHeight-114,width:deviceWidth}}>
+          <View style={{height:((deviceHeight)/2)-100,width:deviceWidth}}>
+              <Swiper style={styles.wrapper} height={((deviceHeight)/2)-100} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
+                <View>
+              <Image source={{uri:this.state.BannerData}} style={{height:((deviceHeight)/2)-100,width:deviceWidth,}}>
+              </Image>
+                </View>
+                <View style={styles.slide3}>
+                 <Image source={require('../../images/impactleaguebanner.png')} style={styles.shadow}>         
+                 
+                  <View style={{alignItems:'center', justifyContent:'center',     paddingTop: 20}}>
+                      <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
+                      <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name="inr"></Icon2>
+                      {this.state.total_amount}
+                      </Text>
+                  </View>
+                   <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
+                      <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
+                      <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
+                      {this.state.total_runs}
+                      </Text>
+                      <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walk/Runs</Text>
+                      </View>
+
+                      <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
+                        <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
+                          {this.state.total_members}
+                        </Text>
+                        <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Members </Text>
+                      </View>
+                    </View>
+
+                </Image>
+                
+                </View>
+              </Swiper>
+             
+          </View>
           <View>
-            <View>
-             <Image source={{uri:this.state.BannerData}} style={styles.bannerimage}/>
-               {this.swwipeDowntoRefress()}
+           {this.swwipeDowntoRefress()}
+           </View>
               <ListView 
                refreshControl={
                 <RefreshControl
@@ -235,7 +292,7 @@ class ImpactLeague extends Component {
                 style={styles.container}>
                 <View style={{width:deviceWidth,height:20,backgroundColor:'red'}}></View>
               </ListView>
-            </View>
+
           </View>
         );
         }else{
@@ -263,10 +320,59 @@ class ImpactLeague extends Component {
 }
 
 const styles = StyleSheet.create({
+ wrapper: {
+  },
+  slide1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#9DD6EB',
+    height:((deviceHeight)/2)-100,
+    width:deviceWidth,
+
+  },
+  slide3: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 30,
+    fontFamily: 'Montserrat-Regular',
+    flex: 1,
+    fontWeight: 'bold',
+  },
   container: {
     backgroundColor:'white',
-    height:deviceHeight-(deviceHeight/2-100)-75,
+    height:deviceHeight-((deviceHeight/2)-225),
   },
+    shadow: {
+        height:((deviceHeight)/2)-100,
+        flex: 1,
+        width: deviceWidth,
+        backgroundColor: 'transparent',
+        justifyContent: 'center',
+    },
+
+    page:{
+      marginLeft:50,
+      flex:-1,
+      width:deviceWidth-100,
+      height:200,
+      backgroundColor:'white',
+      paddingLeft:10,
+      paddingRight:10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#000000',
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      shadowOffset: {
+        height: 4,
+      },
+      borderRadius:5,
+    },
+
   cardLeaderBoard:{
     alignItems: 'center',
     flexDirection:'row',

@@ -47,7 +47,7 @@ var iphone7Plus = 736;
         this.state = {
           RouteImpactleague:'',
           LeaderBoard: ds.cloneWithRows([]),
-          value:'Most Kms Last 7 days',
+          value:'Most Impact Last 7 days',
           fetched:false,
           responce:null,
           userCount: 0,
@@ -154,7 +154,8 @@ var iphone7Plus = 736;
             <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
             </View >
             <View style={styles.flexbox3}>
-            <Text style={[styles.txtSec,{color:textColor}]}>{parseFloat(rowData.distance).toFixed(0)} Km</Text>
+            <Text style={[styles.txtSec,{color:textColor}]}>
+            <Icon style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name="inr"></Icon> {parseFloat(rowData.amount).toFixed(0)}</Text>
             </View>
           </View>
         );
@@ -213,16 +214,16 @@ var iphone7Plus = 736;
         var token = this.state.user.auth_token;
         console.log("token",token);
         var stateValue = '';
-        if (this.state.value == 'Most Kms Last 7 days'){
+        if (this.state.value == 'Most Impact Last 7 days'){
           stateValue = 'last_7';
         }
-        else if (this.state.value == 'Most Kms Last Month'){
+        else if (this.state.value == 'Most Impact Last Month'){
           stateValue = 'last_30'; 
         }
         else if(this.state.value == 'All Time'){
           stateValue = 'all_time';  
         }
-        var url = apis.leaderBoardapi +'?interval=' + stateValue;
+        var url = apis.leaderBoardapi +'?interval=' + stateValue + '&orderby=amount';
         console.log('fetchLeaderBoardvalue',url);
         fetch(url,{
           method: "GET",
@@ -342,7 +343,7 @@ var iphone7Plus = 736;
         return (
           <View>            
             <View style= {styles.textlast7daysWrap}>
-              <ModalDropDown textStyle={styles.last7dayText} options={['Most Kms Last 7 days', 'Most Kms Last Month', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
+              <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Most Impact Last 7 days'} options={['Most Impact Last 7 days', 'Most Impact Last Month', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
               </ModalDropDown>
             </View>
              <View>{this.renderLeaderboadScreen(dataleaderboad)}</View>
@@ -359,7 +360,7 @@ var styles = StyleSheet.create({
     top:0,
   },
   textlast7daysWrap:{
-    height:30,
+    height:40,
     marginBottom:8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -408,7 +409,7 @@ var styles = StyleSheet.create({
   cardLeaderBoard:{
     alignItems: 'center',
     flexDirection:'row',
-    padding:10,
+    padding:5,
     width:deviceWidth,
     
     borderColor:'#CCC',

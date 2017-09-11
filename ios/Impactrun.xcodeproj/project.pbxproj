@@ -1387,7 +1387,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "-Bundle-ID-com.impactrun.appImpactrun";
+				PRODUCT_BUNDLE_IDENTIFIER = com.impactrun.appImpactrun;
 				PRODUCT_NAME = Impactrun;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1422,7 +1422,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "-Bundle-ID-com.impactrun.appImpactrun";
+				PRODUCT_BUNDLE_IDENTIFIER = com.impactrun.appImpactrun;
 				PRODUCT_NAME = Impactrun;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

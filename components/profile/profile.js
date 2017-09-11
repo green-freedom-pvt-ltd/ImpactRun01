@@ -32,6 +32,7 @@ var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 const dataP = [];
 
+//Index.js is used in profile this is no longer used.
 
 
 class Profile extends Component {
