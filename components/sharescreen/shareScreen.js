@@ -31,6 +31,9 @@ import{
   import LoginBtns from '../login/LoginBtns';
   import { takeSnapshot } from "react-native-view-shot";
   import Share, {ShareSheet, Button} from 'react-native-share';
+  import ImpactLeague from '../ImpactLeague/ImpactLeagueHome';
+  import Profile from '../profile/profile.index';
+  import Tab from '../homescreen/tab';
   const FBSDK = require('react-native-fbsdk');
    var moment = require('moment');
 
@@ -294,7 +297,7 @@ import{
         user_id:user_id,
         start_time: date,
         end_time: endtime,
-        distance: distance,
+        distance: parseFloat(distance).toFixed(1),
         peak_speed: 1,
         avg_speed:speed,
         run_amount:impact,
@@ -481,7 +484,7 @@ import{
                start_time:date,
                end_time: endtime,
                cause_id:cause.pk,
-               distance: distance,
+               distance: Number(distance),
                peak_speed: 1,
                avg_speed:speed,
                run_amount:impact,
@@ -509,7 +512,7 @@ import{
                cause_run_title:cause.cause_title,
                start_time:date,
                end_time: endtime,
-               distance: distance,
+               distance:  Number(distance),
                cause_id:cause.pk,
                peak_speed: 1,
                avg_speed:speed,
@@ -540,39 +543,52 @@ import{
     }
     
     getILdata(){
-
       AsyncStorage.getItem('teamleaderBoardData', (err, result) => {
         if (result != null || undefined) {
         var boardData = JSON.parse(result);
         if (this.state.user) {
           this.setState({
             impactleague_team_id:this.state.user.team_code,
+
           })
         }
         if (boardData.impactleague_is_active) {   
           this.setState({
-            navigatetopage:'impactleaguehome'
+            title:'ImpactLeague',
+            navigatetopage:ImpactLeague,
           }) 
         }else{
           this.setState({
-            navigatetopage:'tab'
+            title:'Profile',
+            navigatetopage:Profile,
           })
         }
         }else{
           this.setState({
-            navigatetopage:'tab',
+            title:'ImpactRun',
+            navigatetopage:Tab,
             impactleague_team_id:'',
           })
         }       
       }); 
     }
 
-    navigateTOhome(){
+    navigatetotab(){
       this.props.navigator.push({
-      title: 'Gps',
-      id:this.state.navigatetopage,
-      passProps:(this.state.navigatetopage === 'impactleaguehome')?{data:'fromshare'}:{profileTab:'profile'},
-      navigator: this.props.navigator,
+        navigationBarHidden:true,
+        title:'ImpactRun',
+        showTabBar: true,
+        component:Tab,
+      })
+    }
+
+    navigateTOhome(){
+      this.props.navigator.replace({
+      navigationBarHidden:false,
+      title:this.state.title,
+      showTabBar: false,
+      component:Tab,
+      passProps:{profileTab:'profile'},
       })
      }
      

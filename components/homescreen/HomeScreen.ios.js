@@ -21,6 +21,7 @@ import ReactNative,{
   PushNotificationIOS,
   DeviceEventEmitter,
   Linking,
+  ImageBackground,
   TouchableWithoutFeedback
 } from 'react-native';
  import {Navigator} from 'react-native-deprecated-custom-components';
@@ -72,6 +73,7 @@ class Homescreen extends Component {
           previewSource: '',
           error: null,
           res: null,
+          renderComponent:true,
           value: {
             format: "png",
             quality: 0.9,
@@ -209,6 +211,10 @@ class Homescreen extends Component {
       }
        
       componentWillUnmount() {
+        this.setState({
+          renderComponent:false,
+        })
+        console.log('thisrenderComponentState',this.state.renderComponent);
       }
 
 
@@ -242,7 +248,7 @@ class Homescreen extends Component {
       }
 
       fetchFeedData() {
-        var url = 'http://139.59.243.245/api/messageCenter/';
+        var url = 'http://dev.impactrun.com/api/messageCenter/';
         fetch(url)
         .then( response => response.json() )
         .then( jsonData => {
@@ -293,13 +299,13 @@ class Homescreen extends Component {
             )
         }else{
           return(
-            <Image source={{uri:cause.cause_image}} style={styles.cover}>
+            <ImageBackground source={{uri:cause.cause_image}} style={styles.cover}>
                 <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
                   <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3, justifyContent: 'center',alignItems: 'center', color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {cause.cause_category}
                   </Text>
                 </View>
-            </Image>
+            </ImageBackground>
             )
         }
       }
@@ -609,6 +615,8 @@ class Homescreen extends Component {
 
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
+      if (this.state.renderComponent) {
+        console.log('renderComponent',this.state.renderComponent);
         var cause = this.state.album[route.key][5]
         console.log('cause',cause);
         var money = JSON.stringify(parseFloat(this.state.album[route.key][0]).toFixed(0));
@@ -675,6 +683,7 @@ class Homescreen extends Component {
             </TouchableWithoutFeedback>
           </View>
           )
+      }
        }
       
     };
@@ -754,7 +763,6 @@ class Homescreen extends Component {
       if (this.props.myCauseNum != null ) {
       return (
           <View style={{height:deviceheight,width:deviceWidth}}>
-          <NavBar title={'Impactrun'}rightIcon = {this.renderFeedIcon()}/>
              <TabViewAnimated
              
              style={[ styles.container, this.props.style ]}

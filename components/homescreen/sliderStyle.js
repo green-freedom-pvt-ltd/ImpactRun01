@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { colors } from './index.style';
+import styleConfig from '../../components/styleConfig';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -8,7 +9,7 @@ function wp (percentage) {
     return Math.round(value);
 }
 
-const slideHeight = viewportHeight * 0.4;
+const slideHeight = viewportHeight-200;
 const slideWidth = wp(75);
 const itemHorizontalMargin = wp(2);
 
@@ -24,14 +25,19 @@ export default StyleSheet.create({
         paddingHorizontal: itemHorizontalMargin,
         paddingBottom: 18 // needed for shadow
     },
+    wraptext2:{
+      paddingTop:styleConfig.functionPadding,
+      justifyContent: 'space-between',
+      flexDirection:'row',
+    },
     imageContainer: {
-        flex: 1,
+        height:200,
         backgroundColor: 'white',
         borderTopLeftRadius: entryBorderRadius,
         borderTopRightRadius: entryBorderRadius
     },
     imageContainerEven: {
-        backgroundColor: colors.black
+        backgroundColor: 'white',
     },
     image: {
         ...StyleSheet.absoluteFillObject,
@@ -50,7 +56,7 @@ export default StyleSheet.create({
         backgroundColor: 'white'
     },
     radiusMaskEven: {
-        backgroundColor: colors.black
+        backgroundColor:'white'
     },
     textContainer: {
         justifyContent: 'center',
@@ -62,7 +68,7 @@ export default StyleSheet.create({
         borderBottomRightRadius: entryBorderRadius
     },
     textContainerEven: {
-        backgroundColor: colors.black
+        backgroundColor: 'white'
     },
     title: {
         color: colors.black,
@@ -70,8 +76,21 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         letterSpacing: 0.5
     },
+    wraptext:{
+      justifyContent: 'space-between',
+      flexDirection:'row',
+      paddingBottom:2,
+      paddingTop:5,
+    },
+    textMoneyraised:{
+      left:0,
+      color:styleConfig.greyish_brown_two,
+      fontSize:10,
+      fontWeight:'600',
+      fontFamily:styleConfig.FontFamily,
+    },
     titleEven: {
-        color: 'white'
+        color: colors.black
     },
     subtitle: {
         marginTop: 6,
@@ -80,6 +99,6 @@ export default StyleSheet.create({
         fontStyle: 'italic'
     },
     subtitleEven: {
-        color: 'rgba(255, 255, 255, 0.7)'
+        color: colors.gray,
     }
 });

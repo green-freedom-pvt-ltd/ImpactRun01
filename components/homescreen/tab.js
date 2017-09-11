@@ -156,10 +156,8 @@ class Tabs extends Component {
         // NetInfo.isConnected.fetch().done(
         //     (isConnected) => {
                 if (this.state.isConnected) {
-                    console.log('isConnected',this.state.isConnected);
                     this.fetchData();
                 }else{
-                    console.log('isConnected',this.state.isConnected);
                    this.getCause();
                 }
         //     }
@@ -170,7 +168,7 @@ class Tabs extends Component {
       _handleConnectivityChange(isConnected) {
         var _this = this;
         _this.setState({
-          isConnected,
+          isConnected:isConnected,
         });
         console.log('isConnected',this.state.isConnected);
       }
@@ -304,8 +302,10 @@ class Tabs extends Component {
             let user = JSON.parse(result);
             this.setState({
               user: user,
+              iconImpactleague:(user!= null)?{uri: base64Icon, scale: 6}:{},
             })
-            console.log("result",user);
+            this.render();
+            console.log("result",user,this.state.iconImpactleague);
           })
         }
 
@@ -381,8 +381,55 @@ class Tabs extends Component {
         })
         }
 
+
+
+        renderLeaderboard(){
+            if(this.state.user != null){
+                return(
+                     <NavigatorIOS
+                    ref="navLeaderBoard"
+                    translucent={false}
+                    navigationBarHidden={false}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.bright_blue}
+                    initialRoute={{
+                        showTabBar: true,
+                        rightButtonTitle:this.state.iconImpactleague,
+                        onRightButtonPress: () => {
+                             this.pushedComponent && this.pushedComponent._onRightButtonClicked();
+                        },
+                        title:'Leaderboard',
+                        component:Leaderboard,
+                        passProps:{user:this.state.user,getUserData:this.getUserData,ref:(component) => {this.pushedComponent = component}}
+                    }}/>
+                    )
+            }else{
+                return(
+                      <NavigatorIOS
+                    ref="navLeaderBoard2"
+                    translucent={false}
+                    navigationBarHidden={false}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.bright_blue}
+                    initialRoute={{
+                        showTabBar: true,
+                        title:'Leaderboard',
+                        component:Leaderboard,
+                        passProps:{user:this.state.user,getUserData:this.getUserData,ref:(component) => {this.pushedComponent = component}}
+                    }}/>
+
+                    )
+            }
+        }
+
         render() {
-            // console.log('this.state.myCauseNum',this.state.dataCauseNum);
+        console.log('this.state.myCauseNum',this.state.user,this.state.iconImpactleague);
         if (this.state.dataCauseNum != null) {
             return (
             <View style={{flex:1}}>     
@@ -437,8 +484,8 @@ class Tabs extends Component {
                     barTintColor={styleConfig.bright_blue}
                     initialRoute={{
                         showTabBar: true,
-                        rightButtonTitle: 'edit',
-                        onRightButtonPress: () => this.navigateToProfileForm(),
+                        rightButtonTitle:(this.state.user)?'edit':'',
+                        onRightButtonPress: () => {if(this.state.user){ this.navigateToProfileForm()} else {return}},
                         title:'Profile',
                         component:Profile,
                         passProps:{user:this.state.user,getUserData:this.getUserData}
@@ -454,11 +501,11 @@ class Tabs extends Component {
                           selectedTab: 'welcome',
                       });
                   }}>
-                  <View>
+                 <View>
                   <NavigatorIOS
-                    ref="Impactrun"
+                    ref="Homescreen"
                     translucent={false}
-                    navigationBarHidden={true}
+                    navigationBarHidden={false}
                     style={{height:deviceHeight,width:deviceWidth}}
                     tintColor='#FFF'
                     titleTextColor='#FFF'
@@ -484,23 +531,7 @@ class Tabs extends Component {
                             selectedTab: 'Leaderboard',
                         });
                   }}>
-                  <NavigatorIOS
-                    ref="navLeaderBoard"
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.bright_blue}
-                    initialRoute={{
-                        showTabBar: true,
-                        rightButtonIcon:{uri:base64Icon,scale:3},
-                        onRightButtonPress: () => this.navigateToImpactLeague(),
-                        title:'Leaderboard',
-                        component:Leaderboard,
-                        passProps:{user:this.state.user,getUserData:this.getUserData}
-                    }}/>
+                 {this.renderLeaderboard()}
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
                     selected={this.state.selectedTab === 'Help'}
@@ -531,6 +562,7 @@ class Tabs extends Component {
               </TabBarIOS>
             </View>
           );
+
         }else{
             return(
               <Lodingscreen/>

@@ -58,7 +58,7 @@ class Login extends Component {
         NetInfo.isConnected.fetch().done(
             (isConnected) => {
             this.setState({isConnected});
-              
+              this.fetchDataonInternet();
             }
         );
           
@@ -142,6 +142,7 @@ class Login extends Component {
               })
               this.setState({
                   myCauseNum: newData,
+                  causes:causes.results,
               })
               let myCauseNum = this.state.myCauseNum;
               AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
@@ -262,11 +263,14 @@ class Login extends Component {
       navigateToHome() {
         this.props.navigator.push({
             title: 'Homescreen',
-            component:Tabs,
-            navigationBarHidden: true,
+            screen:'route',
+            navigatorStyle: {
+              navBarHidden:true,
+            },
             passProps: {
               dataCauseCount: this.state.mycauseDataCount,
               dataCauseNum: this.state.myCauseNum,
+              causes:this.state.causes
             },
         })
       }
@@ -274,9 +278,7 @@ class Login extends Component {
 
 
       renderLoadingView() {
-          return ( <
-              Lodingscreen / >
-          );
+          return ( <Lodingscreen / >);
       }
 
 

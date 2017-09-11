@@ -187,7 +187,6 @@ class LeaderboardData extends Component {
       }
 
       render() {
-        if (this.state.loaded) {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
             <View style={{backgroundColor:'white',height:deviceHeight-100,width:deviceWidth,paddingBottom:53}}>
@@ -205,8 +204,6 @@ class LeaderboardData extends Component {
             
           </View> 
         );
-      }else{
-        return this.renderLoadingView();
       }
       }
 

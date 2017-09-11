@@ -571,7 +571,7 @@ class Profile extends Component {
       }
 
       render() {
-        if (this.props.user != null ) {
+        if (this.props.user.length > 1 ) {
         return (
           <View style={{width:deviceWidth}}>
           <View style={styles.container}>

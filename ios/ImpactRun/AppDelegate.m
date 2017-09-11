@@ -47,7 +47,8 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 //  return YES;
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
+  return [[FBSDKApplicationDelegate
+           sharedInstance] application:application
                                   didFinishLaunchingWithOptions:launchOptions];
 }
 

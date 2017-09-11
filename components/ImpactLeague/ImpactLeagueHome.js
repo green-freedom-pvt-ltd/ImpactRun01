@@ -32,14 +32,18 @@ class ImpactLeague extends Component {
 
       constructor(props) {
         super(props);
-        this.fetchDataLocally();
+     
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           LeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
           refreshing: false,
           downrefresh:true,
+          user:null,
+          isMounted:true,
         };
+        this.fetchLeaderBoardData = this.fetchLeaderBoardData.bind(this);
+        this.fetchDataLocally = this.fetchDataLocally.bind(this);
         this.getUserData = this.getUserData.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
@@ -49,11 +53,13 @@ class ImpactLeague extends Component {
        
 
       componentDidMount() { 
+        this.fetchDataLocally();
         this.getUserData();      
         setTimeout(() => {this.setState({downrefresh: false})}, 1000)
       }
 
       componentWillMount() {
+
       }
 
 
@@ -139,7 +145,7 @@ class ImpactLeague extends Component {
         this.props.navigator.push({
           title: rowData.team_name,
           component:impactleagueleaderboard,
-          showTabBar: true,
+          showTabBar: false,
           passProps:{user:this.state.user, Team_id:rowData.id,team_name:rowData.team_name}
         })
       }
@@ -205,6 +211,7 @@ class ImpactLeague extends Component {
         }
       
       render(rowData,jsonData) {
+        if (this.state.isMounted) {
         console.log('user',this.state.user);
         if (this.state.user) {
         if (this.state.user.team_code != 0) {
@@ -243,7 +250,15 @@ class ImpactLeague extends Component {
             <LoginBtns/>
             )
        }
+     }
       }
+
+
+    componentWillUnmount() {
+      this.setState({
+        isMounted:false,
+      })
+    }
 
 }
 

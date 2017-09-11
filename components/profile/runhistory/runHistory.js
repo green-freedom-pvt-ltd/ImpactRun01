@@ -58,6 +58,8 @@ class RunHistory extends Component {
 
 
         componentDidMount() {
+
+
             AsyncStorage.getItem('runversion', (err, result) => {
               console.log("result",result);
 
@@ -87,11 +89,21 @@ class RunHistory extends Component {
         
 
         if (this.state.someData != null) {
-        this.setState({
-          runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.props.rawData)),
-        })
-       }else{
-       }
+          let sortedRuns = this.state.someData.sort((a,b) => {
+            if (a.version < b.version) {
+              return -1;
+            }
+            if (a.version > b.version) {
+              return 1;
+            }
+            // a must be equal to b
+            return 0;
+          });
+          this.setState({
+            runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(sortedRuns)),
+          })
+         }else{
+         }
       }
 
     

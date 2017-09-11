@@ -208,7 +208,6 @@ class Application extends Component{
         renderScene() {
          if (this.state.result != null ) {
            return ( <NavigatorIOS
-                    ref="Help"
                     translucent={false}
                     navigationBarHidden={true}
                     style={{flex:1}}
@@ -223,7 +222,6 @@ class Application extends Component{
                     }}/>)
          }else if (this.state.user != null){
             return ( <NavigatorIOS
-                    ref="Help"
                     translucent={false}
                     navigationBarHidden={true}
                     style={{flex:1}}
@@ -239,7 +237,6 @@ class Application extends Component{
          }else {
             
             return ( <NavigatorIOS
-                    ref="Help"
                     translucent={false}
                     navigationBarHidden={true}
                     style={{flex:1}}
@@ -256,3 +253,6 @@ class Application extends Component{
 }
 
 AppRegistry.registerComponent('Impactrun', () => Application);
+
+// import registerApp from './app/tabScreen.js';
+// registerApp();

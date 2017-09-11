@@ -103,7 +103,7 @@ class Setting extends Component {
       }
 
       componentDidMount() {
-        
+        console.log('props',this.props,this.props.getUserData);
         var settingsLists = [
           {'name':'share',
           'iconName':'share',

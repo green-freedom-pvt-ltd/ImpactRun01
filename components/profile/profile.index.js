@@ -408,10 +408,11 @@ class Profile extends Component {
             data2.push(RunData[i].distance);
             console.log('data',data2);
             sum += RunData[i].distance;
+            console.log('data2',sum);
             };
         }
         this.setState({
-          RunTotalDistance:sum,
+          RunTotalDistance:parseInt(sum),
           level:this.userLevelFunction(sum),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
@@ -732,7 +733,7 @@ class Profile extends Component {
         return(
           <View>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
-           <LoginBtn getUserData={this.props.getUserData}/>
+           <LoginBtn tabNavigation={this.props.tabNavigation} getUserData={this.props.getUserData}/>
            </View>
            </View>
 

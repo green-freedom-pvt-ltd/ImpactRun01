@@ -33,7 +33,7 @@ import commonStyles from '../../components/styles';
 import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
 import CaloriCounter from './caloriCounter';
- var moment = require('moment');
+import Tabs from '../homescreen/tab';
 
 var Pedometer = require('react-native-pedometer');
 var deviceWidth = Dimensions.get('window').width;
@@ -69,7 +69,7 @@ class Home extends Component {
         textState:'PAUSE',
         Enbtn:'END RUN',
         enabled: true,
-        isMoving: false,
+        isMoving: true,
         distanceTravelledsec:0,
         paceButtonIcon: 'md-pause',
         navigateButtonIcon: 'md-locate',
@@ -98,6 +98,7 @@ class Home extends Component {
         },
         onCarDetectedEndRunModel:false,
         weakGPSPoints: 0,
+        componentISmounted:true,
       };
     }
 
@@ -105,23 +106,20 @@ class Home extends Component {
 
   
   componentDidMount(){  
-    Location.startMonitoringSignificantLocationChanges();
+    if (this.state.componentISmounted) {
+    this.refs.circularProgress.performLinearAnimation(parseFloat(this.state.distanceTravelled).toFixed(0), 1000)
     this.getWeight();
     this.saveDataperiodcally(); 
     this._startStepCounterUpdates()
     var date = this.state.myrundate;
     this._handleStartStop();
-    this.updatePaceButtonStyle();
-    this.setState({
-      textState:'PAUSE',
-      isRunning:true,
-    });
+    this.updatePaceButtonStyle(); 
      var d = moment().format('YYYY-MM-DD HH:mm:ss');
     
       this.setState({
         myrundate:d,
       });
-    return;  
+    }
   }
  
 
@@ -167,35 +165,35 @@ class Home extends Component {
 
 
    
-   StillDetictiion(Location,me){ 
-    if (Location.coords.speed < 0 ) {  
-      var priveSteps = this.state.numberOfSteps+10;
-      var distance = this.state.distanceTravelled+0.01;
-      this.StillDetictiioninterval = setInterval(()=>{      
-        this.setState({
-          StillDecteting:false,
-        })
-        var priveSteps = this.state.numberOfSteps+10;
-        var distance = this.state.distanceTravelled+0.01;
-        setTimeout(function(){    
-          clearInterval(me.StillDetictiioninterval); 
-          if (distance > me.state.distanceTravelled) {
-            if (me.state.numberOfSteps < priveSteps) {
-            AlertIOS.alert("Still","It seems you are still.");
-            me.setState({
-              StillDecteting:true,
-            })
-          }else{
+   // StillDetictiion(Location,me){ 
+   //  if (Location.coords.speed < 0 ) {  
+   //    var priveSteps = this.state.numberOfSteps+10;
+   //    var distance = this.state.distanceTravelled+0.01;
+   //    this.StillDetictiioninterval = setInterval(()=>{      
+   //      this.setState({
+   //        StillDecteting:false,
+   //      })
+   //      var priveSteps = this.state.numberOfSteps+10;
+   //      var distance = this.state.distanceTravelled+0.01;
+   //      setTimeout(function(){    
+   //        clearInterval(me.StillDetictiioninterval); 
+   //        if (distance > me.state.distanceTravelled) {
+   //          if (me.state.numberOfSteps < priveSteps) {
+   //          AlertIOS.alert("Still","It seems you are still.");
+   //          me.setState({
+   //            StillDecteting:true,
+   //          })
+   //        }else{
 
-          }
+   //        }
            
-          };
-        }, 10000)
-        },1000)
-       }else{
-        return;
-       }   
-    }
+   //        };
+   //      }, 10000)
+   //      },1000)
+   //     }else{
+   //      return;
+   //     }   
+   //  }
 
     getLocationUpdate(){
       var me = this;
@@ -213,7 +211,7 @@ class Home extends Component {
 
     clearLocationUpdate(){
       Location.stopUpdatingLocation();
-      clearInterval(this.IntervelSaveRun);
+      clearInterval(this.IntervelSaveRun);  
     }
 
 
@@ -343,8 +341,15 @@ class Home extends Component {
 
 
   componentWillUnmount() {
+    this.setState({
+      componentISmounted:false,
+    })
+    console.log('componentUnmount',this.state.componentISmounted);
+    // Location.stopUpdatingLocation();
+    // clearInterval(this.IntervelSaveRun);
+    // this.clearLocationUpdate();
+    //  DeviceEventEmitter.removeListener('locationUpdated');
 
-    this.clearLocationUpdate();
   }
 
 
@@ -389,7 +394,14 @@ class Home extends Component {
         enabled:false,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
-      });      
+      });  
+       setTimeout(()=>{ 
+        console.log('Enabled2', this.state.enabled);
+        this.updatePaceButtonStyle();
+        this._handleStartStop();     
+       },100) ;
+          
+      
     }else{
       var isMoving = !this.state.isMoving;
 
@@ -398,39 +410,50 @@ class Home extends Component {
         enabled:true,
         isRunning:!this.state.isRunning,
         prevLatLng:null,
-      });     
+      });  
+       setTimeout(()=>{ 
+        console.log('Enabled2', this.state.enabled);
+        this.updatePaceButtonStyle();
+        this._handleStartStop();     
+       },100) ;
     } 
-    this.updatePaceButtonStyle();
-    this._handleStartStop(); 
+    
   }
 
 
 
 
   onClickEnable(location) {
-    if (Number(parseFloat(this.state.distanceTravelled).toFixed(1))>= 0.1) {
-      this.EndRunConfimationForlongRun();  
+     var _this = this;
+    if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
+      Location.stopUpdatingLocation();
+      clearInterval(this.IntervelSaveRun);
+      _this.EndRunConfimationForlongRun();  
      }else{
-      this.EndRunConfimation();
+      _this.EndRunConfimation();
       PushNotification.cancelAllLocalNotifications();
     }        
   }
 
+
+
   ConfirmRunEnd(){
      var d = moment().format('YYYY-MM-DD HH:mm:ss');
-      this.setState({
+     this.setState({
         endDate:d,
       });
-      
-      AsyncStorage.removeItem('runDataAppKill');
-      this.clearLocationUpdate();
-      PushNotification.cancelAllLocalNotifications();
-      this.navigateTOShareScreen();
       this.setState({
-      onCarDetectedEndRunModel:false,
-      enabled: !this.state.enabled,     
+        onCarDetectedEndRunModel:false,
+        enabled: !this.state.enabled,   
+        isRunning:!this.state.isRunning,  
       });
       this.updatePaceButtonStyle();
+      this.clearLocationUpdate();
+      this._handleStartStop();
+      AsyncStorage.removeItem('runDataAppKill');
+      PushNotification.cancelAllLocalNotifications();
+      this.navigateTOShareScreen();
+     
   }
 
 
@@ -885,9 +908,10 @@ class Home extends Component {
 
     navigateTOHomeScreen(){
       this.props.navigator.push({
-      title: 'Gps',
-      id:'tab',
-      navigator: this.props.navigator,
+      title:'Impactrun',
+      component:Tabs,
+      navigationBarHidden: true,
+      showTabBar:true,
      })
     }
 
@@ -983,6 +1007,7 @@ class Home extends Component {
 
 
     updatePaceButtonStyle() {
+      console.log('isRunning',this.state.enabled)
       var style = (this.state.enabled) ? commonStyles.redButton : commonStyles.greenButton;
       this.setState({
         paceButtonStyle: style,
@@ -1043,10 +1068,12 @@ class Home extends Component {
    }
    
     render(location) {
-
-      // var intime = TimeFormatter( this.state.mainTimer + this.state.storedRunduration );
+      if (this.state.componentISmounted) {
+      var intime = TimeFormatter( this.state.mainTimer + this.state.storedRunduration );
       var data = this.props.data;
-      // var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
+      var priv = Number(parseFloat(this.state.distanceTravelledsec).toFixed(1));
+      var circularprogress =  ((parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2 === 100)?(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/5:(parseFloat(this.state.distanceTravelled).toFixed(1)*100)/2;
+
       return (
         <View style={commonStyles.container}>
            <View ref="workspace" style={styles.workspace}>           
@@ -1059,23 +1086,34 @@ class Home extends Component {
             <View style={{justifyContent: 'center',alignItems: 'center', flex:1}}>
                 
             <Text style={{fontSize:20,marginTop:30,marginBottom:20,color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,backgroundColor:'transparent',}}>IMPACT</Text> 
+             <AnimatedCircularProgress
+                style={{justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
+                ref='circularProgress'
+                size={130}
+                width={5}
+                fill={circularprogress}
+                prefill={100}
+                tintColor={styleConfig.bright_blue}
+                rotation={0}
+                backgroundColor="#fafafa">                   
+              </AnimatedCircularProgress>
                <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
-                
+                {this.impactTextView(data,priv)}
                 <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>RUPEES</Text>
               </View>
               </View>
               <View style={{flex:1,flexDirection:'row',backgroundColor:'transparent'}}>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,}} name={'ios-walk-outline'}></Icon>
-                  
+                   {this.KmTextView(priv)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
                 </View>
                  <View style={styles.timeDistanceWrap2}>
-              
+                 {this.caloriesTextView()}
                 </View>
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,backgroundColor:'transparent'}} name={'md-stopwatch'}></Icon>
-                 
+                   {this.TimeTextView(intime)}
                   <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>TIME</Text>
 
                 </View>
@@ -1086,14 +1124,14 @@ class Home extends Component {
 
           <View style={commonStyles.bottomToolbar}>
 
-          <TouchableOpacity   onPress={()=>this.startPause()} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
+          <TouchableOpacity   onPress={()=>this.startPause(this)} style={[this.state.paceButtonStyle,styles.stationaryButton]}>
            <View style={{flexDirection:'row'}}>
             <Icon name={this.state.paceButtonIcon} style={{color:'white',fontSize:18,marginTop:2,marginRight:5}}></Icon>
             <Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.textState}</Text>
             </View>
             </TouchableOpacity>
             <TouchableOpacity   
-                 onPress={this.onClickEnable} iconStyle={commonStyles.iconButton} style={styles.EndRun}>
+                 onPress={()=>this.onClickEnable(location)} iconStyle={commonStyles.iconButton} style={styles.EndRun}>
                 <Text style={{fontFamily:styleConfig.FontFamily,fontSize:18,fontWeight:'800',letterSpacing:1,color:'white',}}>{this.state.EndRun}</Text>
             </TouchableOpacity>
                
@@ -1103,6 +1141,7 @@ class Home extends Component {
           {this.modelViewGpsWeek()}
         </View>
       );
+     }
 
     }
 

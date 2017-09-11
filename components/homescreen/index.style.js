@@ -1,5 +1,6 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet,Dimensions } from 'react-native';
+var deviceWidth = Dimensions.get('window').width;
+var deviceHeight = Dimensions.get('window').height;
 export const colors = {
     black: '#1a1917',
     gray: '#888888',
@@ -9,7 +10,8 @@ export const colors = {
 
 export default StyleSheet.create({
     container: {
-        flex: 1,
+        height: deviceHeight-114,
+        width:deviceWidth,
         backgroundColor: colors.background1
     },
     colorsContainer: {
@@ -25,7 +27,8 @@ export default StyleSheet.create({
         backgroundColor: colors.background2
     },
     scrollview: {
-        flex: 1,
+        height: deviceHeight-114,
+        width:deviceWidth,
         paddingTop: 50
     },
     title: {

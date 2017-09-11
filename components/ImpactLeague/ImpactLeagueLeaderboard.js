@@ -60,10 +60,7 @@ class ImpactLeagueLeaderBoard extends Component {
       }
 
 
-      componentWillUnmount() {
-       
-      }
-      
+    
      
       FetchLeaderBoardLocally(){
         AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
@@ -201,9 +198,10 @@ class ImpactLeagueLeaderBoard extends Component {
       }
 
       render() {
-        if (!this.state.loaded ) {
+        if (!this.state.loaded) {
           return this.renderLoadingView();
         }
+        else{
         console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
@@ -222,6 +220,7 @@ class ImpactLeagueLeaderBoard extends Component {
             </View> 
          </View>
         );
+      }
       }
 }
 

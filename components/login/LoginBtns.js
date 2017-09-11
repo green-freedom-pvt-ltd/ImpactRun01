@@ -69,8 +69,10 @@ class LoginBtns extends Component {
               console.log("userresult ",result);
             })
             _this.LoginCountFunction();
+            _this.props.getUserData();
+            _this.props.tabNavigation();
           })
-          _this.props.getUserData();
+       
           })
          .done(); 
          } else {
@@ -123,8 +125,10 @@ class LoginBtns extends Component {
               console.log("userresult ",result);
             })
             this.LoginCountFunction();
+            this.props.getUserData();
+            this.props.tabNavigation();
           })
-          this.props.getUserData();
+          
          })
         .done();
        })
