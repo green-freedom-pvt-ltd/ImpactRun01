@@ -190,7 +190,7 @@ var iphone7Plus = 736;
       fetchDataIfInternet(){
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
-            if (isConnected && this.state.user.auth_token) {
+            if (isConnected && this.state.user) {
               this.fetchLeaderBoard();
             }else{
               return this.fetchLeaderBoardLocally(this.state.value);

@@ -311,7 +311,9 @@ class Login extends Component {
               <Image source={require('../../images/login_background.png')} style={styles.shadow}>         
                 <View style={styles.center}>         
                   <Image source={require('../../images/Logo.png')} style={styles.logo}/>
+                  <Text style={{color:styleConfig.black,fontFamily: styleConfig.FontFamily,}}>Get Fit. Do Good.</Text>
                 </View>
+
                 <View style={styles.container}>
                   <View>
                     <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}>
@@ -352,6 +354,7 @@ var styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom:200,
     },
     Loginbtnfb: {
         flexDirection: 'row',
@@ -368,7 +371,7 @@ var styles = StyleSheet.create({
         width: deviceWidth - 100,
         backgroundColor: 'white',
         borderRadius: 5,
-        marginTop: 15,
+        marginTop: 10,
         height: 50,
         bottom: 0,
         alignItems: 'center',
@@ -383,13 +386,13 @@ var styles = StyleSheet.create({
     },
     skip: {
         flex: 1,
-        top: 20,
+        top: 30,
         flexDirection: 'row',
         justifyContent: 'center',
     },
     logo: {
-        width: 200,
-        height: 40,
+        width: 192,
+        height: 65,
         justifyContent: 'center',
         alignItems: 'center',
     },

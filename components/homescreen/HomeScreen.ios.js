@@ -41,6 +41,7 @@ import CauseDetail from './CauseDetail';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 import { takeSnapshot } from "react-native-view-shot";
 import Share, {ShareSheet, Button} from 'react-native-share';
+import LinearGradient from 'react-native-linear-gradient';
 
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
@@ -774,7 +775,7 @@ class Homescreen extends Component {
     }else{
       return(
         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET'S GO </Text>
+          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET'S GO ></Text>
         </TouchableOpacity>
       )
     }
@@ -794,7 +795,7 @@ class Homescreen extends Component {
       return (
           <View style={{height:deviceheight,width:deviceWidth}}>
           <View style={commonStyles.Navbar}>
-            <Text style={commonStyles.menuTitle}>Impactrun</Text>
+            <Text style={commonStyles.menuTitle}>Impact</Text>
           </View>
           <TabViewAnimated
              
@@ -803,11 +804,17 @@ class Homescreen extends Component {
              renderScene={this._renderPage}
              onRequestChangeTab={this._handleChangeTab}>
              </TabViewAnimated>
+             
+
+             <LinearGradient colors={['#04cbfd', '#33f373']} >
+
              <View style={styles.BtnWraperWrap}>
               <View style={styles.btnWrap}>
                {this.BiginRunBtn(cause)}
               </View>
               </View>
+              </LinearGradient>
+
                 {this.modelViewdeniedLocationRequest()}
           </View>
       );
