@@ -6,7 +6,6 @@ import{
     View,
     Image,
     ScrollView,
-    Navigator,
     Dimensions,
     TouchableOpacity,
     Text,
@@ -31,7 +30,7 @@ import commonStyles from '../styles';
 import NavBar from '../navBarComponent';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-var heightInpersentage = (deviceHeight-114)/100;
+var heightInpersentage = (deviceHeight-50)/100;
 var customFlexHeight1 = heightInpersentage*100;
 var customFlexHeight2 = heightInpersentage*50;
 var customFlexHeight3 = heightInpersentage*33.33333333;
@@ -558,11 +557,21 @@ class Profile extends Component {
       }
 
     navigateToRunHistory() {
+      if (!this.state.runfeatching) {
       this.props.navigator.push({
-      title: 'RunHistory',
-      component:RunHistory,
+      title: 'Gps',
+      id:'runhistory',
+      index: 0,
       passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
-      })
+      navigator: this.props.navigator,
+      });}else{
+        return;
+      }
+      // this.props.navigator.push({
+      // title: 'RunHistory',
+      // component:RunHistory,
+      // passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
+      // })
     }
      
     
@@ -649,7 +658,7 @@ class Profile extends Component {
         return (
             <View key={index} style={{flex:1,justifyContent: 'flex-end',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#CACACA'}}>
                  <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
-                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.bright_blue,borderRadius:3,bottom:5,alignItems: 'center',}}>
+                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:3,bottom:5,alignItems: 'center',}}>
                 </View>
 
             </View>
@@ -684,17 +693,19 @@ class Profile extends Component {
         return (
           <View style={styles.container}>
             <View style ={styles.profileWraper}>
-                <View style={{height:(heightInpersentage*45/100)*40,width:deviceWidth,backgroundColor:'white',justifyContent: 'center',}}>
-                    <UserProfile height={(heightInpersentage*40/100)*35} progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
+                <View style={{height:(heightInpersentage*51.8/100)*45,width:deviceWidth,backgroundColor:'white',justifyContent: 'center',}}>
+                    <UserProfile height={(heightInpersentage*38/100)*35} progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
                 </View>
-                <View onLayout={(event) => this.measureView(event)} style={{height:(heightInpersentage*45/100)*60,width:deviceWidth,backgroundColor:'white'}}>
-                    <View style={{height:(this.state.height/100)*20,width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*20)/100)*10}}>
+                <View onLayout={(event) => this.measureView(event)} style={{height:(heightInpersentage*51.5/100)*45,width:deviceWidth,backgroundColor:'white'}}>
+                    <View style={{height:(this.state.height/100)*23,width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*10)/100)*10}}>
                         <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'400'}}>All Time</Text>
                     </View>
-                    <View style={{height:(this.state.height/100)*37,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
+                    <View style={{height:(this.state.height/100)*35,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
                         <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name="inr"></Icon2><AnimateNumber value={this.state.RunTotalAmount2} formatter={(val) => {return ' ' + parseFloat(val).toFixed(0)}} ></AnimateNumber>
                         </Text>
+                        <View style={{height:(this.state.height/100)*17,}}>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
+                        </View>
                     </View>
                     <View style={{height:(this.state.height/100)*30,width:this.state.width,backgroundColor:'yellow',flexDirection:'row'}}>
                         <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
@@ -719,7 +730,7 @@ class Profile extends Component {
             </View>
 
             <View style ={styles.profileWraper2}>                          
-              <View style={{flex:-1,height:((heightInpersentage*55)/100)*75,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
+              <View style={{flex:-1,height:((heightInpersentage*48)/100)*85,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
                 <View style={styles.container2}>
                  
                    <View style={{flex:-1,flexDirection:'row',height:((((heightInpersentage*55)/100)*75)/100)*80,width:(deviceWidth/100)*80,backgroundColor:'white'}}>                
@@ -753,8 +764,8 @@ class Profile extends Component {
                   </View>
                  </View>
               </View>
-              <View style={{height:((heightInpersentage*55)/100)*25,width:deviceWidth,backgroundColor:'white'}}>
-                <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10}}>
+              <View style={{height:((heightInpersentage*55)/100)*35,width:deviceWidth,backgroundColor:'white', paddingTop:20}}>
+                <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10, paddingTop:20}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
                     <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS></Text>
                   </TouchableOpacity>
@@ -767,6 +778,7 @@ class Profile extends Component {
       }else{
         return(
           <View>
+          <NavBar title={"PROFILE"}/>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
            <LoginBtn tabNavigation={this.props.tabNavigation} getUserData={this.props.getUserData}/>
            </View>

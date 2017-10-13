@@ -638,6 +638,7 @@ class Profile extends Component {
       }else{
         return(
           <View>
+          <NavBar title={"PROFILE"}/>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
            <LoginBtn getUserData={this.props.getUserData}/>
            </View>

@@ -25,6 +25,7 @@ import Faq from '../faq/faq';
 import QuestionLists from './listviewQuestions';
 import RunHistory from '../profile/runhistory/runHistory';
 import EndFeedBack from './endFeedBackPage';
+import NavBar from '../navBarComponent';
 
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -66,13 +67,13 @@ class HelpCenter extends Component {
        }
 
        navigateToNextPage(rowData){
-        if (rowData.name === 'Issue with past workout') {
+        if (rowData.name === 'I have an issue with past workout') {
           return this.navigateToRunhistory(rowData);
-        }else if(rowData.name === 'Questions'){
+        }else if(rowData.name === 'I have a question'){
            return this.navigateToHelp(rowData);
-        }else if(rowData.name === 'Give feedback'){
+        }else if(rowData.name === 'I have a suggestion'){
             return this.navigateToFeedbackPage(rowData);
-        }else if(rowData.name === 'Something else'){
+        }else if(rowData.name === 'My issue isn\'t listed here'){
           return this.navigateToListOfQuestions(rowData);
         }
 
@@ -81,8 +82,9 @@ class HelpCenter extends Component {
        navigateToHelp(rowData){
         this.props.navigator.push({
           title:'Questions',         
-          component:Faq,
-          navigationBarHidden: false,
+          // component:Faq,
+          id:'faq',
+          // navigationBarHidden: false,
           showTabBar: true,
           passProps:{
             rowData:rowData,
@@ -93,11 +95,17 @@ class HelpCenter extends Component {
       navigateToFeedbackPage(rowData){
         this.props.navigator.push({
           title:'Feedback',         
-          component:EndFeedBack,
-          navigationBarHidden: false,
-          showTabBar: true,
+          id:'feedback',
+          // component:EndFeedBack,
+          // navigationBarHidden: false,
+          // showTabBar: true,
           passProps:{
             data:rowData,
+            title:'Help Center',
+            explanation:'That is great! We love to hear from our users.',
+            prompt:'Submit your feedback to us.',
+            hint:'Enter feedback here',
+            user:this.props.user,
             getUserData:this.props.getUserData,
           }
         })
@@ -107,9 +115,10 @@ class HelpCenter extends Component {
 
         this.props.navigator.push({
           title:'Select issue',         
-          component:QuestionLists,
-          navigationBarHidden: false,
-          showTabBar: true,
+          // component:QuestionLists,
+          // navigationBarHidden: false,
+          // showTabBar: true,
+          id:'listquestions',
           passProps:{
            rowData:rowData,
            data:rowData.moreList,
@@ -123,9 +132,8 @@ class HelpCenter extends Component {
        navigateToRunhistory(rowData){
         this.props.navigator.push({
           title:'Questions',         
-          component:RunHistory,
-          navigationBarHidden: false,
-          showTabBar: true,
+          // component:RunHistory,
+          id:'runhistory',
           passProps:{
             rowData:rowData,
             rawData:this.state.rawData,
@@ -143,82 +151,90 @@ class HelpCenter extends Component {
       componentDidMount() {
         
         var QuestionLists = [
-          {'name':'Issue with past workout',
+          {'name':'I have an issue with past workout',
           'iconName':'share',
           'labelname':'pastworkout',
           'moreList':[
               {'name':'Less distance recorded',
-               'header':'Got it. We regret that your distance counted was lesser than actual.',
-               'discription':'GPS gets tricky at times. But no worries, just enter below the correct distance in Kms, and submit. Or chat with us. We will look into the case and change accordingly. Thanks for letting us know.',  
-               'hint':'Enter correct distance in Kms',
+               'header':'',
+               'discription':'Got it. We regret that your distance counted was lesser than actual.\n \nThis might be due to poor GPS signals we are recieving from your device.\n \nBut no worries, tell us more. We would love to help.',  
+               'hint':'Enter feedback here',
+               'tag':'pastworkout',
                'labelname':'less',
                'inputLebel':'',
               },
               {'name':'More distance recorded',
                'header':'Got it. So awesome of you for letting us know !',
-               'discription':'GPS gets tricky at times. Please enter below the correct distance in Kms and submit. Or chat with us.Thanks for letting us know.',
-                'hint':'Enter correct distance in Kms',
+               'discription':'Got it. Awesome of you for letting us know !\n \nThis might be due to poor GPS signals we are recieving from your device.\n \nBut no worries, tell us more. We would love to help.',
+                'hint':'Enter feedback here',
+                'tag':'pastworkout',
                 'labelname':'more',
                 'inputLebel':'',
               },
 
               {'name':'Why is it scratched off',
                'header':'Got it.',
-               'discription':'A scratched or a flagged workout is a workout detected as humanly impossible in our system. Hence it is not counted',
+               'discription':'Got it.\n \nA scratched or a flagged workout is a workout detected as humanly impossible in our system. Hence it is not counted.',
                'hint':'Enter feedback here',
+               'tag':'pastworkout',
                'labelname':'scratched',
-               'inputLebel':'Issue still not resolved? Send feedback or chat with us.',
+               'inputLebel':'Issue still not resolved? Send feedback to us.',
               },
               {'name':"I wasn't in a vehicle",
                 'header':'Got it. Thanks for informing.',
-                'discription':'Our automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that. ',
+                'discription':'Got it. Thanks for informing.\n \n Our automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that.',
                 'hint':'Enter feedback here',
+                'tag':'pastworkout',
                 'labelname':'notvehicle',
-                'inputLebel':'Issue still not resolved? Send feedback or chat with us.',
+                'inputLebel':'Issue still not resolved? Send feedback to us.',
               },
               {'name':'Impact missing in Leaderboard',
                 'header':'Got it. Thanks for informing.',
-                'discription':'Data in leaderboard is fetched from server, but sometimes your workouts take a few hours to sync on server. Please wait for some time and make sure that you are connected to internet.',
+                'discription':'Got it. Thanks for informing.\n \nSometimes your workouts take a few hours to sync on our database. Please wait for some time, and make sure that you are connected to internet.',
                 'hint':'Enter feedback here',
+                'tag':'pastworkout',
                 'labelname':'leaderboardadd',
-                'inputLebel':'Issue still not resolved? Send feedback or chat with us.',
+                'inputLebel':'Issue still not resolved? Send feedback to us.',
               },
               {'name':'Something else',
                'header':'',
-               'discription':'Please enter the details of your workout along with actual distance (in Kms) and submit. We will look into it and add.',
+               'discription':'',
                'hint':'Enter feedback here',
-               'labelname':'else',
-               'inputLebel':'Let us know about your issue. Send feedback or chat with us.',
+               'tag':'pastworkout',
+               'labelname':'stillelse',
+               'inputLebel':'Let us know about your issue. Send feedback to us.',
               },
             ],
           },
           {
-          'name':'Questions',
+          'name':'I have a question',
           'screenName':'',
           'labelname':'question',
           'moreList':null,
          },
           {
-          'name':'Give feedback',
+          'name':'I have a suggestion',
           'iconName':'feedback',
           'labelname':'feedback',
           'moreList':null,
          },
           {
-          'name':'Something else',
+          'name':'My issue isn\'t listed here',
           'labelname':'else',
           'moreList':[
               {'name':'Distance not accurate',
                'header':'Got it. Thanks for informing',
-               'discription':'Our tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance.Sometimes because of unreliability and low accuracy of these sensor readings it ends up recording wrong distance.We are working hard everyday to make our tracking algorithm more accurate and robust and it would help enormously if you could tell us a bit more about the discrepancy you observed.',
+               'discription':'Got it.\n \nOur tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance. \n\nSometimes because of unreliability and low accuracy of these sensors it ends up recording wrong distance.\n \nWe are working hard everyday to make our tracking algorithm more robust. It would help a lot if you could tell us a bit more about the discrepancy you observed.',
                'inputLebel':'Tell us more about the issue',
-               'labelname':'less',
+               'tag':'else',
+               'labelname':'notaccurate',
                'hint':'Enter here',
               },
               {'name':'Workout missing from history',
                'header':'Got it. Thanks for letting us know.',
-               'discription':'Please enter the details of your workout and submit. We`ll look into it and add from backend',
-               'inputLebel':'Give feedback ',
+               'discription':'Got it. Thanks for letting us know.\nPlease enter the details of your workout and submit. We\'ll look into it and add from backend.',
+               'inputLebel':'',
+               'tag':'else',
                'labelname':'workoutmissing',
                'hint':'Enter details here',
 
@@ -226,22 +242,25 @@ class HelpCenter extends Component {
 
               {'name':'Impact missing in Leaderboard',
                'header':'Got it. Thanks for informing.',
-               'discription':'Data in leaderboard is fetched from server, but sometimes your workouts take a few hours to sync on server. Please wait for some time and make sure that you are connected to internet',
-               'inputLebel':'Issue still not resolved? Send feedback or chat with us.',
+               'discription':'Got it.\n \nOur tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance. \n\nSometimes because of unreliability and low accuracy of these sensors it ends up recording wrong distance.\n \nWe are working hard everyday to make our tracking algorithm more robust. It would help a lot if you could tell us a bit more about the discrepancy you observed.',
+               'inputLebel':'Issue still not resolved? Send feedback to us.',
+               'tag':'else',
                'labelname':'leaderboardadd',
                'hint':'Enter feedback here',
               },
               {'name':"I wasn't in a vehicle",
                 'header':'Got it. Thanks for informing',
-                'discription':'Our automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that. ',
-                'inputLebel':'Issu still not resolved? Send feedback or chat with us.',
+                'discription':'Got it. Thanks for informing.\n \nOur automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that. ',
+                'inputLebel':'Issue still not resolved? Send feedback to us.',
+                'tag':'else',
                 'labelname':'notvehicle',
                 'hint':'Enter feedback here',
               },
               {'name':'Issue with GPS',
                 'header':'Got it.',
-                'discription':'GPS can be tricky when you are using the app indoors or when the weather is cloudy/rainy. Try to be in open areas. You can also try restarting the GPS through system settings.',
-                'inputLebel':'Issu still not resolved? Send feedback or chat with us.',
+                'discription':'Got it. \n\n GPS can be tricky when you are using the app indoors or when the weather is cloudy/rainy. Try to be in open areas. You can also try restarting the GPS through system settings.',
+                'inputLebel':'Issue still not resolved? Send feedback to us.',
+                'tag':'else',
                 'labelname':'gpsissue',
                 'hint':'Enter feedback here',
               },
@@ -249,13 +268,15 @@ class HelpCenter extends Component {
                'header':'Got it.',
                'discription':'Please enter the details of your workout along with actual distance (in Kms) and submit. We will look into it and add.',
                'inputLebel':'',
+               'tag':'else',
                'labelname':'zerodistance',
                'hint':'Enter details here',
               },
               {'name':' Still something else',
                'header':'',
                'discription':'',
-               'inputLebel':'Let us know about your issue. Send feedback or chat with us.',
+               'inputLebel':'Let us know about your issue. Send feedback to us.',
+               'tag':'else',
                'labelname':'else',
                'hint':'Enter feedback here',
               },
@@ -304,9 +325,14 @@ class HelpCenter extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
+              
+              <View style={commonStyles.Navbar}>
+                  <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50}]}>{'Help Center'}</Text>
+              </View>
                 <ListView
-                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',paddingTop:50,}}
+                style={{top:0,height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',}}
                 renderRow={this.renderRow}
+                automaticallyAdjustContentInsets={false}
                 dataSource={this.state.HelpCenterTabs}/>
                </View>
               );

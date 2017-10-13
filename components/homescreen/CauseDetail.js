@@ -154,8 +154,9 @@ class CauseDetail extends Component {
     render() {
       var data = this.props.data
         return (
-              <View style={{position:'absolute',height:deviceHeight,width:deviceWidth,backgroundColor: '#fff'}}> 
-                  <View style={{height:deviceHeight,width:deviceWidth}}>
+              <View style={{position:'absolute',height:deviceHeight-114,width:deviceWidth,backgroundColor: '#fff'}}> 
+                <NavBar title = {'OVERVIEW'} leftIcon = {this.leftIconRender()}/>
+                  <View style={{height:deviceHeight-15,width:deviceWidth}}>
                     <ScrollView>
                       <View style={styles.container}>
                      {this.DiscriptionImage(data)}
@@ -235,10 +236,10 @@ class CauseDetail extends Component {
     right: 0, 
     bottom:64,
     width:deviceWidth,
-    height:50,
+    height:60,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:styleConfig.pale_magenta
+    backgroundColor:'#00c1f2'
   },
   Btntext:{
      backgroundColor:'transparent',

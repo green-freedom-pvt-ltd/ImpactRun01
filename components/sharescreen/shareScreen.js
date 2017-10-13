@@ -583,13 +583,20 @@ import{
     }
 
     navigateTOhome(){
-      this.props.navigator.replace({
-      navigationBarHidden:false,
-      title:this.state.title,
-      showTabBar: false,
-      component:Tab,
-      passProps:{profileTab:'profile'},
+      this.props.navigator.push({
+      title: 'Gps',
+      id:'tab',
+      passProps:{profileTab:'profile', user:this.props.user},
+      navigator: this.props.navigator,
       })
+
+      // this.props.navigator.replace({
+      // navigationBarHidden:false,
+      // title:this.state.title,
+      // showTabBar: false,
+      // component:Tab,
+      // passProps:{profileTab:'profile'},
+      // })
      }
      
     navigateToThankyou(){

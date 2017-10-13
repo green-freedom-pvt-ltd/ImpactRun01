@@ -82,14 +82,23 @@ class LodingRunScreen extends Component {
 
     navigateToRunScreen(cause) {
       var cause = this.props.data;
+      console.log('props data' + this.props.data.sponsors);
       this.props.navigator.replace({
         title: 'Gps',
-        component:Home,
-        navigationBarHidden: true,
-        showTabBar: false,
+        id:'runscreen',
+        index: 0,
         passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
+        navigator: this.props.navigator,
       });
       clearTimeout(this.timeout);
+      
+      // this.props.navigator.replace({
+      //   title: 'Gps',
+      //   component:Home,
+      //   navigationBarHidden: true,
+      //   showTabBar: false,
+      //   passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
+      // });
     }
 
     render() {

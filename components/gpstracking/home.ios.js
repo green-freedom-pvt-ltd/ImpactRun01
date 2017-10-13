@@ -909,9 +909,8 @@ class Home extends Component {
     navigateTOHomeScreen(){
       this.props.navigator.push({
       title:'Impactrun',
-      component:Tabs,
-      navigationBarHidden: true,
-      showTabBar:true,
+      id:'tab',
+      navigator: this.props.navigator,
      })
     }
 
@@ -924,8 +923,7 @@ class Home extends Component {
       var user = this.state.Storeduserdata;
       var timetotal = (this.state.result != null)?Number(this.state.mainTimer )+ Number(this.state.storedRunduration):this.state.mainTimer;
       this.props.navigator.replace({
-        component:ShareScreen,
-        navigationBarHidden: true,
+        id:'sharescreen',
         passProps:{
           data:data,
           getUserData:this.props.getUserData,
@@ -942,8 +940,10 @@ class Home extends Component {
           EndRunTime:this.state.endDate,
           noOfsteps:this.state.numberOfSteps,
           },
+        navigator: this.props.navigator,
+
        })
-      alert(JSON.stringify(this.state.newlatlong));
+      // alert(JSON.stringify(this.state.newlatlong));
      }
 
 

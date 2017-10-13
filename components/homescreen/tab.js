@@ -18,6 +18,7 @@ import {
     NavigatorIOS,
 } from 'react-native';
 import DownloadShareMeal from '../downloadsharemeal/downloadShareMeal';
+import Welcome from '../homescreen/HomeScreen';
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import ProfileForm from '../profile/profileForm.js';
@@ -36,6 +37,7 @@ import Homescreen from '../homescreen/HomeScreen';
 import Profile from '../profile/profile.index.js';
 import Leaderboard from '../leaderboard/leaderBoard';
 import Faq from '../faq/faq';
+import Helpcenter from '../Helpcenter/helpcenter';
 import Setting from '../settings/setting';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Lodingscreen from '../LodingScreen';
@@ -381,55 +383,8 @@ class Tabs extends Component {
         })
         }
 
-
-
-        renderLeaderboard(){
-            if(this.state.user != null){
-                return(
-                     <NavigatorIOS
-                    ref="navLeaderBoard"
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.bright_blue}
-                    initialRoute={{
-                        showTabBar: true,
-                        rightButtonTitle:this.state.iconImpactleague,
-                        onRightButtonPress: () => {
-                             this.pushedComponent && this.pushedComponent._onRightButtonClicked();
-                        },
-                        title:'Leaderboard',
-                        component:Leaderboard,
-                        passProps:{user:this.state.user,getUserData:this.getUserData,ref:(component) => {this.pushedComponent = component}}
-                    }}/>
-                    )
-            }else{
-                return(
-                      <NavigatorIOS
-                    ref="navLeaderBoard2"
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.bright_blue}
-                    initialRoute={{
-                        showTabBar: true,
-                        title:'Leaderboard',
-                        component:Leaderboard,
-                        passProps:{user:this.state.user,getUserData:this.getUserData,ref:(component) => {this.pushedComponent = component}}
-                    }}/>
-
-                    )
-            }
-        }
-
         render() {
-        console.log('this.state.myCauseNum',this.state.user,this.state.iconImpactleague);
+            // console.log('this.state.myCauseNum',this.state.dataCauseNum);
         if (this.state.dataCauseNum != null) {
             return (
             <View style={{flex:1}}>     
@@ -443,135 +398,75 @@ class Tabs extends Component {
 
                 <TabBarIOS.Item
                   selected={this.state.selectedTab === 'settings'}
-                  icon={{uri: settingicon, scale: 6.5}}
+                  icon={{uri: settingicon, scale: 5.5}}
                   title="Settings"
                   onPress={() => {
                       this.setState({
                           selectedTab: 'settings',
                       });
                   }}>
-                  <NavigatorIOS
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{flex:1}}
-                    titleTextColor='#FFF'
-                    barTintColor={styleConfig.bright_blue}
-                    tintColor='#FFF'
-                    shadowHidden={true}
-                    initialRoute={{
-                        showTabBar: true,
-                        title:'setting',
-                        component:Setting
-                    }}/>
+                    <Setting navigator={this.props.navigator} />
                 </TabBarIOS.Item>
                  <TabBarIOS.Item
                     selected={this.state.selectedTab === 'profile'}
                     title="Me"
-                    icon={{uri: Profileicon, scale: 6}}
+                    icon={{uri: Profileicon, scale: 5}}
                     onPress={() => {
                         this.setState({
                             selectedTab: 'profile',
                         });
                   }}>
-                  <NavigatorIOS
-                    ref="nav"
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={false}
-                    barTintColor={styleConfig.bright_blue}
-                    initialRoute={{
-                        showTabBar: true,
-                        rightButtonTitle:(this.state.user)?'edit':'',
-                        onRightButtonPress: () => {if(this.state.user){ this.navigateToProfileForm()} else {return}},
-                        title:'Profile',
-                        component:Profile,
-                        passProps:{user:this.state.user,getUserData:this.getUserData}
-                    }}/>
+                 <Profile user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator} />
                 </TabBarIOS.Item>
                 
                 <TabBarIOS.Item
                   selected={this.state.selectedTab === 'welcome'}
                   title="Home"
-                  icon={{uri: RunIcon, scale: 6}}
+                  icon={{uri: RunIcon, scale: 5}}
                   onPress={() => {
                       this.setState({
                           selectedTab: 'welcome',
                       });
                   }}>
-                 <View>
-                  <NavigatorIOS
-                    ref="Homescreen"
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{height:deviceHeight,width:deviceWidth}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.bright_blue}
-                    initialRoute={{
-                         showTabBar: true,
-                        rightButtonIcon:{uri:base64Icon,scale:3},
-                        onRightButtonPress: () => this.navigateToFeed(),
-                        title:'Impactrun',
-                        component:Homescreen,
-                        passProps:{user:this.state.user,getUserData:this.getUserData,myCauseCount:this.props.dataCauseCount,fetchDataonInternet:this.fetchDataonInternet,myCauseNum:this.state.dataCauseNum}
-                    }}/>
+                  <View>
+                    <Welcome myCauseCount={this.props.dataCauseCount} fetchDataonInternet ={this.fetchDataonInternet} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
                  </View>
                 </TabBarIOS.Item>
 
                 <TabBarIOS.Item
                     selected={this.state.selectedTab === 'Leaderboard'}
                     title="Leaderboard"
-                    icon={{uri: GroupImage, scale: 4}}
+                    icon={{uri: GroupImage, scale: 3.5}}
                     onPress={() => {
                         this.setState({
                             selectedTab: 'Leaderboard',
                         });
                   }}>
-                 {this.renderLeaderboard()}
+                 <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
-                    selected={this.state.selectedTab === 'Help'}
+                    selected={this.state.selectedTab === 'help'}
                     title="Help"
-                    icon={{uri: FaqImage, scale: 5.5}}
+                    icon={{uri: FaqImage, scale: 5}}
                     onPress={() => {
+
                         this.setState({
-                            selectedTab: 'Help',
+                            selectedTab: 'help',
                             myFeedStoredCount:this.state.FeedCount
                         });
                   }}>
-                   <NavigatorIOS
-                    ref="Help"
-                    translucent={false}
-                    navigationBarHidden={false}
-                    style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.bright_blue}
-                    initialRoute={{
-                        showTabBar: true,
-                        title:'Help',
-                        component:HelpCenter,
-                        passProps:{user:this.state.user,getUserData:this.getUserData}
-                    }}/>
+                 <Helpcenter  user={this.state.user} navigator={this.props.navigator}/>
                 </TabBarIOS.Item>
               </TabBarIOS>
             </View>
           );
-
         }else{
             return(
               <Lodingscreen/>
             )
           }
       }
-
-
-  }
+}
 
 
     var styles = StyleSheet.create({

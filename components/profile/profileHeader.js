@@ -141,6 +141,14 @@ class UserProfile extends Component {
       console.log('height',this.state.height);
       if (this.props.user != null) {
         return (
+
+          <View>
+
+          <View style={commonStyles.Navbar}>
+              <Text style={commonStyles.menuTitle}>Profile</Text>
+              <View style={{position:'absolute',right:0,top:0,}}>{this.renderEditProfileIcon()}</View>
+          </View>
+          <View>
           <View style={styles.userimagwrap}>
               <View style={styles.UserImageWrap}>
               <View style={{height:this.props.height-10,width:this.props.height-10,borderRadius:(this.props.height-5)/10}}>
@@ -150,6 +158,8 @@ class UserProfile extends Component {
               <View style={styles.barWrap}>
               <LevelBar height={styleConfig.barHeight+10} progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={((deviceWidth-20)/100)*75} totalKm={this.props.totalKm}/>
             </View>
+          </View>
+          </View>
           </View>
         );
       };

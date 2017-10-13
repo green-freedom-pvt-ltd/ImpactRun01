@@ -353,7 +353,7 @@ class ProfileForm extends Component {
               ...this.props.style,
               opacity: fadeAnim, 
               position:'absolute',
-              top:0,
+              top:styleConfig.navBarHeight-12,
             }}
           >
         <View style={{backgroundColor:styleConfig.pale_magenta,width:deviceWidth,height:40,justifyContent: 'center',alignItems: 'center',}}>
@@ -376,7 +376,16 @@ class ProfileForm extends Component {
                 mode="date"/> : <View />
          return (
           <View>
-          <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
+            <View style={commonStyles.Navbar}>
+            <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+                  <Icon3 style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
+                </TouchableOpacity>
+              <Text numberOfLines={1} style={commonStyles.menuTitle}>{'Edit Profile'}</Text>
+            <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.putRequestUser()} >
+              <Text style={{color:'white'}}>SAVE</Text>
+            </TouchableOpacity>
+            </View>
+            <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
           
             <View style={styles.FromWrap}>
              

@@ -41,6 +41,7 @@ import CauseDetail from './CauseDetail';
 import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 import { takeSnapshot } from "react-native-view-shot";
 import Share, {ShareSheet, Button} from 'react-native-share';
+
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
@@ -224,7 +225,7 @@ class Homescreen extends Component {
           if (result != null || undefined) {
           var feeddata = JSON.parse(result);  
           console.log("faqdata",feeddata);
-          AlertIOS.alert("result",JSON.stringify(feeddata));
+          // AlertIOS.alert("result",JSON.stringify(feeddata));
           this.setState({
            loaded: true,
           }) 
@@ -529,11 +530,21 @@ class Homescreen extends Component {
         // authorization is a string which is either "authorizedAlways",
         // "authorizedWhenInUse", "denied", "notDetermined" or "restricted"
         // Location.startUpdatingLocation();
-        me.props.navigator.push({
-        component:LodingRunScreen,
-        navigationBarHidden: true,
+        var cause;
+        if (!!me.state.causes.length && me.state.navigation.index+1) {
+          cause = me.state.causes[me.state.navigation.index]
+        } else {
+          cause = {}
+        }
+
+        // Location.startUpdatingLocation();
+        me.props.navigator.replace({
+        title: 'Gps',
+        id:'runlodingscreen',
+        index: 0,
         passProps:{data:cause,user:me.props.user,getUserData:me.props.getUserData},
-        // sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+        sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+        navigator: me.props.navigator,
         });
       }else{
         if (authorization === "denied") {
@@ -544,6 +555,23 @@ class Homescreen extends Component {
           Location.requestWhenInUseAuthorization();
         }
       }
+
+
+      //   me.props.navigator.push({
+      //   component:LodingRunScreen,
+      //   navigationBarHidden: true,
+      //   passProps:{data:cause,user:me.props.user,getUserData:me.props.getUserData},
+      //   // sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      //   });
+      // }else{
+      //   if (authorization === "denied") {
+      //     me.setState({
+      //       isDenied:true,
+      //     })                 
+      //   }else{
+      //     Location.requestWhenInUseAuthorization();
+      //   }
+      // }
      });
     };
 
@@ -562,11 +590,18 @@ class Homescreen extends Component {
     navigateToCauseDetail(cause,some) {
       console.log('some',some);
       this.props.navigator.push({
-      title: 'Causedetail',
-      component:CauseDetail,
-      navigationBarHidden: false,
+      title: 'Gps',
+      id:'causedetail',
+      index: 0,
       passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
+      navigator: this.props.navigator,
       });
+      // this.props.navigator.push({
+      // title: 'Causedetail',
+      // component:CauseDetail,
+      // navigationBarHidden: false,
+      // passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
+      // });
     };
 
     functionForIphone4Brief(cause){
@@ -603,7 +638,7 @@ class Homescreen extends Component {
             width: event.nativeEvent.layout.width,
             height: event.nativeEvent.layout.height
         })
-        console.log('height',this.state.height);
+        // console.log('height',this.state.height);
     };
 
 
@@ -611,9 +646,9 @@ class Homescreen extends Component {
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
       if (this.state.renderComponent) {
-        console.log('renderComponent',this.state.renderComponent);
+        // console.log('renderComponent',this.state.renderComponent);
         var cause = this.state.album[route.key][5]
-        console.log('cause',cause);
+        // console.log('cause',cause);
         var money = JSON.stringify(parseFloat(this.state.album[route.key][0]).toFixed(0));
         if (money.length > 5) {
           var lenth = money.length;
@@ -739,7 +774,7 @@ class Homescreen extends Component {
     }else{
       return(
         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LETS GO> </Text>
+          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET'S GO </Text>
         </TouchableOpacity>
       )
     }
@@ -758,7 +793,10 @@ class Homescreen extends Component {
       if (this.props.myCauseNum != null ) {
       return (
           <View style={{height:deviceheight,width:deviceWidth}}>
-             <TabViewAnimated
+          <View style={commonStyles.Navbar}>
+            <Text style={commonStyles.menuTitle}>Impactrun</Text>
+          </View>
+          <TabViewAnimated
              
              style={[ styles.container, this.props.style ]}
              navigationState={this.state.navigation}
@@ -810,7 +848,7 @@ class Homescreen extends Component {
       backgroundColor:'#e2e5e6',
       padding:((deviceheight-120)/100)*5,
       paddingLeft:0,
-      height:((deviceheight-120)/100)*85,
+      height:((deviceheight-120)/100)*86,
       justifyContent: 'center',
     },
 
@@ -852,7 +890,6 @@ class Homescreen extends Component {
       height:((deviceheight-120)/100)*35,
       width:deviceWidth-100,
       borderRadius:5,
-      resizeMode:'cover',
       justifyContent:'flex-end',
      },
 
@@ -940,7 +977,7 @@ class Homescreen extends Component {
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor:styleConfig.pale_magenta,
+      backgroundColor:'#00c1f2',
       justifyContent: 'center',
       shadowColor: '#000000',
       shadowOpacity: 0.4,

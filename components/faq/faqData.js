@@ -166,8 +166,8 @@ class Faqdata extends Component {
           return this.renderLoadingView();
         }
         return (
-          <View style={{height:deviceHeight-114,width:deviceWidth}}>
-            <View style={{height:deviceHeight-114,width:deviceWidth}}>
+          <View style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth}}>
+            <View style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth}}>
               <ListView
               refreshControl={
                 <RefreshControl
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     height:40, 
     borderColor: '#e1e1e8', 
     backgroundColor: 'white',
-    borderRadius:8,
+    borderRadius:4,
     width:deviceWidth-100,
     color:'#4a4a4a',
     padding:10,

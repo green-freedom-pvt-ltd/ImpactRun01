@@ -262,18 +262,35 @@ class Login extends Component {
 
       navigateToHome() {
         this.props.navigator.push({
-            title: 'Homescreen',
-            screen:'route',
-            navigatorStyle: {
-              navBarHidden:true,
-            },
+            title: 'Gps',
+            id: 'tab',
             passProps: {
               dataCauseCount: this.state.mycauseDataCount,
               dataCauseNum: this.state.myCauseNum,
               causes:this.state.causes
             },
+            navigator: this.props.navigator,
         })
       }
+
+
+      // navigateToHome() {
+      //   this.props.navigator.push({
+      //       title: 'Homescreen',
+      //       component:Tabs,
+      //       navigationBarHidden: true,
+      //       title: 'Homescreen',
+      //       screen:'route',
+      //       navigatorStyle: {
+      //         navBarHidden:true,
+      //       },
+      //       passProps: {
+      //         dataCauseCount: this.state.mycauseDataCount,
+      //         dataCauseNum: this.state.myCauseNum,
+      //         causes:this.state.causes
+      //       },
+      //   })
+      // }
 
 
 

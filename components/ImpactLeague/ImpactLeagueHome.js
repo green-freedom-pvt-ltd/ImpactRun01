@@ -159,12 +159,14 @@ class ImpactLeague extends Component {
 
   
       NavigateToDetail(rowData){
+        console.log('NavigateToDetail Start');
         this.props.navigator.push({
+          id:'impactleagueleaderboard',
           title: rowData.team_name,
-          component:impactleagueleaderboard,
-          showTabBar: true,
+          navigator: this.props.navigator,
           passProps:{user:this.state.user, Team_id:rowData.team_id,team_name:rowData.team_name}
         })
+        console.log('NavigateToDetail');
       }
 
       goBack(){
@@ -205,6 +207,7 @@ class ImpactLeague extends Component {
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
+            <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
             <LodingScreen style={{height:deviceHeight-50}}/>
           </View>
         );
@@ -240,7 +243,8 @@ class ImpactLeague extends Component {
 
 
         return (
-        <View style={{height:deviceHeight-114,width:deviceWidth}}>
+        <View style={{height:deviceHeight,width:deviceWidth}}>
+          <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
           <View style={{height:((deviceHeight)/2)-100,width:deviceWidth}}>
               <Swiper style={styles.wrapper} height={((deviceHeight)/2)-100} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
                 <View>

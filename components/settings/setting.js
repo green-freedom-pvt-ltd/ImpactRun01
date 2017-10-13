@@ -76,14 +76,21 @@ class Setting extends Component {
           console.log('WRONG SIGNIN', err);
          })
         }
-
         navigateToLogin(){
            this.props.navigator.push({
-            component:Login,
-            navigationBarHidden: true,
-            showTabBar: false,
+            title: 'Gps',
+            id:'login',
+            index: 0,
+            navigator: this.props.navigator,
            })
         }
+        // navigateToLogin(){
+        //    this.props.navigator.push({
+        //     component:Login,
+        //     navigationBarHidden: true,
+        //     showTabBar: false,
+        //    })
+        // }
 
 
        handleFBLogout(){
@@ -105,18 +112,18 @@ class Setting extends Component {
       componentDidMount() {
         console.log('props',this.props,this.props.getUserData);
         var settingsLists = [
-          {'name':'share',
+          {'name':'Share',
           'iconName':'share',
           'functionName':'',
          },
           {
-          'name':'rate',
+          'name':'Rate',
           'iconName':'grade',
           'functionName':'',
          },
          {
-          'name':'logout',
-          'iconName':'thumbs-up-down',
+          'name':'Logout',
+          'iconName':'exit-to-app',
           'functionName':'',
          },
         ]
@@ -131,12 +138,13 @@ class Setting extends Component {
               user:user,
               loaded:true
             })
-            if (this.state.user) {
+            console.log('this.state.Usr ', this.state.user);
               this.setState({
                 text:(this.state.user) ? 'LOGOUT':'LOGIN',
                 IconText: (this.state.user) ? 'md-log-out':'md-log-in'
               })
-            };
+            ;
+            console.log('this.state.Usr ', this.state.text);
           })  
       }
 
@@ -151,11 +159,11 @@ class Setting extends Component {
           url: "http://www.impactrun.com/#",
           subject: "Download ImpactRun Now " //  for email
         };
-        if (rowData.name === 'share') {
+        if (rowData.name === 'Share') {
          return Share.open(shareOptions);
-        }else if(rowData.name === 'rate'){
+        }else if(rowData.name === 'Rate'){
          return this.handleClick();
-        }else if(rowData.name === 'logout'){
+        }else if(rowData.name === 'Logout'){
           return this._signOut();
         }else if(rowData.name === 'help'){
           return this.navigateToHelp();
@@ -173,21 +181,17 @@ class Setting extends Component {
       
  
       ListIconfirst(rowData){
-        if(rowData.name === 'logout'){
-          return;
-        }else{
           return(
             <Icon style={{color:'#595c5d',fontSize:20,}}name={rowData.iconName}></Icon>
           )
-        }   
       }
 
 
       renderRow(rowData) {
-        var alignItems = (rowData.name === 'logout')? 'center':'flex-start';
+        var alignItems = (rowData.name === 'Logout')? 'center':'flex-start';
         console.log('rowData',rowData);
-        var marginTop = (rowData.name === 'logout')?100:0;
-        var borderBottomWidth = (rowData.name === 'logout' || rowData.name === 'help')?0:0.5;
+        var marginTop = (rowData.name === 'Logout')?10:0;
+        var borderBottomWidth = (rowData.name === 'Logout' || rowData.name === 'help')?0:0.5;
         return (
           <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
             <View style={{flex:-1,width:50,justifyContent: 'center',alignItems: 'center',}}>
@@ -205,9 +209,13 @@ class Setting extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
+                  <View style={commonStyles.Navbar}>
+                    <Text style={commonStyles.menuTitle}>Settings</Text>
+                  </View>
                 <ListView
-                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',paddingTop:50}}
+                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6'}}
                 renderRow={this.renderRow}
+                automaticallyAdjustContentInsets={false}
                 dataSource={this.state.SettingTabs}/>
                </View>
               );

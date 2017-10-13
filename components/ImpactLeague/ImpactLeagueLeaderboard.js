@@ -84,6 +84,7 @@ class ImpactLeagueLeaderBoard extends Component {
            
         var url = apis.ImpactLeagueLeaderboardV2Api;
         var token = this.props.user.auth_token;
+        console.log('token ' + token);
         if (this.props.user.team_code == this.props.Team_id) {
           fetch(url,{
             method: "GET",
@@ -194,6 +195,7 @@ class ImpactLeagueLeaderBoard extends Component {
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
+          <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>    
             <LodingScreen style={{ height:deviceHeight-150}}/>
           </View>
         );
@@ -207,7 +209,8 @@ class ImpactLeagueLeaderBoard extends Component {
         console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,paddingBottom:53}}>
+           <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>
+            <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth}}>
                <ListView 
                 refreshControl={
                 <RefreshControl

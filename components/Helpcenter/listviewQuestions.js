@@ -44,17 +44,26 @@ class QuestionLists extends Component {
 
        
        navigateToNextPage(rowData){
+        console.log("rowData.inputLebel", rowData.inputLebel);
         this.props.navigator.push({
           title:'Feedback',         
-          component:EndFeedBack,
-          navigationBarHidden: false,
-          showTabBar: true,
+          // component:EndFeedBack,
+          // navigationBarHidden: false,
+          // showTabBar: true,
+          id:'feedback',
           passProps:{
             rowData:this.props.rowData,
             runData:this.props.runData,
             data:rowData,
             user:this.props.user,
             getUserData:this.props.getUserData,
+            title:'Help Center',
+            explanation:rowData.discription,
+            prompt:rowData.inputLebel,
+            hint:rowData.hint,
+            subtag:rowData.labelname,
+            tag:rowData.tag,
+
 
           }
         })
@@ -72,7 +81,11 @@ class QuestionLists extends Component {
 
 
 
- 
+     
+    goBack(){
+        this.props.navigator.pop({});
+    }
+
       
    
 
@@ -94,7 +107,13 @@ class QuestionLists extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-                <ListView
+              <View style={commonStyles.Navbar}>
+                <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+                  <IconSec style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></IconSec>
+                </TouchableOpacity>
+                  <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50,paddingRight:50}]}>{'Help Center'}</Text>
+              </View>
+              <ListView
                 style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',}}
                 renderRow={this.renderRow}
                 dataSource={this.state.HelpCenterTabs}/>

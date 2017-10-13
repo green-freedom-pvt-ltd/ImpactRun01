@@ -7,6 +7,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  AlertIOS,
 } from 'react-native';
 import apis from '../apis';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -28,6 +29,7 @@ class EndFeedBack extends Component {
     }
 
     componentDidMount() {
+      // AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
      
     }
     onsubmitFeedback(){
@@ -49,27 +51,41 @@ class EndFeedBack extends Component {
         )
       }
     
+     
+    goBack(){
+        this.props.navigator.pop({});
+    }
 
+      navigateToHome(rowData){
+
+        this.props.navigator.push({
+          title:'Select issue',         
+          // component:QuestionLists,
+          // navigationBarHidden: false,
+          // showTabBar: true,
+          id:'tab',
+          passProps:{
+           getUserData:this.props.getUserData,
+           user:this.props.user,
+          }
+        })
+      }
 
     postFeedback(){
-
       if (this.props.user){
+        console.log("userdata", this.props.data.labelname);
        var user_id = this.props.user.user_id;
+       var mybody;
        var date = new Date();
        console.log('this.props.rowData',this.props.rowData,this.props.data);
        var convertepoch = parseInt(date.getTime()/1000);
-       fetch(apis.UserFeedBack, {
-          method: "post",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body:JSON.stringify({
+       if(this.props.subtag){
+       mybody = JSON.stringify({
           "feedback":this.state.moreText,
           "feedback_app_version":'1.0.7',
           "user_id":user_id,
-          "tag":this.props.rowData.labelname,
-          "sub_tag":this.props.data.labelname,
+          "tag":this.props.tag,
+          "sub_tag":this.props.subtag,
           "run_id":(this.props.runData)?this.props.runData.run_id:0,
           "phone_number":this.props.user.phone_number,
           "email":this.props.user.email,
@@ -77,11 +93,38 @@ class EndFeedBack extends Component {
           "is_chat":false,
           "client_time_stamp":convertepoch,
           })
+ 
+       }
+       else{
+       mybody = JSON.stringify({
+          "feedback":this.state.moreText,
+          "feedback_app_version":'1.0.7',
+          "user_id":user_id,
+          "tag":this.props.data.labelname,
+          "run_id":(this.props.runData)?this.props.runData.run_id:0,
+          "phone_number":this.props.user.phone_number,
+          "email":this.props.user.email,
+          "is_ios":true,
+          "is_chat":false,
+          "client_time_stamp":convertepoch,
+          })
+
+       }
+       
+       fetch(apis.UserFeedBack, {
+          method: "post",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body:mybody
         })
         .then((response) => response.json())
         .then((response) => {
           console.log('responce',response);
-          alert('Thank you for giving your feedback');
+          AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
+          this.navigateToHome();
+
         })
         .catch((err) => {
           console.log('err',err);
@@ -98,36 +141,43 @@ class EndFeedBack extends Component {
 
     render() {
       var data = this.props.data;
+      console.log("Title ", this.props.title);
       return (
         <View style={styles.container}>
-        <View style={{height:deviceHeight-114,width:deviceWidth}} >
-         <ScrollView style={{width:deviceWidth}}>
-          <View style={{width:deviceWidth,justifyContent: 'center',alignItems: 'flex-start',padding:25}}>
-          <Text style = {{textAlign:'left', color:'#4a4a4a',fontSize:styleConfig.fontSizer1+2,fontWeight:'400',fontFamily:styleConfig.FontFamily,marginBottom:20,}}>{data.header}</Text>
-          <Text style = {{textAlign:'left', color:'#4a4a4a',fontSize:styleConfig.fontSizer1,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>{data.discription}</Text>   
-          </View>
-          </ScrollView>
-            <View style={styles.FaqSubmitWrap}>
+         <View style={commonStyles.Navbar}>
+          <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+            <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+          </TouchableOpacity>
+            <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50,paddingRight:50}]}>{this.props.title}</Text>
+        </View>
 
-              <View>
-               <Text>{data.inputLebel}</Text>
+        <View style={{height:deviceHeight,width:deviceWidth}} >
+
+        <View style={{marginTop:30,marginLeft:10,}}>
+          <Text style={{color:'black'}}>{this.props.explanation}</Text>
+        </View>
+        <View style={{marginTop:15,marginLeft:10,}}>
+          <Text style={{color:'black', fontFamily:styleConfig.FontFamily,}}>{this.props.prompt}</Text>
+        </View>
+            <View style={styles.FaqSubmitWrap}>
+               <View>
                 <TextInput
                 ref={component => this._textInput = component} 
                 style={styles.textEdit}
                 onChangeText={(moreText) => this.setState({moreText})}
-                placeholder="If you have any question ask us!"
+                placeholder={this.props.hint}
                 />
-                </View>
+              </View>
                
-                <TouchableOpacity onPress={() => this.postFeedback()} style={styles.submitFaqbtn}>
+                
+              </View>
+              <TouchableOpacity onPress={() => this.postFeedback()} style={styles.submitFaqbtn}>
                   <Text style={{color:'white'}}>Submit</Text>
 
                 </TouchableOpacity>
                 
-              </View>
                 <KeyboardSpacer/>
-                 </View>
-                 {this.modelView()}
+            </View>
             </View>
       );
     }
@@ -135,11 +185,10 @@ class EndFeedBack extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height:deviceHeight-114,
+    height:deviceHeight,
     backgroundColor: '#e2e5e6',
   },
   FaqSubmitWrap:{
-    paddingTop:7,
     height:styleConfig.navBarHeight,
     width:deviceWidth,
     flexDirection: 'row',
@@ -148,24 +197,27 @@ const styles = StyleSheet.create({
     backgroundColor:'#e1e1e8',
     borderBottomWidth:2,
     borderBottomColor:'#e1e1e8',
+    marginTop:1,
   },
   textEdit: {
     height:40, 
     borderColor: '#e1e1e8', 
     backgroundColor: 'white',
     borderRadius:8,
-    width:deviceWidth-100,
+    width:deviceWidth-10,
+    marginLeft:5,
     color:'#4a4a4a',
     padding:10,
     marginRight:5,
   },
   submitFaqbtn:{
     height:40, 
-    width:85,
+    width:deviceWidth-40,
+    marginLeft:20,
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:styleConfig.bright_blue, 
+    backgroundColor:styleConfig.pale_magenta, 
   }
 });
 

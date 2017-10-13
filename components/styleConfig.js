@@ -365,5 +365,6 @@ export default {
   pale_magenta:'#d667cd',
   bright_blue:'#0077ff',
   warm_grey_three:'#8a8a8a',
+  light_sky_blue:'#00c1f2',
 
 }

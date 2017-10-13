@@ -179,6 +179,7 @@ var iphone7Plus = 736;
        //  console.log('route',route);
        // // component will not rerender
        // this.props.navigator.replace(route);
+       setTimeout(() => {this.setState({downrefresh: false})}, 1000)
        this.getUserData();
        this.fetchLeaderBoardLocally(this.state.value);
 
@@ -189,7 +190,7 @@ var iphone7Plus = 736;
       fetchDataIfInternet(){
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
-            if (isConnected) {
+            if (isConnected && this.state.user.auth_token) {
               this.fetchLeaderBoard();
             }else{
               return this.fetchLeaderBoardLocally(this.state.value);
@@ -198,14 +199,6 @@ var iphone7Plus = 736;
         );
       }
       
-
-
-      componentWillReceiveProps(nextProps) {
-       nextProps.route.rightButtonTitle = (this.state.user)?'league':'';
-
-       console.log('props',nextProps);  
-      }
-
 
       fetchLeaderBoard() {
         AsyncStorage.removeItem('leaderBoard' + this.state.value,(err) => {
@@ -254,16 +247,40 @@ var iphone7Plus = 736;
 
 
       navigateToImpactLeague(){
-        if (this.state.user != null) {
-           this.props.navigator.push({
-            title: 'ImpactLeague',
-            component:ImpactLeague,
-            passProps:{user:this.state.user,getUserData:this.getUserData,}
+         AsyncStorage.getItem('USERDATA', (err, result) => {
+          let user = JSON.parse(result);
+          console.log("user",user.team_code);
+          this.setState({
+            user:user,
+          })
+          if (this.state.user.team_code === 0) {
+            this.setState({
+              RouteImpactleague:'impactleaguecode'
+            })
+          }else{               
+            this.setState({
+              RouteImpactleague:'impactleaguehome'
+            })
+          }
+          this.props.navigator.push({
+            id:this.state.RouteImpactleague,
+            navigator: this.props.navigator,
+            passProps:{user:this.props.user, getUserData:this.props.getUserData}
+          })
         })
 
-        }else{
-          return;
-        }
+
+
+        // if (this.state.user != null) {
+        //    this.props.navigator.push({
+        //     title: 'ImpactLeague',
+        //     component:ImpactLeague,
+        //     passProps:{user:this.state.user,getUserData:this.getUserData,}
+        // })
+
+        // }else{
+        //   return;
+        // }
       }
 
 
@@ -341,7 +358,11 @@ var iphone7Plus = 736;
       render() {
         var dataleaderboad = this.state.LeaderBoardResult;
         return (
-          <View>            
+          <View>      
+          <View style={commonStyles.Navbar}>
+              <Text style={commonStyles.menuTitle}>Leaderboard</Text>
+              <View style={{position:'absolute',right:0,top:0,}}>{this.renderImpactLeagueIcon()}</View>
+            </View>      
             <View style= {styles.textlast7daysWrap}>
               <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Most Impact Last 7 days'} options={['Most Impact Last 7 days', 'Most Impact Last Month', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
               </ModalDropDown>

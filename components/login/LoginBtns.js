@@ -126,7 +126,7 @@ class LoginBtns extends Component {
             })
             this.LoginCountFunction();
             this.props.getUserData();
-            this.props.tabNavigation();
+            // this.props.tabNavigation();
           })
           
          })

@@ -14,6 +14,8 @@ import{
 import FaqData from './faqData';
 import NavBar from '../navBarComponent';
 import commonStyles from '../../components/styles';
+import styleConfig from '../../components/styleConfig';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -27,9 +29,19 @@ class Faq extends Component {
         })
       }
 
+      goBack(){
+          this.props.navigator.pop({});
+      }
+
   		render() {
   		  return (
           <View>
+              <View style={commonStyles.Navbar}>
+                <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+                  <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+                </TouchableOpacity>
+                  <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50,paddingRight:50}]}>{'FAQ'}</Text>
+              </View>
   			    <FaqData user = {this.props.user}/>
           </View>
   			);
