@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Impactrun.app"
+               BuildableName = "Impact.app"
                BlueprintName = "Impact"
                ReferencedContainer = "container:Impact.xcodeproj">
             </BuildableReference>
@@ -71,7 +71,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Impactrun.app"
+            BuildableName = "Impact.app"
             BlueprintName = "Impact"
             ReferencedContainer = "container:Impact.xcodeproj">
          </BuildableReference>
@@ -113,7 +113,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Impactrun.app"
+            BuildableName = "Impact.app"
             BlueprintName = "Impact"
             ReferencedContainer = "container:Impact.xcodeproj">
          </BuildableReference>
@@ -124,6 +124,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "Impact"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

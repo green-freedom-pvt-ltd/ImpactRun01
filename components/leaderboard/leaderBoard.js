@@ -210,7 +210,7 @@ var iphone7Plus = 736;
         if (this.state.value == 'Most Impact Last 7 days'){
           stateValue = 'last_7';
         }
-        else if (this.state.value == 'Most Impact Last Month'){
+        else if (this.state.value == 'Most Impact Last 30 days'){
           stateValue = 'last_30'; 
         }
         else if(this.state.value == 'All Time'){
@@ -364,7 +364,7 @@ var iphone7Plus = 736;
               <View style={{position:'absolute',right:0,top:0,}}>{this.renderImpactLeagueIcon()}</View>
             </View>      
             <View style= {styles.textlast7daysWrap}>
-              <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Most Impact Last 7 days'} options={['Most Impact Last 7 days', 'Most Impact Last Month', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
+              <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Most Impact Last 7 days'} options={['Most Impact Last 7 days', 'Most Impact Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
               </ModalDropDown>
             </View>
              <View>{this.renderLeaderboadScreen(dataleaderboad)}</View>

@@ -240,7 +240,7 @@ class Homescreen extends Component {
          NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
-              console.log("isind");
+              // console.log("isind");
                this.fetchFeedData();
             }else{
               this.getFeedFromlocal();
@@ -258,7 +258,7 @@ class Homescreen extends Component {
           loaded: true,
           notificationCount:jsonData.count,
         });
-        console.log("jsonData.results",jsonData);
+        // console.log("jsonData.results",jsonData);
         AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
         });
         })
@@ -344,7 +344,7 @@ class Homescreen extends Component {
                    
                     let causesArr = _this.state.causes.slice()
                     causesArr.push(val)  
-                    console.log('causesArr',causesArr);                
+                    // console.log('causesArr',causesArr);                
                     _this.setState({causes: causesArr})
                     _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
@@ -775,7 +775,7 @@ class Homescreen extends Component {
     }else{
       return(
         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET'S GO ></Text>
+          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET'S GO</Text>
         </TouchableOpacity>
       )
     }

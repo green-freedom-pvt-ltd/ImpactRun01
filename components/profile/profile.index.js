@@ -638,7 +638,7 @@ class Profile extends Component {
     }
     
     getXRows(item,index) {
-        console.log('item',item)
+        // console.log('item',item)
         var days = item[0];
         var rupees = item[1];
         var maxvalue = Math.max.apply(Math, dataRupees);
@@ -666,7 +666,7 @@ class Profile extends Component {
     }
 
     getYRows(item,index) {
-        console.log('item',item)
+        // console.log('item',item)
         var days = item[0];
         if (item[1] === undefined) {
             var rupees = 0;
@@ -767,7 +767,7 @@ class Profile extends Component {
               <View style={{height:((heightInpersentage*55)/100)*35,width:deviceWidth,backgroundColor:'white', paddingTop:20}}>
                 <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10, paddingTop:20}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
-                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS></Text>
+                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS</Text>
                   </TouchableOpacity>
                 </View>
               </View>

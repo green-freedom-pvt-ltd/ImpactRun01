@@ -118,7 +118,7 @@
             Home:true,
           })
 
-          this.RouteChangeField(responseJson)
+          // this.RouteChangeField(responseJson)
 
         })
         .catch((error) => {
@@ -126,21 +126,6 @@
         });
       }
 
-      RouteChangeField(responseJson){
-        var userdata = this.props.user;
-        var userdata = this.props.user;
-        console.log("userdata",userdata);
-        let userData = {
-          team_code:responseJson.team_code
-        }
-        // first user, delta values
-        AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
-         AsyncStorage.getItem('USERDATA', (err, result) => {
-                this.props.getUserData();
-
-        })
-        })    
-      }
 
       onSelectCity(idx,value){
         console.log('index',idx,value);
@@ -197,6 +182,9 @@
         console.log('data',data);
   		  return (
           <View>
+          <View style={commonStyles.Navbar}>
+              <Text style={commonStyles.menuTitle}>Impact League</Text>
+            </View>
             <View style ={styles.container}>
               <Image source={{uri:data.impactleague_banner}} style={styles.bannerimage}>
               </Image>

@@ -241,8 +241,9 @@ class ImpactLeague extends Component {
           return this.renderLoadingView();
         }
 
-
+        console.log("this.state.total_amount", this.state.total_amount);
         return (
+
         <View style={{height:deviceHeight,width:deviceWidth}}>
           <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
           <View style={{height:((deviceHeight)/2)-100,width:deviceWidth}}>
@@ -257,20 +258,20 @@ class ImpactLeague extends Component {
                   <View style={{alignItems:'center', justifyContent:'center',     paddingTop: 20}}>
                       <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
                       <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name="inr"></Icon2>
-                      {this.state.total_amount}
+                      {typeof this.state.total_amount == 'undefined' ? 0 :  this.state.total_amount }
                       </Text>
                   </View>
                    <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
                       <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
                       <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
-                      {this.state.total_runs}
+                      {typeof this.state.total_runs == 'undefined' ? 0 :  this.state.total_runs }
                       </Text>
                       <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walk/Runs</Text>
                       </View>
 
                       <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
                         <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
-                          {this.state.total_members}
+                          {typeof this.state.total_members == 'undefined' ? 0 :  this.state.total_members }
                         </Text>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Members </Text>
                       </View>

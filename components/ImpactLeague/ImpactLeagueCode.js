@@ -121,35 +121,83 @@ class ImpactLeagueCode extends Component {
     }
 
 
+      navigateTOhome(responseJson){
+        this.props.navigator.replace({
+          title: 'impactleaguehome',
+          id:'impactleaguehome',
+          navigator: this.props.navigator,
+          passProps:{
+            backTo:'learderboad',
+            user:this.props.user,
+            data:responseJson,
+            getUserData:this.props.getUserData,
+          }
+        })
+      }
+      
+    RouteChangeField(responseJson){
+        var userdata = this.props.user;
+        console.log("userdata",userdata);
+        let userData = {
+          team_code:responseJson.team_code
+        }
+        // first user, delta values
+        AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
+         AsyncStorage.getItem('USERDATA', (err, result) => {
+                this.props.getUserData();
+
+        })
+        })    
+      }
+
+
 		Navigate_To_nextpage(responseJson){
+      this.RouteChangeField(responseJson);
       var team_code = responseJson.team_code;
       console.log(responseJson.company_attribute);
       var cities = responseJson.company_attribute;
-      var city = [];
-      var i;
-      for (i = 0; i < cities.length; i++) {
-        if (cities[i].city != null ) {
-          city.push(cities[i].city);
-        }
-
-      }
-      console.log('text',city);
       var departments = responseJson.company_attribute;
+      console.log('cities',cities);
       var department = [];
-      var i;
-      for (i = 0; i < departments.length; i++) {
-        if (departments[i].department != null) {
-          department.push(departments[i].department);
-        }
-
+      var city = [];
+      if(cities.length == 0 && departments.length == 0)
+      {
+        this.navigateTOhome();
       }
-    
-     this.setState({
-      city:city,
-      department:department,
-      data:responseJson,
-      FormScreen:true,
-     })
+      else{
+        var i;
+        for (i = 0; i < cities.length; i++) {
+          if (cities[i].city != null ) {
+            city.push(cities[i].city);
+          }
+
+        }
+        console.log('text',city);
+        var i;
+        for (i = 0; i < departments.length; i++) {
+          if (departments[i].department != null) {
+            department.push(departments[i].department);
+          }
+
+        }
+       this.props.navigator.replace({
+        id:'impactleagueform2',
+          passProps:{
+            cities:city,
+            departments:department,
+            user:this.props.user,
+            data:responseJson,
+            getUserData:this.props.getUserData,
+          },
+        navigator: this.props.navigator,
+        })
+      }
+     // this.setState({
+     //  city:city,
+     //  department:department,
+     //  data:responseJson,
+     //  FormScreen:true,
+     // })
     }
      
 
@@ -190,6 +238,10 @@ class ImpactLeagueCode extends Component {
       }
     }
 
+    goBack(){
+      this.props.navigator.pop();
+    }
+
     leftIconRender(){
       return(
         <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
@@ -202,6 +254,12 @@ class ImpactLeagueCode extends Component {
       if (this.state.FormScreen!= true) {
   		  return (
           <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
+          <View style={commonStyles.Navbar}>
+          <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
+           <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+          </TouchableOpacity>
+          <Text style={commonStyles.menuTitle}>Impact League</Text>
+        </View>
           <View style={styles.container}>
           <View style={styles.ContentWrap}>
           <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
@@ -218,6 +276,10 @@ class ImpactLeagueCode extends Component {
             <TouchableOpacity onPress={() => this.SubmitCode()} style={styles.submitbtn}>
               <Text style={{color:'white'}}>SUBMIT</Text>
             </TouchableOpacity>
+            </View>
+            <View>
+            <Text style={{marginTop:50,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>What's This?</Text>
+            <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSize4,fontFamily:styleConfig.FontFamily,}}>{'Here, secret code is for Impact League. Impact League is a Walkathon oraganised by us where you and your colleagues compete with each other to raise charity.\nWalk. Help. Win! \n\nGreat idea right ? \nTo know more shoot us a mail at\ncontact@impactrun.com \n\nSee you soon.'}</Text>
             </View>
           </View>
           </View>

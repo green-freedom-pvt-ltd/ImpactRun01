@@ -15,6 +15,7 @@ import styleConfig from '../styleConfig';
 import Modal from '../downloadsharemeal/CampaignModal'
 import LoginBtns from '../login/LoginBtns'
 import Icon from 'react-native-vector-icons/Ionicons';
+var dismissKeyboard = require('dismissKeyboard');
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../../components/styles';
@@ -122,6 +123,7 @@ class EndFeedBack extends Component {
         .then((response) => response.json())
         .then((response) => {
           console.log('responce',response);
+          dismissKeyboard()
           AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
           this.navigateToHome();
 
