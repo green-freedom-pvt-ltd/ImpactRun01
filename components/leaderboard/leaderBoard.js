@@ -56,11 +56,29 @@ var iphone7Plus = 736;
           refreshing:false,
           downrefresh:true,
           user:props.user,
+          my_rate:1.0,
+          my_currency:"INR",
+
         };
         this.renderRow = this.renderRow.bind(this);
         this.getUserData = this.getUserData.bind(this);
       }
 
+
+     componentWillMount() {        
+          AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+          })     
+          
+       AsyncStorage.getItem('my_rate', (err, result) => {
+            this.setState({
+              my_rate:JSON.parse(result),
+          })
+          }) 
+
+     }
       
       fetchLeaderBoardLocally(value){
         AsyncStorage.getItem('leaderBoard' + value, (err, result) => {
@@ -155,7 +173,7 @@ var iphone7Plus = 736;
             </View >
             <View style={styles.flexbox3}>
             <Text style={[styles.txtSec,{color:textColor}]}>
-            <Icon style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name="inr"></Icon> {parseFloat(rowData.amount).toFixed(0)}</Text>
+            <Icon style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) }</Text>
             </View>
           </View>
         );

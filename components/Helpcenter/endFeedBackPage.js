@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:styleConfig.pale_magenta, 
+    backgroundColor:styleConfig.light_sky_blue, 
   }
 });
 

@@ -23,8 +23,11 @@ import styleConfig from '../styleConfig';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavBar from '../navBarComponent';
 import Login from '../login/login.js';
+import ModalDropDown from './modelindex.js'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+var DeviceInfo = require('react-native-device-info');
+
 
 
 var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
@@ -45,6 +48,16 @@ class Setting extends Component {
         };
         this.renderRow = this.renderRow.bind(this);
       }
+
+    componentWillMount() {        
+          AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+          })     
+
+     }
+
 
 
 
@@ -121,9 +134,20 @@ class Setting extends Component {
           'iconName':'grade',
           'functionName':'',
          },
+                  {
+          'name':'ExchangeRate',
+          'iconName':'show-chart',
+          'functionName':'',
+         },
+
          {
           'name':'Logout',
           'iconName':'exit-to-app',
+          'functionName':'',
+         },
+         {
+          'name':'Version',
+          'iconName':'',
           'functionName':'',
          },
         ]
@@ -155,9 +179,9 @@ class Setting extends Component {
       onClickLi(rowData){
         let shareOptions = {
           title: "ImpactRun",
-          message: "I use ImpactRun to track my daily runs and 'do good' for society with every step. Check it out. It's amazing!",
+          message: "I use Impact to track my daily walks and runs and 'do good' for society with every step. Check it out. It's amazing!",
           url: "http://www.impactrun.com/#",
-          subject: "Download ImpactRun Now " //  for email
+          subject: "Download Impact Now " //  for email
         };
         if (rowData.name === 'Share') {
          return Share.open(shareOptions);
@@ -181,16 +205,98 @@ class Setting extends Component {
       
  
       ListIconfirst(rowData){
+          if(rowData.iconName != ''){
           return(
+            
+
             <Icon style={{color:'#595c5d',fontSize:20,}}name={rowData.iconName}></Icon>
           )
+        }
       }
 
 
+      navigateToHome() {
+        console.log('hual', this.state.my_currency);
+        this.props.navigator.push({
+            title: 'Gps',
+            id: 'tab',
+            passProps: {
+              my_currency:this.state.my_currency,
+            },
+            navigator: this.props.navigator,
+        })
+      }
+
+
+      onSelectExchangeRate(idx,value){
+        this.setState({
+          value:value,
+        })
+        // console.log('value', value.substring(0,3));
+        this.setState({
+          my_currency: value.substring(0,3),
+        })
+        AsyncStorage.removeItem('my_rate',(err) => {
+        });
+        AsyncStorage.removeItem('my_currency',(err) => {
+        });
+
+        AsyncStorage.setItem('my_currency',JSON.stringify(value.substring(0,3)));
+        AsyncStorage.getItem('exchangeRates', (err, result) => {
+          this.setState({
+          exchange_rates:JSON.parse(result),  
+          })
+          for (var i = 0; i < this.state.exchange_rates.length; i++) { 
+            if (this.state.exchange_rates[i].currency == value.substring(0,3)){
+              this.setState({
+                my_rate:this.state.exchange_rates[i].rate,
+                // my_currency:this.state.exchange_rates[i].currency,
+              })
+            }
+          }
+          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+          this.navigateToHome();
+        })
+
+        
+
+
+      }
+
+      getDevVersion(rowData){
+        var mydefaultValue = 'USD $';
+        var myindex;
+          if(rowData.name == 'Version'){
+          return(
+            
+
+            <Text>{DeviceInfo.getVersion()}</Text>
+          )
+        }
+        else if (rowData.name == 'ExchangeRate'){
+          var optionsdata = [  'USD $',
+                               'EUR €',
+                               'JPY ¥',
+                               'GBP £',
+                               'INR ₹']
+          for (var i=0;i<optionsdata.length - 1; i++){
+            
+            if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
+              mydefaultValue = optionsdata[i];
+              // console.log('mydefaultValue',mydefaultValue);
+            }
+          }
+          return (
+              <ModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {mydefaultValue} options={optionsdata} onSelect={(idx, value) => this.onSelectExchangeRate(idx, value)} >
+              </ModalDropDown>
+              )
+        }
+      }
+
       renderRow(rowData) {
-        var alignItems = (rowData.name === 'Logout')? 'center':'flex-start';
-        console.log('rowData',rowData);
-        var marginTop = (rowData.name === 'Logout')?10:0;
+        var alignItems = (rowData.name === 'Logout')? 'flex-start':'flex-start';
+        // console.log('rowData',rowData);
+        var marginTop = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?deviceHeight-387:0;
         var borderBottomWidth = (rowData.name === 'Logout' || rowData.name === 'help')?0:0.5;
         return (
           <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
@@ -201,6 +307,7 @@ class Setting extends Component {
               <Text style={{color:'#595c5d'}}>{rowData.name}</Text>
             </View>
             <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
+             {this.getDevVersion(rowData)}
             </View>
           </TouchableOpacity>
         );
@@ -216,7 +323,8 @@ class Setting extends Component {
                 style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6'}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
-                dataSource={this.state.SettingTabs}/>
+                dataSource={this.state.SettingTabs}
+                scrollEnabled={false}/>
                </View>
               );
           }

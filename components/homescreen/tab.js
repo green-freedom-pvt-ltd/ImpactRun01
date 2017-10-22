@@ -233,12 +233,19 @@ class Tabs extends Component {
               })
               this.setState({
                   myCauseNum: newData,
+                  exchange_rates:causes.exchange_rates,
+                  overall_impact:causes.overall_impact,
+
               })
               let myCauseNum = this.state.myCauseNum;
                 AsyncStorage.removeItem('CauseNumber',(err) => {
                    console.log("removed");
                 });
                 AsyncStorage.setItem('CauseNumber',JSON.stringify(myCauseNum));
+                AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
+                // AsyncStorage.multiSet(this.state.exchange_rates, (err) => {
+                //   console.log('myCauseErr' + err)
+                // })
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
@@ -429,7 +436,7 @@ class Tabs extends Component {
                       });
                   }}>
                   <View>
-                    <Welcome myCauseCount={this.props.dataCauseCount} fetchDataonInternet ={this.fetchDataonInternet} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
+                    <Welcome my_currency = {this.props.my_currency} myCauseCount={this.props.dataCauseCount} fetchDataonInternet ={this.fetchDataonInternet} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
                  </View>
                 </TabBarIOS.Item>
 

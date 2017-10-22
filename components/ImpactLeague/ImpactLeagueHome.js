@@ -53,6 +53,9 @@ class ImpactLeague extends Component {
           downrefresh:true,
           user:null,
           isMounted:true,
+          my_rate:1.0,
+          my_currency:"INR",
+
         };
         this.fetchLeaderBoardData = this.fetchLeaderBoardData.bind(this);
         this.fetchDataLocally = this.fetchDataLocally.bind(this);
@@ -70,9 +73,21 @@ class ImpactLeague extends Component {
         setTimeout(() => {this.setState({downrefresh: false})}, 1000)
       }
 
-      componentWillMount() {
-      }
 
+     componentWillMount() {        
+          AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+          })     
+          
+       AsyncStorage.getItem('my_rate', (err, result) => {
+            this.setState({
+              my_rate:JSON.parse(result),
+          })
+          }) 
+
+     }
 
       fetchDataLocally(){
         AsyncStorage.getItem('USERDATA', (err, result) => {
@@ -160,13 +175,14 @@ class ImpactLeague extends Component {
   
       NavigateToDetail(rowData){
         console.log('NavigateToDetail Start');
-        this.props.navigator.push({
-          id:'impactleagueleaderboard',
-          title: rowData.team_name,
-          navigator: this.props.navigator,
-          passProps:{user:this.state.user, Team_id:rowData.team_id,team_name:rowData.team_name}
-        })
-        console.log('NavigateToDetail');
+        if(typeof this.props.navigator != 'undefined'){
+          this.props.navigator.push({
+            id:'impactleagueleaderboard',
+            title: rowData.team_name,
+            navigator: this.props.navigator,
+            passProps:{user:this.state.user, Team_id:rowData.team_id,team_name:rowData.team_name}
+          })
+        }
       }
 
       goBack(){
@@ -197,7 +213,7 @@ class ImpactLeague extends Component {
               <Text numberOfLines={1} style={[styles.txt,{color:textColor,flex:1}]}>{rowData.team_name}</Text>
               <View style={{justifyContent: 'center',alignItems: 'center',}}>
           
-               <Text style={[styles.txtSec,{color:textColor}]}> <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name="inr"></Icon2> {parseFloat(rowData.amount).toFixed(0)} </Text> 
+               <Text style={[styles.txtSec,{color:textColor}]}> <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={me.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) } </Text> 
               </View>             
             </TouchableOpacity>
           </View>
@@ -257,8 +273,8 @@ class ImpactLeague extends Component {
                  
                   <View style={{alignItems:'center', justifyContent:'center',     paddingTop: 20}}>
                       <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
-                      <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name="inr"></Icon2>
-                      {typeof this.state.total_amount == 'undefined' ? 0 :  this.state.total_amount }
+                      <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
+                      {typeof this.state.total_amount == 'undefined' ? 0 :  (this.state.my_currency == 'INR' ? parseFloat(this.state.total_amount).toFixed(0) : parseFloat(this.state.total_amount/this.state.my_rate).toFixed(2)) }
                       </Text>
                   </View>
                    <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>

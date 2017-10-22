@@ -34,6 +34,8 @@ import styleConfig from '../../components/styleConfig';
 import haversine from 'haversine';
 import CaloriCounter from './caloriCounter';
 import Tabs from '../homescreen/tab';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+import LinearGradient from 'react-native-linear-gradient';
 
 var Pedometer = require('react-native-pedometer');
 var deviceWidth = Dimensions.get('window').width;
@@ -99,6 +101,8 @@ class Home extends Component {
         onCarDetectedEndRunModel:false,
         weakGPSPoints: 0,
         componentISmounted:true,
+        my_rate:1.0,
+        my_currency:"INR",
       };
     }
 
@@ -133,6 +137,18 @@ class Home extends Component {
     //        console.log(error)
     //   }
     // );
+    AsyncStorage.getItem('my_currency', (err, result) => {
+        this.setState({
+          my_currency:JSON.parse(result),
+      })
+      })     
+      
+    AsyncStorage.getItem('my_rate', (err, result) => {
+        this.setState({
+          my_rate:JSON.parse(result),
+      })
+      }) 
+
     AsyncStorage.getItem('runDataAppKill', (err, result) => {
     var datarun =JSON.parse(result);
       if (datarun != null) { 
@@ -1034,11 +1050,11 @@ class Home extends Component {
    impactTextView(data,priv){
     if (this.state.result) {
       return(
-          <Text style={styles.Impact}>{parseFloat(parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate).toFixed(0)}</Text>
+          <Text style={styles.Impact}><Icon2 style={styles.Impact}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate).toFixed(0): parseFloat((parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ priv).toFixed(1) * data.conversion_rate)/this.state.my_rate).toFixed(2))}</Text>
         )
     }else{
       return(
-           <Text style={styles.Impact}>{parseFloat(this.state.distanceTravelled).toFixed(1)* data.conversion_rate}</Text>
+           <Text style={styles.Impact}><Icon2 style={styles.Impact}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(this.state.distanceTravelled).toFixed(1)* data.conversion_rate : parseFloat(parseFloat(this.state.distanceTravelled).toFixed(2)* data.conversion_rate/this.state.my_rate).toFixed(2))}</Text>
         )
     }
    }
@@ -1084,12 +1100,10 @@ class Home extends Component {
               <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>
             </View>
             <View style={{justifyContent: 'center',alignItems: 'center', flex:1}}>
-                
-            <Text style={{fontSize:20,marginTop:30,marginBottom:20,color:styleConfig.greyish_brown_two,fontFamily:styleConfig.FontFamily,backgroundColor:'transparent',}}>IMPACT</Text> 
              <AnimatedCircularProgress
                 style={{justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}
                 ref='circularProgress'
-                size={130}
+                size={180}
                 width={5}
                 fill={circularprogress}
                 prefill={100}
@@ -1097,9 +1111,10 @@ class Home extends Component {
                 rotation={0}
                 backgroundColor="#fafafa">                   
               </AnimatedCircularProgress>
-               <View style={{marginTop:-130,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
+               <View style={{marginTop:-165,backgroundColor:'transparent',width:130,height:130,justifyContent:'center',alignItems:'center'}}>
                 {this.impactTextView(data,priv)}
-                <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>RUPEES</Text>
+                
+                <Text style={{fontFamily:styleConfig.FontFamily,fontSize:19,color:styleConfig.greyish_brown_two,opacity:0.7,}}>IMPACT</Text>
               </View>
               </View>
               <View style={{flex:1,flexDirection:'row',backgroundColor:'transparent'}}>
@@ -1184,7 +1199,7 @@ var styles = StyleSheet.create({
     height:50,
     width:deviceWidth/2-20,
     borderRadius:30,
-    backgroundColor:styleConfig.pale_magenta,
+    backgroundColor:styleConfig.light_sky_blue,
     marginLeft:10,
   },
   ResumePause:{
@@ -1217,7 +1232,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
   },
   Impact:{
-    fontSize:30,
+    fontSize:40,
     fontWeight:'500',
     color:styleConfig.greyish_brown_two,
     backgroundColor:'transparent',   
@@ -1298,7 +1313,7 @@ var styles = StyleSheet.create({
     height:40,
     margin:5,
     borderRadius:5,
-    backgroundColor:styleConfig.pale_magenta,
+    backgroundColor:styleConfig.light_sky_blue,
     justifyContent: 'center',
     alignItems: 'center',
    },

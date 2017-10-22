@@ -133,6 +133,7 @@ class Login extends Component {
               var causes = causes;
               console.log('causes',causes);
               let causesData = []
+              let exchangeRate = []
               let newData = []
               causes.results.forEach((item, i) => {
                   if (item.is_active || item.is_completed) {
@@ -143,9 +144,18 @@ class Login extends Component {
               this.setState({
                   myCauseNum: newData,
                   causes:causes.results,
+                  exchange_rates:causes.exchange_rates,
+                  overall_impact:causes.overall_impact,
               })
+              console.log('ec', this.state.exchange_rates);
+              console.log('ec2', exchangeRate);
               let myCauseNum = this.state.myCauseNum;
               AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
+              AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
+              // AsyncStorage.multiSet(exchangeRate, (err) => {
+              //     console.log('ExchangeRate' + err)
+              // })
+
               AsyncStorage.multiSet(causesData, (err) => {
                   console.log('myCauseErr' + err)
               })
@@ -267,7 +277,9 @@ class Login extends Component {
             passProps: {
               dataCauseCount: this.state.mycauseDataCount,
               dataCauseNum: this.state.myCauseNum,
-              causes:this.state.causes
+              causes:this.state.causes,
+              exchange_rates:this.state.exchange_rates,
+              overall_impact:this.state.overall_impact,
             },
             navigator: this.props.navigator,
         })

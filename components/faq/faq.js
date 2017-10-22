@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#e03ed2', 
+    backgroundColor:styleConfig.light_sky_blue, 
   }
 });
  export default Faq;

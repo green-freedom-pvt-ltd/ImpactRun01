@@ -48,6 +48,8 @@ class RunHistory extends Component {
           newarray:false,
           enterWeightmodel:false,
           someData:null,
+          my_rate:1.0,
+          my_currency:"INR",
         };
         this.renderRunsRow = this.renderRunsRow.bind(this);
         this.fetchRunhistoryupdataData = this.fetchRunhistoryupdataData.bind(this);
@@ -56,6 +58,20 @@ class RunHistory extends Component {
       }
 
 
+    componentWillMount() {
+    AsyncStorage.getItem('my_currency', (err, result) => {
+        this.setState({
+          my_currency:JSON.parse(result),
+      })
+      })     
+      
+    AsyncStorage.getItem('my_rate', (err, result) => {
+        this.setState({
+          my_rate:JSON.parse(result),
+      })
+      }) 
+ 
+    }
 
         componentDidMount() {
 
@@ -405,7 +421,7 @@ class RunHistory extends Component {
                     <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}>{RunDistance} Km</Text>
                   </View>
                   <View style={styles.runContent}>
-                    <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}><Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon2> {RunAmount} </Text>
+                    <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}><Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? RunAmount : parseFloat(RunAmount/this.state.my_rate).toFixed(2))} </Text>
                   </View>
                    <View onPress={()=> this.EnterWeight()}style={styles.runContent}>
                     {colorie}
@@ -436,7 +452,7 @@ class RunHistory extends Component {
                     <Text style={styles.runContentText}>{RunDistance} Km</Text>
                   </View>
                   <View style={styles.runContent}>
-                    <Text style={styles.runContentText}> <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon2> {RunAmount}</Text>
+                    <Text style={styles.runContentText}> <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? RunAmount : parseFloat(RunAmount/this.state.my_rate).toFixed(2))}</Text>
                   </View>
                   <View onPress={()=> this.EnterWeight()}style={styles.runContent}>
                     {colorie}

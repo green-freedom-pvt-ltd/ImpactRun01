@@ -333,7 +333,8 @@ class HelpCenter extends Component {
                 style={{top:0,height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
-                dataSource={this.state.HelpCenterTabs}/>
+                dataSource={this.state.HelpCenterTabs}
+                scrollEnabled={false}/>
                </View>
               );
           }

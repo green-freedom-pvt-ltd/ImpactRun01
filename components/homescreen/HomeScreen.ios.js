@@ -28,6 +28,8 @@ import ReactNative,{
 import LodingRunScreen from '../gpstracking/runlodingscreen'
 import Modal from '../downloadsharemeal/CampaignModal'
 var { RNLocation: Location } = require('NativeModules');
+var DeviceInfo = require('react-native-device-info');
+
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Lodingscreen from '../../components/LodingScreen';
@@ -87,6 +89,13 @@ class Homescreen extends Component {
         this.getfeedCount = this.getfeedCount.bind(this);
         this.renderFeedIcon = this.renderFeedIcon.bind(this);
         this.navigateToFeed = this.navigateToFeed.bind(this);
+        // AsyncStorage.getItem('my_currency', (err, result) => {
+        //     this.setState({
+        //       settings_currency:JSON.parse(result),
+        //   })
+        //   })
+        //   console.log('setting_currency', this.state.settings_currency);     
+
       }
 
       locationManager: undefined
@@ -183,14 +192,142 @@ class Homescreen extends Component {
         })
       }
 
+      getmyCurrency(countrycode){
+        switch(countrycode){
+          case 'US': return 'USD';
+                    break;
+          case 'IN' : return 'INR';
+                    break;
+          case 'CA': return 'USD';
+                    break;
+          case 'AT' : 
+          case 'BE' :
+          case 'HR' :
+          case 'BG' :
+          case 'CY' :
+          case 'CZ' :
+          case 'DK' :
+          case 'EE' : 
+          case 'FI' : 
+          case 'FR' :
+          case 'DE' :
+          case 'GR' :
+          case 'HU' :
+          case 'IE' :
+          case 'IT' :
+          case 'LV':
+          case 'LT':
+          case 'LU': 
+          case 'MT':
+          case 'NL': 
+          case 'PL':
+          case 'PT':
+          case 'RO':
+          case 'SK':
+          case 'SI':
+          case 'ES':
+          case 'SE' : return 'EUR';
+                    break;
+          case 'JP': return 'JPY';
+                    break;
+          case 'GB': return 'GBP';
+                    break;
+          default: return 'INR';
+
+        }
+      }
+
+      isKeyAlreadyExists(){
+         AsyncStorage.getItem('my_currency', (err, result) => {
+          console.log('resas', result);
+          return result;
+          //   this.setState({
+          //     setting_currency:JSON.parse(result),
+          // })
+          })   
+
+      }
+
+
       componentWillMount() {
         this.getfeedCount();
+        // console.log('props currency', this.props.my_currency);
+
+
+        //  AsyncStorage.getItem('my_currency', (err, result) => {
+        //   var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
+        //   console.log('resas', result);
+        //   if(result){
+        //     if(result != mycurrency) 
+        //       {
+        //         mycurrency = result;
+        //         AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
+        //       }
+        //   }
+        //   console.log('mycurrency', mycurrency);
+        // AsyncStorage.getItem('exchangeRates', (err, result) => {
+        //     this.setState({
+        //     exchange_rates:JSON.parse(result),  
+        //     })
+        //     console.log('exc2', this.state.exchange_rates);
+        //     for (var i = 0; i < this.state.exchange_rates.length; i++) { 
+        //       if (this.state.exchange_rates[i].currency == mycurrency){
+        //         this.setState({
+        //           my_rate:this.state.exchange_rates[i].rate,
+        //           my_currency:mycurrency,
+        //         })
+        //       }
+        //     }
+        //     console.log('countr', this.state.my_rate);
+        //     AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+        //     // console.log('countr', DeviceInfo.getDeviceCountry());
+
+        //   })
+        // })   
+
+
+
+
+
+
+
+        
+        // var setting_currency = await AsyncStorage.getItem('my_currency');
+        var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
+        if (typeof this.props.my_currency != 'undefined')
+        {
+          if(mycurrency != this.props.my_currency){
+            mycurrency = this.props.my_currency;
+          }
+          
+        }
+
+
+        AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
 
         this.fetchifinternet();
+        AsyncStorage.getItem('exchangeRates', (err, result) => {
+          this.setState({
+          exchange_rates:JSON.parse(result),  
+          })
+          for (var i = 0; i < this.state.exchange_rates.length; i++) { 
+            if (this.state.exchange_rates[i].currency == mycurrency){
+              this.setState({
+                my_rate:this.state.exchange_rates[i].rate,
+                my_currency:mycurrency,
+              })
+            }
+          }
+          console.log('countr', this.state.my_rate);
+          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+          // console.log('countr', DeviceInfo.getDeviceCountry());
+
+        })
       // PushNotificationIOS.addListener('register', this._onRegistered);
       // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
       // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
       // PushNotificationIOS.addListener('localNotification', this._onLocalNotification);
+      
 
         PushNotificationIOS.requestPermissions();          
         AsyncStorage.getItem('RID0', (err, result) => {
@@ -649,8 +786,9 @@ class Homescreen extends Component {
       if (this.state.renderComponent) {
         // console.log('renderComponent',this.state.renderComponent);
         var cause = this.state.album[route.key][5]
-        // console.log('cause',cause);
-        var money = JSON.stringify(parseFloat(this.state.album[route.key][0]).toFixed(0));
+        var money = JSON.stringify(parseFloat(parseFloat(this.state.album[route.key][0]).toFixed(0)/parseFloat(this.state.my_rate).toFixed(0)).toFixed(0));
+        // var money = JSON.stringify(parseFloat(this.state.album[route.key][0]).toFixed(0)); Old money value used
+        // console.log('money2',money);
         if (money.length > 5) {
           var lenth = money.length;
           var commmaplace = lenth-4;
@@ -665,7 +803,8 @@ class Homescreen extends Component {
         if (Runs.length > 5) {
         var runlength = Runs.length;
         var commmaplacerun =runlength-4;
-        var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,lenth));
+        var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,runlength));
+        //This was length copied pasted @Akash avoid such copy pastes dude
         }else{
           var runFinalvalue = JSON.parse(Runs);
         }
@@ -690,7 +829,7 @@ class Homescreen extends Component {
               <View style={styles.barWrap}>
               <View style={{width:deviceWidth-125}}>
                 <View style = {styles.wraptext}>
-                  <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name="inr"></Icon> {Moneyfinalvalue}</Text>
+                  <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon> {Moneyfinalvalue}</Text>
                   <Text style = {styles.textMoneyraised}>{parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
                 </View>
                 <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-125} progress={cause.amount_raised/cause.amount}/>
@@ -786,6 +925,7 @@ class Homescreen extends Component {
     // RENDER_FUNCTION
     render(route) { 
        var cause;
+       // console.log('prpos rate', this.props.my_currency);
         if (!!this.state.causes.length && this.state.navigation.index+1) {
           cause = this.state.causes[this.state.navigation.index]
         } else {
@@ -806,15 +946,13 @@ class Homescreen extends Component {
              </TabViewAnimated>
              
 
-             <LinearGradient colors={['#04cbfd', '#33f373']} >
-
+             
              <View style={styles.BtnWraperWrap}>
               <View style={styles.btnWrap}>
                {this.BiginRunBtn(cause)}
               </View>
               </View>
-              </LinearGradient>
-
+             
                 {this.modelViewdeniedLocationRequest()}
           </View>
       );

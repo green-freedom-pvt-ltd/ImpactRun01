@@ -234,7 +234,7 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    bottom:64,
+    bottom:55,
     width:deviceWidth,
     height:60,
     justifyContent: 'center',

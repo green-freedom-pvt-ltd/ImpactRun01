@@ -37,7 +37,8 @@ var customFlexHeight3 = heightInpersentage*33.33333333;
 var customFlexHeight4 = heightInpersentage*25;
 const dataP = [];
 const dataRupees = [];
-
+const my_currency = "INR";
+const my_rate = 1.0;
 
 class Profile extends Component {
       constructor(props) {
@@ -59,6 +60,8 @@ class Profile extends Component {
           level:0,
           prevKm:0,
           levelKm:0,
+          my_rate:1.0,
+          my_currency:"INR",
 
           progressVal:0,
           navigation: {
@@ -75,9 +78,23 @@ class Profile extends Component {
       }
 
 
-     componentWillMount() {
-       
-    
+     componentWillMount() {        
+          AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+            my_currency=this.state.my_currency;
+            // console.log('my_rate',this.state.my_currency);
+          })     
+          
+       AsyncStorage.getItem('my_rate', (err, result) => {
+            this.setState({
+              my_rate:JSON.parse(result),
+          })
+            my_rate=this.state.my_rate;
+                  // console.log('my_rate',this.state.my_rate);
+          }) 
+
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
      
@@ -361,7 +378,7 @@ class Profile extends Component {
         else{
           var tempB=[];
           var tempA = [];
-          dataRupees.push(dataI[counterDate.toLocaleDateString()]);
+          dataRupees.push(dataI[counterDate.toLocaleDateString()]/my_rate);
           tempA.push(weekday[counterDate.getDay()],dataI[counterDate.toLocaleDateString()]);
           // tempB.push(tempA)
           dataP.unshift(tempA);
@@ -405,7 +422,7 @@ class Profile extends Component {
           if (flag != true) {
             data2.push(RunData[i].distance);
             sum += RunData[i].distance;
-            console.log('data2',sum);
+            // console.log('data2',sum);
             };
         }
         this.setState({
@@ -486,7 +503,7 @@ class Profile extends Component {
       })
       return 6;
     }else if (totalkm <= 5000){
-      console.log('level 7');
+      // console.log('level 7');
       this.setState({
         prevKm:2000,
         levelKm:5000,
@@ -642,23 +659,38 @@ class Profile extends Component {
         var days = item[0];
         var rupees = item[1];
         var maxvalue = Math.max.apply(Math, dataRupees);
-        var hunderdPercentageHeightBar = Math.ceil(maxvalue / 10) * 10;;
-        var MaxBarHeight = ((((heightInpersentage*55)/100)*75)/100)*80 ;
-        var barHeightRatio = ((((heightInpersentage*55)/100)*75)/100)*80/hunderdPercentageHeightBar;
+
+        if (my_currency != 'INR' && typeof rupees != 'undefined'){
+          rupees= parseFloat(rupees/my_rate).toFixed(2);
+
+        } 
+        if(my_currency == 'INR'){
+          var hunderdPercentageHeightBar = Math.ceil(maxvalue / 10) * 10;
+        }
+        else
+        {
+          var hunderdPercentageHeightBar = Math.ceil(maxvalue*100)/100;
+        }
+
+        var MaxBarHeight = ((((heightInpersentage*54)/100)*75)/100)*80 ;
+        var barHeightRatio = ((((heightInpersentage*54)/100)*75)/100)*80/hunderdPercentageHeightBar;
         var barHeight = (barHeightRatio*rupees)-5;
+        // console.log('barHeight',barHeight);
+        // console.log('rupees',rupees);
+        
         var chartWidth = (deviceWidth/100)*80;
         var barWidth = chartWidth/15;
-        if (rupees == undefined) {
+        if (typeof rupees == 'undefined') {
            var iconrupees;
         }else{
-
-            var iconrupees = <Icon2 style={{fontSize:styleConfig.fontSizerlabel-2,}}name="inr"></Icon2>; 
+          
+            var iconrupees = <Icon2 style={{fontSize:styleConfig.fontSizerlabel-2,}}name={my_currency.toLowerCase()}></Icon2>; 
         }
        
         return (
             <View key={index} style={{flex:1,justifyContent: 'flex-end',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#CACACA'}}>
-                 <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
-                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:3,bottom:5,alignItems: 'center',}}>
+                 <Text style={{ top:-6,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
+                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:3,alignItems: 'center',}}>
                 </View>
 
             </View>
@@ -687,9 +719,19 @@ class Profile extends Component {
     render() {
         var Yaxis = dataP.map(this.getYRows);
         var Xaxis = dataP.map(this.getXRows);
+
         var maxvalue = Math.max.apply(Math, dataRupees);
-        var hunderdPercentageHeightBar = Math.ceil(maxvalue / 10) * 10;
+        // console.log('dataRupees',maxvalue);
+        if(this.state.my_currency == 'INR'){
+          var hunderdPercentageHeightBar = Math.ceil(maxvalue / 10) * 10;
+        }
+        else
+        {
+          var hunderdPercentageHeightBar =  Math.ceil(maxvalue*100)/100; //parseFloat(maxvalue).toFixed(2);
+        }
+        // console.log('dataRupees23',hunderdPercentageHeightBar);
         if (this.props.user != null ) {
+          // console.log('my_currencylower',this.state.my_currency.toLowerCase());
         return (
           <View style={styles.container}>
             <View style ={styles.profileWraper}>
@@ -701,7 +743,7 @@ class Profile extends Component {
                         <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'400'}}>All Time</Text>
                     </View>
                     <View style={{height:(this.state.height/100)*35,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
-                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name="inr"></Icon2><AnimateNumber value={this.state.RunTotalAmount2} formatter={(val) => {return ' ' + parseFloat(val).toFixed(0)}} ></AnimateNumber>
+                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><AnimateNumber value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
                         </Text>
                         <View style={{height:(this.state.height/100)*17,}}>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
@@ -730,7 +772,7 @@ class Profile extends Component {
             </View>
 
             <View style ={styles.profileWraper2}>                          
-              <View style={{flex:-1,height:((heightInpersentage*48)/100)*85,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
+              <View style={{flex:-1,height:((heightInpersentage*47)/100)*85,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
                 <View style={styles.container2}>
                  
                    <View style={{flex:-1,flexDirection:'row',height:((((heightInpersentage*55)/100)*75)/100)*80,width:(deviceWidth/100)*80,backgroundColor:'white'}}>                
@@ -738,8 +780,8 @@ class Profile extends Component {
                        <View style={{alignItems: 'flex-start', flex:1,borderTopWidth:1,borderTopColor:'#CACACA'}}>
                         <View style ={{height:30,width:100,justifyContent: 'center',alignItems:'center',top:-15,left:-65}}>
                           <Text style={{textAlign:'center', fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',}}>
-                             <Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerlabel-2,fontWeight:'400'}}name="inr">
-                             </Icon2> {parseFloat(hunderdPercentageHeightBar).toFixed(0)}
+                             <Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerlabel-2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}>
+                             </Icon2> {(this.state.my_currency == 'INR' ? parseFloat(hunderdPercentageHeightBar).toFixed(0) : parseFloat(hunderdPercentageHeightBar).toFixed(2))}
                           </Text>
                          </View>
                       </View>
@@ -747,8 +789,8 @@ class Profile extends Component {
                        <View style={{alignItems: 'flex-start', flex:1,borderTopWidth:1,borderTopColor:'#CACACA'}}>
                         <View style = {{height:30,width:100,justifyContent: 'center',alignItems: 'center',top:-15,left:-65}}>
                           <Text style={{textAlign:'center',fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',}}>
-                             <Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerlabel-2,fontWeight:'400'}}name="inr">
-                             </Icon2> {parseFloat(hunderdPercentageHeightBar/2).toFixed(0)}
+                             <Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerlabel-2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}>
+                             </Icon2> {(this.state.my_currency == 'INR' ? parseFloat(hunderdPercentageHeightBar/2).toFixed(0) : parseFloat(hunderdPercentageHeightBar/2).toFixed(2))}
                           </Text>
                         </View>  
                        </View>

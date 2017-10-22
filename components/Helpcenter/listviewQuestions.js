@@ -116,7 +116,8 @@ class QuestionLists extends Component {
               <ListView
                 style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',}}
                 renderRow={this.renderRow}
-                dataSource={this.state.HelpCenterTabs}/>
+                dataSource={this.state.HelpCenterTabs}
+                scrollEnabled={false}/>
                </View>
               );
           }

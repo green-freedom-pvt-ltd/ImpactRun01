@@ -36,10 +36,28 @@ class ImpactLeagueLeaderBoard extends Component {
           ImpactLeagueLeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
           refreshing:false,
-          teamname:'Impact League'
+          teamname:'Impact League',
+          my_rate:1.0,
+          my_currency:"INR",
+
         };
         this.renderRow = this.renderRow.bind(this);
       }
+
+     componentWillMount() {        
+          AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+          })     
+          
+       AsyncStorage.getItem('my_rate', (err, result) => {
+            this.setState({
+              my_rate:JSON.parse(result),
+          })
+          }) 
+
+     }
 
       componentDidMount() {
          this.FetchDataifInternet();
@@ -180,7 +198,7 @@ class ImpactLeagueLeaderBoard extends Component {
               <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
               <View style={{justifyContent: 'center',alignItems: 'center',}}>
               <Text style={[styles.txtSec,{color:textColor}]}>
-              <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name="inr"></Icon2> {parseFloat(totalkms).toFixed(0)} </Text>
+              <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(totalkms).toFixed(0) : parseFloat(totalkms/this.state.my_rate).toFixed(2))} </Text>
               </View>
           </View>
         );
