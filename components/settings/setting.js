@@ -24,9 +24,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavBar from '../navBarComponent';
 import Login from '../login/login.js';
 import ModalDropDown from './modelindex.js'
+import DistanceModalDropDown from './modelindex2.js'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var DeviceInfo = require('react-native-device-info');
+var my_distance = 'km';
+var my_currency = 'USD $';
 
 
 
@@ -47,6 +50,7 @@ class Setting extends Component {
 
         };
         this.renderRow = this.renderRow.bind(this);
+        // this.getUserData = this.getUserData.bind(this);
       }
 
     componentWillMount() {        
@@ -54,6 +58,26 @@ class Setting extends Component {
             this.setState({
               my_currency:JSON.parse(result),
           })
+          var optionsdata = [  'USD $',
+                   'EUR €',
+                   'JPY ¥',
+                   'GBP £',
+                   'INR ₹']
+          for (var i=0;i<optionsdata.length - 1; i++){
+            
+            if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
+              my_currency = optionsdata[i];
+              console.log('mydefaultValue',my_currency);
+            }
+          }
+
+          })     
+          AsyncStorage.getItem('my_distance', (err, result) => {
+            this.setState({
+              my_distance:JSON.parse(result),
+          })
+            my_distance = this.state.my_distance;
+            // console.log('my_distance', this.state.my_distance);
           })     
 
      }
@@ -134,7 +158,12 @@ class Setting extends Component {
           'iconName':'grade',
           'functionName':'',
          },
-                  {
+        {
+          'name':'Distance',
+          'iconName':'directions-run',
+          'functionName':'',
+         },
+        {
           'name':'ExchangeRate',
           'iconName':'show-chart',
           'functionName':'',
@@ -216,16 +245,41 @@ class Setting extends Component {
 
 
       navigateToHome() {
-        console.log('hual', this.state.my_currency);
+        // console.log('hual', this.state.my_currency);
         this.props.navigator.push({
             title: 'Gps',
             id: 'tab',
             passProps: {
               my_currency:this.state.my_currency,
+              // my_distance:this.state.my_distance,
             },
             navigator: this.props.navigator,
         })
       }
+
+
+        // getUserData() {
+        //  console.log("tabscreenuser");
+        //   AsyncStorage.getItem('USERDATA', (err, result) => {
+        //     let user = JSON.parse(result);
+        //     this.setState({
+        //       user2: user,
+        //       iconImpactleague:(user!= null)?{uri: base64Icon, scale: 6}:{},
+        //     })
+        //     this.render();
+        //     console.log("result",user,this.state.iconImpactleague);
+        //   })
+    //     // }
+
+    // navigateToProfile(){
+    //   this.props.navigator.push({
+    //   title: 'Gps',
+    //   id:'profileindex',
+    //   passProps:{profileTab:'profile', user:this.state.user2, getUserData:this.getUserData},
+    //   navigator: this.props.navigator,
+    //   })
+
+    //  }
 
 
       onSelectExchangeRate(idx,value){
@@ -255,12 +309,27 @@ class Setting extends Component {
             }
           }
           AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+          my_currency = value;
           this.navigateToHome();
         })
 
         
 
 
+      }
+
+      onSelectDistance(idx,value){
+        this.setState({
+          value:value,
+        })
+        // console.log('value', value.substring(0,3));
+
+        AsyncStorage.removeItem('my_distance',(err) => {
+        });
+
+        AsyncStorage.setItem('my_distance',JSON.stringify(value));
+        my_distance = value;
+        this.navigateToHome();
       }
 
       getDevVersion(rowData){
@@ -279,16 +348,25 @@ class Setting extends Component {
                                'JPY ¥',
                                'GBP £',
                                'INR ₹']
-          for (var i=0;i<optionsdata.length - 1; i++){
+          // for (var i=0;i<optionsdata.length - 1; i++){
             
-            if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
-              mydefaultValue = optionsdata[i];
-              // console.log('mydefaultValue',mydefaultValue);
-            }
-          }
+          //   if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
+          //     mydefaultValue = optionsdata[i];
+          //     // console.log('mydefaultValue',mydefaultValue);
+          //   }
+          // }
           return (
-              <ModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {mydefaultValue} options={optionsdata} onSelect={(idx, value) => this.onSelectExchangeRate(idx, value)} >
+              <ModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {my_currency} options={optionsdata} onSelect={(idx, value) => this.onSelectExchangeRate(idx, value)} >
               </ModalDropDown>
+              )
+        }
+
+        else if (rowData.name == 'Distance'){
+          var optionsdata = [  'km',
+                               'miles']
+          return (
+              <DistanceModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {my_distance} options={optionsdata} onSelect={(idx, value) => this.onSelectDistance(idx, value)} >
+              </DistanceModalDropDown>
               )
         }
       }
@@ -296,7 +374,7 @@ class Setting extends Component {
       renderRow(rowData) {
         var alignItems = (rowData.name === 'Logout')? 'flex-start':'flex-start';
         // console.log('rowData',rowData);
-        var marginTop = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?deviceHeight-387:0;
+        var marginTop = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?deviceHeight-440:0;
         var borderBottomWidth = (rowData.name === 'Logout' || rowData.name === 'help')?0:0.5;
         return (
           <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>

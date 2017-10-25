@@ -462,7 +462,7 @@ class Tabs extends Component {
                             myFeedStoredCount:this.state.FeedCount
                         });
                   }}>
-                 <Helpcenter  user={this.state.user} navigator={this.props.navigator}/>
+                 <Helpcenter  user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
                 </TabBarIOS.Item>
               </TabBarIOS>
             </View>

@@ -70,7 +70,12 @@ class RunHistory extends Component {
           my_rate:JSON.parse(result),
       })
       }) 
- 
+    AsyncStorage.getItem('my_distance', (err, result) => {
+        this.setState({
+          my_distance:JSON.parse(result),
+      })
+    })     
+
     }
 
         componentDidMount() {
@@ -418,7 +423,7 @@ class RunHistory extends Component {
                 </View>
                 <View style={{flexDirection:'row',flex:1}}>
                   <View style={styles.runContent}>
-                    <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}>{RunDistance} Km</Text>
+                    <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}>{(this.state.my_distance == 'miles' ? parseFloat(RunDistance*0.621).toFixed(1) : RunDistance)} {(this.state.my_distance == 'miles' ? 'mi' : 'km')}</Text>
                   </View>
                   <View style={styles.runContent}>
                     <Text style={[styles.runContentText,{textDecorationLine:textDecoration}]}><Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? RunAmount : parseFloat(RunAmount/this.state.my_rate).toFixed(2))} </Text>
@@ -449,7 +454,7 @@ class RunHistory extends Component {
                 </View>
                 <View style={{flexDirection:'row',flex:1}}>
                   <View style={styles.runContent}>
-                    <Text style={styles.runContentText}>{RunDistance} Km</Text>
+                    <Text style={styles.runContentText}>{(this.state.my_distance == 'miles' ? parseFloat(RunDistance*0.621).toFixed(1) : RunDistance)} {(this.state.my_distance == 'miles' ? 'mi' : 'km')}</Text>
                   </View>
                   <View style={styles.runContent}>
                     <Text style={styles.runContentText}> <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? RunAmount : parseFloat(RunAmount/this.state.my_rate).toFixed(2))}</Text>

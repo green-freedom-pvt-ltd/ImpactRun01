@@ -148,6 +148,12 @@ class Home extends Component {
           my_rate:JSON.parse(result),
       })
       }) 
+    AsyncStorage.getItem('my_distance', (err, result) => {
+        this.setState({
+          my_distance:JSON.parse(result),
+      })
+    })     
+
 
     AsyncStorage.getItem('runDataAppKill', (err, result) => {
     var datarun =JSON.parse(result);
@@ -1062,11 +1068,11 @@ class Home extends Component {
    KmTextView(priv){
     if (this.state.result) {
       return(
-          <Text style={styles.distance}>{parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ Number(priv)).toFixed(1)}</Text>
+          <Text style={styles.distance}>{(this.state.my_distance == 'miles' ? parseFloat((Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ Number(priv))*0.621).toFixed(1) : parseFloat(Number(parseFloat(this.state.distanceTravelled).toFixed(1))+ Number(priv)).toFixed(1))}</Text>
         )
     }else{
       return(
-           <Text style={styles.distance}>{parseFloat(this.state.distanceTravelled).toFixed(1)}</Text>
+           <Text style={styles.distance}>{(this.state.my_distance == 'miles' ? parseFloat(this.state.distanceTravelled*0.621).toFixed(1) : parseFloat(this.state.distanceTravelled).toFixed(1))}</Text>
         )
     }
    }
@@ -1121,7 +1127,7 @@ class Home extends Component {
                 <View style={styles.timeDistanceWrap}>
                   <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,}} name={'ios-walk-outline'}></Icon>
                    {this.KmTextView(priv)}
-                  <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>KMS</Text>
+                  <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>{(this.state.my_distance == 'miles' ? 'MI' : 'KMS')}</Text>
                 </View>
                  <View style={styles.timeDistanceWrap2}>
                  {this.caloriesTextView()}

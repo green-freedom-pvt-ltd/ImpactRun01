@@ -43,6 +43,7 @@ import RunHistory from './components/profile/runhistory/runHistory';
 import ProfileForm from './components/profile/profileForm';
 import ProfileHeader from './components/profile/profileHeader';
 import Profile from './components/profile/profile';
+import ProfileIndex from './components/profile/profile.index.js';
 import Helpcenter from './components/Helpcenter/helpcenter';
 import QuestionLists from './components/Helpcenter/listviewQuestions';
 import FeedBack from './components/Helpcenter/endFeedBackPage.js';
@@ -330,6 +331,8 @@ class Application extends Component{
                 return <ProfileHeader navigator={navigator} {...route.passProps}/>;
                 case 'profile':
                 return <Profile navigator={navigator} {...route.passProps}/>;
+                case 'profileindex':
+                return <ProfileIndex navigator={navigator} {...route.passProps}/>;
                 case 'listquestions':
                 return <QuestionLists navigator={navigator} {...route.passProps}/>;
                 case 'feedback':

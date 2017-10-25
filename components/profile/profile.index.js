@@ -95,6 +95,14 @@ class Profile extends Component {
                   // console.log('my_rate',this.state.my_rate);
           }) 
 
+          AsyncStorage.getItem('my_distance', (err, result) => {
+            this.setState({
+              my_distance:JSON.parse(result),
+          })
+            // my_distance=this.state.my_distance;
+            console.log('my_distance',this.state.my_distance);
+          })     
+
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
      
@@ -760,10 +768,10 @@ class Profile extends Component {
                         </View>
                         <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
                             <Text style={{right:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
-                                <AnimateNumber value={this.state.RunTotalDistance} formatter={(val) => {
+                                <AnimateNumber value={(this.state.my_distance == 'miles' ? this.state.RunTotalDistance*0.621 : this.state.RunTotalDistance)} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                 }} ></AnimateNumber>
-                                <Text style={{fontSize:styleConfig.FontSizeTitle-5,color:'grey'}}> km</Text>
+                                <Text style={{fontSize:styleConfig.FontSizeTitle-5,color:'grey'}}> {(this.state.my_distance == 'miles' ? 'mi' : 'km')}</Text>
                              </Text>
                             <Text style={{right:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
                         </View>
@@ -822,7 +830,7 @@ class Profile extends Component {
           <View>
           <NavBar title={"PROFILE"}/>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
-           <LoginBtn tabNavigation={this.props.tabNavigation} getUserData={this.props.getUserData}/>
+           <LoginBtn getUserData={this.props.getUserData}/>
            </View>
            </View>
 

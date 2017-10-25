@@ -397,11 +397,11 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginTop:180,
-    height: 200,
+    height: 80,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    width: 185,
+    width: 130,
     marginLeft: 200,
     
   },
