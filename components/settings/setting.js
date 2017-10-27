@@ -76,7 +76,10 @@ class Setting extends Component {
             this.setState({
               my_distance:JSON.parse(result),
           })
-            my_distance = this.state.my_distance;
+            if(this.state.my_distance != '')
+            {
+              my_distance = this.state.my_distance;
+            }
             // console.log('my_distance', this.state.my_distance);
           })     
 
@@ -382,7 +385,7 @@ class Setting extends Component {
                {this.ListIconfirst(rowData)}
             </View>
             <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',alignItems:alignItems}}>
-              <Text style={{color:'#595c5d'}}>{rowData.name}</Text>
+              <Text style={{color:'#595c5d'}}>{(rowData.name == 'Logout' ? (this.state.user != null ? rowData.name : 'Login') : rowData.name)}</Text>
             </View>
             <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
              {this.getDevVersion(rowData)}

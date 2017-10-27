@@ -216,7 +216,22 @@ class Tabs extends Component {
 
 
       fetchData(dataValue) {
-          fetch(REQUEST_URL)
+        var token = 'noauthuser' ;
+        var auth_token = '';
+        if (this.state.user) {
+            token = this.state.user.auth_token;
+            auth_token = "Bearer " + token;
+        }
+        // console.log('tokena', token);
+        // console.log('auth_token', auth_token);
+        // Adding token for viewing causes via employee module pn
+          fetch(REQUEST_URL,{
+          method: "GET",
+          headers: {  
+            'Authorization':auth_token,
+            'Content-Type':'application/json',
+              }
+            })
             .then(this.handleNetworkErrors.bind(this))
             .then((causes) => {
               var causes = causes;

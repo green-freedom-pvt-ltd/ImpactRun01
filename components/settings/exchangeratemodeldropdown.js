@@ -28,6 +28,7 @@ import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 var deviceWidth = Dimensions.get('window').width;
+var deviceHeight = Dimensions.get('window').height;
 const TOUCHABLE_ELEMENTS = ['TouchableHighlight', 'TouchableOpacity', 'TouchableWithoutFeedback', 'TouchableWithNativeFeedback'];
 
 export default class ModalDropdown extends Component {
@@ -401,7 +402,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    width: 185,
+    width: deviceWidth - 220,
     marginLeft: 200,
     
   },
