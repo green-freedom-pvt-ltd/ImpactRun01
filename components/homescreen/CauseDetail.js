@@ -22,6 +22,7 @@ import Icon3 from 'react-native-vector-icons/Ionicons';
 import NavBar from '../navBarComponent';
 import LodingRunScreen from '../gpstracking/runlodingscreen'
 var { RNLocation: Location } = require('NativeModules');
+import ImageLoad from 'react-native-image-placeholder';
 
 class CauseDetail extends Component {
     
@@ -120,16 +121,17 @@ class CauseDetail extends Component {
      DiscriptionImage(data){
       if(data.is_completed){
         return(
-           <Image source={{uri:data.cause_completed_description_image}} style={styles.image}>
-          </Image>
+           <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.image} loadingStyle={{size: 'large', color: 'grey'}} source={{uri:data.cause_completed_description_image}} style={styles.image}>
+          </ImageLoad>
         )
       }else{
         return(
-           <Image source={{uri:data.cause_image}} style={styles.image}>
-           <View style={styles.overlaytext}>
-             <Text style={styles.categorytext}>{data.cause_category}</Text>
-           </View>
-          </Image>
+          <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.image} loadingStyle={{size: 'large', color: 'grey'}} source={{uri:data.cause_image}} style={styles.image}>
+            <View style={styles.overlaytext}>
+              <Text style={styles.categorytext}>{data.cause_category}</Text>
+            </View>
+          </ImageLoad>
+          
           )
       }
      }

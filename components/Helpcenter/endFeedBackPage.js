@@ -146,20 +146,13 @@ class EndFeedBack extends Component {
       console.log("Title ", this.props.title);
       return (
         <View style={styles.container}>
-         <View style={commonStyles.Navbar}>
-          <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-            <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
-          </TouchableOpacity>
-            <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50,paddingRight:50}]}>{this.props.title}</Text>
-        </View>
-
         <View style={{height:deviceHeight,width:deviceWidth}} >
 
         <View style={{marginTop:30,marginLeft:10,}}>
-          <Text style={{color:'black'}}>{this.props.explanation}</Text>
+          <Text style={{color:'black'}}>{data.header}</Text>
         </View>
         <View style={{marginTop:15,marginLeft:10,}}>
-          <Text style={{color:'black', fontFamily:styleConfig.FontFamily,}}>{this.props.prompt}</Text>
+          <Text style={{color:'black', fontFamily:styleConfig.FontFamily,}}>{data.discription}</Text>
         </View>
             <View style={styles.FaqSubmitWrap}>
                <View>
@@ -167,7 +160,7 @@ class EndFeedBack extends Component {
                 ref={component => this._textInput = component} 
                 style={styles.textEdit}
                 onChangeText={(moreText) => this.setState({moreText})}
-                placeholder={this.props.hint}
+                placeholder={data.inputLebel}
                 />
               </View>
                

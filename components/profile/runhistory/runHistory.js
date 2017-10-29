@@ -705,12 +705,6 @@ class RunHistory extends Component {
         var fetchingRun = this.props.fetchRunData;
           return (
             <View>
-              <View style={commonStyles.Navbar}>
-                <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent',height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-                  <Icon3 style={{color:'white',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
-                </TouchableOpacity>
-                  <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50,paddingRight:50}]}>{'RUN HISTORY'}</Text>
-              </View>
               <View style={{height:deviceHeight-styleConfig.navBarHeight}}>
               {this.headerFromHelp()}
                  <ListView

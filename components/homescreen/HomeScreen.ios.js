@@ -29,6 +29,7 @@ import LodingRunScreen from '../gpstracking/runlodingscreen'
 import Modal from '../downloadsharemeal/CampaignModal'
 var { RNLocation: Location } = require('NativeModules');
 var DeviceInfo = require('react-native-device-info');
+import ImageLoad from 'react-native-image-placeholder';
 
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
@@ -438,13 +439,15 @@ class Homescreen extends Component {
             )
         }else{
           return(
-            <ImageBackground source={{uri:cause.cause_image}} style={styles.cover}>
-                <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
+            <View>
+            <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.cover} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_image}} style={styles.cover}>        
+            </ImageLoad>
+              <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
                   <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3, justifyContent: 'center',alignItems: 'center', color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {cause.cause_category}
                   </Text>
-                </View>
-            </ImageBackground>
+              </View>
+           </View>
             )
         }
       }

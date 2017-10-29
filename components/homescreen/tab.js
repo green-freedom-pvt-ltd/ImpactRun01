@@ -379,6 +379,7 @@ class Tabs extends Component {
         }
 
         navigateToProfileForm() {
+        if (this.props.user) {
           this.refs.nav.push({
             title: 'profileform',
             component:ProfileForm,
@@ -387,7 +388,11 @@ class Tabs extends Component {
             onRightButtonPress: () => {
                  this.pushedComponent && this.pushedComponent._onRightButtonClicked();
             },
+        
         })
+          }else{
+            return;
+          }
         }
 
         navigateToImpactLeague() {
@@ -427,9 +432,9 @@ class Tabs extends Component {
                           selectedTab: 'settings',
                       });
                   }}>
-                    <Setting navigator={this.props.navigator} />
+                <Setting navigator={this.props.navigator} />
                 </TabBarIOS.Item>
-                 <TabBarIOS.Item
+                <TabBarIOS.Item
                     selected={this.state.selectedTab === 'profile'}
                     title="Me"
                     icon={{uri: Profileicon, scale: 5}}
@@ -437,8 +442,24 @@ class Tabs extends Component {
                         this.setState({
                             selectedTab: 'profile',
                         });
-                  }}>
-                 <Profile user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator} />
+                }}>
+                <NavigatorIOS
+                    ref="nav"
+                    translucent={false}
+                    navigationBarHidden={false}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.light_sky_blue}
+                    initialRoute={{
+                    showTabBar: true,
+                    rightButtonTitle: (this.state.user)?'edit':'',
+                    onRightButtonPress: () => this.navigateToProfileForm(),
+                    title:'Profile',
+                    component:Profile,
+                    passProps:{user:this.state.user,getUserData:this.getUserData}
+                }}/>               
                 </TabBarIOS.Item>
                 
                 <TabBarIOS.Item
@@ -446,13 +467,13 @@ class Tabs extends Component {
                   title="Home"
                   icon={{uri: RunIcon, scale: 5}}
                   onPress={() => {
-                      this.setState({
-                          selectedTab: 'welcome',
-                      });
-                  }}>
-                  <View>
-                    <Welcome my_currency = {this.props.my_currency} myCauseCount={this.props.dataCauseCount} fetchDataonInternet ={this.fetchDataonInternet} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
-                 </View>
+                  this.setState({
+                      selectedTab: 'welcome',
+                  });
+                }}>
+                <View>
+                   <Welcome my_currency = {this.props.my_currency} myCauseCount={this.props.dataCauseCount} fetchDataonInternet ={this.fetchDataonInternet} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
+                </View>
                 </TabBarIOS.Item>
 
                 <TabBarIOS.Item
@@ -477,8 +498,22 @@ class Tabs extends Component {
                             myFeedStoredCount:this.state.FeedCount
                         });
                   }}>
-                 <Helpcenter  user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
-                </TabBarIOS.Item>
+                 <NavigatorIOS
+                    ref="Help"
+                    translucent={false}
+                    navigationBarHidden={false}
+                    style={{flex:1}}
+                    tintColor='#FFF'
+                    titleTextColor='#FFF'
+                    shadowHidden={true}
+                    barTintColor={styleConfig.light_sky_blue}
+                    initialRoute={{
+                    showTabBar: true,
+                    title:'Help',
+                    component:HelpCenter,
+                    passProps:{user:this.state.user,getUserData:this.getUserData}
+                    }}/>                
+                    </TabBarIOS.Item>
               </TabBarIOS>
             </View>
           );

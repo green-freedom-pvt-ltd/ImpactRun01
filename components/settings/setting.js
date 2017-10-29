@@ -118,10 +118,8 @@ class Setting extends Component {
         }
         navigateToLogin(){
            this.props.navigator.push({
-            title: 'Gps',
             id:'login',
-            index: 0,
-            navigator: this.props.navigator,
+            
            })
         }
         // navigateToLogin(){

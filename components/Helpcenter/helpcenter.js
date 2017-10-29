@@ -79,12 +79,11 @@ class HelpCenter extends Component {
 
        }
        
-       navigateToHelp(rowData){
+        navigateToHelp(rowData){
         this.props.navigator.push({
           title:'Questions',         
-          // component:Faq,
-          id:'faq',
-          // navigationBarHidden: false,
+          component:Faq,
+          navigationBarHidden: false,
           showTabBar: true,
           passProps:{
             rowData:rowData,
@@ -95,17 +94,11 @@ class HelpCenter extends Component {
       navigateToFeedbackPage(rowData){
         this.props.navigator.push({
           title:'Feedback',         
-          id:'feedback',
-          // component:EndFeedBack,
-          // navigationBarHidden: false,
-          // showTabBar: true,
+          component:EndFeedBack,
+          navigationBarHidden: false,
+          showTabBar: true,
           passProps:{
             data:rowData,
-            title:'Help Center',
-            explanation:'That is great! We love to hear from our users.',
-            prompt:'Submit your feedback to us.',
-            hint:'Enter feedback here',
-            user:this.props.user,
             getUserData:this.props.getUserData,
           }
         })
@@ -115,10 +108,9 @@ class HelpCenter extends Component {
 
         this.props.navigator.push({
           title:'Select issue',         
-          // component:QuestionLists,
-          // navigationBarHidden: false,
-          // showTabBar: true,
-          id:'listquestions',
+          component:QuestionLists,
+          navigationBarHidden: false,
+          showTabBar: true,
           passProps:{
            rowData:rowData,
            data:rowData.moreList,
@@ -132,8 +124,9 @@ class HelpCenter extends Component {
        navigateToRunhistory(rowData){
         this.props.navigator.push({
           title:'Questions',         
-          // component:RunHistory,
-          id:'runhistory',
+          component:RunHistory,
+          navigationBarHidden: false,
+          showTabBar: true,
           passProps:{
             rowData:rowData,
             rawData:this.state.rawData,
@@ -325,10 +318,6 @@ class HelpCenter extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-              
-              <View style={commonStyles.Navbar}>
-                  <Text numberOfLines={1} style={[commonStyles.menuTitle,{width:deviceWidth-50}]}>{'Help Center'}</Text>
-              </View>
                 <ListView
                 style={{top:0,height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',}}
                 renderRow={this.renderRow}

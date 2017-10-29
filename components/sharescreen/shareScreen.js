@@ -17,6 +17,8 @@ import{
     NetInfo,
     ActivityIndicatorIOS,
   } from 'react-native';
+  
+  import ImageLoad from 'react-native-image-placeholder';
   import apis from '../apis';
   import TimerMixin from 'react-timer-mixin';
   import Icon from 'react-native-vector-icons/Ionicons';
@@ -758,7 +760,7 @@ import{
               </View>
             </View>
             <View style={{height:deviceHeight/3+30,width:deviceWidth,backgroundColor:'white',}}>
-             <Image style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'}source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} style={{flex:1}}></Image> 
+             <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
             </View>
             <View style={{flex:1 ,alignItems: 'center',justifyContent: 'center', flexDirection:'column',backgroundColor:'white'}}>
              <View style={{height:styleConfig.navBarHeight-30,width:deviceWidth,flex:-1,flexDirection:'row',width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute',top:0}}>            
@@ -814,7 +816,7 @@ import{
               </View>
             </View>
             <View style={{height:deviceHeight/3+30,width:deviceWidth,backgroundColor:'white',}}>
-             <Image style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'}source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} style={{flex:1}}></Image> 
+             <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
             </View>
             </View>
             <View style={{flex:1 ,alignItems: 'center',justifyContent: 'center', flexDirection:'column',backgroundColor:'white'}}>

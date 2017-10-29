@@ -176,13 +176,13 @@ function barChatHight(){
 
 function navBarHeight(){
   if (Dimensions.get('window').height === iphone7Plus) {
-    return 80
+    return 64
   }else if(Dimensions.get('window').height === iphone6s){
-    return 75
+    return 64
   }else if(Dimensions.get('window').height === iphone5 ){
-    return 70
+    return 64
   } else if(Dimensions.get('window').height < iphone5 ){
-    return 55
+    return 64
   }
 }
 
