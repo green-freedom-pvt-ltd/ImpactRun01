@@ -22,7 +22,7 @@ var {
 
 import Lodingscreen from '../../components/LodingScreen';
 import styleConfig from '../../components/styleConfig';
-
+import Tabs from '../homescreen/tab'
 import {
     GoogleSignin,
     GoogleSigninButton
@@ -30,7 +30,7 @@ import {
 var deviceHeight = Dimensions.get('window').height;
 var deviceWidth = Dimensions.get('window').width;
 
-class Profile extends Component {
+class Login extends Component {
     propTypes: {
         onPress: React.PropTypes.func,
         onLogin: React.PropTypes.func,
@@ -39,33 +39,48 @@ class Profile extends Component {
 
       constructor(props) {
           super(props);
-          this.fetchDataonInternet();
           this.state = {
               visibleHeight: Dimensions.get('window').height,
               scroll: false,
               user: null,
               loaded: false,
               mycauseDatatCount: null,
-              LoginCountTotal: null,
           };
+          this._handleConnectivityChange = this._handleConnectivityChange.bind(this);
       }
+
+
       componentDidMount() {
-          this.fetchDataonInternet();
+        NetInfo.isConnected.addEventListener(
+            'change',
+            this._handleConnectivityChange
+        );
+        NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+            this.setState({isConnected});
+              this.fetchDataonInternet();
+            }
+        );
+          
       }
-      LoginCountFunction() {
-          let TotalLogin = {
-              TotalLoginCount: 1,
-          }
-          AsyncStorage.setItem('LoginCount', JSON.stringify(TotalLogin), () => {
-              AsyncStorage.getItem('LoginCount', (err, result) => {
-                  var Logincount = JSON.parse(result);
-                  this.setState({
-                      LoginCountTotal: Logincount,
-                      openModel: true,
-                  })
-              })
-          })
+
+      componentWilliUnmount(){
+        NetInfo.removeEventListener(
+            'change',
+            this._handleConnectivityChange
+        );
       }
+
+
+      _handleConnectivityChange(isConnected) {
+        var _this = this;
+        _this.setState({
+          isConnected,
+        });
+         this.fetchDataonInternet(isConnected);
+       
+      }
+     
 
       componentWillMount() {
           AsyncStorage.getItem('LoginCount', (err, result) => {
@@ -89,40 +104,65 @@ class Profile extends Component {
          
       }
 
-      fetchDataonInternet(){
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                if (isConnected) {
-                    this.fetchData();
-                }
-            }
-        );
+      fetchDataonInternet(isConnected){
+        console.log('isConnected',isConnected);
+
+        if (isConnected) {
+           console.log('isConnected2',isConnected);
+            this.fetchData();
+        }
       }
 
+      handleNetworkErrors(response){
+        console.log("response",response);
+       if(response.ok){
+        console.log("response",response);
+        return response.json()
+       }else{
+        AlertIOS.alert("Network error","There is some problem connecting to internet");
+        return;
+       }
+       return response.json()
+      }
 
-      fetchData(dataValue) {
+      fetchData() {
+        console.log('fetching');
         fetch(apis.causeListapi)
-            .then((response) => response.json())
+            .then(response => response.json())
             .then((causes) => {
               var causes = causes;
+              console.log('causes',causes);
               let causesData = []
+              let exchangeRate = []
               let newData = []
               causes.results.forEach((item, i) => {
-                  if (item.is_active) {
+                  if (item.is_active || item.is_completed) {
                       causesData.push(['cause' + i, JSON.stringify(item)])
                       newData.push('cause' + i);
                   };
               })
               this.setState({
                   myCauseNum: newData,
+                  causes:causes.results,
+                  exchange_rates:causes.exchange_rates,
+                  overall_impact:causes.overall_impact,
               })
+              console.log('ec', this.state.exchange_rates);
+              console.log('ec2', exchangeRate);
               let myCauseNum = this.state.myCauseNum;
               AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
+              AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
+              // AsyncStorage.multiSet(exchangeRate, (err) => {
+              //     console.log('ExchangeRate' + err)
+              // })
+
               AsyncStorage.multiSet(causesData, (err) => {
                   console.log('myCauseErr' + err)
               })
             })
-            .done();
+            .catch((err)=>{
+             console.log("errorcauseapi ",err)
+            })
       }
 
       _signInGoogle() {
@@ -132,6 +172,7 @@ class Profile extends Component {
                 user: user,
                 loaded: true,
             });
+            console.log("user",user);
             var access_token = user.accessToken;
             fetch("http://dev.impactrun.com/api/users/", {
                     method: "GET",
@@ -139,67 +180,33 @@ class Profile extends Component {
                         'Authorization': "Bearer google-oauth2 " + user.accessToken,
                     }
                 })
-                .then((response) => response.json())
+                .then(this.handleNetworkErrors.bind(this))
                 .then((userdata) => {
                     var userdata = userdata[0];
                     console.log('usrerloginGoogle',userdata);
-                    let UID234_object = {
-                        body_weight:userdata.body_weight,
-                        first_name: userdata.first_name,
-                        user_id: userdata.user_id,
-                        last_name: userdata.last_name,
-                        gender_user: userdata.gender_user,
-                        email: userdata.email,
-                        phone_number: userdata.phone_number,
-                        Birth_day: userdata.birthday,
-                        social_thumb: userdata.social_thumb,
-                        auth_token: userdata.auth_token,
-                        total_amount: userdata.total_amount,
-                        is_signup: userdata.sign_up,
-                        total_distance: userdata.total_distance,
-                        team_code: userdata.team_code,
+                    let userData = {
+                      body_weight:userdata.body_weight,
+                      first_name: userdata.first_name,
+                      user_id: userdata.user_id,
+                      last_name: userdata.last_name,
+                      gender_user: userdata.gender_user,
+                      email: userdata.email,
+                      phone_number: userdata.phone_number,
+                      Birth_day: userdata.birthday,
+                      social_thumb: userdata.social_thumb,
+                      auth_token: userdata.auth_token,
+                      total_amount: userdata.total_amount,
+                      is_signup: userdata.sign_up,
+                      total_distance: userdata.total_distance,
+                      team_code: userdata.team_code,
                     };
-                    // first user, delta values
-                    let UID234_delta = {
-                        body_weight:userdata.body_weight,
-                        first_name: userdata.first_name,
-                        user_id: userdata.user_id,
-                        last_name: userdata.last_name,
-                        gender_user: userdata.gender_user,
-                        email: userdata.email,
-                        phone_number: userdata.phone_number,
-                        Birth_day: userdata.birthday,
-                        social_thumb: userdata.social_thumb,
-                        auth_token: userdata.auth_token,
-                        total_amount: userdata.total_amount,
-                        is_signup: userdata.sign_up,
-                        total_distance: userdata.total_distance,
-                        team_code: userdata.team_code,
-
-                    };
-
-
-                    let multi_set_pairs = [
-                        ['UID234', JSON.stringify(UID234_object)],
-
-                    ]
-                    let multi_merge_pairs = [
-                        ['UID234', JSON.stringify(UID234_delta)],
-
-                    ]
-
-                    AsyncStorage.multiSet(multi_set_pairs, (err) => {
-                        AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-                            AsyncStorage.multiGet(['UID234'], (err, stores) => {
-                                stores.map((result, i, store) => {
-                                    let key = store[i][0];
-                                    let val = store[i][1];
-                                });
-                                this.navigateToHome();
-                            });
-                        });
-                    });
-                    this.LoginCountFunction();
+                    console.log("userdata",userdata);
+                     AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
+                      AsyncStorage.getItem('USERDATA', (err, result) => {
+                        console.log("userresult ",result);
+                      })
+                      this.navigateToHome();
+                     })
                 })
                 .done();
               })
@@ -210,8 +217,8 @@ class Profile extends Component {
       }
 
       handleFBLogin() {
-          var _this = this;
-          FBLoginManager.login(function(error, data) {
+        var _this = this;
+        FBLoginManager.login(function(error, data) {
           if (!error) {
               _this.setState({
                   user: data,
@@ -225,11 +232,12 @@ class Profile extends Component {
                       'Authorization': "Bearer facebook " + Fb_token,
                   }
               })
-              .then((response) => response.json())
+              .then((response)=>response.json())
               .then((userdata) => {
                 var userdata = userdata[0];
                console.log('usrerloginfacebook',userdata);
-                let UID234_object = {
+            
+                let userData = {
                     body_weight:userdata.body_weight,
                     first_name: userdata.first_name,
                     user_id: userdata.user_id,
@@ -245,46 +253,13 @@ class Profile extends Component {
                     total_distance: userdata.total_distance,
                     team_code: userdata.team_code,
                 };
-                // first user, delta values
-                let UID234_delta = {
-                    body_weight:userdata.body_weight,
-                    first_name: userdata.first_name,
-                    user_id: userdata.user_id,
-                    last_name: userdata.last_name,
-                    gender_user: userdata.gender_user,
-                    email: userdata.email,
-                    phone_number: userdata.phone_number,
-                    Birth_day: userdata.birthday,
-                    social_thumb: userdata.social_thumb,
-                    auth_token: userdata.auth_token,
-                    total_amount: userdata.total_amount,
-                    is_signup: userdata.sign_up,
-                    total_distance: userdata.total_distance,
-                    team_code: userdata.team_code,
-                };
-                // // second user, initial values
-
-                let multi_set_pairs = [
-                    ['UID234', JSON.stringify(UID234_object)],
-
-                ]
-                let multi_merge_pairs = [
-                    ['UID234', JSON.stringify(UID234_delta)],
-                ]
-
-                AsyncStorage.multiSet(multi_set_pairs, (err) => {
-                    AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-                        AsyncStorage.multiGet(['UID234'], (err, stores) => {
-                            stores.map((result, i, store) => {
-                                let key = store[i][0];
-                                let val = store[i][1];
-                                console.log('user',JSON.parse(val));
-                            });
-                         _this.navigateToHome();
-                        });
-                    });
-                    _this.LoginCountFunction();
-                });
+               
+               AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
+                  AsyncStorage.getItem('USERDATA', (err, result) => {
+                    console.log("userresult ",result);
+                  })
+                _this.navigateToHome();
+               })
               })
               .catch((err) => {
                 console.log('WRONG SIGNIN FB', err);
@@ -296,25 +271,43 @@ class Profile extends Component {
       }
 
       navigateToHome() {
-        this.LoginCountFunction();
         this.props.navigator.push({
             title: 'Gps',
             id: 'tab',
             passProps: {
-                dataCauseCount: this.state.mycauseDataCount,
-                dataCauseNum: this.state.myCauseNum,
-                show: this.state.openModel
+              dataCauseCount: this.state.mycauseDataCount,
+              dataCauseNum: this.state.myCauseNum,
+              causes:this.state.causes,
+              exchange_rates:this.state.exchange_rates,
+              overall_impact:this.state.overall_impact,
             },
             navigator: this.props.navigator,
         })
       }
 
 
+      // navigateToHome() {
+      //   this.props.navigator.push({
+      //       title: 'Homescreen',
+      //       component:Tabs,
+      //       navigationBarHidden: true,
+      //       title: 'Homescreen',
+      //       screen:'route',
+      //       navigatorStyle: {
+      //         navBarHidden:true,
+      //       },
+      //       passProps: {
+      //         dataCauseCount: this.state.mycauseDataCount,
+      //         dataCauseNum: this.state.myCauseNum,
+      //         causes:this.state.causes
+      //       },
+      //   })
+      // }
+
+
 
       renderLoadingView() {
-          return ( <
-              Lodingscreen / >
-          );
+          return ( <Lodingscreen / >);
       }
 
 
@@ -330,7 +323,9 @@ class Profile extends Component {
               <Image source={require('../../images/login_background.png')} style={styles.shadow}>         
                 <View style={styles.center}>         
                   <Image source={require('../../images/Logo.png')} style={styles.logo}/>
+                  <Text style={{color:styleConfig.black,fontFamily: styleConfig.FontFamily,}}>Get Fit. Do Good.</Text>
                 </View>
+
                 <View style={styles.container}>
                   <View>
                     <TouchableOpacity onPress={() => this.handleFBLogin()} style={styles.Loginbtnfb}>
@@ -371,6 +366,7 @@ var styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom:200,
     },
     Loginbtnfb: {
         flexDirection: 'row',
@@ -387,7 +383,7 @@ var styles = StyleSheet.create({
         width: deviceWidth - 100,
         backgroundColor: 'white',
         borderRadius: 5,
-        marginTop: 15,
+        marginTop: 10,
         height: 50,
         bottom: 0,
         alignItems: 'center',
@@ -402,13 +398,13 @@ var styles = StyleSheet.create({
     },
     skip: {
         flex: 1,
-        top: 20,
+        top: 30,
         flexDirection: 'row',
         justifyContent: 'center',
     },
     logo: {
-        width: 200,
-        height: 40,
+        width: 192,
+        height: 65,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -428,4 +424,4 @@ var styles = StyleSheet.create({
     }
 })
 
-export default Profile;
+export default Login;

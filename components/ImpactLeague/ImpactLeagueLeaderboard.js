@@ -17,11 +17,13 @@ import{
     AsyncStorage,
     RefreshControl,
   } from 'react-native';
-
+import styleConfig from '../styleConfig';
 import apis from '../apis';
 import LodingScreen from '../LodingScreen';
 import commonStyles from '../styles';
+import NavBar from '../navBarComponent';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ImpactLeagueLeaderBoard extends Component {
@@ -34,31 +36,50 @@ class ImpactLeagueLeaderBoard extends Component {
           ImpactLeagueLeaderBoardData: ds.cloneWithRows([]),
           loaded: false,
           refreshing:false,
+          teamname:'Impact League',
+          my_rate:1.0,
+          my_currency:"INR",
+
         };
         this.renderRow = this.renderRow.bind(this);
       }
 
+     componentWillMount() {        
+          AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+          })     
+          
+       AsyncStorage.getItem('my_rate', (err, result) => {
+            this.setState({
+              my_rate:JSON.parse(result),
+          })
+          }) 
+
+     }
+
       componentDidMount() {
-         this.FetchLeaderBoardLocally();
+         this.FetchDataifInternet();
+         this.setState({
+          teamname:this.props.team_name
+         })
       }
       
       FetchDataifInternet(){
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
-               this.FetchLeaderBoard();
+              this.FetchLeaderBoard();
             }else{
-              AlertIOS.alert('No internet connection', 'Please connect your device to internet connection')
+              this.FetchLeaderBoardLocally();
             } 
           }
         );
       }
 
 
-      componentWillUnmount() {
-       
-      }
-      
+    
      
       FetchLeaderBoardLocally(){
         AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
@@ -67,14 +88,10 @@ class ImpactLeagueLeaderBoard extends Component {
             this.setState({
               ImpactLeagueLeaderBoardData:this.state.ImpactLeagueLeaderBoardData.cloneWithRows(boardData.results),
               BannerData:boardData.results,
-              teamname:boardData.results[0].team,
               loaded: true,
             })
           }else{
              this.FetchDataifInternet();
-             this.setState({
-              teamname:'Impact League'
-             })
           }
         }); 
       }
@@ -83,8 +100,9 @@ class ImpactLeagueLeaderBoard extends Component {
 
       FetchLeaderBoard() {     
            
-        var url = apis.ImpactLeagueLeaderboardApi;
+        var url = apis.ImpactLeagueLeaderboardV2Api;
         var token = this.props.user.auth_token;
+        console.log('token ' + token);
         if (this.props.user.team_code == this.props.Team_id) {
           fetch(url,{
             method: "GET",
@@ -137,9 +155,9 @@ class ImpactLeagueLeaderBoard extends Component {
       })
       }
       socialthumb(rowData){
-        if (rowData.user.social_thumb) {
+        if (rowData.social_thumb) {
           return(
-            <Image style={styles.thumb} source={{uri:rowData.user.social_thumb}}></Image>
+            <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             )
         }else{
           return(
@@ -156,7 +174,7 @@ class ImpactLeagueLeaderBoard extends Component {
 
 
       renderRow(rowData,index,rowID){
-        var totalkms = (rowData.league_total_distance.total_distance == null)?'0':rowData.league_total_distance.total_distance;
+        var totalkms = (rowData.amount == null)?'0':rowData.amount;
         rowID++
         var me = this;
         let style = [
@@ -169,46 +187,48 @@ class ImpactLeagueLeaderBoard extends Component {
             'width':25,
           }
         ];
-        var backgroundColor = (this.props.user.user_id === rowData.user.user_id)?'#ffcd4d':'#fff';
+        var textColor=(this.props.user.user_id === rowData.user_id)?'#fff':"#4a4a4a";
+        var backgroundColor = (this.props.user.user_id === rowData.user_id)?'#ffcd4d':'#fff';
         return (
           <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <View style={style}>
-                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:15,color:'#4a4a4a',}}>{rowID}</Text>
+                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:textColor,}}>{rowID} </Text> 
               </View> 
               <View>{this.socialthumb(rowData)}</View>       
-              <Text style={styles.txt}>{rowData.user.first_name} {rowData.user.last_name}</Text>
-              <Text style={styles.txtSec}>{parseFloat(totalkms).toFixed(2)} Km</Text>
+              <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
+              <View style={{justifyContent: 'center',alignItems: 'center',}}>
+              <Text style={[styles.txtSec,{color:textColor}]}>
+              <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(totalkms).toFixed(0) : parseFloat(totalkms/this.state.my_rate).toFixed(2))} </Text>
+              </View>
           </View>
         );
+      }
+      leftIconRender(){
+        return(
+          <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+            </TouchableOpacity>
+        )
       }
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
-          <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
-            </View>     
+          <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>    
             <LodingScreen style={{ height:deviceHeight-150}}/>
           </View>
         );
       }
 
       render() {
-        if (!this.state.loaded ) {
+        if (!this.state.loaded) {
           return this.renderLoadingView();
         }
+        else{
         console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-           <View style={commonStyles.Navbar}>
-            <TouchableOpacity style={{left:0,position:'absolute',height:60,width:60,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:34,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-            </TouchableOpacity>
-              <Text numberOfLines={1} style={commonStyles.menuTitle}>{this.state.teamname}</Text>
-            </View>
-            <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth,}}>
+           <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>
+            <View style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth}}>
                <ListView 
                 refreshControl={
                 <RefreshControl
@@ -223,6 +243,7 @@ class ImpactLeagueLeaderBoard extends Component {
             </View> 
          </View>
         );
+      }
       }
 }
 
@@ -242,27 +263,24 @@ const styles = StyleSheet.create({
     borderColor:'#CCC',
   },
   txt: {
-    width:deviceWidth-200,
+    flex:1,
     color:'#4a4a4a',
-    fontSize: 14,
-    fontWeight:'400',
+    fontSize: styleConfig.fontSizerleaderBoardContent+2,
+    fontWeight:'600',
     textAlign: 'left',
     marginLeft:10,
     fontFamily: 'Montserrat-Regular',
   },
   txtSec:{
     color:'#4a4a4a',
-    fontSize:14,
+    fontSize:styleConfig.fontSizerleaderBoardContent+2,
     fontWeight:'400',
-    position:'absolute',
-    right:15,
-    top:30,
     fontFamily: 'Montserrat-Regular',
   },
    thumb: {
-    height:50,
-    width:50,
-    borderRadius:25,
+    height:styleConfig.navBarHeight-30,
+    width:styleConfig.navBarHeight-30,
+    borderRadius:(styleConfig.navBarHeight-30)/2,
     backgroundColor:'#ffcd4d',
     marginBottom: 5,
      borderColor:'#ccc',

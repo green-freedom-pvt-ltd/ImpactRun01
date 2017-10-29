@@ -13,14 +13,16 @@ import{
     Text,
     AlertIOS,
     Platform,
-    ActivityIndicatorIOS,
+    ActivityIndicator,
     AsyncStorage
   } from 'react-native';
 import commonStyles from '../styles';
 import apis from '../apis';
+import NavBar from '../navBarComponent'
 import styleConfig from '../styleConfig';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ImpactLeagueForm2 from './ImpactLeagueForm2'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 
@@ -44,6 +46,10 @@ class ImpactLeagueCode extends Component {
         moreText:'',
         codenotextist:'',
         loading:false,
+        FormScreen:false,
+        city:null,
+        department:null,
+        data:null,
       };
       this.codeDoesnotExistCheck = this.codeDoesnotExistCheck.bind(this);
     }
@@ -115,57 +121,104 @@ class ImpactLeagueCode extends Component {
     }
 
 
+      navigateTOhome(responseJson){
+        this.props.navigator.replace({
+          title: 'impactleaguehome',
+          id:'impactleaguehome',
+          navigator: this.props.navigator,
+          passProps:{
+            backTo:'learderboad',
+            user:this.props.user,
+            data:responseJson,
+            getUserData:this.props.getUserData,
+          }
+        })
+      }
+      
+    RouteChangeField(responseJson){
+        var userdata = this.props.user;
+        console.log("userdata",userdata);
+        let userData = {
+          team_code:responseJson.team_code
+        }
+        // first user, delta values
+        AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
+         AsyncStorage.getItem('USERDATA', (err, result) => {
+                this.props.getUserData();
+
+        })
+        })    
+      }
+
+
 		Navigate_To_nextpage(responseJson){
+      this.RouteChangeField(responseJson);
       var team_code = responseJson.team_code;
       console.log(responseJson.company_attribute);
       var cities = responseJson.company_attribute;
-      var city = [];
-      var i;
-      for (i = 0; i < cities.length; i++) {
-        if (cities[i].city != null ) {
-          city.push(cities[i].city);
-        }
-
-      }
-      console.log('text',city);
       var departments = responseJson.company_attribute;
+      console.log('cities',cities);
       var department = [];
-      var i;
-      for (i = 0; i < departments.length; i++) {
-        if (departments[i].department != null) {
-          department.push(departments[i].department);
-        }
-
+      var city = [];
+      if(cities.length == 0 && departments.length == 0)
+      {
+        this.navigateTOhome();
       }
-      console.log('text',department);
+      else{
+        var i;
+        for (i = 0; i < cities.length; i++) {
+          if (cities[i].city != null ) {
+            city.push(cities[i].city);
+          }
 
-      this.props.navigator.replace({
-      id:'impactleagueform2',
-        passProps:{
-          cities:city,
-          departments:department,
-          user:this.props.user,
-          data:responseJson,
-          getUserData:this.props.getUserData,
-        },
-      navigator: this.props.navigator,
-      })
+        }
+        console.log('text',city);
+        var i;
+        for (i = 0; i < departments.length; i++) {
+          if (departments[i].department != null) {
+            department.push(departments[i].department);
+          }
+
+        }
+       this.props.navigator.replace({
+        id:'impactleagueform2',
+          passProps:{
+            cities:city,
+            departments:department,
+            user:this.props.user,
+            data:responseJson,
+            getUserData:this.props.getUserData,
+          },
+        navigator: this.props.navigator,
+        })
+      }
+     // this.setState({
+     //  city:city,
+     //  department:department,
+     //  data:responseJson,
+     //  FormScreen:true,
+     // })
     }
-  
+     
+
     codeDoesnotExistCheck(responseJson){
-      console.log('responcedatacode',responseJson);
       var valueReturn = "Object with team_code="+this.state.moreText+" does not exist.";
-      var valueReturn2 = "The fields user, team must make a unique set";
+      var valueReturn2 = "The fields user, team must make a unique set.";
+      // console.log('responcedatacode',JSON.stringify(responseJson.non_field_errors[0])==valueReturn2);
       if (responseJson) {
-        if (responseJson.team[0] === valueReturn) {
+        if (responseJson.non_field_errors) {
+        if (JSON.stringify(responseJson.non_field_errors[0]) != null) {
+          console.log('react2');
           this.setState({
-            codenotextist:'Sorry, that’s not the code.',
+            codenotextist:JSON.stringify(responseJson.non_field_errors[0]),
           })
         }else{
-
-            this.Navigate_To_nextpage(responseJson);
-
+          console.log('react3');
+          this.Navigate_To_nextpage(responseJson);
         }
+      }else{
+        this.Navigate_To_nextpage(responseJson);
+      }
       }
     }
      
@@ -173,11 +226,11 @@ class ImpactLeagueCode extends Component {
       if (this.state.loading) {
         return(
           <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.56)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-            <ActivityIndicatorIOS
-             style={{height: 80}}
+            <ActivityIndicator
+              style={{height: 80}}
               size="large"
             >
-            </ActivityIndicatorIOS>
+            </ActivityIndicator>
           </View>
           )
       }else{
@@ -185,37 +238,59 @@ class ImpactLeagueCode extends Component {
       }
     }
 
+    goBack(){
+      this.props.navigator.pop();
+    }
+
+    leftIconRender(){
+      return(
+        <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+           <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+        </TouchableOpacity>
+        )
+    }
+    
     render() {
-		  return (
-        <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
-        <View style={commonStyles.Navbar}>
+      if (this.state.FormScreen!= true) {
+  		  return (
+          <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
+          <View style={commonStyles.Navbar}>
           <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
            <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
           </TouchableOpacity>
           <Text style={commonStyles.menuTitle}>Impact League</Text>
         </View>
-        <View style={styles.container}>
-        <View style={styles.ContentWrap}>
-        <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
-        <View style ={ styles.InputUnderLine}>
-         <TextInput
-          ref={component => this._textInput = component} 
-          style={styles.textEdit}
-          onChangeText={(moreText) => this.setState({moreText})}
-          placeholder="DFG3456"
-          />
+          <View style={styles.container}>
+          <View style={styles.ContentWrap}>
+          <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
+          <View style ={ styles.InputUnderLine}>
+           <TextInput
+            ref={component => this._textInput = component} 
+            style={styles.textEdit}
+            onChangeText={(moreText) => this.setState({moreText})}
+            placeholder="DFG3456"
+            />
+            </View>
+            <View style={{marginBottom:20}}><Text style={styles.Errtext}>{this.state.codenotextist}</Text></View>
+            <View style={styles.BtnWrap}>
+            <TouchableOpacity onPress={() => this.SubmitCode()} style={styles.submitbtn}>
+              <Text style={{color:'white'}}>SUBMIT</Text>
+            </TouchableOpacity>
+            </View>
+            <View>
+            <Text style={{marginTop:50,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>What's This?</Text>
+            <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSize4,fontFamily:styleConfig.FontFamily,}}>{'Here, secret code is for Impact League. Impact League is a Walkathon oraganised by us where you and your colleagues compete with each other to raise charity.\nWalk. Help. Win! \n\nGreat idea right ? \nTo know more shoot us a mail at\ncontact@impactrun.com \n\nSee you soon.'}</Text>
+            </View>
           </View>
-          <View style={{marginBottom:20}}><Text style={styles.Errtext}>{this.state.codenotextist}</Text></View>
-          <View style={styles.BtnWrap}>
-          <TouchableOpacity onPress={() => this.SubmitCode()} style={styles.submitbtn}>
-            <Text style={{color:'white'}}>SUBMIT</Text>
-          </TouchableOpacity>
           </View>
-        </View>
-        </View>
-        {this.isloading()}
-        </View>
-			);
+          {this.isloading()}
+          </View>
+  			);
+      }else{
+        return(
+          <ImpactLeagueForm2 cities={this.state.city} departments={this.state.department} data={this.state.data} user={this.props.user} getUserData = {this.props.getUserData} />
+        )
+      }
 	  }
   }
 

@@ -31,6 +31,10 @@ import{
       }
 
      componentDidMount() {
+      this.setState({
+        weight:this.props.weight,
+
+      })
        
       }
       
@@ -41,7 +45,7 @@ import{
        
      }
       render() {
-        if (this.props.weight != null) {
+        if (this.props.weight != null ) {
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
            <Icon style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="whatshot"></Icon>

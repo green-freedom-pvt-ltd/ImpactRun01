@@ -17,7 +17,6 @@ import {
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
-var KeyboardEvents = require('react-native-keyboardevents');
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import LodingScreen from '../../components/LodingScreen';
 var deviceWidth = Dimensions.get('window').width;
@@ -78,7 +77,16 @@ class Faqdata extends Component {
       componentWillUnmount() {
         
       }
-
+     
+     handleNeteorkErrors(response){
+       console.log("response",response);
+       if (response.ok) {
+         return response.json()
+       }else{
+         AlertIOS.alert("Network error","There is some problem connecting to internet");
+       }
+     
+     }
 
       fetchFaqData() {
         AsyncStorage.removeItem('faqData',(err) => {
@@ -86,7 +94,7 @@ class Faqdata extends Component {
          });
         var url = apis.faqsApi;
         fetch(url)
-          .then( response => response.json() )
+          .then(this.handleNeteorkErrors.bind(this))
           .then( jsonData => {
             this.setState({
               faqData: this.state.faqData.cloneWithRows(jsonData.results),
@@ -158,8 +166,8 @@ class Faqdata extends Component {
           return this.renderLoadingView();
         }
         return (
-          <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-105,width:deviceWidth}}>
+          <View style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth}}>
+            <View style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth}}>
               <ListView
               refreshControl={
                 <RefreshControl
@@ -171,17 +179,20 @@ class Faqdata extends Component {
                 style={styles.container}>
               </ListView>
               <View style={styles.FaqSubmitWrap}>
+              <View>
                 <TextInput
                 ref={component => this._textInput = component} 
                 style={styles.textEdit}
                 onChangeText={(moreText) => this.setState({moreText})}
                 placeholder="If you have any question ask us!"
                 />
+                </View>
                 <TouchableOpacity onPress={() => this.SubmitFaq()} style={styles.submitFaqbtn}>
                   <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
+
               </View>
-                 <KeyboardSpacer/>
+                  <KeyboardSpacer/>
             </View>
           </View> 
         );
@@ -192,11 +203,6 @@ class Faqdata extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f2f2f2',
-    height:deviceHeight,
-    width:deviceWidth,
-    marginTop:-45,
-    bottom:-45,
-    marginBottom:45,
   },
   thumb: {
     backgroundColor: 'white',
@@ -221,37 +227,33 @@ const styles = StyleSheet.create({
    color:'#4a4a4a',
   },
   FaqSubmitWrap:{
-    paddingLeft:10,
-    height:styleConfig.navBarHeight,
+    paddingTop:7,
+    height:50,
     width:deviceWidth,
     flexDirection: 'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
+    justifyContent:'center',
+    alignItems:'flex-start',
     backgroundColor:'#e1e1e8',
     borderBottomWidth:2,
     borderBottomColor:'#e1e1e8',
   },
   textEdit: {
-    marginLeft:-5,
-    height:48, 
+    height:40, 
     borderColor: '#e1e1e8', 
     backgroundColor: 'white',
-    borderWidth:5 ,
-    borderRadius:8,
+    borderRadius:4,
     width:deviceWidth-100,
     color:'#4a4a4a',
     padding:10,
-    top:4,
+    marginRight:5,
   },
   submitFaqbtn:{
     height:40, 
     width:85,
-    right:-4,
-    top:-6,
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:styleConfig.bright_blue, 
+    backgroundColor:styleConfig.light_sky_blue, 
   }
 });
 

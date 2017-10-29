@@ -9,8 +9,9 @@ import {
   AlertIOS,
   Platform
 } from 'react-native';
-import Share, {ShareSheet, Button} from 'react-native-share';
+
 import Icon from 'react-native-vector-icons/Ionicons';
+import styleConfig from './styleConfig';
 
 class SocialShare extends Component {
   constructor(props) {
@@ -35,12 +36,12 @@ class SocialShare extends Component {
     };
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={{height:40,flexDirection:'row',alignItems: 'center',}} onPress={()=>{
+        <TouchableOpacity style={{flexDirection:'row',alignItems: 'center',}} onPress={()=>{
           Share.open(shareOptions);
         }}>
-        <Icon style={{color:'black',fontSize:20,margin:10}}name={'md-share'}></Icon>
+        <Icon style={{color:'black',fontSize:styleConfig.fontSizerlabel+4,margin:10,paddingRight:11,}}name={'md-share'}></Icon>
           <View style={styles.instructions}>
-            <Text style={{color:'#4a4a4a'}}>Share Impactrun</Text>
+            <Text style={{color:'#4a4a4a',fontSize:styleConfig.fontSizerlabel+2,fontFamily:styleConfig.FontFamily}}>SHARE IMPACTRUN</Text>
           </View>
         </TouchableOpacity>
       

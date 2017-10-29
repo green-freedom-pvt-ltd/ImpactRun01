@@ -18,7 +18,15 @@
       "scale": "2x",
       "subtype": "667h"
     },
-    
+    {
+      "extent": "full-screen",
+      "idiom": "iphone",
+      "filename": "Default-Landscape-736h@3x.png",
+      "minimum-system-version": "8.0",
+      "orientation": "landscape",
+      "scale": "3x",
+      "subtype": "736h"
+    },
     {
       "extent": "full-screen",
       "idiom": "iphone",

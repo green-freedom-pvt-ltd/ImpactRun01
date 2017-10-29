@@ -1,7 +1,8 @@
 import React, {
   Component,
-  PropTypes,
+  
 } from 'react';
+const PropTypes = require('prop-types');
 
 import {
   Animated,
@@ -13,6 +14,7 @@ import styleConfig from '../../components/styleConfig';
 var deviceheight = Dimensions.get('window').height;
 const INDETERMINATE_WIDTH_FACTOR = 0.3;
 const BAR_WIDTH_ZERO_POSITION = INDETERMINATE_WIDTH_FACTOR / (1 + INDETERMINATE_WIDTH_FACTOR);
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class ProgressBar extends Component {
   static propTypes = {
@@ -34,7 +36,7 @@ export default class ProgressBar extends Component {
     animated: true,
     borderRadius: 10,
     borderWidth: 0,
-    color: styleConfig.bright_blue,
+    color: '#33f373',
     height:11,
     indeterminate: false,
     progress: 0,
@@ -145,7 +147,10 @@ export default class ProgressBar extends Component {
 
     return (
       <View style={[containerStyle, style]} {...restProps}>
+      <LinearGradient colors={['#04cbfd', '#33f373']} >
+      </LinearGradient>
         <Animated.View   style={progressStyle} />
+        
         {children}
       </View>
     );

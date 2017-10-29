@@ -12,7 +12,10 @@ import{
     Text,
   } from 'react-native';
 import FaqData from './faqData';
+import NavBar from '../navBarComponent';
 import commonStyles from '../../components/styles';
+import styleConfig from '../../components/styleConfig';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -26,12 +29,13 @@ class Faq extends Component {
         })
       }
 
+      goBack(){
+          this.props.navigator.pop({});
+      }
+
   		render() {
   		  return (
           <View>
-            <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Faqs</Text>
-            </View>
   			    <FaqData user = {this.props.user}/>
           </View>
   			);
@@ -41,10 +45,8 @@ class Faq extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f2f2f2',
-    height:deviceHeight,
+    height:deviceHeight-114,
     width:deviceWidth,
-    bottom:-45,
-    marginTop:-45,
   },
   thumb: {
     backgroundColor: '#5bb75b',
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius:8,
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#e03ed2', 
+    backgroundColor:styleConfig.light_sky_blue, 
   }
 });
  export default Faq;

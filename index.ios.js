@@ -9,27 +9,26 @@ import {
   StatusBar,
   PushNotificationIOS,
   Text,
-  Navigator,
+  NavigatorIOS,
   AsyncStorage,
   NetInfo,
   AlertIOS,
  } from 'react-native';
- import BackgroundTimer from 'react-native-background-timer';
- // import crashlytics from 'react-native-fabric-crashlytics';
+import {Navigator} from 'react-native-deprecated-custom-components';
+import styleConfig from './components/styleConfig'
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
-import BackgroundGeolocation from 'react-native-background-geolocation';
 import LodingScreen from './components/LodingScreen';
-global.bgGeo = BackgroundGeolocation;
-import Home from './components/homescreen/HomeScreen.ios';
+
 import RunScreen from './components/gpstracking/home.ios';
 import Login from './components/login/login';
+import Tabs from './components/homescreen/tab.js';
 import Tab from './components/homescreen/tab';
+
 import CauseDetail from './components/homescreen/CauseDetail';
 import Setting from './components/settings/setting';
 import Runlogingscreen from './components/gpstracking/runlodingscreen';
 import ShareScreen from './components/sharescreen/shareScreen';
-import ThankyouScreen from './components/thankyouScreen';
 import ImpactLeagueForm2 from './components/ImpactLeague/ImpactLeagueForm2';
 import ImpactLeagueCode from './components/ImpactLeague/ImpactLeagueCode';
 import ImpactLeagueHome from './components/ImpactLeague/ImpactLeagueHome';
@@ -44,7 +43,11 @@ import RunHistory from './components/profile/runhistory/runHistory';
 import ProfileForm from './components/profile/profileForm';
 import ProfileHeader from './components/profile/profileHeader';
 import Profile from './components/profile/profile';
-import BackgroundFetch from "react-native-background-fetch";
+import ProfileIndex from './components/profile/profile.index.js';
+import Helpcenter from './components/Helpcenter/helpcenter';
+import QuestionLists from './components/Helpcenter/listviewQuestions';
+import FeedBack from './components/Helpcenter/endFeedBackPage.js';
+
 import apis from './components/apis'
 var REQUEST_URL = 'http://dev.impactrun.com/api/causes/';
 const NoBackSwipe ={
@@ -70,7 +73,6 @@ class Application extends Component{
 
 
       componentDidMount() {
-        this.fetchDataonInternet()
       }
 
 
@@ -80,25 +82,31 @@ class Application extends Component{
           this.setState({
               myCauseNum: JSON.parse(result),
           })
-        })
+        });
+
         AsyncStorage.getItem('runDataAppKill', (err, result) => {
+          console.log("result",result);
           this.setState({
             result:result
           })
-        });
-        AsyncStorage.multiGet(['UID234'], (err, stores) => {
-          stores.map((result, i, store) => {
-            let key = store[i][0];
-            let val = store[i][1];
+        });       
+        AsyncStorage.getItem('USERDATA', (err, result) => {
+          if (result != null) { 
+            var user = JSON.parse(result);
             this.setState({
-              user:val,
+              user:user,
               loding:true,
             })
-          })
-          this.setState({
-            userLogin:this.state.user,
-          })
+          }else{
+            this.setState({
+              user:null,
+              loding:true,
+            })
+          }
+          // console.log("this.state.resultwed",this.state.result);
+          // console.log("this.state.user",this.state.user);
           if (this.state.result != null) {
+            console.log("this.state.result",this.state.result);
             this.setState({
               textState:'runscreen',
             })
@@ -107,18 +115,20 @@ class Application extends Component{
              textState:(this.state.user) ? 'tab':'login',
             })
           }
-        });
+        })
+
+          
       }
 
-      fetchDataonInternet(){
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                if (isConnected) {
-                    this.fetchData();
-                }
-            }
-        );
-      }
+      // fetchDataonInternet(){
+      //   NetInfo.isConnected.fetch().done(
+      //       (isConnected) => {
+      //           if (isConnected) {
+      //               this.fetchData();
+      //           }
+      //       }
+      //   );
+      // }
 
 
 
@@ -143,7 +153,9 @@ class Application extends Component{
               AsyncStorage.multiSet(causesData, (err) => {
               })
             })
-            .done();
+           .catch((err)=>{
+             console.log("errorcauseapi ",err)
+            })
       }
 
 
@@ -184,17 +196,33 @@ class Application extends Component{
            break;
            case 'impactleagueform2':
            return Navigator.SceneConfigs.FloatFromRight
+           break;
+           case 'runlodingscreen':
+           return Navigator.SceneConfigs.FloatFromBottom
+           break;
+           case 'runhistory':
+           return Navigator.SceneConfigs.FloatFromRight
+           break;
+           case 'MessageCenter':
+           return Navigator.SceneConfigs.FloatFromRight
+           break;
+           case 'profileform':
+           return Navigator.SceneConfigs.FloatFromRight
+           break;
+           case 'impactleagueleaderboard':
+           return Navigator.SceneConfigs.FloatFromRight
+           break;
+           default:
+           return Navigator.SceneConfigs.FloatFromRight
+
        }
     };
-
-      render() {
+     render() {
         if(this.state.textState != null)
         {
         var mycausecount = this.state.mycauseDataCount;
-        console.log('mysomedatacount',mycausecount);
         return (
           <View  style={{flex: 1}} >
-
             <Navigator
                 ref={(ref) => this._navigator = ref}
                 configureScene={ this._configureScene }
@@ -202,26 +230,60 @@ class Application extends Component{
                 renderScene={this.renderScene.bind(this)}
                 passProps={this.state.mycauseDataCount}
                 />
-           </View>);
+          </View>);
         }
         return this.LodingFunction();
         }
 
+      // render() {
+      //   if(this.state.textState != null)
+      //   {
+      //   var mycausecount = this.state.mycauseDataCount;
+      //   return (
+      //     <View  style={{flex: 1}} >
+      //      {this.renderScene()}
+      //      </View>);
+      //   }
+      //   return this.LodingFunction();
+      //   }
+
         runScreenRender(route,navigator){
           if (this.state.result != null) {
             return(
-                <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>
+                <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} />
               )
           }else{
             return(
-                <RunScreen  navigator={navigator} {...route.passProps} locationManager={BackgroundGeolocation}/>
+                <RunScreen  navigator={navigator} {...route.passProps} />
               )
           }
         }
 
+       // renderScene(route, navigator, user,causeLength) {
+       //     switch (route.id) {
+       //          case 'tab':
+       //          return <Tabs dataCauseNum={this.state.myCauseNum} navigator={navigator} {...route.passProps}/>;
+       //          case 'causedetail':
+       //          return <CauseDetail navigator={navigator} {...route.passProps}/>;
+       //          case 'runscreen':
+       //          return this.runScreenRender(route,navigator);
+       //          case 'login':
+       //          return <Login navigator={navigator} {...route.passProps}/>;
+       //          case 'runlodingscreen':
+       //          return <Runlogingscreen navigator={navigator} {...route.passProps}/>;
+       //          case 'sharescreen':
+       //          return <ShareScreen navigator={navigator} {...route.passProps}/>;
+       //          case 'leaderboard':
+       //          return <Leaderboard navigator={navigator} {...route.passProps}/>;
+
+       //          default :
+       //          return <Login navigator={navigator}{...route.passProps} />
+       //      }
+
+       // }
 
         renderScene(route, navigator, user,causeLength) {
-          console.log('mycauseLengthData',user);
+          // console.log("routeid", route.id)
            switch (route.id) {
                 case 'home':
                 return <Home navigator={navigator} {...route.passProps}/>;
@@ -249,6 +311,8 @@ class Application extends Component{
                 return <ThankyouScreen navigator={navigator} {...route.passProps}/>;
                 case 'faq':
                 return <Faq navigator={navigator} {...route.passProps}/>;
+                case 'helpcenter':
+                return <Helpcenter navigator={navigator} {...route.passProps}/>;
                 case 'leaderboard':
                 return <Leaderboard navigator={navigator} {...route.passProps}/>;
                 case 'impactleagueform2':
@@ -267,12 +331,71 @@ class Application extends Component{
                 return <ProfileHeader navigator={navigator} {...route.passProps}/>;
                 case 'profile':
                 return <Profile navigator={navigator} {...route.passProps}/>;
+                case 'profileindex':
+                return <ProfileIndex navigator={navigator} {...route.passProps}/>;
+                case 'listquestions':
+                return <QuestionLists navigator={navigator} {...route.passProps}/>;
+                case 'feedback':
+                return <FeedBack navigator={navigator} {...route.passProps}/>;
 
                 default :
-                 return <Login navigator={navigator}{...route.passProps} locationManager={BackgroundGeolocation}/>
+                 return <Login navigator={navigator}{...route.passProps} />
             }
 
        }
+        // renderScene() {
+        //  if (this.state.result != null ) {
+        //    return ( <NavigatorIOS
+        //             ref="Help"
+        //             translucent={false}
+        //             navigationBarHidden={true}
+        //             style={{flex:1}}
+        //             tintColor='#FFF'
+        //             titleTextColor='#FFF'
+        //             shadowHidden={true}
+        //             barTintColor={styleConfig.bright_blue}
+        //             initialRoute={{
+        //                 showTabBar: false,
+        //                 component:RunScreen,
+        //                 title:'RunScreen',
+        //                 passProps:{data:JSON.parse(this.state.result).data}
+        //             }}/>)
+        //  }else if (this.state.user != null){
+        //     return ( <NavigatorIOS
+        //             translucent={false}
+        //             navigationBarHidden={true}
+        //             style={{flex:1}}
+        //             tintColor='#FFF'
+        //             titleTextColor='#FFF'
+        //             shadowHidden={true}
+        //             barTintColor={styleConfig.bright_blue}
+        //             initialRoute={{
+        //                 showTabBar: false,
+        //                 component:Tabs,
+        //                 title:'Impactrun',
+        //                 passProps:{dataCauseNum:this.state.myCauseNum}
+        //             }}/>)
+        //  }else {
+        //   console.log("Ahaha")
+            
+        //     return ( <NavigatorIOS
+        //             translucent={false}
+        //             navigationBarHidden={true}
+        //             style={{flex:1}}
+        //             tintColor='#FFF'
+        //             titleTextColor='#FFF'
+        //             shadowHidden={true}
+        //             barTintColor={styleConfig.bright_blue}
+        //             initialRoute={{
+        //                 showTabBar: true,
+        //                 component:Login,
+        //                 title: 'Login',
+        //             }}/>)
+        //  }
+        // }
 }
 
 AppRegistry.registerComponent('Impactrun', () => Application);
+
+// import registerApp from './app/tabScreen.js';
+// registerApp();

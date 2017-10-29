@@ -9,10 +9,13 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import commonStyles from '../../components/styles';
 import MessageCenterData from './messageCenterData';
+  
+
 class MessageCenter extends Component {
     constructor(props) {
       super(props);
@@ -27,16 +30,17 @@ class MessageCenter extends Component {
         index:0,
         navigator: this.props.navigator,
         passProps:{data:rowData},
+       
       })
+    }
+    goBack(){
+       this.props.navigator.pop({})
     }
 
   render() {
     return (
-    <View >
-      <View style={commonStyles.Navbar}>
-        <Text style={commonStyles.menuTitle}>Feeds</Text>
-      </View>
-      <MessageCenterData navigator={this.props.navigator} />
+    <View>
+      <MessageCenterData getfeedCount={this.props.getfeedCount} navigator={this.props.navigator} />
     </View>
     );
   }

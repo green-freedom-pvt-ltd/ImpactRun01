@@ -69,7 +69,6 @@ var styles = StyleSheet.create({
   	color: 'white'
   },
   redButton: {
-    padding:10,
     height:50,
     backgroundColor:styleConfig.bright_blue,
     width:width/2-10, 
@@ -79,7 +78,6 @@ var styles = StyleSheet.create({
 
   },
   greenButton: {
-    padding:10,
     height:50,
     backgroundColor:styleConfig.bright_blue,
     width: 100,
@@ -89,11 +87,14 @@ var styles = StyleSheet.create({
     borderRadius:30,
   },
   menuTitle:{
-    width:width-110,
+    backgroundColor:'transparent',
+    flex:1,
     textAlign:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     fontWeight:'400',
     color:'white',
-    fontSize:17,
+    fontSize:styleConfig.TitleFontSize,
     fontFamily:styleConfig.FontFamily,
   },
    menuTitle2:{
@@ -103,22 +104,23 @@ var styles = StyleSheet.create({
     fontFamily:styleConfig.FontFamily,
   },
 
-   Navbar:{
+  Navbar:{
+    paddingTop:20,
     position:'relative',
     height:styleConfig.navBarHeight,
-    paddingTop:10,
     width:width,
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:styleConfig.bright_blue,
-     shadowColor: '#000000',
+    backgroundColor:'#00c1f2',
+    shadowColor: '#000000',
       shadowOpacity: 0.8,
       shadowRadius: 1,
       shadowOffset: {
         height: 0,
       },
- },
+  },
+  
   
 });
 
