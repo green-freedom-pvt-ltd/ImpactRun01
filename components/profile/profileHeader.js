@@ -138,8 +138,6 @@ class UserProfile extends Component {
     }
 
     render() {
-      console.log('height',this.state.height);
-      if (this.props.user != null) {
         return (
 
           <View>
@@ -162,7 +160,6 @@ class UserProfile extends Component {
           </View>
           </View>
         );
-      };
     }
 };
 

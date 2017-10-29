@@ -6,6 +6,7 @@ import{
     View,
     Image,
     ScrollView,
+    Navigator,
     Dimensions,
     TouchableOpacity,
     Text,
@@ -16,7 +17,7 @@ import{
   } from 'react-native';
 var {FBLoginManager} = require('react-native-facebook-login');
 import apis from '../apis';
-
+import ImageLoad from 'react-native-image-placeholder';
 import ProfileForm from './profileForm';
 import RunHistory from './runhistory/runHistory';
 import LodingView from '../LodingScreen';
@@ -30,7 +31,7 @@ import commonStyles from '../styles';
 import NavBar from '../navBarComponent';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
-var heightInpersentage = (deviceHeight-50)/100;
+var heightInpersentage = (deviceHeight-114)/100;
 var customFlexHeight1 = heightInpersentage*100;
 var customFlexHeight2 = heightInpersentage*50;
 var customFlexHeight3 = heightInpersentage*33.33333333;
@@ -75,10 +76,14 @@ class Profile extends Component {
         this.fetch7DayData = this.fetch7DayData.bind(this);
         this.fetchAmount =  this.fetchAmount.bind(this);
         this.fetchTotalDistance = this.fetchTotalDistance.bind(this);
+        this.getUserData = this.getUserData.bind(this);
       }
 
 
-     componentWillMount() {        
+     componentWillMount() {   
+        this.setState({
+          user:this.props.user,
+        })     
           AsyncStorage.getItem('my_currency', (err, result) => {
             this.setState({
               my_currency:JSON.parse(result),
@@ -94,14 +99,6 @@ class Profile extends Component {
             my_rate=this.state.my_rate;
                   // console.log('my_rate',this.state.my_rate);
           }) 
-
-          AsyncStorage.getItem('my_distance', (err, result) => {
-            this.setState({
-              my_distance:JSON.parse(result),
-          })
-            // my_distance=this.state.my_distance;
-            console.log('my_distance',this.state.my_distance);
-          })     
 
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });
@@ -314,6 +311,7 @@ class Profile extends Component {
           if (flag != true) {
 
           data3.push(RunData[i].run_amount);
+          console.log('data3',data3);
            sum += parseInt(RunData[i].run_amount);
             };
         }
@@ -429,13 +427,15 @@ class Profile extends Component {
           var flag = RunData[i].is_flag;
           if (flag != true) {
             data2.push(RunData[i].distance);
+            console.log('data',data2);
             sum += RunData[i].distance;
+
             // console.log('data2',sum);
             };
         }
         this.setState({
           RunTotalDistance:sum,
-          level:this.userLevelFunction(this.state.RunTotalAmount2),
+          level:this.userLevelFunction(sum),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
@@ -448,76 +448,54 @@ class Profile extends Component {
 
 
    userLevelFunction(totalkm){
-  console.log('totalkm' , totalkm);
    if (totalkm != null) {
-      if (totalkm == 0 ) { 
+    if (totalkm <= 50 ) { 
       this.setState({
         prevKm:0,
-        levelKm:1,
-        progressVal:totalkm/1,
-
-      })
-      return 0;
-    }
-    else if (totalkm <= 10 ) { 
-      this.setState({
-        prevKm:1,
-        levelKm:10,
-        progressVal:totalkm/10,
+        levelKm:50,
+        progressVal:totalkm/50,
 
       })
       return 1;
-    }else if (totalkm <= 50){
-      
-      this.setState({
-        prevKm:10,
-        levelKm:50,
-        progressVal:(totalkm-10)/50,
-        
-      })
-      return 2;
-    }else if (totalkm <= 100){
+    }else if (totalkm <= 250){
       
       this.setState({
         prevKm:50,
-        levelKm:100,
-        progressVal:(totalkm-50)/100,
+        levelKm:250,
+        progressVal:(totalkm-50)/200,
         
+      })
+      return 2;
+    }else if (totalkm <= 500) {
+      this.setState({
+        prevKm:250,
+        levelKm:500,
+        progressVal:(totalkm-250)/250,
       })
       return 3;
-    }else if (totalkm <= 500){
-      
-      this.setState({
-        prevKm:100,
-        levelKm:500,
-        progressVal:(totalkm-100)/250,
-        
-      })
-      return 4;
     }else if (totalkm <= 1000){
-      
       this.setState({
         prevKm:500,
         levelKm:1000,
         progressVal:(totalkm-500)/500,
-        
       })
-      return 5;
-    }else if (totalkm <= 2000) {
+      return 4;
+      
+    }else if (totalkm <= 2500) {
       this.setState({
         prevKm:1000,
-        levelKm:2000,
-        progressVal:(totalkm-1000)/1000,
+        levelKm:2500,
+        progressVal:(totalkm-1000)/1500,
       })
-      return 6;
+      return 5;
     }else if (totalkm <= 5000){
       // console.log('level 7');
       this.setState({
-        prevKm:2000,
+        prevKm:2500,
         levelKm:5000,
-        progressVal:(totalkm-2000)/2500,
+        progressVal:(totalkm-2500)/2500,
       })
-      return 7;
+      return 6;
       
     }else if (totalkm <= 10000) {
       this.setState({
@@ -525,22 +503,7 @@ class Profile extends Component {
         levelKm:10000,
         progressVal:(totalkm-5000)/5000,
       })
-      return 8;
-    }else if (totalkm <= 20000){
-      this.setState({
-        prevKm:10000,
-        levelKm:20000,
-        progressVal:(totalkm-10000)/10000,
-      })
-      return 9;
-      
-    }else if (totalkm <= 50000) {
-      this.setState({
-        prevKm:20000,
-        levelKm:50000,
-        progressVal:(totalkm-20000)/25000,
-      })
-      return 10;
+      return 7;
     }
 
     }else{
@@ -582,21 +545,11 @@ class Profile extends Component {
       }
 
     navigateToRunHistory() {
-      if (!this.state.runfeatching) {
       this.props.navigator.push({
-      title: 'Gps',
-      id:'runhistory',
-      index: 0,
+      title: 'RunHistory',
+      component:RunHistory,
       passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
-      navigator: this.props.navigator,
-      });}else{
-        return;
-      }
-      // this.props.navigator.push({
-      // title: 'RunHistory',
-      // component:RunHistory,
-      // passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
-      // })
+      })
     }
      
     
@@ -619,7 +572,16 @@ class Profile extends Component {
           return;
         }
       }
-
+     
+     getUserData(){
+      AsyncStorage.getItem('USERDATA', (err, result) => {
+          let user = JSON.parse(result);
+           this.setState({
+            user:user,
+           })
+           this.props.getUserData();
+        }) 
+     }
 
 
       removeallRun(){
@@ -660,10 +622,11 @@ class Profile extends Component {
             width: event.nativeEvent.layout.width,
             height: event.nativeEvent.layout.height
         })
+        console.log('height',this.state.height);
     }
     
     getXRows(item,index) {
-        // console.log('item',item)
+        console.log('item',item)
         var days = item[0];
         var rupees = item[1];
         var maxvalue = Math.max.apply(Math, dataRupees);
@@ -697,8 +660,9 @@ class Profile extends Component {
        
         return (
             <View key={index} style={{flex:1,justifyContent: 'flex-end',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#CACACA'}}>
-                 <Text style={{ top:-6,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
-                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:3,alignItems: 'center',}}>
+                 <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
+                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.bright_blue,borderRadius:3,bottom:5,alignItems: 'center',}}>
+ 
                 </View>
 
             </View>
@@ -706,7 +670,7 @@ class Profile extends Component {
     }
 
     getYRows(item,index) {
-        // console.log('item',item)
+        console.log('item',item)
         var days = item[0];
         if (item[1] === undefined) {
             var rupees = 0;
@@ -738,24 +702,22 @@ class Profile extends Component {
           var hunderdPercentageHeightBar =  Math.ceil(maxvalue*100)/100; //parseFloat(maxvalue).toFixed(2);
         }
         // console.log('dataRupees23',hunderdPercentageHeightBar);
-        if (this.props.user != null ) {
+        if ( this.state.user != null ) {
           // console.log('my_currencylower',this.state.my_currency.toLowerCase());
         return (
           <View style={styles.container}>
             <View style ={styles.profileWraper}>
-                <View style={{height:(heightInpersentage*51.8/100)*45,width:deviceWidth,backgroundColor:'white',justifyContent: 'center',}}>
-                    <UserProfile height={(heightInpersentage*38/100)*35} progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
+                <View style={{height:(heightInpersentage*45/100)*40,width:deviceWidth,backgroundColor:'white',justifyContent: 'center',}}>
+                    <UserProfile height={(heightInpersentage*40/100)*35} progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.state.user} navigator={this.props.navigator}></UserProfile>
                 </View>
-                <View onLayout={(event) => this.measureView(event)} style={{height:(heightInpersentage*51.5/100)*45,width:deviceWidth,backgroundColor:'white'}}>
-                    <View style={{height:(this.state.height/100)*23,width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*10)/100)*10}}>
+                <View onLayout={(event) => this.measureView(event)} style={{height:(heightInpersentage*45/100)*60,width:deviceWidth,backgroundColor:'white'}}>
+                    <View style={{height:(this.state.height/100)*20,width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*20)/100)*10}}>
                         <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'400'}}>All Time</Text>
                     </View>
-                    <View style={{height:(this.state.height/100)*35,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
+                    <View style={{height:(this.state.height/100)*37,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
                         <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><AnimateNumber value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
                         </Text>
-                        <View style={{height:(this.state.height/100)*17,}}>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
-                        </View>
                     </View>
                     <View style={{height:(this.state.height/100)*30,width:this.state.width,backgroundColor:'yellow',flexDirection:'row'}}>
                         <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
@@ -766,7 +728,7 @@ class Profile extends Component {
                             </Text>
                             <Text style={{left:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> ImpactRuns </Text>                       
                         </View>
-                        <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
+                       <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
                             <Text style={{right:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
                                 <AnimateNumber value={(this.state.my_distance == 'miles' ? this.state.RunTotalDistance*0.621 : this.state.RunTotalDistance)} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
@@ -780,7 +742,7 @@ class Profile extends Component {
             </View>
 
             <View style ={styles.profileWraper2}>                          
-              <View style={{flex:-1,height:((heightInpersentage*47)/100)*85,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
+              <View style={{flex:-1,height:((heightInpersentage*55)/100)*75,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
                 <View style={styles.container2}>
                  
                    <View style={{flex:-1,flexDirection:'row',height:((((heightInpersentage*55)/100)*75)/100)*80,width:(deviceWidth/100)*80,backgroundColor:'white'}}>                
@@ -814,10 +776,10 @@ class Profile extends Component {
                   </View>
                  </View>
               </View>
-              <View style={{height:((heightInpersentage*55)/100)*35,width:deviceWidth,backgroundColor:'white', paddingTop:20}}>
-                <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10, paddingTop:20}}>
+              <View style={{height:((heightInpersentage*55)/100)*25,width:deviceWidth,backgroundColor:'white'}}>
+                <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
-                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS</Text>
+                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS></Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -828,9 +790,8 @@ class Profile extends Component {
       }else{
         return(
           <View>
-          <NavBar title={"PROFILE"}/>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
-           <LoginBtn getUserData={this.props.getUserData}/>
+           <LoginBtn getUserData={this.getUserData}/>
            </View>
            </View>
 
