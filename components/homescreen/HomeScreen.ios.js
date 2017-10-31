@@ -78,6 +78,7 @@ class Homescreen extends Component {
           previewSource: '',
           error: null,
           res: null,
+          my_currency:'USD',
           renderComponent:true,
           value: {
             format: "png",
@@ -241,6 +242,10 @@ class Homescreen extends Component {
       isKeyAlreadyExists(){
          AsyncStorage.getItem('my_currency', (err, result) => {
           console.log('resas', result);
+          this.setState({
+            my_currency:JSON.parse(result)
+          })
+          this.getExchangeRate();
           return result;
           //   this.setState({
           //     setting_currency:JSON.parse(result),
@@ -249,9 +254,32 @@ class Homescreen extends Component {
 
       }
 
+      getExchangeRate(){
+         AsyncStorage.getItem('exchangeRates', (err, result) => {
+          console.log('exchangeRates',result);
+          this.setState({
+          exchange_rates:JSON.parse(result),  
+          })
+          for (var i = 0; i < this.state.exchange_rates.length; i++) { 
+            console.log('this.state.exchange_rates[i].currency',this.state.exchange_rates[i].currency,this.state.my_currency);
+            if (this.state.exchange_rates[i].currency == this.state.my_currency){
+              this.setState({
+                my_rate:this.state.exchange_rates[i].rate,
+                // my_currency:mycurrency,
+              })
+            }
+          }
+          console.log('countr', this.state.my_rate);
+          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+          // console.log('countr', DeviceInfo.getDeviceCountry());
+
+        })
+      }
+
 
       componentWillMount() {
         this.getfeedCount();
+         this.isKeyAlreadyExists();
         // console.log('props currency', this.props.my_currency);
 
 
@@ -294,42 +322,25 @@ class Homescreen extends Component {
 
         
         // var setting_currency = await AsyncStorage.getItem('my_currency');
-        var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-        if (typeof this.props.my_currency != 'undefined')
-        {
-          if(mycurrency != this.props.my_currency){
-            mycurrency = this.props.my_currency;
+        if(!this.state.my_currency){
+          var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
+          if (typeof this.props.my_currency != 'undefined')
+          {
+            if(mycurrency != this.props.my_currency){
+              mycurrency = this.props.my_currency;
+            }
+            
           }
-          
+          AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
         }
 
 
-        AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
-
-        this.fetchifinternet();
-        AsyncStorage.getItem('exchangeRates', (err, result) => {
-          this.setState({
-          exchange_rates:JSON.parse(result),  
-          })
-          for (var i = 0; i < this.state.exchange_rates.length; i++) { 
-            if (this.state.exchange_rates[i].currency == mycurrency){
-              this.setState({
-                my_rate:this.state.exchange_rates[i].rate,
-                my_currency:mycurrency,
-              })
-            }
-          }
-          console.log('countr', this.state.my_rate);
-          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
-          // console.log('countr', DeviceInfo.getDeviceCountry());
-
-        })
+        this.fetchifinternet();      
       // PushNotificationIOS.addListener('register', this._onRegistered);
       // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
       // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
       // PushNotificationIOS.addListener('localNotification', this._onLocalNotification);
       
-
         PushNotificationIOS.requestPermissions();          
         AsyncStorage.getItem('RID0', (err, result) => {
           this.setState({
@@ -337,9 +348,7 @@ class Homescreen extends Component {
           loaded:true,             
            })
           this.PostSavedRundataIfInternetisOn();      
-      })  
-
-
+        })  
         AsyncStorage.getItem('SaveRunCount', (err, result) => {
           this.setState({
           RunCount:JSON.parse(result),  
@@ -921,6 +930,7 @@ class Homescreen extends Component {
         </TouchableOpacity>
       )
     }
+    
    }
 
 

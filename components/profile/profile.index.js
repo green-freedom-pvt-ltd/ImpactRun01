@@ -92,13 +92,21 @@ class Profile extends Component {
             // console.log('my_rate',this.state.my_currency);
           })     
           
-       AsyncStorage.getItem('my_rate', (err, result) => {
+          AsyncStorage.getItem('my_rate', (err, result) => {
             this.setState({
               my_rate:JSON.parse(result),
           })
             my_rate=this.state.my_rate;
                   // console.log('my_rate',this.state.my_rate);
           }) 
+
+          AsyncStorage.getItem('my_distance', (err, result) => {
+            this.setState({
+              my_distance:JSON.parse(result),
+          })
+            // my_distance=this.state.my_distance;
+            console.log('my_distance',this.state.my_distance);
+          })     
 
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       // });

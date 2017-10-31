@@ -28,8 +28,8 @@ import DistanceModalDropDown from './modelindex2.js'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var DeviceInfo = require('react-native-device-info');
-var my_distance = 'km';
-var my_currency = 'USD $';
+// var my_distance = 'km';
+var my_currency = [];
 
 
 
@@ -38,6 +38,7 @@ import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 class Setting extends Component {
      constructor(props) {
         super(props);
+         
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             visibleHeight: Dimensions.get('window').height,
@@ -46,44 +47,63 @@ class Setting extends Component {
             text:'LOGIN',
             IconText:'md-log-in',
             SettingTabs: ds.cloneWithRows([]),
-
+         
 
         };
         this.renderRow = this.renderRow.bind(this);
         // this.getUserData = this.getUserData.bind(this);
       }
-
-    componentWillMount() {        
+      componentDidMount() {
+        AsyncStorage.getItem('my_currency', (err, result) => {
+            console.log('my_curreny',result);
+            my_currency.push( JSON.parse(result));
+            
+         })
+        this.render();
+      }
+      componentWillMount() {        
           AsyncStorage.getItem('my_currency', (err, result) => {
+            console.log('my_curreny',result);
             this.setState({
               my_currency:JSON.parse(result),
           })
-          var optionsdata = [  'USD $',
-                   'EUR €',
-                   'JPY ¥',
-                   'GBP £',
-                   'INR ₹']
+          var optionsdata = [  
+            'USD $',
+            'EUR €',
+            'JPY ¥',
+            'GBP £',
+            'INR ₹'
+          ]
+
+          console.log('this.state.my_currency',this.state.my_currency);
           for (var i=0;i<optionsdata.length - 1; i++){
-            
+
+            console.log('optionsdata[i].substring(0,3)',optionsdata[i].substring(0,3),this.state.my_currency);
             if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
-              my_currency = optionsdata[i];
-              console.log('mydefaultValue',my_currency);
+              console.log('optionsdata[i]',optionsdata[i]);
+              this.setState({
+                my_currency:optionsdata[i],
+              })
+              console.log('this.state.my_currency',this.state.my_currency);
             }
           }
 
           })     
+
           AsyncStorage.getItem('my_distance', (err, result) => {
             this.setState({
               my_distance:JSON.parse(result),
           })
             if(this.state.my_distance != '')
             {
-              my_distance = this.state.my_distance;
+            this.setState({
+              my_distance:this.state.my_distance,
+            })
             }
             // console.log('my_distance', this.state.my_distance);
           })     
 
-     }
+      }
 
 
 
@@ -296,7 +316,7 @@ class Setting extends Component {
         AsyncStorage.removeItem('my_currency',(err) => {
         });
 
-        AsyncStorage.setItem('my_currency',JSON.stringify(value.substring(0,3)));
+        AsyncStorage.mergeItem('my_currency',JSON.stringify(value.substring(0,3)));
         AsyncStorage.getItem('exchangeRates', (err, result) => {
           this.setState({
           exchange_rates:JSON.parse(result),  
@@ -305,12 +325,15 @@ class Setting extends Component {
             if (this.state.exchange_rates[i].currency == value.substring(0,3)){
               this.setState({
                 my_rate:this.state.exchange_rates[i].rate,
-                // my_currency:this.state.exchange_rates[i].currency,
+                my_currency:this.state.exchange_rates[i].currency,
+
               })
+
+              console.log('thisCurrency',this.state.my_currency);
             }
           }
           AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
-          my_currency = value;
+          // my_currency = value;
           this.navigateToHome();
         })
 
@@ -320,6 +343,13 @@ class Setting extends Component {
       }
 
       onSelectDistance(idx,value){
+         AsyncStorage.getItem('my_currency', (err, result) => {
+            console.log('my_curreny',result);
+             this.setState({
+              my_currency : JSON.parse(result),
+             }) 
+            console.log('this.state.my_currency',this.state.my_currency);
+         })
         this.setState({
           value:value,
         })
@@ -329,26 +359,25 @@ class Setting extends Component {
         });
 
         AsyncStorage.setItem('my_distance',JSON.stringify(value));
-        my_distance = value;
         this.navigateToHome();
       }
 
-      getDevVersion(rowData){
+      getDevVersion(rowData){   
+   
+        console.log(this.state.my_currency);
         var mydefaultValue = 'USD $';
         var myindex;
-          if(rowData.name == 'Version'){
+        if(rowData.name == 'Version'){
           return(
-            
-
             <Text>{DeviceInfo.getVersion()}</Text>
           )
         }
         else if (rowData.name == 'ExchangeRate'){
-          var optionsdata = [  'USD $',
-                               'EUR €',
-                               'JPY ¥',
-                               'GBP £',
-                               'INR ₹']
+          var optionsdata = [ 'USD $',
+                              'EUR €',
+                              'JPY ¥',
+                              'GBP £',
+                              'INR ₹']
           // for (var i=0;i<optionsdata.length - 1; i++){
             
           //   if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
@@ -357,16 +386,15 @@ class Setting extends Component {
           //   }
           // }
           return (
-              <ModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {my_currency} options={optionsdata} onSelect={(idx, value) => this.onSelectExchangeRate(idx, value)} >
+              <ModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {this.state.my_currency} options={optionsdata} onSelect={(idx, value) => this.onSelectExchangeRate(idx, value)} >
               </ModalDropDown>
               )
         }
-
         else if (rowData.name == 'Distance'){
-          var optionsdata = [  'km',
-                               'miles']
+          var optionsdata = ['km',
+                             'miles']
           return (
-              <DistanceModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {my_distance} options={optionsdata} onSelect={(idx, value) => this.onSelectDistance(idx, value)} >
+              <DistanceModalDropDown textStyle={{flex:1,marginTop:9,justifyContent: 'flex-end',borderBottomColor:'#e2e5e6'}} defaultValue = {this.state.my_distance} options={optionsdata} onSelect={(idx, value) => this.onSelectDistance(idx, value)} >
               </DistanceModalDropDown>
               )
         }

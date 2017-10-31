@@ -35,7 +35,7 @@ export default class ModalDropdown extends Component {
   static propTypes = {
     disabled: PropTypes.bool,
     defaultIndex: PropTypes.number,
-    defaultValue: PropTypes.string,
+    // defaultValue: PropTypes.string,
     options: PropTypes.array,
 
     accessible: PropTypes.bool,
@@ -58,7 +58,7 @@ export default class ModalDropdown extends Component {
   static defaultProps = {
     disabled: false,
     defaultIndex: 0,
-    defaultValue: '',
+    // defaultValue: '',
     options: null,
     animated: true,
     showsVerticalScrollIndicator: true
@@ -165,7 +165,7 @@ export default class ModalDropdown extends Component {
             <View style={styles.button}>
               <Text style={[styles.buttonText, this.props.textStyle]}
                     numberOfLines={1}>
-                {this.state.buttonText}{'     '}
+                {this.props.defaultValue}{'     '}
               <Icon style={{color:"black",fontSize:16,}} name="caret-down"></Icon>
               </Text>
             </View>
@@ -183,6 +183,7 @@ export default class ModalDropdown extends Component {
   }
 
   _renderModal() {
+    console.log('fromIndexCurrency',this.props.defaultValue);
     if (this.state.showDropdown && this._buttonFrame) {
       let frameStyle = this._calcPosition();
       let animationType = this.props.animated ? 'fade' : 'none';

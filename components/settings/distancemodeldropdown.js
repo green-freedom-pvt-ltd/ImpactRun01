@@ -164,7 +164,7 @@ export default class ModalDropdown extends Component {
             <View style={styles.button}>
               <Text style={[styles.buttonText, this.props.textStyle]}
                     numberOfLines={1}>
-                {this.state.buttonText}{'     '}
+                {this.props.defaultValue}{'     '}
               <Icon style={{color:"black",fontSize:16,}} name="caret-down"></Icon>
               </Text>
             </View>

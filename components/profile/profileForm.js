@@ -353,7 +353,7 @@ class ProfileForm extends Component {
               ...this.props.style,
               opacity: fadeAnim, 
               position:'absolute',
-              top:styleConfig.navBarHeight-12,
+              top:0,
             }}
           >
         <View style={{backgroundColor:styleConfig.pale_magenta,width:deviceWidth,height:40,justifyContent: 'center',alignItems: 'center',}}>
@@ -371,6 +371,7 @@ class ProfileForm extends Component {
       if (this.props.user != null) {
          var showDatePicker = this.state.showDatePicker ?
             <DatePickerIOS
+             timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
                 style={{position:"absolute",width:deviceWidth,right:0,bottom:0,backgroundColor:"white"}}
                 date={this.props.user.birthday} onEndEditing={()=> this.setState({showDatePicker:false})} onDateChange={(date)=>this.setState({date:date.toLocaleDateString()})}
                 mode="date"/> : <View />
