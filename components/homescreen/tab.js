@@ -379,7 +379,6 @@ class Tabs extends Component {
         }
 
         navigateToProfileForm() {
-        if (this.props.user) {
           this.refs.nav.push({
             title: 'profileform',
             component:ProfileForm,
@@ -390,9 +389,6 @@ class Tabs extends Component {
             },
         
         })
-          }else{
-            return;
-          }
         }
 
         navigateToImpactLeague() {
