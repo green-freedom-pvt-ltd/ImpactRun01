@@ -80,7 +80,7 @@ class Profile extends Component {
       }
 
 
-     componentWillMount() {   
+     componentWillMount() { 
         this.setState({
           user:this.props.user,
         })     
@@ -442,8 +442,8 @@ class Profile extends Component {
             };
         }
         this.setState({
-          RunTotalDistance:sum,
-          level:this.userLevelFunction(sum),
+          RunTotalDistance:sum*10,
+          level:this.userLevelFunction(sum*10),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
@@ -455,55 +455,77 @@ class Profile extends Component {
 
 
 
-   userLevelFunction(totalkm){
+  userLevelFunction(totalkm){
+  console.log('totalkm' , totalkm);
    if (totalkm != null) {
-    if (totalkm <= 50 ) { 
+      if (totalkm == 0 ) { 
       this.setState({
         prevKm:0,
-        levelKm:50,
-        progressVal:totalkm/50,
+        levelKm:1,
+        progressVal:totalkm/1,
+
+      })
+      return 0;
+    }
+    else if (totalkm <= 10 ) { 
+      this.setState({
+        prevKm:1,
+        levelKm:10,
+        progressVal:totalkm/10,
 
       })
       return 1;
-    }else if (totalkm <= 250){
+    }else if (totalkm <= 50){
       
       this.setState({
-        prevKm:50,
-        levelKm:250,
-        progressVal:(totalkm-50)/200,
+        prevKm:10,
+        levelKm:50,
+        progressVal:(totalkm-10)/50,
         
       })
       return 2;
-    }else if (totalkm <= 500) {
+    }else if (totalkm <= 100){
+      
       this.setState({
-        prevKm:250,
-        levelKm:500,
-        progressVal:(totalkm-250)/250,
+        prevKm:50,
+        levelKm:100,
+        progressVal:(totalkm-50)/100,
+        
       })
       return 3;
+    }else if (totalkm <= 500){
+      
+      this.setState({
+        prevKm:100,
+        levelKm:500,
+        progressVal:(totalkm-100)/250,
+        
+      })
+      return 4;
     }else if (totalkm <= 1000){
+      
       this.setState({
         prevKm:500,
         levelKm:1000,
         progressVal:(totalkm-500)/500,
-      })
-      return 4;
-      
-    }else if (totalkm <= 2500) {
-      this.setState({
-        prevKm:1000,
-        levelKm:2500,
-        progressVal:(totalkm-1000)/1500,
+        
       })
       return 5;
+    }else if (totalkm <= 2000) {
+      this.setState({
+        prevKm:1000,
+        levelKm:2000,
+        progressVal:(totalkm-1000)/1000,
+      })
+      return 6;
     }else if (totalkm <= 5000){
       // console.log('level 7');
       this.setState({
-        prevKm:2500,
+        prevKm:2000,
         levelKm:5000,
-        progressVal:(totalkm-2500)/2500,
+        progressVal:(totalkm-2000)/2500,
       })
-      return 6;
+      return 7;
       
     }else if (totalkm <= 10000) {
       this.setState({
@@ -511,7 +533,22 @@ class Profile extends Component {
         levelKm:10000,
         progressVal:(totalkm-5000)/5000,
       })
-      return 7;
+      return 8;
+    }else if (totalkm <= 20000){
+      this.setState({
+        prevKm:10000,
+        levelKm:20000,
+        progressVal:(totalkm-10000)/10000,
+      })
+      return 9;
+      
+    }else if (totalkm <= 50000) {
+      this.setState({
+        prevKm:20000,
+        levelKm:50000,
+        progressVal:(totalkm-20000)/25000,
+      })
+      return 10;
     }
 
     }else{

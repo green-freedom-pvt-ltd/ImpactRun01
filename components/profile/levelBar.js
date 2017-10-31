@@ -44,20 +44,23 @@ import{
   }
 
 
-     componentWillMount() {        
-          AsyncStorage.getItem('my_currency', (err, result) => {
-            this.setState({
-              my_currency:JSON.parse(result),
-          })
-          })     
-          
-       AsyncStorage.getItem('my_rate', (err, result) => {
-            this.setState({
-              my_rate:JSON.parse(result),
-          })
-          }) 
+ componentWillMount() {        
+      AsyncStorage.getItem('my_currency', (err, result) => {
+        this.setState({
+          my_currency:JSON.parse(result),
+      })
+      })     
+      
+   AsyncStorage.getItem('my_rate', (err, result) => {
+        this.setState({
+          my_rate:JSON.parse(result),
+      })
+      }) 
 
-     }
+ }
+
+
+ 
  getKMfunction(){
    AsyncStorage.getItem('totalkm', (err, result) => {
     this.setState({
@@ -77,16 +80,16 @@ import{
 
     render(){
    
-    	return(
-    		<View style={styles.Maincontainer}>
+      return(
+        <View style={styles.Maincontainer}>
           <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.props.userName +" "+this.props.lastname}</Text>
           <View style={[styles.wrapLevelKm,{width:this.props.widthBar}]}>
-           <Text style={styles.kmtext}><Icon style={{fontSize:styleConfig.fontSizerlabel-2}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.prevKm : parseFloat(this.props.prevKm/this.state.my_rate).toFixed(2))}</Text><Text  style={styles.kmtext2}><Icon style={{fontSize:styleConfig.fontSizerlabel-2}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.levelKm : parseFloat(this.props.levelKm/this.state.my_rate).toFixed(2))}</Text>
+           <Text style={styles.kmtext}><Icon style={{fontSize:styleConfig.fontSizerlabel-2}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.prevKm : parseFloat(this.props.prevKm/this.state.my_rate).toFixed(2))}</Text><Text  style={styles.kmtext2}><Icon  style={{fontSize:styleConfig.fontSizerlabel-2}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.levelKm : parseFloat(this.props.levelKm/this.state.my_rate).toFixed(2))}</Text>
          </View>
-    		 <LevelBarComponent unfilledColor={'grey'} height={6} width={this.props.widthBar} progress={this.props.progressVal}  />
+         <LevelBarComponent unfilledColor={'grey'} height={6} width={this.props.widthBar} progress={this.props.progressVal}  />
          <Text style = {[styles.leveltext,{width:this.props.widthBar}]}>Level {this.props.level}</Text>
-    		</View>
-    		)
+        </View>
+        )
     }
   }
 

@@ -378,7 +378,6 @@ class ProfileForm extends Component {
          return (
           <View>
             <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
-          
             <View style={styles.FromWrap}>
              
               <View style={styles.ProfileTextInput}>
@@ -409,8 +408,7 @@ class ProfileForm extends Component {
                    {this.radioButtonFemale()}<Text style = {{color:'#4a4a4a',fontFamily:styleConfig.FontFamily,}}> Female</Text>
                 </View>
               </View>
-              <View style={styles.ProfileTextInput2}>
-              
+              <View style={styles.ProfileTextInput2}>              
                {showDatePicker}
               </View>
 
