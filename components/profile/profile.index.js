@@ -423,8 +423,8 @@ class Profile extends Component {
       }
 
       fetchTotalDistance(){
-         AsyncStorage.removeItem('totalkm',(err) => {
-         });
+        AsyncStorage.removeItem('totalkm',(err) => {
+        });
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
         if (result != null || undefined) {
         var RunData = JSON.parse(result)
@@ -443,7 +443,7 @@ class Profile extends Component {
         }
         this.setState({
           RunTotalDistance:sum,
-          level:this.userLevelFunction(sum*10),
+          level:this.userLevelFunction(this.state.RunTotalAmount2),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
@@ -451,7 +451,7 @@ class Profile extends Component {
         return;
          }
        })
-      }
+    }
 
 
 
