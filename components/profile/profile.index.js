@@ -442,7 +442,7 @@ class Profile extends Component {
             };
         }
         this.setState({
-          RunTotalDistance:sum*10,
+          RunTotalDistance:sum,
           level:this.userLevelFunction(sum*10),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
