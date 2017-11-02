@@ -242,9 +242,15 @@ class Homescreen extends Component {
       isKeyAlreadyExists(){
          AsyncStorage.getItem('my_currency', (err, result) => {
           console.log('resas', result);
+          if (result == null)
+          {
+            result = JSON.stringify(this.getmyCurrency(DeviceInfo.getDeviceCountry()));
+            // console.log('resas', result);
+          }
           this.setState({
             my_currency:JSON.parse(result)
           })
+          AsyncStorage.setItem('my_currency',result);
           this.getExchangeRate();
           return result;
           //   this.setState({
@@ -261,7 +267,7 @@ class Homescreen extends Component {
           exchange_rates:JSON.parse(result),  
           })
           for (var i = 0; i < this.state.exchange_rates.length; i++) { 
-            console.log('this.state.exchange_rates[i].currency',this.state.exchange_rates[i].currency,this.state.my_currency);
+            // console.log('this.state.exchange_rates[i].currency',this.state.exchange_rates[i].currency,this.state.my_currency);
             if (this.state.exchange_rates[i].currency == this.state.my_currency){
               this.setState({
                 my_rate:this.state.exchange_rates[i].rate,

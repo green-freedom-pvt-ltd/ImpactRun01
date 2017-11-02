@@ -127,7 +127,20 @@ class Login extends Component {
 
       fetchData() {
         console.log('fetching');
-        fetch(apis.causeListapi)
+        var token = 'noauthuser' ;
+        var auth_token = '';
+        if (this.state.user) {
+            token = this.state.user.auth_token;
+            auth_token = "Bearer " + token;
+        }
+
+        fetch(apis.causeListapi,{
+            method: "GET",
+            headers: {  
+              'Authorization':auth_token,
+              'Content-Type':'application/json',
+                }
+            })
             .then(response => response.json())
             .then((causes) => {
               var causes = causes;
@@ -147,8 +160,8 @@ class Login extends Component {
                   exchange_rates:causes.exchange_rates,
                   overall_impact:causes.overall_impact,
               })
-              console.log('ec', this.state.exchange_rates);
-              console.log('ec2', exchangeRate);
+              // console.log('ec', this.state.exchange_rates);
+              // console.log('ec2', exchangeRate);
               let myCauseNum = this.state.myCauseNum;
               AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
               AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
