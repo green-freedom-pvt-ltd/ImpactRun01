@@ -43,7 +43,7 @@ class UserProfile extends Component {
     }
 
     social_thumb(height){
-      console.log('height123',this.props.height,height);
+      // console.log('height123',this.props.height,height);
       if (this.props.user.first_name != '') {
         return(
           <ImageLoad  placeholderSource={require('../../images/profile_placeholder.jpg')} isShowActivity={false} placeholderStyle={{flex:1,width:height,width:height,borderRadius:height/2}} borderRadius={height/2} loadingStyle={{size: 'large', color: 'blue'}}  style={{flex:1,width:height,width:height,borderRadius:height/2}} source={{uri:this.props.user.social_thumb}}></ImageLoad>

@@ -319,7 +319,7 @@ class Profile extends Component {
           if (flag != true) {
 
           data3.push(RunData[i].run_amount);
-          console.log('data3',data3);
+          // console.log('data3',data3);
            sum += parseInt(RunData[i].run_amount);
             };
         }

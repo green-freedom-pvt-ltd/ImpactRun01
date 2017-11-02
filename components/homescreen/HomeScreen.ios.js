@@ -266,14 +266,21 @@ class Homescreen extends Component {
           this.setState({
           exchange_rates:JSON.parse(result),  
           })
-          for (var i = 0; i < this.state.exchange_rates.length; i++) { 
-            // console.log('this.state.exchange_rates[i].currency',this.state.exchange_rates[i].currency,this.state.my_currency);
-            if (this.state.exchange_rates[i].currency == this.state.my_currency){
-              this.setState({
-                my_rate:this.state.exchange_rates[i].rate,
-                // my_currency:mycurrency,
-              })
+          if(this.state.exchange_rates){
+            for (var i = 0; i < this.state.exchange_rates.length; i++) { 
+              // console.log('this.state.exchange_rates[i].currency',this.state.exchange_rates[i].currency,this.state.my_currency);
+              if (this.state.exchange_rates[i].currency == this.state.my_currency){
+                this.setState({
+                  my_rate:this.state.exchange_rates[i].rate,
+                  // my_currency:mycurrency,
+                })
+              }
             }
+          }
+          else {
+            this.setState({
+              my_rate: 1.0,
+            })
           }
           console.log('countr', this.state.my_rate);
           AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
