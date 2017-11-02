@@ -435,7 +435,7 @@ class Profile extends Component {
           var flag = RunData[i].is_flag;
           if (flag != true) {
             data2.push(RunData[i].distance);
-            console.log('data',data2);
+            // console.log('data',data2);
             sum += RunData[i].distance;
 
             // console.log('data2',sum);
@@ -443,7 +443,7 @@ class Profile extends Component {
         }
         this.setState({
           RunTotalDistance:sum,
-          level:this.userLevelFunction(sum*10),
+          level:this.userLevelFunction(this.state.RunTotalAmount2),
         })      
          AsyncStorage.setItem('totalkm',JSON.stringify(this.state.RunTotalDistance), () => {
          })
@@ -456,7 +456,7 @@ class Profile extends Component {
 
 
   userLevelFunction(totalkm){
-  console.log('totalkm' , totalkm);
+  // console.log('totalkm' , totalkm);
    if (totalkm != null) {
       if (totalkm == 0 ) { 
       this.setState({
@@ -671,7 +671,6 @@ class Profile extends Component {
     }
     
     getXRows(item,index) {
-        console.log('item',item)
         var days = item[0];
         var rupees = item[1];
         var maxvalue = Math.max.apply(Math, dataRupees);
@@ -706,7 +705,7 @@ class Profile extends Component {
         return (
             <View key={index} style={{flex:1,justifyContent: 'flex-end',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#CACACA'}}>
                  <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
-                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.bright_blue,borderRadius:3,bottom:5,alignItems: 'center',}}>
+                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:3,bottom:3,alignItems: 'center',}}>
  
                 </View>
 
@@ -715,7 +714,6 @@ class Profile extends Component {
     }
 
     getYRows(item,index) {
-        console.log('item',item)
         var days = item[0];
         if (item[1] === undefined) {
             var rupees = 0;
@@ -824,7 +822,7 @@ class Profile extends Component {
               <View style={{height:((heightInpersentage*55)/100)*25,width:deviceWidth,backgroundColor:'white'}}>
                 <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
-                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS></Text>
+                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS</Text>
                   </TouchableOpacity>
                 </View>
               </View>

@@ -132,31 +132,31 @@ class Application extends Component{
 
 
 
-      fetchData(dataValue) {
-        fetch(REQUEST_URL)
-            .then((response) => response.json())
-            .then((causes) => {
-              var causes = causes;
-              let causesData = []
-              let newData = []
-              causes.results.forEach((item, i) => {
-                  if (item.is_active) {
-                      causesData.push(['cause' + i, JSON.stringify(item)])
-                      newData.push('cause' + i);
-                  };
-              })
-              this.setState({
-                  myCauseNum: newData,
-              })
-              let myCauseNum = this.state.myCauseNum;
-              AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
-              AsyncStorage.multiSet(causesData, (err) => {
-              })
-            })
-           .catch((err)=>{
-             console.log("errorcauseapi ",err)
-            })
-      }
+      // fetchData(dataValue) {
+      //   fetch(REQUEST_URL)
+      //       .then((response) => response.json())
+      //       .then((causes) => {
+      //         var causes = causes;
+      //         let causesData = []
+      //         let newData = []
+      //         causes.results.forEach((item, i) => {
+      //             if (item.is_active) {
+      //                 causesData.push(['cause' + i, JSON.stringify(item)])
+      //                 newData.push('cause' + i);
+      //             };
+      //         })
+      //         this.setState({
+      //             myCauseNum: newData,
+      //         })
+      //         let myCauseNum = this.state.myCauseNum;
+      //         AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
+      //         AsyncStorage.multiSet(causesData, (err) => {
+      //         })
+      //       })
+      //      .catch((err)=>{
+      //        console.log("errorcauseapi ",err)
+      //       })
+      // }
 
 
       onClickMenu() {
