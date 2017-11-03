@@ -28,7 +28,7 @@ import DistanceModalDropDown from './modelindex2.js'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var DeviceInfo = require('react-native-device-info');
-// var my_distance = 'km';
+var my_distance = 'km';
 var my_currency = [];
 
 
@@ -75,10 +75,10 @@ class Setting extends Component {
             'INR ₹'
           ]
 
-          console.log('this.state.my_currency',this.state.my_currency);
+          // console.log('this.state.my_currency',this.state.my_currency);
           for (var i=0;i<optionsdata.length - 1; i++){
 
-            console.log('optionsdata[i].substring(0,3)',optionsdata[i].substring(0,3),this.state.my_currency);
+            // console.log('optionsdata[i].substring(0,3)',optionsdata[i].substring(0,3),this.state.my_currency);
             if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
               console.log('optionsdata[i]',optionsdata[i]);
               this.setState({
@@ -364,7 +364,7 @@ class Setting extends Component {
 
       getDevVersion(rowData){   
    
-        console.log(this.state.my_currency);
+        // console.log(this.state.my_currency);
         var mydefaultValue = 'USD $';
         var myindex;
         if(rowData.name == 'Version'){
