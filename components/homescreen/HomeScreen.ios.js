@@ -845,7 +845,7 @@ class Homescreen extends Component {
               <View style={{flex:1,justifyContent: 'center',alignItems: 'center'}}>
                 <View style={{width:deviceWidth-125}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize3,fontWeight:'400'}}>By {cause.partners[0].partner_ngo}</Text>      
+                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:10,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
                 </View>
               </View>
               <View style={{flex:1.5,justifyContent: 'flex-end',alignItems: 'center'}}>

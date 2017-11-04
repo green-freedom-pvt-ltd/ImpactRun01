@@ -352,8 +352,8 @@ class RunHistory extends Component {
         if (this.props.helpcenter) {
         this.props.navigator.push({
           title:'Select issue',         
-          id:'listquestions',
-          // component:QuestionLists,
+          // id:'listquestions',
+          component:QuestionLists,
           // navigationBarHidden: false,
           // showTabBar: true,
           passProps:{

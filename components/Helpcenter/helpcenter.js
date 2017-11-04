@@ -123,7 +123,7 @@ class HelpCenter extends Component {
 
        navigateToRunhistory(rowData){
         this.props.navigator.push({
-          title:'Questions',         
+          title:'Select Workout',         
           component:RunHistory,
           navigationBarHidden: false,
           showTabBar: true,
