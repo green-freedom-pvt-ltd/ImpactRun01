@@ -46,8 +46,7 @@ class CauseDetail extends Component {
       Location.getAuthorizationStatus(function(authorization) {
       if (authorization === "authorizedWhenInUse") {
       me.props.navigator.push({
-         component:LodingRunScreen,
-         navigationBarHidden: true,
+         id:'runlodingscreen',
          passProps: {data: data},
            navigationOptions: {
               gesturesEnabled: false,

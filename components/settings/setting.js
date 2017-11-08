@@ -127,7 +127,7 @@ class Setting extends Component {
          this.handleFBLogout();
            GoogleSignin.revokeAccess().then(() => GoogleSignin.signOut()).then(() => {
            this.setState({user: null});
-             let keys = ['UID234', 'UID345','USERDATA'];
+             let keys = ['UID234', 'UID345','USERDATA','RunFetchedData','fetchRunhistoryData'];
               AsyncStorage.multiRemove(keys, (err) => {
               });
 
@@ -157,7 +157,7 @@ class Setting extends Component {
           if (!error) {
             _this.setState({ user : null});
             _this.props.onLogout && _this.props.onLogout();
-            let keys = ['UID234', 'UID345','USERDATA','fetchRunhistoryData'];
+            let keys = ['UID234', 'UID345','USERDATA','fetchRunhistoryData','RunFetchedData'];
               AsyncStorage.multiRemove(keys, (err) => {
               });
        

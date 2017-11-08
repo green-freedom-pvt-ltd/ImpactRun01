@@ -63,7 +63,7 @@ class Profile extends Component {
           levelKm:0,
           my_rate:1.0,
           my_currency:"INR",
-
+          RunFetchedData:null,
           progressVal:0,
           navigation: {
             index: 1,
@@ -83,7 +83,8 @@ class Profile extends Component {
      componentWillMount() { 
         this.setState({
           user:this.props.user,
-        })     
+        })   
+         
           AsyncStorage.getItem('my_currency', (err, result) => {
             this.setState({
               my_currency:JSON.parse(result),
@@ -115,6 +116,14 @@ class Profile extends Component {
 
 
       fetchRunDataLocally(){
+         AsyncStorage.getItem('RunFetchedData', (err, result) => {
+            this.setState({
+              RunFetchedData:JSON.parse(result),
+          })
+            if (this.state.RunFetchedData === null) {
+              this.fetchRunhistoryData();
+            }
+          })           
           AsyncStorage.getItem('nextpage', (err, result) => {
             this.setState({
               nextPage:JSON.parse(result),
@@ -156,8 +165,8 @@ class Profile extends Component {
 
 
       fetchRunhistoryData() {
-        if (this.props.user != null) {
-        var token = this.props.user.auth_token;
+        if (this.props.user != null || this.state.user != null) {
+        var token = (this.props.user != null)?this.props.user.auth_token:this.state.user.auth_token;
         var url = apis.runListapi;
         fetch(url,{
           method: "GET",
@@ -194,6 +203,7 @@ class Profile extends Component {
               RunCount:jsonDataobj.count,
             })
 
+            AsyncStorage.setItem('RunFetchedData', JSON.stringify(1));
             let RunCount = this.state.RunCount;
             AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
               if (jsonData.results != null || undefined) {
@@ -423,8 +433,8 @@ class Profile extends Component {
       }
 
       fetchTotalDistance(){
-         AsyncStorage.removeItem('totalkm',(err) => {
-         });
+        AsyncStorage.removeItem('totalkm',(err) => {
+        });
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
         if (result != null || undefined) {
         var RunData = JSON.parse(result)
@@ -451,7 +461,7 @@ class Profile extends Component {
         return;
          }
        })
-      }
+    }
 
 
 
@@ -620,11 +630,13 @@ class Profile extends Component {
      
      getUserData(){
       AsyncStorage.getItem('USERDATA', (err, result) => {
-          let user = JSON.parse(result);
-           this.setState({
-            user:user,
-           })
-           this.props.getUserData();
+           let user = JSON.parse(result);
+            this.setState({
+              user:user,
+            })
+            console.log('datauseer',user);
+            this.fetchRunhistoryData();
+            this.props.getUserData();
         }) 
      }
 
