@@ -153,10 +153,12 @@ class Tabs extends Component {
               this.setState({
                 runUnsynceddata:rundata,
               })
+              if (rundata != null) {
               rundata.map((result,i)=>{
                 console.log('resultIrun ',result);
                 this.postPastRun(result);
               })
+              }
             })     
         }
 
