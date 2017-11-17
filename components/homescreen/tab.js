@@ -23,7 +23,7 @@ import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import ProfileForm from '../profile/profileForm.js';
 import EventEmitter from 'EventEmitter';
- var base64Icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABICAYAAACqT5alAAAABGdBTUEAALGPC/xhBQAABOFJREFUeAHtmlmIFEcYx2dUxDt4YTSieCAqHkgkJARU9EFFgygeICIi+qCgQRHFh4CQhzwsgSiJeGD0yQNR8SDg8WBWvFZNRFkkEW/BCKsuisQcuvl9Zqbt6emq6aquaWd2+4P/dPVX31lfV3X1dGcyhtTU1HQdVAotNgw/08pUodrl04SrvYKl4k8rXGqEqr0/y3K7hSQ+NEhkIrKdDeTLKforxu8bONguCd9CYaCBUjWLrkzncDWXL0rs76PCLwhsCtgcJUDXMu8j4Z3ZbPY4iawHL10nVMpeG43AVvoehPSvgNcrhB+VJXYzJP2cBXMPzSVRFUPkDsCTlTpIC2AMDTLfnssqDcLoszAFBOM8PNT6bWJrbJhjA95Cv718G/3DChsrkr6k5Z7vEVW+zMkvHiOBhlzSTQo/WQU/CvsZQrvBY/AEPM0df+YYpNkwhoFuoHsOYzlOBbakKuQbSbgBDAqx3DOEF5W1ieptiCKM3B3kBB5xOUrAjcB2R9fDM1bYaBDDjwp53lnoHPZ69Y2FBD1AL6LtXU2vVbL47YDuaIX1R5LwNUXnEpRtV2NJ9iL6RoOGfGvwPbo1ipiisFch1D5E8DW8+gwOPgYqOhRURNBklf4T+XlBG2HnyHUGPwETKlilURwB/lIYqPX8IvCbQkjYx4D3NEXbJGHRfwPGec4UDWTEjyl5CaM4FzRoDCwT1/mNx1e09ylimQa/HkOy6l4CXRRyKras9vdUnT7+Q187avMT4uqK8BdgkkZJFsUdXj9K8phYC8pBUZKVqTW/HM5zNmflk5VFS7Z5ci+eA2xGWUzo6N3cyUkRxFDQLqBUJBfotz2tIb+DocoEMQo8BC5pad4ZRjuCb8G/4CaYmO+TI+e3gUv6EWNvi+r3U9BGoDc459DrzFwy07F5L8TuTniyw5KE5Vbmgv7GyJqCxHQnCMucXgDugrgkK+eFEkZE5kwJmSjdckfYDwar8pMVVEkoSv+nYAYYDvqAIcBqF4Sea5LVVx5hZe2RNeAw8/UPju6IQVgHKoH+IYiOppnpJ3S4tbPh7MS5V6mm8T8mNgnLM6yxozIMx2kbm8YJM6qvcLTXxpljnV029owTzjnZZuPMoc45Br7exp5Vwjirw9kJG4eOdL52ZCe6GVbIYUBu8EnTkehRFktaVVjMUOUbHL4pNllWjvxX9mVZPeiMU9pW4GhCJX6Nn8m6eBLpI4gPQF2Zk5Yt4/JEEorihGA6gVNlSlp2VPImobKIoNqCGiCXniu6g6HxlZVpIBoC/BxcBXFI/oj7AVTKQ0ogy8ApgcrjpTz/ngYmFX+C/EbQN2Cyek4JvidYBF4BFcn8HwdaV09mJSIlmUZVtvA3lFB31m298XAWQcKG0oQTHvDE3aUVTnzIE3aYVjjhAU/cXYurcBvXQ8wmQl6nyvvg4GvVthpfI9Gb7+uXl3u/8yfDFR+v8poE3Re4fBn3XeVl6YuIZOXx0DV95HMRu+l6DvePHVGxgX7FLHuO64TtI0lIs8UlrH1dWmrQmawTkFnrkxtD2/vix8eP0zyPsnyVJ9TIyu1fzf/nGvzGvS31xlecbyKjhOr/uO1xFAWdTIu7pNOEdZdDc+hLK9wcqqjLIa2wbnSaQ19a4eZQRV0OcXda8tXbSZ0Dx33yBUBK6QhoRuA/Om5HY4SRRjAAAAAASUVORK5CYII=";
+var base64Icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABICAYAAACqT5alAAAABGdBTUEAALGPC/xhBQAABOFJREFUeAHtmlmIFEcYx2dUxDt4YTSieCAqHkgkJARU9EFFgygeICIi+qCgQRHFh4CQhzwsgSiJeGD0yQNR8SDg8WBWvFZNRFkkEW/BCKsuisQcuvl9Zqbt6emq6aquaWd2+4P/dPVX31lfV3X1dGcyhtTU1HQdVAotNgw/08pUodrl04SrvYKl4k8rXGqEqr0/y3K7hSQ+NEhkIrKdDeTLKforxu8bONguCd9CYaCBUjWLrkzncDWXL0rs76PCLwhsCtgcJUDXMu8j4Z3ZbPY4iawHL10nVMpeG43AVvoehPSvgNcrhB+VJXYzJP2cBXMPzSVRFUPkDsCTlTpIC2AMDTLfnssqDcLoszAFBOM8PNT6bWJrbJhjA95Cv718G/3DChsrkr6k5Z7vEVW+zMkvHiOBhlzSTQo/WQU/CvsZQrvBY/AEPM0df+YYpNkwhoFuoHsOYzlOBbakKuQbSbgBDAqx3DOEF5W1ieptiCKM3B3kBB5xOUrAjcB2R9fDM1bYaBDDjwp53lnoHPZ69Y2FBD1AL6LtXU2vVbL47YDuaIX1R5LwNUXnEpRtV2NJ9iL6RoOGfGvwPbo1ipiisFch1D5E8DW8+gwOPgYqOhRURNBklf4T+XlBG2HnyHUGPwETKlilURwB/lIYqPX8IvCbQkjYx4D3NEXbJGHRfwPGec4UDWTEjyl5CaM4FzRoDCwT1/mNx1e09ylimQa/HkOy6l4CXRRyKras9vdUnT7+Q187avMT4uqK8BdgkkZJFsUdXj9K8phYC8pBUZKVqTW/HM5zNmflk5VFS7Z5ci+eA2xGWUzo6N3cyUkRxFDQLqBUJBfotz2tIb+DocoEMQo8BC5pad4ZRjuCb8G/4CaYmO+TI+e3gUv6EWNvi+r3U9BGoDc459DrzFwy07F5L8TuTniyw5KE5Vbmgv7GyJqCxHQnCMucXgDugrgkK+eFEkZE5kwJmSjdckfYDwar8pMVVEkoSv+nYAYYDvqAIcBqF4Sea5LVVx5hZe2RNeAw8/UPju6IQVgHKoH+IYiOppnpJ3S4tbPh7MS5V6mm8T8mNgnLM6yxozIMx2kbm8YJM6qvcLTXxpljnV029owTzjnZZuPMoc45Br7exp5Vwjirw9kJG4eOdL52ZCe6GVbIYUBu8EnTkehRFktaVVjMUOUbHL4pNllWjvxX9mVZPeiMU9pW4GhCJX6Nn8m6eBLpI4gPQF2Zk5Yt4/JEEorihGA6gVNlSlp2VPImobKIoNqCGiCXniu6g6HxlZVpIBoC/BxcBXFI/oj7AVTKQ0ogy8ApgcrjpTz/ngYmFX+C/EbQN2Cyek4JvidYBF4BFcn8HwdaV09mJSIlmUZVtvA3lFB31m298XAWQcKG0oQTHvDE3aUVTnzIE3aYVjjhAU/cXYurcBvXQ8wmQl6nyvvg4GvVthpfI9Gb7+uXl3u/8yfDFR+v8poE3Re4fBn3XeVl6YuIZOXx0DV95HMRu+l6DvePHVGxgX7FLHuO64TtI0lIs8UlrH1dWmrQmawTkFnrkxtD2/vix8eP0zyPsnyVJ9TIyu1fzf/nGvzGvS31xlecbyKjhOr/uO1xFAWdTIu7pNOEdZdDc+hLK9wcqqjLIa2wbnSaQ19a4eZQRV0OcXda8tXbSZ0Dx33yBUBK6QhoRuA/Om5HY4SRRjAAAAAASUVORK5CYII=";
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var REQUEST_URL = apis.causeListapi;
@@ -64,11 +64,11 @@ class Tabs extends Component {
               userSignup: false,
               countCampaign: 0,
               indexcause:-1,
-              isConnected:null,
+              overall_impact:'',
           };
 
           
-          this._handleConnectivityChange = this._handleConnectivityChange.bind(this);
+          this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
           this.getUserData = this.getUserData.bind(this);
           this.render = this.render.bind(this);
           this.ChangeCampaignCount = this.ChangeCampaignCount.bind(this);
@@ -77,17 +77,8 @@ class Tabs extends Component {
         }
         
         componentDidMount() {
-
-            this.removerundata();
             this.getUserData();
-            this.getData(); 
-            NetInfo.isConnected.addEventListener(
-                'change',
-                this._handleConnectivityChange
-            );
-            NetInfo.isConnected.fetch().done(
-                (isConnected) => { this.setState({isConnected}); }
-            );
+           
         }
 
         componentWillUnmount() {
@@ -98,22 +89,7 @@ class Tabs extends Component {
         }
 
 
-        removerundata(){
-          AsyncStorage.getItem('runremovecount', (err, result) => {  
-            if (result == null) {
-                AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-                    if (err == null ) {
-                    let rumremovecount = 1;
-                    AsyncStorage.setItem('runremovecount', JSON.stringify(rumremovecount), (data) => {
-                      console.log("data",data);
-                    })
-                    };
-               });
-            }else{
-               return;
-            }
-          })
-        }
+   
 
         getData(){
             AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
@@ -127,9 +103,10 @@ class Tabs extends Component {
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
-                var fetchversion = parseInt(this.state.causeFeatchVersion)+(3000);
-                if (fetchversion <= parseInt(epochtime)) {
-                    this.fetchDataonInternet();
+                var fetchversion = parseInt(this.state.causeFeatchVersion)+(300);
+                if (fetchversion < epochtime) {
+                    console.log('data',fetchversion);
+                    this.fetchData();
                
                }else{
                 this.getCause();
@@ -137,12 +114,27 @@ class Tabs extends Component {
             }
             else{
                 console.log('resultsgetinternet');
-               this.fetchDataonInternet();
+               this.fetchData();
             }
          })
         }
         
-        componentWillMount() {  
+        componentWillMount() { 
+            NetInfo.isConnected.fetch().then((isConnected) => {
+            console.log('isConnected profile',isConnected);
+            if (isConnected) {
+                this.getData();
+                }else{
+                this.getCause();
+                }
+            });
+            NetInfo.isConnected.addEventListener(
+              'change',
+              this.handleFirstConnectivityChange
+
+            ); 
+            
+           
            if (this.props.profileTab != null || undefined) {
            this.setState({
              selectedTab:'profile',
@@ -151,27 +143,108 @@ class Tabs extends Component {
             return;
            }
         }
+
+
+
+        fetchLocalRunData(){
+            AsyncStorage.getItem('UnsyncedData', (err, result) => {
+              console.log( "result",JSON.parse(result));
+              var rundata = JSON.parse(result);
+              this.setState({
+                runUnsynceddata:rundata,
+              })
+              rundata.map((result,i)=>{
+                console.log('resultIrun ',result);
+                this.postPastRun(result);
+              })
+            })     
+        }
+
+
+        postPastRun(result){
+
+          let tokenparse = this.state.user.auth_token;
+          
+          let RunData = result; 
+          console.log('RunData',RunData,tokenparse);
+          fetch(apis.runApi, {
+            method: "POST",
+            headers: {  
+              'Authorization':"Bearer "+ tokenparse,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',    
+            },
+            body:JSON.stringify({
+            cause_run_title:RunData.cause_run_title,
+            user_id:RunData.user_id,
+            start_time:RunData.start_time,
+            end_time:RunData.end_time,
+            distance:RunData.distance,
+            peak_speed: 1,
+            avg_speed:RunData.avg_speed,
+            run_amount:RunData.run_amount,
+            run_duration:RunData.run_duration,
+            is_flag:false,
+            calories_burnt:RunData.calories_burnt,
+            start_location_lat:RunData.start_location_lat,
+            start_location_long:RunData.start_location_long,
+            end_location_lat:RunData.end_location_lat,
+            end_location_long:RunData.end_location_long,
+            no_of_steps:RunData.no_of_steps,
+            is_ios:RunData.is_ios,
+            num_spikes:RunData.num_spikes,
+          })
+         })
+
+        .then((response) => response.json())
+        .then((userRunData) => { 
+          console.log('userRunData',userRunData);
+          var remvedfetcheddata = this.state.runUnsynceddata
+          var listToremove =[];
+          listToremove.push(userRunData.start_time);
+          var removeIndex = remvedfetcheddata.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
+          remvedfetcheddata.splice(removeIndex, 1);   
+          console.log('remvedfetcheddata',JSON.stringify(remvedfetcheddata));
+          AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
+          });
+          var epochtime = userRunData.version;
+           let responceversion = {
+             runversion:epochtime
+           }
+          AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),()=>{   
+            console.log("removed version",responceversion);
+          });      
+         }).catch((error)=>{
+            console.log('error',error);
+
+         })
+        }   
       
 
       fetchDataonInternet(){ 
-   
-        // NetInfo.isConnected.fetch().done(
-        //     (isConnected) => {
-                if (this.state.isConnected) {
-                    this.fetchData();
-                }else{
-                   this.getCause();
-                }
-        //     }
-        // );
+        console.log('isConnectedinternet',this.state.isConnected);
+        if (this.state.isConnected) {
+            console.log('isConnectedinternet',this.state.isConnected);
+            this.getData();
+        }else{
+           this.getCause();
+        }
       }
 
-
-      _handleConnectivityChange(isConnected) {
-        var _this = this;
-        _this.setState({
-          isConnected:isConnected,
-        });
+     
+      handleFirstConnectivityChange(isConnected) {
+        this.setState({
+            isConnected:isConnected,
+        })
+        if (isConnected) {
+            this.getData();
+            this.fetchLeaderBoard();
+                  
+             
+        }else{
+             this.getCause();
+        }
+         
         console.log('isConnected',this.state.isConnected);
       }
    
@@ -179,7 +252,6 @@ class Tabs extends Component {
        if(response.ok){
         return response.json();
        }else{
-        AlertIOS.alert("Network error","There is some problem connecting to internet");
         return;
        }
        
@@ -256,8 +328,11 @@ class Tabs extends Component {
                 AsyncStorage.removeItem('CauseNumber',(err) => {
                    console.log("removed");
                 });
+
                 AsyncStorage.setItem('CauseNumber',JSON.stringify(myCauseNum));
                 AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
+                AsyncStorage.setItem('overall_impact',JSON.stringify(this.state.overall_impact));
+
                 // AsyncStorage.multiSet(this.state.exchange_rates, (err) => {
                 //   console.log('myCauseErr' + err)
                 // })
@@ -272,6 +347,7 @@ class Tabs extends Component {
                 this.setState({
                   dataCauseNum:JSON.parse(result),
                 })
+                this.fetchLocalRunData();
                })
                
               AsyncStorage.multiRemove(newData, (err) => {
@@ -283,7 +359,6 @@ class Tabs extends Component {
             .catch((err)=>{
              console.log("errorcauseapi ",err)
              if (err != null) {
-              AlertIOS.alert("Network error","There is some problem connecting to internet");
               this.getCause();
              };
             })
@@ -297,6 +372,8 @@ class Tabs extends Component {
             this.setState({
               dataCauseNum:JSON.parse(result),
             })
+            console.log('dataCauseNum',this.state.dataCauseNum);
+            this.fetchLocalRunData();
             if (this.state.dataCauseNum != null ) {
             try {
                 AsyncStorage.multiGet(this.state.dataCauseNum, (err, stores) => {
@@ -307,6 +384,7 @@ class Tabs extends Component {
                         this.setState({
                             myCusesDataExist: val,
                         })
+
                      
                     })
                 });
@@ -380,9 +458,9 @@ class Tabs extends Component {
 
         navigateToProfileForm() {
           this.refs.nav.push({
-            title: 'profileform',
+            title: 'Profile Edit',
             component:ProfileForm,
-            rightButtonTitle: 'save',
+            rightButtonTitle: 'Save',
             passProps:{user:this.state.user,getUserData:this.getUserData,ref:(component) => {this.pushedComponent = component},},
             onRightButtonPress: () => {
                  this.pushedComponent && this.pushedComponent._onRightButtonClicked();
@@ -444,10 +522,10 @@ class Tabs extends Component {
                     translucent={false}
                     navigationBarHidden={false}
                     style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.light_sky_blue}
+                    tintColor='black'
+                    titleTextColor='black'
+                    shadowHidden={false}
+                    barTintColor='white'
                     initialRoute={{
                     showTabBar: true,
                     rightButtonTitle: (this.state.user)?'edit':'',
@@ -499,10 +577,10 @@ class Tabs extends Component {
                     translucent={false}
                     navigationBarHidden={false}
                     style={{flex:1}}
-                    tintColor='#FFF'
-                    titleTextColor='#FFF'
-                    shadowHidden={true}
-                    barTintColor={styleConfig.light_sky_blue}
+                    tintColor='black'
+                    titleTextColor='black'
+                    shadowHidden={false}
+                    barTintColor={'white'}
                     initialRoute={{
                     showTabBar: true,
                     title:'Help',

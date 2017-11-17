@@ -423,11 +423,10 @@ class Setting extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-                  <View style={commonStyles.Navbar}>
-                    <Text style={commonStyles.menuTitle}>Settings</Text>
-                  </View>
+                 <NavBar title={'Settings'}/>      
+
                 <ListView
-                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6'}}
+                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',top:5,}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
                 dataSource={this.state.SettingTabs}

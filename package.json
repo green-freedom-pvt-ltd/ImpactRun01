@@ -8,6 +8,7 @@
   "dependencies": {
     "@remobile/react-native-refresh-infinite-listview": "^1.0.3",
     "apphub": "^0.5.1",
+    "clevertap-react-native": "^0.1.8",
     "haversine": "^1.0.0",
     "moment": "^2.18.1",
     "react": "^16.0.0-alpha.12",

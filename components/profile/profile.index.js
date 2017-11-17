@@ -770,7 +770,7 @@ class Profile extends Component {
                         <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'400'}}>All Time</Text>
                     </View>
                     <View style={{height:(this.state.height/100)*37,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
-                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><AnimateNumber value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
+                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><AnimateNumber value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
                         </Text>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
                     </View>
@@ -781,7 +781,7 @@ class Profile extends Component {
                                     return ' ' + parseFloat(val).toFixed(0)
                                   }} ></AnimateNumber>
                             </Text>
-                            <Text style={{left:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> ImpactRuns </Text>                       
+                            <Text style={{left:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walks & Runs </Text>                       
                         </View>
                        <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
                             <Text style={{right:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
@@ -834,7 +834,7 @@ class Profile extends Component {
               <View style={{height:((heightInpersentage*55)/100)*25,width:deviceWidth,backgroundColor:'white'}}>
                 <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
-                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>SEE RUNS</Text>
+                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>See Workouts</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -938,7 +938,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     backgroundColor: 'white',
-    flexDirection:'column'
+    flexDirection:'column',
   },
    container2: {
     flex:-1,

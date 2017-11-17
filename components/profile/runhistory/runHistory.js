@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   AlertIOS,
   TextInput,
+  NetInfo,
 } from 'react-native';
 import apis from '../../apis';
 import styleConfig from '../../styleConfig';
@@ -30,12 +31,12 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import QuestionLists from '../../Helpcenter/listviewQuestions.js';
 class RunHistory extends Component {
 
-     constructor(props) {
+      constructor(props) {
         super(props);
         this.getWeightLocal();
         var ds = new ListView.DataSource({
-          rowHasChanged: (row1, row2) => row1.version !== row2.version,
-          sectionHeaderHasChanged: (section1, section2) => section1.version !== section2.version,
+          rowHasChanged:(row1, row2) => row1.version !== row2.version,
+          sectionHeaderHasChanged:(section1, section2) => section1.version !== section2.version,
         });
         this.state = {
           rowData:[],
@@ -54,33 +55,51 @@ class RunHistory extends Component {
         this.renderRunsRow = this.renderRunsRow.bind(this);
         this.fetchRunhistoryupdataData = this.fetchRunhistoryupdataData.bind(this);
         this.covertmonthArrayToMap = this.covertmonthArrayToMap.bind(this);
-
+        this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
       }
 
 
-    componentWillMount() {
-    AsyncStorage.getItem('my_currency', (err, result) => {
-        this.setState({
-          my_currency:JSON.parse(result),
-      })
-      })     
-      
-    AsyncStorage.getItem('my_rate', (err, result) => {
-        this.setState({
-          my_rate:JSON.parse(result),
-      })
-      }) 
-    AsyncStorage.getItem('my_distance', (err, result) => {
-        this.setState({
-          my_distance:JSON.parse(result),
-      })
-    })     
-
-    }
+      componentWillMount() {
+        AsyncStorage.getItem('my_currency', (err, result) => {
+            this.setState({
+              my_currency:JSON.parse(result),
+          })
+          })     
+          
+        AsyncStorage.getItem('my_rate', (err, result) => {
+            this.setState({
+              my_rate:JSON.parse(result),
+          })
+          }) 
+        AsyncStorage.getItem('my_distance', (err, result) => {
+            this.setState({
+              my_distance:JSON.parse(result),
+          })
+        })     
+      }
 
         componentDidMount() {
+           AsyncStorage.getItem('UnsyncedData', (err, result) => {
+              console.log( "result",JSON.parse(result));
+              var rundata = JSON.parse(result);
+              this.setState({
+                RunCount:rundata.length,
+              })
+              
+            })  
+         
+           NetInfo.isConnected.fetch().then((isConnected) => {
+            console.log('isConnected profile',isConnected);
 
-
+            if (isConnected) {
+                  this.fetchLocalRunData();
+                };
+            });
+            NetInfo.isConnected.addEventListener(
+              'change',
+              this.handleFirstConnectivityChange
+            );          
+  
             AsyncStorage.getItem('runversion', (err, result) => {
               console.log("result",result);
 
@@ -104,28 +123,110 @@ class RunHistory extends Component {
                   }) 
                 })
               }
+              })   
+            this.state.someData =  this.props.rawData
+            if (this.state.someData != null) {
+              let sortedRuns = this.state.someData.sort((a,b) => {
+                if (a.version < b.version) {
+                  return -1;
+                }
+                if (a.version > b.version) {
+                  return 1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+              this.setState({
+                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(sortedRuns)),
               })
-           
-         this.state.someData =  this.props.rawData
-        
+           }else{
 
-        if (this.state.someData != null) {
-          let sortedRuns = this.state.someData.sort((a,b) => {
-            if (a.version < b.version) {
-              return -1;
-            }
-            if (a.version > b.version) {
-              return 1;
-            }
-            // a must be equal to b
-            return 0;
-          });
-          this.setState({
-            runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(sortedRuns)),
-          })
-         }else{
-         }
+           }
       }
+      
+
+       handleFirstConnectivityChange(isConnected) {
+            console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+            this.setState({
+              isConnected:isConnected,
+            })
+            if (isConnected) {
+              this.fetchLocalRunData();
+            };
+            
+        }
+
+        fetchLocalRunData(){
+            AsyncStorage.getItem('UnsyncedData', (err, result) => {
+              console.log( "result",JSON.parse(result));
+              var rundata = JSON.parse(result);
+              this.setState({
+                runUnsynceddata:rundata,
+                RunCount:rundata.length,
+              })
+              rundata.map((result,i)=>{
+                console.log('resultIrun ',result);
+                this.postPastRun(result);
+              })
+            })     
+        }
+
+
+
+        postPastRun(result){
+          let tokenparse = this.state.user.auth_token;
+          let RunData = result; 
+          fetch(apis.runApi, {
+            method: "POST",
+            headers: {  
+              'Authorization':"Bearer "+ tokenparse,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',    
+            },
+            body:JSON.stringify({
+            cause_run_title:RunData.cause_run_title,
+            user_id:RunData.user_id,
+            start_time:RunData.start_time,
+            end_time:RunData.end_time,
+            distance:RunData.distance,
+            peak_speed: 1,
+            avg_speed:RunData.avg_speed,
+            run_amount:RunData.run_amount,
+            run_duration:RunData.run_duration,
+            is_flag:false,
+            calories_burnt:RunData.calories_burnt,
+            start_location_lat:RunData.start_location_lat,
+            start_location_long:RunData.start_location_long,
+            end_location_lat:RunData.end_location_lat,
+            end_location_long:RunData.end_location_long,
+            no_of_steps:RunData.no_of_steps,
+            is_ios:RunData.is_ios,
+            num_spikes:RunData.num_spikes,
+          })
+         })
+
+        .then((response) => response.json())
+        .then((userRunData) => { 
+          console.log('userRunData',userRunData);
+          var remvedfetcheddata = this.state.runUnsynceddata
+          var listToremove =[];
+          listToremove.push(userRunData.start_time);
+          var removeIndex = remvedfetcheddata.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
+          remvedfetcheddata.splice(removeIndex, 1);   
+          console.log('remvedfetcheddata',JSON.stringify(remvedfetcheddata));
+          AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
+          });
+          var epochtime = userRunData.version;
+           let responceversion = {
+             runversion:epochtime
+           }
+          AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),()=>{   
+            console.log("removed version",responceversion);
+          });      
+         }).catch((error)=>{
+            console.log('error',error);
+         })
+        } 
 
     
 
@@ -148,6 +249,14 @@ class RunHistory extends Component {
 
       }
 
+
+      componentWillUnmount(){
+        NetInfo.isConnected.removeEventListener(
+              'change',
+              this.handleFirstConnectivityChange
+            );
+      }
+
   
 
 
@@ -161,7 +270,7 @@ class RunHistory extends Component {
 
       renderSectionHeader(sectionData, category) {
         return (
-          <View style={[commonStyles.Navbar,{height:30,width:deviceWidth,justifyContent:'flex-start',paddingTop:0,paddingLeft:5}]}>
+          <View style={{height:30,width:deviceWidth,justifyContent:'flex-start',paddingTop:0,paddingLeft:5,backgroundColor:'blue'}}>
           <Text style={commonStyles.menuTitle2}>{category}</Text>
           </View>
         )
@@ -198,6 +307,31 @@ class RunHistory extends Component {
           })
 
       }
+
+
+    PostNotSyncedRun(){
+      NetInfo.isConnected.fetch().then((isConnected) => {
+        console.log('isConnected',isConnected);
+      if (isConnected) {
+        this.fetchLocalRunData();
+      }else{
+
+        AlertIOS.alert('Network error ','No internet connection . Please connect your phone to internet to sync your workouts');
+      }
+    })
+    }
+
+    RunNotSyncedButton(){
+      if (this.state.RunCount > 0) {
+        return(
+          <View style={{justifyContent:'center',alignItems:'center',padding:5}}>
+          <TouchableOpacity style={styles.runSynced} onPress={()=> this.PostNotSyncedRun()}>
+            <Text style={{color:'white',fontFamily:styleConfig.FontFamily}}>{this.state.RunCount} workout not synced. Cilck to Sync </Text>
+          </TouchableOpacity>
+          </View>
+          )
+      };
+    }
 
     modelView(){
       return(
@@ -707,6 +841,7 @@ class RunHistory extends Component {
             <View>
               <View style={{height:deviceHeight-styleConfig.navBarHeight}}>
               {this.headerFromHelp()}
+              {this.RunNotSyncedButton()}
                  <ListView
                     renderSectionHeader={this.renderSectionHeader}
                     refreshControl={
@@ -722,7 +857,6 @@ class RunHistory extends Component {
               </View>
             </View>
           )
-
       }
         
 
@@ -762,6 +896,14 @@ const styles = StyleSheet.create({
     color:'white',
     fontFamily: styleConfig.FontFamily,
 
+  },
+  runSynced:{
+    height:30,
+    width:deviceWidth-10,
+    backgroundColor:styleConfig.pale_magenta,
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius:5,
   },
 
   modelWrap:{

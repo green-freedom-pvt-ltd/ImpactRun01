@@ -38,7 +38,7 @@ class levelBarComponent extends Component {
     animated: true,
     borderRadius: 10,
     borderWidth: 0,
-    color: styleConfig.bright_blue,
+    color: '#33f373',
     height:11,
     indeterminate: false,
     progress: 0,

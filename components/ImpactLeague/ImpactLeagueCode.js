@@ -256,7 +256,7 @@ class ImpactLeagueCode extends Component {
           <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
           <View style={commonStyles.Navbar}>
           <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-           <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+           <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
           </TouchableOpacity>
           <Text style={commonStyles.menuTitle}>Impact League</Text>
         </View>

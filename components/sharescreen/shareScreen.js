@@ -92,6 +92,7 @@ import{
       this.viewData = this.viewData.bind(this);
       this.isloading = this.isloading.bind(this);
       this.getUserData = this.getUserData.bind(this);
+      this.handleNetworkErrors = this.handleNetworkErrors.bind(this);
     }
 
 
@@ -261,13 +262,15 @@ import{
     }
 
     handleNetworkErrors(response){
+      console.log(response);
        if(response.ok){
+        console.log('response.ok',response.ok);
         return response.json();
        }else{
+        this.PostRun();
         this.setState({
           postingRun:false,
         })
-        this.SaveRunLocally();
         AlertIOS.alert("Network error","There is some problem connecting to internet");
         return ;
        }
@@ -276,10 +279,8 @@ import{
   
     SaveRunLocally(){
       if (this.props.user) {
-     var saveRuns = parseInt(this.state.saveRunCountData)+ 1 ;
      var startPosition = this.props.StartLocation;
      var endPosition = this.props.EndLocation;
-     AsyncStorage.setItem("SaveRunCount",JSON.stringify(saveRuns));
      var cause = this.props.data;
      var CauseShareMessage = cause.cause_share_message_template;
      var speed = this.props.speed;
@@ -296,6 +297,7 @@ import{
      var tokenparse = JSON.parse(token);
      var Runid = this.state.runid;
      var calories_burnt = this.props.calories_burnt;
+
        let RID1  = {
         cause_run_title:cause.cause_title,
         user_id:user_id,
@@ -315,36 +317,62 @@ import{
         end_location_long:endPosition.longitude,
         no_of_steps:steps,
         is_ios:true,
+        num_spikes:this.props.num_spikes,
        
       };
-      
-     var RunNO = "RID"+saveRuns;
-      let multi_set_pairs = [
-          [RunNO, JSON.stringify(RID1)],
-      ]
-       let multi_merge_pairs = [
-          [RunNO, JSON.stringify(RID1)],
-      ]
+      AsyncStorage.getItem('UnsyncedData', (err, result) => {
+        console.log('result',result);
+        if (result != null) {
+        var newRunArray = [];
+        this.setState({
+          UnsyncedData:JSON.parse(result),
+        })
+        var runSavedata = newRunArray.push(RID1);
+        console.log('runSavedata ',newRunArray);
+        var Newunsyncedrun = newRunArray.concat(JSON.parse(result));
+        console.log('Newunsyncedrun',Newunsyncedrun);
+        AsyncStorage.removeItem('UnsyncedData',(err) => {
+        });
+        let localunsyncedRundata = Newunsyncedrun;
+        AsyncStorage.removeItem('UnsyncedData',(err) => {
+        });
+        AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
+        })
+      }else{
+        var newRunArray = [];
+        var runSavedata = newRunArray.push(RID1);
+        AsyncStorage.setItem('UnsyncedData', JSON.stringify(newRunArray), (data) => {
+          console.log('resuktdata ',data);
+        })
+      }
+      })
+      // var RunNO = "RID"+saveRuns;
+      // let multi_set_pairs = [
+      //     [RunNO, JSON.stringify(RID1)],
+      // ]
+      //  let multi_merge_pairs = [
+      //     [RunNO, JSON.stringify(RID1)],
+      // ]
 
-     AsyncStorage.setItem(RunNO,JSON.stringify(RID1));
-      AsyncStorage.multiSet(multi_set_pairs, (err) => {
-          AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-              AsyncStorage.multiGet([RunNO], (err, stores) => {
-                  stores.map((result, i, store) => {
-                      let key = store[i][0];
-                      let val = store[i][1];
-                      this.setState({
-                       userRunData:val,
-                      })
-                  });                 
-              })
-            .then((userRunData) => { 
-              // AlertIOS.alert('userndata',JSON.stringify(userRunData));
-            })
-            .done();
-          })
+     // AsyncStorage.setItem(RunNO,JSON.stringify(RID1));
+     //  AsyncStorage.multiSet(multi_set_pairs, (err) => {
+     //      AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
+     //          AsyncStorage.multiGet([RunNO], (err, stores) => {
+     //              stores.map((result, i, store) => {
+     //                  let key = store[i][0];
+     //                  let val = store[i][1];
+     //                  this.setState({
+     //                   userRunData:val,
+     //                  })
+     //              });                 
+     //          })
+     //        .then((userRunData) => { 
+     //          // AlertIOS.alert('userndata',JSON.stringify(userRunData));
+     //        })
+     //        .done();
+     //      })
           
-       });
+     //   });
      }else{
       return;
      }
@@ -377,7 +405,6 @@ import{
           postingRun:false,
         })
       }
-      if (this.props.user) {       
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
@@ -385,7 +412,7 @@ import{
       var time = this.props.time;
       var date = this.props.StartRunTime;
       var endtime = this.props.EndRunTime;
-      var userdata = this.props.user;
+      var userdata = this.state.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
@@ -393,6 +420,13 @@ import{
       var startPosition = this.props.StartLocation;
       var endPosition = this.props.EndLocation;
       var cause = this.props.data;
+      var num_spikes = parseInt(this.props.num_spikes);
+      if (num_spikes != 0) {
+        var spikes = parseInt(this.props.num_spikes)
+      }else{
+        var spikes = 0;
+      }
+      console.log('num_spikes',num_spikes);
       // try{
       //   let response = await fetch('https://mywebsite.com/endpoint/');
       //   let responseJson = await response.json();
@@ -435,6 +469,7 @@ import{
        })
       .then(_this.handleNetworkErrors.bind(_this))
       .then((userRunData) => { 
+        _this.RemoveUnsyncedDatawhenpost(userRunData);
          _this.setState({
           postingRun:false,
          })
@@ -449,12 +484,13 @@ import{
           console.log("removed version share ",responceversion);
         })
         .catch((error)=>{
+          _this.SaveRunLocally();
          console.log("err",error);
         })
        })
       .catch((error)=>{
+         _this.SaveRunLocally();
         console.log("errorPostrunShare ",error);
-        _this.SaveRunLocally();
         _this.setState({
           postingRun:false,
         })
@@ -462,15 +498,31 @@ import{
       })
     }
     catch (error) {
+      console.log('somedata',error)
+
        _this.SaveRunLocally();
     }
     }, 3000);
-    }else{
-      this.setState({
-          postingRun:false,
+  } 
+
+
+
+    RemoveUnsyncedDatawhenpost(userRunData){
+        var newRunArray = [];
+        console.log('this.state.UnsyncedData', this.state.UnsyncedData);
+        if (this.state.UnsyncedData != [] || this.state.UnsyncedData != null) {
+        var removeIndex = this.state.UnsyncedData.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
+        this.state.UnsyncedData.splice(removeIndex, 1); 
+        } 
+        AsyncStorage.removeItem('UnsyncedData',(err) => {
+        });
+        let localunsyncedRundata = this.state.UnsyncedData;
+        AsyncStorage.removeItem('UnsyncedData',(err) => {
+        });
+        AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
+          console.log('localunsyncedRundata',localunsyncedRundata);
         })
-     }
-  }
+    }
 
     DiscardRunfunction(){
       return this.navigateTOhome();
@@ -744,8 +796,8 @@ import{
           <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
-                <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank you {username}</Text>
-                <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
+                <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                 <Text style={styles.lableText}>Impact</Text>
               </View>
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
@@ -800,7 +852,7 @@ import{
            <View ref='captureScreenShot'>
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
-                <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thankyou {username}</Text>
+                <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
                 <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                 <Text style={styles.lableText}>Impact</Text>
               </View>

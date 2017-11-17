@@ -30,7 +30,7 @@ import NavBar from '../navBarComponent';
 import apis from '../apis';
 var dismissKeyboard = require('dismissKeyboard');
 var moment = require('moment');
-var heightInpersentage = (deviceHeight-114)/100;
+var heightInpersentage = (deviceHeight-64)/100;
 class ProfileForm extends Component {
 
     constructor(props) {

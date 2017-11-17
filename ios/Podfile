@@ -2,18 +2,15 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
-target 'Impactrun' do
- pod 'OneSignal', '~> 1.13.3'
+target 'Impact' do
 
 
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
  # use_frameworks!
 
-  # Pods for Impactrun
+  # Pods for Impact
 
-  target 'ImpactrunTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
+
+  
 
 end

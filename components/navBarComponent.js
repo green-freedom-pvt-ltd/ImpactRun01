@@ -45,14 +45,14 @@ class ThankyouScreen extends Component {
 		render() {
       var data = this.props.data;
 	    return (
-		    <View style={commonStyles.Navbar}>
-          <TouchableOpacity style={styles.LeftButton} onPress={()=>this.leftBtnfunction()}>
+		    <View style={styles.Navbar}>
+          <View style={styles.LeftButton} onPress={()=>this.leftBtnfunction()}>
            {this.leftIcon()}
-          </TouchableOpacity>        
-            <Text  numberOfLines={1} style={commonStyles.menuTitle}>{this.props.title}</Text>
-           <TouchableOpacity style={styles.RightButton} onPress={()=>this.rightBtnfunction()} >
+           </View>        
+            <Text  numberOfLines={1} style={styles.menuTitle}>{this.props.title}</Text>
+           <View style={styles.RightButton} onPress={()=>this.rightBtnfunction()} >
            {this.rightIcon()}
-          </TouchableOpacity> 
+          </View> 
         </View>
 		  );
 	  }
@@ -65,9 +65,40 @@ var styles = StyleSheet.create({
    height:64,
    width:50,
    paddingTop:15,
-
-      
+   justifyContent:'center',
+   alignItems:'center',
   },
+
+   Navbar:{
+    paddingTop:20,
+    position:'relative',
+    height:styleConfig.navBarHeight,
+    width:deviceWidth,
+    flexDirection: 'row',
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'white',
+    shadowColor: '#000000',
+      shadowOpacity: 0.8,
+      shadowRadius: 1,
+      shadowOffset: {
+        height: 0,
+      },
+  },
+
+
+  menuTitle:{
+    backgroundColor:'transparent',
+    flex:1,
+    textAlign:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight:'400',
+    color:'#2a2a2a',
+    fontSize:styleConfig.TitleFontSize,
+    fontFamily:styleConfig.FontFamily,
+  },
+
   LeftButton: {
    height:styleConfig.navBarHeight,
    width:50,

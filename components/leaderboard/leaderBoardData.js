@@ -84,6 +84,7 @@ class LeaderboardData extends Component {
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
+              console.log('isConnected',isConnected);
               this.fetchLeaderBoard();
             }else{
               return this.fetchLeaderBoardLocally();

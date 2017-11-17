@@ -103,6 +103,7 @@ class Home extends Component {
         componentISmounted:true,
         my_rate:1.0,
         my_currency:"INR",
+        num_spikes:0,
       };
     }
 
@@ -447,7 +448,7 @@ class Home extends Component {
 
   onClickEnable(location) {
      var _this = this;
-    if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
+    if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.0) {
       Location.stopUpdatingLocation();
       clearInterval(this.IntervelSaveRun);
       _this.EndRunConfimationForlongRun();  
@@ -608,6 +609,11 @@ class Home extends Component {
 
           }     
         }else{
+          if (locationAccuracy > 100){
+            this.setState({
+              num_spikes:this.state.num_spikes+1, 
+            })
+          }
           if (this.state.GpsAccuracyCheck) {
             if(this.state.weakGPSPoints >= 10){
               this._ongpsWeakNotification();
@@ -961,6 +967,7 @@ class Home extends Component {
           StartRunTime:this.state.myrundate,
           EndRunTime:this.state.endDate,
           noOfsteps:this.state.numberOfSteps,
+          num_spikes:this.state.num_spikes,
           },
         navigator: this.props.navigator,
 
@@ -1099,8 +1106,6 @@ class Home extends Component {
       return (
         <View style={commonStyles.container}>
            <View ref="workspace" style={styles.workspace}>           
-                        
-          
             <View style={styles.WrapCompany}>
               <Image style={{resizeMode: 'contain',height:styleConfig.LogoHeight,width:styleConfig.LogoWidth,}}source={{uri:data.sponsors[0].sponsor_logo}}></Image>
               <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>

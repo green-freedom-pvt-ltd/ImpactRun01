@@ -32,7 +32,10 @@ if (PixelRatio.get() === 3) {
 }
 
 function BtnHight () {
- if(Dimensions.get('window').height === iphone7Plus){
+
+ if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 55;
+  }else if(Dimensions.get('window').height === iphone7Plus){
    return 60;
   }else if(Dimensions.get('window').height === iphone6) {
     return 55;
@@ -53,7 +56,7 @@ function GraphHeight (){
     return (Deviceheight/2)-120
   }else if (iphone6s === Deviceheight) {
     return (Deviceheight/2)-120
-  }else if (iphone6Plus === Deviceheight) {
+  }else if (iphone6Plus === Deviceheight && Dimensions.get('window').width === 414) {
     return (Deviceheight/2)-115
   }else if (iphone7 === Deviceheight) {
     return (Deviceheight/2)-115
@@ -92,19 +95,24 @@ function BtnWidth () {
 }
 }
 function fontSizer1 () {
-if(Dimensions.get('window').height === iphone7Plus){
-    return 22;
-  }else if(Dimensions.get('window').height === iphone6) {
-    return 19;
+ if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 18;
+  }else if(Dimensions.get('window').height === iphone7Plus){
+    return 20;
+  }
+  else if(Dimensions.get('window').height === iphone6) {
+    return 16;
   }else if (Dimensions.get('window').height === iphone5) {
     return 15;
   }else if (Dimensions.get('window').height < iphone5) {
-    return 18;
-  };
+    return 15;
+  }
 
 }
 function fontSizerlabel () {
-  if(Dimensions.get('window').height === iphone7Plus){
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 13;
+  }else if(Dimensions.get('window').height === iphone7Plus){
     return 13;
   }else if(Dimensions.get('window').height === iphone6) {
     return 12;
@@ -112,7 +120,9 @@ function fontSizerlabel () {
     return 10;
   }else if (Dimensions.get('window').height < iphone5) {
     return 6;
-  };
+  }else{
+    return 12;
+  }
 }
 
 function fontSizerImpact () {
@@ -128,19 +138,46 @@ function fontSizerImpact () {
 }
 
 function functionPadding(){
-  if (Dimensions.get('window').height === iphone7Plus) {
-    return 15
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 3;
+  }else if (Dimensions.get('window').height === iphone7Plus) {
+    return 3
   }else if(Dimensions.get('window').height === iphone6s){
-    return 12
+    return 3
   }else if(Dimensions.get('window').height === iphone5 ){
-    return 10
+    return 3
   }else if(Dimensions.get('window').height < iphone5 ){
+    return 3
+  }else{
+    return 2
+  }
+}
+
+function PaddingCard(){
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 8;
+  }else if (Dimensions.get('window').height === iphone7Plus) {
+    return 10
+  }else if(Dimensions.get('window').height === iphone6s){
+    return 7
+  }else if(Dimensions.get('window').height === iphone5 ){
+    return 5
+  }else if(Dimensions.get('window').height === iphone5 ){
+    return 5
+  }else if(Dimensions.get('window').height === iphone6 ){
+    return 5
+  }else if(Dimensions.get('window').height < iphone5 ){
+    return 4
+  }else{
     return 5
   }
 }
 
+
 function barChatFontSize(){
-  if (Dimensions.get('window').height === iphone7Plus) {
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 8;
+  }else if (Dimensions.get('window').height === iphone7Plus) {
     return 10
   }else if(Dimensions.get('window').height === iphone6s){
     return 8
@@ -148,11 +185,15 @@ function barChatFontSize(){
     return 7
   }else if(Dimensions.get('window').height < iphone5 ){
     return 5
+  }else{
+    return 8
   }
 }
 
 function runbtntop(){
-  if (Dimensions.get('window').height === iphone7Plus) {
+   if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 160;
+  }else if (Dimensions.get('window').height === iphone7Plus) {
     return 190
   }else if(Dimensions.get('window').height === iphone6s){
     return 170
@@ -160,10 +201,14 @@ function runbtntop(){
     return 125
   }else if(Dimensions.get('window').height < iphone5 ){
     return 95
+  }else{
+    return 170
   }
 }
 function barChatHight(){
-  if (Dimensions.get('window').height === iphone7Plus) {
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 200;
+  }else if (Dimensions.get('window').height === iphone7Plus) {
     return 250
   }else if(Dimensions.get('window').height === iphone6s){
     return 210
@@ -171,17 +216,23 @@ function barChatHight(){
     return 150
   }else if(Dimensions.get('window').height < iphone5 ){
     return 90
+  }else{
+    return 210
   }
 }
 
 function navBarHeight(){
-  if (Dimensions.get('window').height === iphone7Plus) {
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 64;
+  }else if (Dimensions.get('window').height === iphone7Plus) {
     return 64
   }else if(Dimensions.get('window').height === iphone6s){
     return 64
   }else if(Dimensions.get('window').height === iphone5 ){
     return 64
   } else if(Dimensions.get('window').height < iphone5 ){
+    return 64
+  }else{
     return 64
   }
 }
@@ -210,8 +261,10 @@ function fontSizer3 () {
 }
 }
 function fontSizer4 () {
-  if(Dimensions.get('window').height === iphone7Plus){
-    return 15;
+   if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 14;
+  }else if(Dimensions.get('window').height === iphone7Plus){
+    return 17;
   }else if(Dimensions.get('window').height === iphone6) {
     return 13;
   }else if (Dimensions.get('window').height === iphone5) {
@@ -222,7 +275,9 @@ function fontSizer4 () {
 }
  
 function fontSizerleaderBoardContent () {
-  if(Dimensions.get('window').height === iphone7Plus){
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 12;
+  }else if(Dimensions.get('window').height === iphone7Plus){
     return 13;
   }else if(Dimensions.get('window').height === iphone6) {
     return 12;
@@ -230,10 +285,14 @@ function fontSizerleaderBoardContent () {
     return 11;
   }else if(Dimensions.get('window').height < iphone5 ){
     return 10;
+  }else{
+    return 12;
   }
 }
 function TitleFontSize(){
-  if(Dimensions.get('window').height === iphone7Plus){
+  if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
+    return 18;
+  }else if(Dimensions.get('window').height === iphone7Plus){
     return 20;
   }else if(Dimensions.get('window').height === iphone6) {
     return 18;
@@ -241,6 +300,8 @@ function TitleFontSize(){
     return 16;
   }else if(Dimensions.get('window').height < iphone5 ){
     return 15;
+  }else{
+    return 12;
   }
 }
 
@@ -254,7 +315,10 @@ function LogoHeight () {
     return 70;
   }
 }
+
 }
+
+
 function LogoWidth () {
   if(Devicewidth > 320){
     return 200;
@@ -265,7 +329,10 @@ function LogoWidth () {
     return 100;
   }
 }
+
 }
+
+
 function CardHeight () {
   if(Deviceheight > 568){
     return Deviceheight-220;
@@ -279,6 +346,8 @@ function CardHeight () {
   }
 }
 }
+
+
 function barHeight () {
   if(Deviceheight > 568){
     return 10;
@@ -340,6 +409,7 @@ export default {
   fontSizerleaderBoardContent:fontSizerleaderBoardContent(),
   TitleFontSize:TitleFontSize(),
   barChatFontSize:barChatFontSize(),
+  PaddingCard:PaddingCard(),
   // navHight
   navBarHeight:navBarHeight(),
   // fontColors

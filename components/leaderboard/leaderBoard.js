@@ -87,6 +87,7 @@ var iphone7Plus = 736;
           this.setState({
             LeaderBoard:this.state.LeaderBoard.cloneWithRows(jsonData.results),
             fetched:true,
+            refreshing:false,
           }) 
         }else{
          this.fetchDataIfInternet()
@@ -124,7 +125,7 @@ var iphone7Plus = 736;
 
       _onRefresh() {
         this.setState({refreshing: true});
-        this.fetchLeaderBoard();
+        this.fetchDataIfInternet();
       }
      
       borderBottomWidth(){
@@ -209,9 +210,12 @@ var iphone7Plus = 736;
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected && this.state.user) {
+              console.log('isConnect leaderBoard',isConnected);
               this.fetchLeaderBoard();
             }else{
-              return this.fetchLeaderBoardLocally(this.state.value);
+               this.fetchLeaderBoardLocally(this.state.value);
+               AlertIOS.alert('No internet connection');
+
             }  
           }
         );
@@ -364,23 +368,22 @@ var iphone7Plus = 736;
       renderImpactLeagueIcon(){
         if (this.props.user != null) {
         return(
-           <TouchableOpacity style={{height:styleConfig.navBarHeight,width:styleConfig.navBarHeight-20,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToImpactLeague()} >
-             <Image style={{height:20,width:20,}} source={{uri: base64Icon, scale:3}} ></Image>
-            </TouchableOpacity>
+          <TouchableOpacity style={{flex:1,backgroundColor:'transparent',padding:5,top:-10,justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToImpactLeague()} >
+            <Icon style={{textAlign:'center',fontSize:26}} name ={'trophy'}></Icon>
+          </TouchableOpacity>
           );
          }else{
-          return;
+          return(
+            <View></View>
+            );
          }
       }
 
       render() {
         var dataleaderboad = this.state.LeaderBoardResult;
         return (
-          <View>      
-          <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Leaderboard</Text>
-              <View style={{position:'absolute',right:0,top:0,}}>{this.renderImpactLeagueIcon()}</View>
-            </View>      
+          <View>
+            <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()}/>      
             <View style= {styles.textlast7daysWrap}>
               <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Most Impact Last 7 days'} options={['Most Impact Last 7 days', 'Most Impact Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
               </ModalDropDown>

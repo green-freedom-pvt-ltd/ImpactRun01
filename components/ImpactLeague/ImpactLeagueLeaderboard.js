@@ -29,8 +29,7 @@ var deviceHeight = Dimensions.get('window').height;
 class ImpactLeagueLeaderBoard extends Component {
 
       constructor(props) {
-        super(props);
-       
+        super(props);  
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           ImpactLeagueLeaderBoardData: ds.cloneWithRows([]),
@@ -44,20 +43,18 @@ class ImpactLeagueLeaderBoard extends Component {
         this.renderRow = this.renderRow.bind(this);
       }
 
-     componentWillMount() {        
+      componentWillMount() {        
           AsyncStorage.getItem('my_currency', (err, result) => {
             this.setState({
               my_currency:JSON.parse(result),
-          })
-          })     
-          
-       AsyncStorage.getItem('my_rate', (err, result) => {
+            })
+          })            
+          AsyncStorage.getItem('my_rate', (err, result) => {
             this.setState({
               my_rate:JSON.parse(result),
-          })
+            })
           }) 
-
-     }
+      }
 
       componentDidMount() {
          this.FetchDataifInternet();
@@ -206,7 +203,7 @@ class ImpactLeagueLeaderBoard extends Component {
       leftIconRender(){
         return(
           <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'white',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+              <Icon style={{color:'black',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
             </TouchableOpacity>
         )
       }
@@ -224,7 +221,6 @@ class ImpactLeagueLeaderBoard extends Component {
           return this.renderLoadingView();
         }
         else{
-        console.log(this.state.isConnected);
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
            <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()}/>

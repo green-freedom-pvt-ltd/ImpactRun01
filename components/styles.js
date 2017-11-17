@@ -112,13 +112,8 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#00c1f2',
-    shadowColor: '#000000',
-      shadowOpacity: 0.8,
-      shadowRadius: 1,
-      shadowOffset: {
-        height: 0,
-      },
+    backgroundColor:'white',
+  
   },
   
   

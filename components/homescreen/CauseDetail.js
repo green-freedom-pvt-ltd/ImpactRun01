@@ -112,7 +112,7 @@ class CauseDetail extends Component {
     leftIconRender(){
       return(
          <TouchableOpacity style={{height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={this.popRoute.bind(this)} >
-           <Icon style={{color:'white',fontSize:40,fontWeight:'600'}}name={'ios-close'}></Icon>
+           <Icon style={{color:'black',fontSize:40,fontWeight:'600'}}name={'ios-close'}></Icon>
           </TouchableOpacity>
       )
      }

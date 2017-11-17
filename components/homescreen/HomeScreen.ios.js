@@ -24,13 +24,15 @@ import ReactNative,{
   ImageBackground,
   TouchableWithoutFeedback
 } from 'react-native';
- import {Navigator} from 'react-native-deprecated-custom-components';
-import LodingRunScreen from '../gpstracking/runlodingscreen'
-import Modal from '../downloadsharemeal/CampaignModal'
+
+
+
+import {Navigator} from 'react-native-deprecated-custom-components';
+import LodingRunScreen from '../gpstracking/runlodingscreen';
+import Modal from '../downloadsharemeal/CampaignModal';
 var { RNLocation: Location } = require('NativeModules');
 var DeviceInfo = require('react-native-device-info');
 import ImageLoad from 'react-native-image-placeholder';
-
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import Lodingscreen from '../../components/LodingScreen';
@@ -45,6 +47,7 @@ import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 import { takeSnapshot } from "react-native-view-shot";
 import Share, {ShareSheet, Button} from 'react-native-share';
 import LinearGradient from 'react-native-linear-gradient';
+import AnimateNumber from 'react-native-animate-number';
 
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
@@ -87,6 +90,8 @@ class Homescreen extends Component {
             snapshotContentContainer: false,
           },
           isDenied:false,
+          overall_impact:'',
+          my_rate:1,
         };
         this.getfeedCount = this.getfeedCount.bind(this);
         this.renderFeedIcon = this.renderFeedIcon.bind(this);
@@ -293,83 +298,37 @@ class Homescreen extends Component {
       componentWillMount() {
         this.getfeedCount();
          this.isKeyAlreadyExists();
-        // console.log('props currency', this.props.my_currency);
-
-
-        //  AsyncStorage.getItem('my_currency', (err, result) => {
-        //   var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-        //   console.log('resas', result);
-        //   if(result){
-        //     if(result != mycurrency) 
-        //       {
-        //         mycurrency = result;
-        //         AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
-        //       }
-        //   }
-        //   console.log('mycurrency', mycurrency);
-        // AsyncStorage.getItem('exchangeRates', (err, result) => {
-        //     this.setState({
-        //     exchange_rates:JSON.parse(result),  
-        //     })
-        //     console.log('exc2', this.state.exchange_rates);
-        //     for (var i = 0; i < this.state.exchange_rates.length; i++) { 
-        //       if (this.state.exchange_rates[i].currency == mycurrency){
-        //         this.setState({
-        //           my_rate:this.state.exchange_rates[i].rate,
-        //           my_currency:mycurrency,
-        //         })
-        //       }
-        //     }
-        //     console.log('countr', this.state.my_rate);
-        //     AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
-        //     // console.log('countr', DeviceInfo.getDeviceCountry());
-
-        //   })
-        // })   
-
-
-
-
-
-
-
-        
-        // var setting_currency = await AsyncStorage.getItem('my_currency');
-        if(!this.state.my_currency){
+         if(!this.state.my_currency){
           var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-          if (typeof this.props.my_currency != 'undefined')
-          {
+          if (typeof this.props.my_currency != 'undefined'){
             if(mycurrency != this.props.my_currency){
               mycurrency = this.props.my_currency;
-            }
-            
+            }           
           }
           AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
         }
-
-
         this.fetchifinternet();      
-      // PushNotificationIOS.addListener('register', this._onRegistered);
-      // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
-      // PushNotificationIOS.addListener('notification', this._onRemoteNotification);
-      // PushNotificationIOS.addListener('localNotification', this._onLocalNotification);
-      
-        PushNotificationIOS.requestPermissions();          
-        AsyncStorage.getItem('RID0', (err, result) => {
-          this.setState({
-          Rundata:JSON.parse(result),  
-          loaded:true,             
-           })
-          this.PostSavedRundataIfInternetisOn();      
-        })  
+        PushNotificationIOS.requestPermissions();              
+        this.PostSavedRundataIfInternetisOn();   
+      }
+
+
+
+      fetchLocalRunData(){
+        var runNumber=[];
+        var i;
         AsyncStorage.getItem('SaveRunCount', (err, result) => {
           this.setState({
-          RunCount:JSON.parse(result),  
-          loaded:true,             
-           })
-              
-        })  
-        
+            RunCount:JSON.parse(result),  
+            loaded:true,             
+          })          
+          var runcount = this.state.RunCount;
+          console.log('runcount',this.state.RunCount);
+          for (i = 0; i < runcount+1; i++) {
+            runNumber.push("RID" + i )  ;
+          }
+          this.postPastRunoldSync();
+        })
       }
        
       componentWillUnmount() {
@@ -380,150 +339,7 @@ class Homescreen extends Component {
       }
 
 
-
-      getFeedFromlocal(){
-       AsyncStorage.getItem('feedData', (err, result) => { 
-          if (result != null || undefined) {
-          var feeddata = JSON.parse(result);  
-          console.log("faqdata",feeddata);
-          // AlertIOS.alert("result",JSON.stringify(feeddata));
-          this.setState({
-           loaded: true,
-          }) 
-        }else{
-          this.fetchifinternet();
-        }
-        });
-      }
-      
-      fetchifinternet(){
-         NetInfo.isConnected.fetch().done(
-          (isConnected) => { this.setState({isConnected}); 
-            if (isConnected) {
-              // console.log("isind");
-               this.fetchFeedData();
-            }else{
-              this.getFeedFromlocal();
-            } 
-          }
-        );
-      }
-
-      fetchFeedData() {
-        var url = 'http://dev.impactrun.com/api/messageCenter/';
-        fetch(url)
-        .then( response => response.json() )
-        .then( jsonData => {
-        this.setState({
-          loaded: true,
-          notificationCount:jsonData.count,
-        });
-        // console.log("jsonData.results",jsonData);
-        AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
-        });
-        })
-        .catch( error => console.log('Error fetching: ' + error) );
-      }
-  
-      PostSavedRundataIfInternetisOn(){
-           if(this.props.user) {
-           NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-              if (isConnected && this.state.Rundata != null) {
-                  this.postPastRun();
-               }
-            }
-           );  
-         }
-      }
-
-
-      cardImageheight(){
-        if (deviceheight === iphone6) {
-         return deviceheight/2-110
-        }else if (Dimensions.get('window').height === iphone5){
-          return deviceheight/2-110
-        }
-        else if (Dimensions.get('window').height === iphone6SPlus){
-          return deviceheight/2-140
-        }
-        else if (Dimensions.get('window').height < iphone5){
-         return deviceheight/2-110
-        }
-      }
-
-     
-
-      showImage(cause){
-        if (this.state.loadingimage === true) {
-          return(
-            <Image style={styles.cover}></Image>
-            )
-        }else{
-          return(
-            <View>
-            <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.cover} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_image}} style={styles.cover}>        
-            </ImageLoad>
-              <View style={{paddingTop:5,paddingLeft:15,flex:-1,height:30,backgroundColor:'rgba(255, 255, 255, 0.75)'}}>
-                  <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3, justifyContent: 'center',alignItems: 'center', color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
-                    {cause.cause_category}
-                  </Text>
-              </View>
-           </View>
-            )
-        }
-      }
-
-
-      //  _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-      //   // Should we become active when the user presses down on the circle?
-      
-      //   console.log('myparesesponced');
-      //   return false;
-      // }
-
-      // _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-      //   // Should we become active when the user moves a touch over the circle?\
-        
-      //   console.log('myparesesponced');
-      //   return true;
-      // }
-
-
-      componentDidMount() {       
-        var provider = this.props.provider;
-        var causeNum = this.props.myCauseNum;
-       
-        if (causeNum != null || undefined) {
-          try {
-            AsyncStorage.multiGet(causeNum, (err, stores) => {
-
-                var _this = this
-                stores.map((item) => {
-
-                    let key = item[0];
-                    let val = JSON.parse(item[1]);
-                   
-                    let causesArr = _this.state.causes.slice()
-                    causesArr.push(val)  
-                    // console.log('causesArr',causesArr);                
-                    _this.setState({causes: causesArr})
-                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
-                    _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
-                });
-              this.setState({
-                loadingimage:false,
-                navigation: Object.assign({}, this.state.navigation, {index: 0, routes: Object.keys(this.state.album).map(key => ({ key })), })
-              })
-          });
-          } catch (err) {
-            console.log(err)
-          } 
-        }else{
-          this.props.fetchDataonInternet();
-        }
-      }
-     postPastRun(){
+    postPastRunoldSync(){
       var userdata = this.props.user;
       var user_id =JSON.stringify(userdata.user_id);
       var token = JSON.stringify(userdata.auth_token);
@@ -544,6 +360,8 @@ class Homescreen extends Component {
           loaded:true,             
           }) 
          var RunData = this.state.MyRunVal;
+         console.log('RunData',RunData);
+         if (RunData != null) {
          fetch(apis.runApi, {
           method: "POST",
           headers: {  
@@ -583,17 +401,198 @@ class Homescreen extends Component {
         });      
         this.RemoveStoredRun(runNumber);
        })
+       }
       });
       })
     }
 
-    RemoveStoredRun(runNumber){
 
+
+
+     removeByAttr (arr, attr, value){
+          var i = arr.length;
+          while(i--){
+             if( arr[i] 
+                 && arr[i].hasOwnProperty(attr) 
+                 && (arguments.length > 2 && arr[i][attr] === value ) ){ 
+
+                 arr.splice(i,1);
+
+             }
+          }
+          console.log('arr',arr);
+
+          return arr;
+
+      }    
+
+
+
+
+      getFeedFromlocal(){
+        AsyncStorage.getItem('feedData', (err, result) => { 
+        if (result != null || undefined) {
+          var feeddata = JSON.parse(result);  
+          this.setState({
+           loaded: true,
+          }) 
+        }else{
+          this.fetchifinternet();
+        }
+        });
+      }
+      
+      fetchifinternet(){
+         NetInfo.isConnected.fetch().done(
+          (isConnected) => { this.setState({isConnected}); 
+            if (isConnected) {
+              this.fetchFeedData();
+            }else{
+              this.getFeedFromlocal();
+            } 
+          }
+        );
+      }
+
+      fetchFeedData() {
+        var url = 'http://dev.impactrun.com/api/messageCenter/';
+        fetch(url)
+        .then( response => response.json() )
+        .then( jsonData => {
+        this.setState({
+          loaded: true,
+          notificationCount:jsonData.count,
+        });
+        // console.log("jsonData.results",jsonData);
+        AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
+        });
+        })
+        .catch( error => console.log('Error fetching: ' + error) );
+      }
+  
+      PostSavedRundataIfInternetisOn(){
+        if(this.props.user) {
+          NetInfo.isConnected.fetch().done(
+          (isConnected) => {
+            if (isConnected) {
+              this.fetchLocalRunData();
+            }else{
+            }
+          }
+         );  
+        }
+      }
+
+
+      cardImageheight(){
+        if (deviceheight === iphone6) {
+         return deviceheight/2-110
+        }else if (Dimensions.get('window').height === iphone5){
+          return deviceheight/2-110
+        }
+        else if (Dimensions.get('window').height === iphone6SPlus){
+          return deviceheight/2-140
+        }
+        else if (Dimensions.get('window').height < iphone5){
+         return deviceheight/2-110
+        }
+      }
+
+     
+
+      showImage(cause){
+        if (this.state.loadingimage === true) {
+          return(
+            <Image style={styles.cover}></Image>
+            )
+        }else{
+          return(
+            <View>
+              <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.cover} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_image}} style={styles.cover}>        
+              </ImageLoad>
+              <View style={{paddingLeft:15,flex:-1,backgroundColor:'rgba(255, 255, 255, 0.75)',top:-30,height:30,justifyContent:'center'}}>
+                  <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3,  color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+                    {cause.cause_category}
+                  </Text>
+              </View>
+            </View>
+            )
+        }
+      }
+
+
+      //  _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
+      //   // Should we become active when the user presses down on the circle?
+      
+      //   console.log('myparesesponced');
+      //   return false;
+      // }
+
+      // _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
+      //   // Should we become active when the user moves a touch over the circle?\
+        
+      //   console.log('myparesesponced');
+      //   return true;
+      // }
+
+
+      componentDidMount() {  
+        AsyncStorage.getItem('my_rate', (err, result) => {
+          this.setState({
+            my_rate:JSON.parse(result),
+          })
+            
+        })
+      AsyncStorage.getItem('overall_impact', (err, result) => {
+          this.setState({
+            overall_impact:JSON.parse(result),
+          }) 
+        })    
+
+        var provider = this.props.provider;
+        var causeNum = this.props.myCauseNum;
+       
+        if (causeNum != null || undefined) {
+          try {
+            AsyncStorage.multiGet(causeNum, (err, stores) => {
+
+                var _this = this
+                stores.map((item) => {
+
+                    let key = item[0];
+                    let val = JSON.parse(item[1]);
+                   
+                    let causesArr = _this.state.causes.slice()
+                    causesArr.push(val)  
+                    console.log('causesArr',causesArr);                
+                    _this.setState({causes: causesArr})
+                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
+                    _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
+                });
+              this.setState({
+                loadingimage:false,
+                navigation: Object.assign({}, this.state.navigation, {index: 0, routes: Object.keys(this.state.album).map(key => ({ key })), })
+              })
+          });
+          } catch (err) {
+            console.log(err)
+          } 
+        }else{
+          this.props.fetchDataonInternet();
+        }
+      }
+
+
+     
+
+
+    
+
+    RemoveStoredRun(runNumber){
       let keys = runNumber;
       keys.push("SaveRunCount");
-        AsyncStorage.multiRemove(keys, (err) => {
-      });
-
+      AsyncStorage.multiRemove(keys, (err) => {
+    });
     }
     
 
@@ -770,17 +769,17 @@ class Homescreen extends Component {
     functionForIphone4Brief(cause){
       if (Dimensions.get('window').height === 667) {
       return(
-        <Text  numberOfLines={4} style={styles.causeBrief}>{cause.cause_brief}</Text>
+        <Text  numberOfLines={3} style={styles.causeBrief}>{cause.cause_brief}</Text>
         )
       }else if(Dimensions.get('window').height === 568){
       
           return(
-          <Text  numberOfLines={4} style={styles.causeBrief}>{cause.cause_brief}</Text>
+          <Text  numberOfLines={3} style={styles.causeBrief}>{cause.cause_brief}</Text>
           )
     
       }else if(Dimensions.get('window').height > 667){
           return(
-          <Text  numberOfLines={4} style={styles.causeBrief}>{cause.cause_brief}</Text>
+          <Text  numberOfLines={3} style={styles.causeBrief}>{cause.cause_brief}</Text>
           )
     
       }else if(Dimensions.get('window').height < 568){
@@ -803,7 +802,16 @@ class Homescreen extends Component {
         })
         // console.log('height',this.state.height);
     };
-
+   
+   putComma(data){
+    if (data.length > 4) {
+      var numlength = data.length;
+      var commmaplacerun = numlength-4;
+      return JSON.parse(data.slice(0,commmaplacerun)+ ',' + data.slice(commmaplacerun,numlength));
+      }else{
+        return JSON.parse(data);
+      }
+   }
 
 
     // RENDER_SCREEN
@@ -812,27 +820,15 @@ class Homescreen extends Component {
         // console.log('renderComponent',this.state.renderComponent);
         var cause = this.state.album[route.key][5]
         var money = JSON.stringify(parseFloat(parseFloat(this.state.album[route.key][0]).toFixed(0)/parseFloat(this.state.my_rate).toFixed(0)).toFixed(0));
-        // var money = JSON.stringify(parseFloat(this.state.album[route.key][0]).toFixed(0)); Old money value used
-        // console.log('money2',money);
-        if (money.length > 5) {
-          var lenth = money.length;
-          var commmaplace = lenth-4;
-          var Moneyfinalvalue =JSON.parse(money.slice(0,commmaplace)+ ',' + money.slice(commmaplace,lenth)) ; 
-        }else{
-          // AlertIOS.alert("someval");
-          var Moneyfinalvalue = JSON.parse(money);
-        }
-        // var moneyslice = money.slice(0,2);
-        var moneyslice = money.slice(0,2);
-        var Runs = JSON.stringify(parseFloat(this.state.album[route.key][2]).toFixed(0));
-        if (Runs.length > 5) {
-        var runlength = Runs.length;
-        var commmaplacerun =runlength-4;
-        var runFinalvalue = JSON.parse(Runs.slice(0,commmaplacerun)+ ',' + Runs.slice(commmaplacerun,runlength));
+        
+        var Moneyfinalvalue = (Math.round(JSON.parse(money)* 100)/100).toLocaleString(); 
+       
+        var runFinalvalue = (Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString();
         //This was length copied pasted @Akash avoid such copy pastes dude
-        }else{
-          var runFinalvalue = JSON.parse(Runs);
-        }
+      
+        
+        var causeAmountFinalvalue = (Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString();
+           
         if (cause.is_completed != true) {
         // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
         return (
@@ -841,27 +837,34 @@ class Homescreen extends Component {
            <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause,this.state.album[route.key][9])} >
             <View  style={styles.album}>
               {this.showImage(cause)}
-              <View style={styles.borderhide}></View>
-              <View style={{flex:1,justifyContent: 'center',alignItems: 'center'}}>
+              <View style={{flex:1,top:-30,justifyContent:'center',backgroundColor:"transparent", paddingTop:30}}>
+              <View style={{justifyContent: 'center',alignItems: 'center',backgroundColor:'transparent',paddingBottom:styleConfig.PaddingCard}}>
                 <View style={{width:deviceWidth-125}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:10,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
+                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize4-2,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
                 </View>
               </View>
-              <View style={{flex:1.5,justifyContent: 'flex-end',alignItems: 'center'}}>
-                    {this.functionForIphone4Brief(cause)}
-               </View>
+              <View style={{justifyContent: 'center',alignItems: 'center',backgroundColor:'transparent',paddingBottom:styleConfig.PaddingCard}}>
+                  {this.functionForIphone4Brief(cause)}
+              </View>
               <View style={styles.barWrap}>
-              <View style={{width:deviceWidth-125}}>
-                <View style = {styles.wraptext}>
-                  <Text style = {styles.textMoneyraised}>Raised <Icon style={{color:styleConfig.greyish_brown_two,fontSize:styleConfig.FontSize3,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon> {Moneyfinalvalue}</Text>
-                  <Text style = {styles.textMoneyraised}>{parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
-                </View>
-                <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-125} progress={cause.amount_raised/cause.amount}/>
-                <View style = {styles.wraptext2}>
-                  <Text style = {styles.textMoneyraised}> {runFinalvalue} ImpactRuns </Text>
-                </View>
-                </View>
+                  <View style={{width:deviceWidth-125}}>
+                    <View style = {styles.wraptext}>
+                      <Text style = {styles.textMoneyraisedlableRemainingpercentage}>{100-parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
+                    </View>
+                    <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-125} progress={cause.amount_raised/cause.amount}/>
+                    <View style = {styles.TextWaperforCuaseRaisedAmount}>
+                      <View style = {styles.wraptext2}>
+                        <Text style = {styles.textMoneyraisedlabel}> WALK & RUNS </Text>
+                        <Text style = {styles.textMoneyraised}> {runFinalvalue} </Text>
+                      </View>
+                      <View style = {styles.wraptext2}>
+                        <Text style = {styles.textMoneyraised2Label}> GOAL </Text>
+                        <Text style = {styles.textMoneyraised2}><Icon style={styles.textMoneyraised2}name={this.state.my_currency.toLowerCase()}></Icon> {causeAmountFinalvalue}</Text>
+                      </View>
+                    </View>
+                  </View>
+              </View>
               </View>
             </View>
             </TouchableWithoutFeedback>
@@ -951,18 +954,31 @@ class Homescreen extends Component {
     // RENDER_FUNCTION
     render(route) { 
        var cause;
-       // console.log('prpos rate', this.props.my_currency);
         if (!!this.state.causes.length && this.state.navigation.index+1) {
           cause = this.state.causes[this.state.navigation.index]
         } else {
           cause = {}
         }
+       var Overallimpact = this.state.overall_impact/this.state.my_rate;
+       var Impact = parseInt(Overallimpact);
       if (this.props.myCauseNum != null ) {
       return (
           <View style={{height:deviceheight,width:deviceWidth}}>
           <View style={commonStyles.Navbar}>
             <Text style={commonStyles.menuTitle}>Impact</Text>
           </View>
+          <View style={{justifyContent:'flex-end',backgroundColor:'transparent',height:deviceheight-114}}>
+          <View style={styles.TotalRaisedTextWrap}>
+           <View style={{flexDirection:'column'}}>           
+            <Text style={styles.TotalRaisedText}>
+            <Icon style={[styles.TotalRaisedText,{fontSize:styleConfig.FontSizeTitle+20}]}name={this.state.my_currency.toLowerCase()}></Icon>
+              <AnimateNumber value={Impact} formatter={(val) => {
+                  return ' ' + parseFloat(val).toFixed(0)
+                }} ></AnimateNumber>        
+           </Text>
+          <Text style={styles.totaltextlable}>Total Impact</Text>
+          </View>
+           </View>
           <TabViewAnimated
              
              style={[ styles.container, this.props.style ]}
@@ -976,6 +992,7 @@ class Homescreen extends Component {
              <View style={styles.BtnWraperWrap}>
               <View style={styles.btnWrap}>
                {this.BiginRunBtn(cause)}
+              </View>
               </View>
               </View>
              
@@ -1003,11 +1020,34 @@ class Homescreen extends Component {
     },
 
     BtnWraperWrap:{
-      backgroundColor:'#e2e5e6',
-      height:((deviceheight-120)/100)*15,
+      backgroundColor:'white',
+      height:((deviceheight-120)/100)*13,
       width:deviceWidth,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    TotalRaisedTextWrap:{
+       height:((deviceheight-120)/100)*15,
+       width:deviceWidth,
+       backgroundColor:'transparent',
+       justifyContent:'center',
+       alignItems:'center'
+    },
+    totaltextlable:{
+       flex:1,
+       justifyContent:'center',
+       textAlign:'center',
+       fontSize:styleConfig.FontSize4,
+       color:'grey',
+       fontWeight:'600',
+
+
+    },
+    TotalRaisedText:{
+       fontSize:styleConfig.FontSizeTitle+24,
+       color:'#33f373',
+       fontWeight:'800',
+       fontFamily:styleConfig.FontFamily,
     },
     btnWrap:{
       flex:1,
@@ -1016,10 +1056,10 @@ class Homescreen extends Component {
     },
 
     container: {
-      backgroundColor:'#e2e5e6',
-      padding:((deviceheight-120)/100)*5,
+      backgroundColor:'white',
+      padding:((deviceheight-120)/100)*3,
       paddingLeft:0,
-      height:((deviceheight-120)/100)*86,
+      height:((deviceheight-120)/100)*77,
       justifyContent: 'center',
     },
 
@@ -1065,7 +1105,6 @@ class Homescreen extends Component {
      },
 
      cardTexwrap:{
-      flex:1,
       padding:15,
       paddingTop:0,
       paddingBottom:0,
@@ -1100,9 +1139,10 @@ class Homescreen extends Component {
 
     causeTitle:{
       color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSizeTitle,
-      fontWeight:'400',
+      fontSize:styleConfig.FontSizeTitle+4,
+      fontWeight:'600',
       fontFamily:styleConfig.FontFamily,
+      paddingBottom:styleConfig.PaddingCard,
     },
 
     causeBrief:{
@@ -1114,33 +1154,65 @@ class Homescreen extends Component {
     },
   
     barWrap:{
-      justifyContent: 'center',
-      flex:2,
+      justifyContent: 'flex-start',
+      backgroundColor:'white',
       alignItems: 'center',
-
     },
+
     wraptext:{
+      justifyContent: 'flex-end',
+      flexDirection:'row',
+    },
+
+    TextWaperforCuaseRaisedAmount:{
       justifyContent: 'space-between',
       flexDirection:'row',
-      paddingBottom:5,
+      backgroundColor:'white',
+      alignItems:'center',
+      paddingTop:styleConfig.PaddingCard,
     },
+
     wraptext2:{
       paddingTop:styleConfig.functionPadding,
       justifyContent: 'space-between',
-      flexDirection:'row',
+      flexDirection:'column',
+    },
+    textMoneyraisedlableRemainingpercentage:{
+      left:0,
+      color:'grey',
+      fontSize:styleConfig.FontSize4-2,
+      fontWeight:'400',
+      fontFamily:styleConfig.FontFamily,
+      paddingBottom:styleConfig.PaddingCard,
+    },
+    textMoneyraisedlabel:{
+      left:0,
+      color:'grey',
+      fontSize:styleConfig.FontSize4-2,
+      fontWeight:'400',
+      fontFamily:styleConfig.FontFamily,
     },
     textMoneyraised:{
       left:0,
       color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSize3,
-      fontWeight:'600',
+      fontSize:styleConfig.FontSizeTitle,
+      fontWeight:'400',
       fontFamily:styleConfig.FontFamily,
     },
     textMoneyraised2:{
       left:0,
       color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSize4,
-      fontWeight:'600',
+      fontSize:styleConfig.FontSizeTitle,
+      fontWeight:'400',
+      textAlign:'right',
+      fontFamily:styleConfig.FontFamily,
+    },
+    textMoneyraised2Label:{
+      left:0,
+      color:'grey',
+      fontSize:styleConfig.FontSize4-2,
+      fontWeight:'400',
+      textAlign:'right',
       fontFamily:styleConfig.FontFamily,
     },
     btnbegin2:{
@@ -1169,18 +1241,18 @@ class Homescreen extends Component {
       backgroundColor:"red",
     },
     modelStyle:{
-    justifyContent: 'center',
-    alignItems: 'center',
-   },
-   modelWrap:{
-    padding:20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:"white",
-    paddingBottom:5,
-    borderRadius:5,
-   },
-   iconWrapmodel:{
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modelWrap:{
+      padding:20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor:"white",
+      paddingBottom:5,
+      borderRadius:5,
+    },
+    iconWrapmodel:{
      justifyContent: 'center',
      alignItems: 'center',
      height:70,
@@ -1224,6 +1296,8 @@ class Homescreen extends Component {
     fontFamily: styleConfig.FontFamily,
    },
   });
+
+
   export default Homescreen;
   // <View style={{bottom:0, width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
      
