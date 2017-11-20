@@ -374,7 +374,6 @@ class Tabs extends Component {
             this.setState({
               dataCauseNum:JSON.parse(result),
             })
-            console.log('dataCauseNum',this.state.dataCauseNum);
             this.fetchLocalRunData();
             if (this.state.dataCauseNum != null ) {
             try {
@@ -560,8 +559,8 @@ class Tabs extends Component {
                         this.setState({
                             selectedTab: 'Leaderboard',
                         });
-                  }}>
-                 <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
+                    }}>
+                    <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
                     selected={this.state.selectedTab === 'help'}

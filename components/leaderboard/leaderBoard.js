@@ -90,7 +90,9 @@ var iphone7Plus = 736;
             refreshing:false,
           }) 
         }else{
+        if (this.state.user != null) {
          this.fetchDataIfInternet()
+        }
         }
         });
       }
@@ -209,12 +211,11 @@ var iphone7Plus = 736;
       fetchDataIfInternet(){
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
-            if (isConnected && this.state.user) {
+            if (isConnected) {
               console.log('isConnect leaderBoard',isConnected);
               this.fetchLeaderBoard();
             }else{
                this.fetchLeaderBoardLocally(this.state.value);
-               AlertIOS.alert('No internet connection');
 
             }  
           }

@@ -57,20 +57,20 @@ class EndFeedBack extends Component {
         this.props.navigator.pop({});
     }
 
-      navigateToHome(rowData){
+      // navigateToHome(rowData){
 
-        this.props.navigator.push({
-          title:'Select issue',         
-          // component:QuestionLists,
-          // navigationBarHidden: false,
-          // showTabBar: true,
-          id:'tab',
-          passProps:{
-           getUserData:this.props.getUserData,
-           user:this.props.user,
-          }
-        })
-      }
+      //   this.props.navigator.push({
+      //     title:'Select issue',         
+      //     // component:QuestionLists,
+      //     // navigationBarHidden: false,
+      //     // showTabBar: true,
+      //     Component:'tab',
+      //     passProps:{
+      //      getUserData:this.props.getUserData,
+      //      user:this.props.user,
+      //     }
+      //   })
+      // }
 
     postFeedback(){
       if (this.props.user){
@@ -125,7 +125,6 @@ class EndFeedBack extends Component {
           console.log('responce',response);
           dismissKeyboard()
           AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
-          this.navigateToHome();
 
         })
         .catch((err) => {

@@ -95,7 +95,7 @@ class Homescreen extends Component {
         };
         this.getfeedCount = this.getfeedCount.bind(this);
         this.renderFeedIcon = this.renderFeedIcon.bind(this);
-        this.navigateToFeed = this.navigateToFeed.bind(this);
+        // this.navigateToFeed = this.navigateToFeed.bind(this);
         // AsyncStorage.getItem('my_currency', (err, result) => {
         //     this.setState({
         //       settings_currency:JSON.parse(result),
@@ -200,6 +200,7 @@ class Homescreen extends Component {
       }
 
       getmyCurrency(countrycode){
+        console.log('countrycode',countrycode);
         switch(countrycode){
           case 'US': return 'USD';
                     break;
@@ -249,15 +250,23 @@ class Homescreen extends Component {
           console.log('resas', result);
           if (result == null)
           {
-            result = JSON.stringify(this.getmyCurrency(DeviceInfo.getDeviceCountry()));
+            result = this.getmyCurrency(DeviceInfo.getDeviceCountry());
+            var data = JSON.stringify(result);
+            console.log('result ',result);
+            this.setState({
+             my_currency:JSON.parse(data)
+            })
+            AsyncStorage.setItem('my_currency',data);
+            this.getExchangeRate();
             // console.log('resas', result);
-          }
+          }else{
           this.setState({
             my_currency:JSON.parse(result)
           })
           AsyncStorage.setItem('my_currency',result);
           this.getExchangeRate();
-          return result;
+          }
+          
           //   this.setState({
           //     setting_currency:JSON.parse(result),
           // })
@@ -266,7 +275,7 @@ class Homescreen extends Component {
       }
 
       getExchangeRate(){
-         AsyncStorage.getItem('exchangeRates', (err, result) => {
+        AsyncStorage.getItem('exchangeRates', (err, result) => {
           console.log('exchangeRates',result);
           this.setState({
           exchange_rates:JSON.parse(result),  
@@ -288,7 +297,8 @@ class Homescreen extends Component {
             })
           }
           console.log('countr', this.state.my_rate);
-          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+          var my_rate = JSON.stringify(this.state.my_rate);
+          AsyncStorage.setItem('my_rate',my_rate);
           // console.log('countr', DeviceInfo.getDeviceCountry());
 
         })
@@ -303,11 +313,13 @@ class Homescreen extends Component {
           if (typeof this.props.my_currency != 'undefined'){
             if(mycurrency != this.props.my_currency){
               mycurrency = this.props.my_currency;
+              console.log('mycurrency ',mycurrency);
+               AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
             }           
           }
-          AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
+         
         }
-        this.fetchifinternet();      
+        // this.fetchifinternet();      
         PushNotificationIOS.requestPermissions();              
         this.PostSavedRundataIfInternetisOn();   
       }
@@ -321,13 +333,15 @@ class Homescreen extends Component {
           this.setState({
             RunCount:JSON.parse(result),  
             loaded:true,             
-          })          
+          })  
+          if (this.state.RunCount != null) {        
           var runcount = this.state.RunCount;
           console.log('runcount',this.state.RunCount);
           for (i = 0; i < runcount+1; i++) {
             runNumber.push("RID" + i )  ;
           }
           this.postPastRunoldSync();
+        }
         })
       }
        
@@ -342,6 +356,7 @@ class Homescreen extends Component {
     postPastRunoldSync(){
       var userdata = this.props.user;
       var user_id =JSON.stringify(userdata.user_id);
+
       var token = JSON.stringify(userdata.auth_token);
       var tokenparse = JSON.parse(token);
       var runNumber=[];
@@ -429,46 +444,46 @@ class Homescreen extends Component {
 
 
 
-      getFeedFromlocal(){
-        AsyncStorage.getItem('feedData', (err, result) => { 
-        if (result != null || undefined) {
-          var feeddata = JSON.parse(result);  
-          this.setState({
-           loaded: true,
-          }) 
-        }else{
-          this.fetchifinternet();
-        }
-        });
-      }
+      // getFeedFromlocal(){
+      //   AsyncStorage.getItem('feedData', (err, result) => { 
+      //   if (result != null || undefined) {
+      //     var feeddata = JSON.parse(result);  
+      //     this.setState({
+      //      loaded: true,
+      //     }) 
+      //   }else{
+      //     this.fetchifinternet();
+      //   }
+      //   });
+      // }
       
-      fetchifinternet(){
-         NetInfo.isConnected.fetch().done(
-          (isConnected) => { this.setState({isConnected}); 
-            if (isConnected) {
-              this.fetchFeedData();
-            }else{
-              this.getFeedFromlocal();
-            } 
-          }
-        );
-      }
+      // fetchifinternet(){
+      //    NetInfo.isConnected.fetch().done(
+      //     (isConnected) => { this.setState({isConnected}); 
+      //       if (isConnected) {
+      //         this.fetchFeedData();
+      //       }else{
+      //         this.getFeedFromlocal();
+      //       } 
+      //     }
+      //   );
+      // }
 
-      fetchFeedData() {
-        var url = 'http://dev.impactrun.com/api/messageCenter/';
-        fetch(url)
-        .then( response => response.json() )
-        .then( jsonData => {
-        this.setState({
-          loaded: true,
-          notificationCount:jsonData.count,
-        });
-        // console.log("jsonData.results",jsonData);
-        AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
-        });
-        })
-        .catch( error => console.log('Error fetching: ' + error) );
-      }
+      // fetchFeedData() {
+      //   var url = 'http://dev.impactrun.com/api/messageCenter/';
+      //   fetch(url)
+      //   .then( response => response.json() )
+      //   .then( jsonData => {
+      //   this.setState({
+      //     loaded: true,
+      //     notificationCount:jsonData.count,
+      //   });
+      //   // console.log("jsonData.results",jsonData);
+      //   AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
+      //   });
+      //   })
+      //   .catch( error => console.log('Error fetching: ' + error) );
+      // }
   
       PostSavedRundataIfInternetisOn(){
         if(this.props.user) {
@@ -539,13 +554,13 @@ class Homescreen extends Component {
       componentDidMount() {  
         AsyncStorage.getItem('my_rate', (err, result) => {
           this.setState({
-            my_rate:JSON.parse(result),
+            my_rate:(result != null )? JSON.parse(result):1,
           })
             
         })
       AsyncStorage.getItem('overall_impact', (err, result) => {
           this.setState({
-            overall_impact:JSON.parse(result),
+            overall_impact:(result != null)? JSON.parse(result):0,
           }) 
         })    
 
@@ -819,15 +834,15 @@ class Homescreen extends Component {
       if (this.state.renderComponent) {
         // console.log('renderComponent',this.state.renderComponent);
         var cause = this.state.album[route.key][5]
-        var money = JSON.stringify(parseFloat(parseFloat(this.state.album[route.key][0]).toFixed(0)/parseFloat(this.state.my_rate).toFixed(0)).toFixed(0));
+        // var money = JSON.stringify(parseFloat(parseFloat(this.state.album[route.key][0]).toFixed(0)/parseFloat(this.state.my_rate).toFixed(0)).toFixed(0));
         
-        var Moneyfinalvalue = (Math.round(JSON.parse(money)* 100)/100).toLocaleString(); 
+        // var Moneyfinalvalue = (Math.round(JSON.parse(money)* 100)/100).toLocaleString(); 
        
-        var runFinalvalue = (Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString();
+        var runFinalvalue = (this.state.album[route.key][2] != null)?(Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString():0;
         //This was length copied pasted @Akash avoid such copy pastes dude
       
         
-        var causeAmountFinalvalue = (Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString();
+        var causeAmountFinalvalue = (cause.amount != null && this.state.my_rate != null)?(Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString():0;
            
         if (cause.is_completed != true) {
         // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
@@ -1299,10 +1314,5 @@ class Homescreen extends Component {
 
 
   export default Homescreen;
-  // <View style={{bottom:0, width:deviceWidth-65,justifyContent: 'center',alignItems: 'center',}}>
-     
-  //     <TouchableOpacity  style={styles.btnbegin} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen()}>
-  //       <Image style={{height:40,width:60}} source={ require('../../images/RunImage.png')}></Image>
-  //     </TouchableOpacity>
-     
-  // </View>
+
+

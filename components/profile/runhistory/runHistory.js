@@ -83,7 +83,7 @@ class RunHistory extends Component {
               console.log( "result",JSON.parse(result));
               var rundata = JSON.parse(result);
               this.setState({
-                RunCount:rundata.length,
+                RunCount:(rundata != null)? rundata.length:0,
               })
               
             })  
@@ -162,12 +162,14 @@ class RunHistory extends Component {
               var rundata = JSON.parse(result);
               this.setState({
                 runUnsynceddata:rundata,
-                RunCount:rundata.length,
+                RunCount:(rundata != null)? rundata.length:0,
               })
+              if (rundata != null){ 
               rundata.map((result,i)=>{
-                console.log('resultIrun ',result);
-                this.postPastRun(result);
-              })
+                 console.log('resultIrun ',result);
+                 this.postPastRun(result);
+               })
+              }
             })     
         }
 
@@ -436,7 +438,7 @@ class RunHistory extends Component {
                   <Icon3 style={{color:"white",fontSize:30,}} name={'md-create'}></Icon3>
                 </View>
                 <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>ENTER BODY WEIGHT</Text>
-                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                <View style={{justifyContent: 'center',alignItems: 'center',}}>
                   <Text style={{textAlign:'center', marginBottom:10,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your body weight is required to calculate calories burnt in every run or walk </Text>
                   <TextInput
                     placeholder="Enter Your weight in KG"
@@ -914,7 +916,8 @@ const styles = StyleSheet.create({
     backgroundColor:"white",
     paddingBottom:5,
     borderRadius:5,
-   },
+    
+  },
 
 
   modelStyle:{
