@@ -183,7 +183,7 @@ class RunHistory extends Component {
                 if (this.state.user != null) {
                   this.postPastRun(result);
                 }else{
-                  AlertIOS.alert('some');
+                  console.log('no user for post run');
                 }
                })
               }
