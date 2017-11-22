@@ -54,6 +54,8 @@ class QuestionLists extends Component {
             runData:this.props.runData,
             data:rowData,
             user:this.props.user,
+            tag:this.props.tag,
+            sub_tag:rowData.labelname,
             getUserData:this.props.getUserData,
 
           }
@@ -63,6 +65,7 @@ class QuestionLists extends Component {
  
 
       componentDidMount() {
+        console.log('tags',this.props.tag);
         this.setState({
            HelpCenterTabs: this.state.HelpCenterTabs.cloneWithRows(this.props.data),
         })

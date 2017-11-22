@@ -8,6 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
   AlertIOS,
+  ActivityIndicator,
+  NetInfo,
 } from 'react-native';
 import apis from '../apis';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -25,11 +27,13 @@ class EndFeedBack extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        moreText:''
+        moreText:'',
       };
     }
 
     componentDidMount() {
+     
+      console.log('this.props.sub_tag',this.props.sub_tag,this.props.tag,this.props.data);
       // AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
      
     }
@@ -73,69 +77,102 @@ class EndFeedBack extends Component {
       // }
 
     postFeedback(){
-      if (this.props.user){
-        console.log("userdata", this.props.data.labelname);
-       var user_id = this.props.user.user_id;
-       var mybody;
-       var date = new Date();
-       console.log('this.props.rowData',this.props.rowData,this.props.data);
-       var convertepoch = parseInt(date.getTime()/1000);
-       if(this.props.subtag){
-       mybody = JSON.stringify({
-          "feedback":this.state.moreText,
-          "feedback_app_version":'1.0.7',
-          "user_id":user_id,
-          "tag":this.props.tag,
-          "sub_tag":this.props.subtag,
-          "run_id":(this.props.runData)?this.props.runData.run_id:0,
-          "phone_number":this.props.user.phone_number,
-          "email":this.props.user.email,
-          "is_ios":true,
-          "is_chat":false,
-          "client_time_stamp":convertepoch,
-          })
- 
-       }
-       else{
-       mybody = JSON.stringify({
-          "feedback":this.state.moreText,
-          "feedback_app_version":'1.0.7',
-          "user_id":user_id,
-          "tag":this.props.data.labelname,
-          "run_id":(this.props.runData)?this.props.runData.run_id:0,
-          "phone_number":this.props.user.phone_number,
-          "email":this.props.user.email,
-          "is_ios":true,
-          "is_chat":false,
-          "client_time_stamp":convertepoch,
-          })
-
-       }
-       
-       fetch(apis.UserFeedBack, {
-          method: "post",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body:mybody
-        })
-        .then((response) => response.json())
-        .then((response) => {
-          console.log('responce',response);
-          dismissKeyboard()
-          AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
-
-        })
-        .catch((err) => {
-          console.log('err',err);
-        })
-      }else{
+      NetInfo.isConnected.fetch().then((isConnected) => {
+      if (isConnected) {
         this.setState({
-          open:true,
+          isPostingFeedBack:true,
         })
-      }
 
+        if (this.props.user){
+          console.log("userdata", this.props.data.labelname);
+         var user_id = this.props.user.user_id;
+         var mybody;
+         var date = new Date();
+         console.log('this.props.rowData',this.props.rowData,this.props.data);
+         var convertepoch = parseInt(date.getTime()/1000);
+         if(this.props.sub_tag){
+         mybody = JSON.stringify({
+            "feedback":this.state.moreText,
+            "feedback_app_version":'1.0.7',
+            "user_id":user_id,
+            "tag":this.props.tag,
+            "sub_tag":this.props.subtag,
+            "run_id":(this.props.runData)?this.props.runData.run_id:0,
+            "phone_number":this.props.user.phone_number,
+            "email":this.props.user.email,
+            "is_ios":true,
+            "is_chat":false,
+            "client_time_stamp":convertepoch,
+            })
+   
+         }
+         else{
+         mybody = JSON.stringify({
+            "feedback":this.state.moreText,
+            "feedback_app_version":'1.0.7',
+            "user_id":user_id,
+            "tag":this.props.tag,
+            "run_id":(this.props.runData)?this.props.runData.run_id:0,
+            "phone_number":this.props.user.phone_number,
+            "email":this.props.user.email,
+            "is_ios":true,
+            "is_chat":false,
+            "client_time_stamp":convertepoch,
+            })
+
+         }
+         
+         fetch(apis.UserFeedBack, {
+            method: "post",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body:mybody
+          })
+          .then((response) => response.json())
+          .then((response) => {
+            this.setState({
+              isPostingFeedBack:false,
+            })
+            console.log('responce',response);
+            dismissKeyboard()
+            AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
+
+          })
+          .catch((err) => {
+            this.setState({
+              isPostingFeedBack:false,
+            })
+            console.log('err',err);
+          })
+        }else{
+          this.setState({
+            open:true,
+          })
+        }
+      }else{
+        AlertIOS.alert('No internet connection', 'Please check the internet connection and try again');
+      }
+      })
+    }
+
+
+    onPostsuccessView(){
+      if (this.state.isPostingFeedBack) {
+        return(
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight-114,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+          <Text style={{color:'white',fontWeight:'600'}}>Posting feedback...</Text>
+            <ActivityIndicator
+             style={{height: 80}}
+              size="large"
+            >
+            </ActivityIndicator>
+          </View>
+          )
+      }else{
+        return;
+      }
     }
   
  
@@ -145,7 +182,8 @@ class EndFeedBack extends Component {
       console.log("Title ", this.props.title);
       return (
         <View style={styles.container}>
-        <View style={{height:deviceHeight,width:deviceWidth}} >
+        
+        <View>
 
         <View style={{marginTop:30,marginLeft:10,}}>
           <Text style={{color:'black'}}>{data.header}</Text>
@@ -172,6 +210,7 @@ class EndFeedBack extends Component {
                 
                 <KeyboardSpacer/>
             </View>
+            {this.onPostsuccessView()}
             </View>
       );
     }

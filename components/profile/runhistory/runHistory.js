@@ -216,8 +216,13 @@ class RunHistory extends Component {
           var removeIndex = remvedfetcheddata.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
           remvedfetcheddata.splice(removeIndex, 1);   
           console.log('remvedfetcheddata',JSON.stringify(remvedfetcheddata));
+          if (remvedfetcheddata != null) {
           AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
           });
+          }else{
+            AsyncStorage.setItem('UnsyncedData', JSON.stringify([]), () => {
+            });
+          }
           var epochtime = userRunData.version;
            let responceversion = {
              runversion:epochtime
@@ -272,8 +277,8 @@ class RunHistory extends Component {
 
       renderSectionHeader(sectionData, category) {
         return (
-          <View style={{height:30,width:deviceWidth,justifyContent:'flex-start',paddingTop:0,paddingLeft:5,backgroundColor:'blue'}}>
-          <Text style={commonStyles.menuTitle2}>{category}</Text>
+          <View style={{height:30,width:deviceWidth,justifyContent:'center',paddingTop:5,paddingLeft:5,backgroundColor:'#00c1f2'}}>
+           <Text style={commonStyles.menuTitle2}>{category}</Text>
           </View>
         )
       }
@@ -498,6 +503,7 @@ class RunHistory extends Component {
             data:this.props.rowList,
             getUserData:this.props.getUserData,
             user:this.props.user,
+            tag:this.props.tag,
           }
         })
       }else{
@@ -512,9 +518,11 @@ class RunHistory extends Component {
           component:QuestionLists,
           navigationBarHidden: false,
           showTabBar: true,
+
           passProps:{
             rowData:rowData,
             data:this.props.rowList,
+            tag:this.props.tag,
           }
         })
       }else{
@@ -1043,7 +1051,7 @@ const styles = StyleSheet.create({
     height:40,
     margin:5,
     borderRadius:5,
-    backgroundColor:styleConfig.pale_magenta,
+    backgroundColor:'#00c1f2',
     justifyContent: 'center',
     alignItems: 'center',
   },

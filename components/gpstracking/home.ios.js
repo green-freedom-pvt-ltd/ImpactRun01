@@ -448,7 +448,7 @@ class Home extends Component {
 
   onClickEnable(location) {
      var _this = this;
-    if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.0) {
+    if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
       Location.stopUpdatingLocation();
       clearInterval(this.IntervelSaveRun);
       _this.EndRunConfimationForlongRun();  

@@ -853,7 +853,7 @@ import{
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
                 <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                 <Text style={styles.lableText}>Impact</Text>
               </View>
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              

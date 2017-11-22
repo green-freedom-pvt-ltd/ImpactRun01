@@ -52,7 +52,6 @@ class HelpCenter extends Component {
        fetchRunDataLocally(){
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
-            console.log('runData',RunData);
             if (result != null || undefined) {
               this.setState({
                 rawData: RunData,
@@ -99,6 +98,7 @@ class HelpCenter extends Component {
           showTabBar: true,
           passProps:{
             data:rowData,
+            tag:rowData.labelname,
             getUserData:this.props.getUserData,
           }
         })
@@ -114,6 +114,7 @@ class HelpCenter extends Component {
           passProps:{
            rowData:rowData,
            data:rowData.moreList,
+           tag:rowData.labelname,
            getUserData:this.props.getUserData,
            user:this.props.user,
           }
@@ -132,6 +133,7 @@ class HelpCenter extends Component {
             rawData:this.state.rawData,
             EmptyText:this.state.EmptyText,
             helpcenter:true,
+            tag:rowData.labelname,
             rowList:rowData.moreList,
             user:this.props.user,
             getUserData:this.props.getUserData,
@@ -302,7 +304,6 @@ class HelpCenter extends Component {
 
 
       renderRow(rowData) {
-        console.log('rowData',rowData);
         return (
           <TouchableOpacity  onPress={()=> this.navigateToNextPage(rowData)}style={{paddingLeft:20,height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",}}>           
             <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',alignItems:'flex-start'}}>

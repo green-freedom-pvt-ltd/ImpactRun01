@@ -95,7 +95,7 @@ class Homescreen extends Component {
         };
         this.getfeedCount = this.getfeedCount.bind(this);
         this.renderFeedIcon = this.renderFeedIcon.bind(this);
-        // this.navigateToFeed = this.navigateToFeed.bind(this);
+        this.navigateToFeed = this.navigateToFeed.bind(this);
         // AsyncStorage.getItem('my_currency', (err, result) => {
         //     this.setState({
         //       settings_currency:JSON.parse(result),
@@ -200,7 +200,6 @@ class Homescreen extends Component {
       }
 
       getmyCurrency(countrycode){
-        console.log('countrycode',countrycode);
         switch(countrycode){
           case 'US': return 'USD';
                     break;
@@ -251,22 +250,21 @@ class Homescreen extends Component {
           if (result == null)
           {
             result = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-            var data = JSON.stringify(result);
-            console.log('result ',result);
-            this.setState({
-             my_currency:JSON.parse(data)
-            })
-            AsyncStorage.setItem('my_currency',data);
-            this.getExchangeRate();
-            // console.log('resas', result);
+            console.log('resas', result,JSON.stringify(result));
+            AsyncStorage.setItem('my_currency',JSON.stringify(result));
+
           }else{
           this.setState({
             my_currency:JSON.parse(result)
           })
+          // AsyncStorage.removeItem('my_currency',(err) => {
+          // });
+
+          console.log('resultmy_currency ',this.state.my_currency,result);
           AsyncStorage.setItem('my_currency',result);
+        }
           this.getExchangeRate();
-          }
-          
+          return result;
           //   this.setState({
           //     setting_currency:JSON.parse(result),
           // })
