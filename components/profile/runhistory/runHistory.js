@@ -78,7 +78,20 @@ class RunHistory extends Component {
         })     
       }
 
+
+      getUserData(){
+      AsyncStorage.getItem('USERDATA', (err, result) => {
+           let user = JSON.parse(result);
+            this.setState({
+              user:user,
+            })
+           
+        }) 
+     }
+
+
         componentDidMount() {
+          this.getUserData();
            AsyncStorage.getItem('UnsyncedData', (err, result) => {
               console.log( "result",JSON.parse(result));
               var rundata = JSON.parse(result);
@@ -167,7 +180,11 @@ class RunHistory extends Component {
               if (rundata != null){ 
               rundata.map((result,i)=>{
                  console.log('resultIrun ',result);
-                 this.postPastRun(result);
+                if (this.state.user != null) {
+                  this.postPastRun(result);
+                }else{
+                  AlertIOS.alert('some');
+                }
                })
               }
             })     
@@ -220,6 +237,9 @@ class RunHistory extends Component {
           AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
           });
           }else{
+            this.setState({
+              RunCount:0
+            })
             AsyncStorage.setItem('UnsyncedData', JSON.stringify([]), () => {
             });
           }
@@ -319,7 +339,7 @@ class RunHistory extends Component {
     PostNotSyncedRun(){
       NetInfo.isConnected.fetch().then((isConnected) => {
         console.log('isConnected',isConnected);
-      if (isConnected) {
+      if (isConnected === true ) {
         this.fetchLocalRunData();
       }else{
 
