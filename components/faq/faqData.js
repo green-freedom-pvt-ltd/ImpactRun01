@@ -166,8 +166,8 @@ class Faqdata extends Component {
           return this.renderLoadingView();
         }
         return (
-          <View style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth}}>
+          <View style={{height:deviceHeight,width:deviceWidth}}>
+            <View style={{height:deviceHeight-110,width:deviceWidth}}>
               <ListView
               refreshControl={
                 <RefreshControl

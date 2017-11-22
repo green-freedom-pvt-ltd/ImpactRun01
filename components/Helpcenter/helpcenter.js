@@ -100,6 +100,7 @@ class HelpCenter extends Component {
             data:rowData,
             tag:rowData.labelname,
             getUserData:this.props.getUserData,
+
           }
         })
       }
@@ -212,6 +213,9 @@ class HelpCenter extends Component {
           'iconName':'feedback',
           'labelname':'feedback',
           'moreList':null,
+          'header':'That is great! We love to hear from our user',
+          'inputLebel':'Enter your feedback here',
+          'discription':'Submit your feedback',
          },
           {
           'name':'My issue isn\'t listed here',

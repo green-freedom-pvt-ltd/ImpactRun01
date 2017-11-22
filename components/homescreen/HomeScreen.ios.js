@@ -47,7 +47,7 @@ import { TabViewAnimated, TabViewPage } from 'react-native-tab-view';
 import { takeSnapshot } from "react-native-view-shot";
 import Share, {ShareSheet, Button} from 'react-native-share';
 import LinearGradient from 'react-native-linear-gradient';
-import AnimateNumber from 'react-native-animate-number';
+import AnimateNumber from './numberAnimate.js';
 
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
@@ -92,6 +92,7 @@ class Homescreen extends Component {
           isDenied:false,
           overall_impact:'',
           my_rate:1,
+          loadingImpact:true,
         };
         this.getfeedCount = this.getfeedCount.bind(this);
         this.renderFeedIcon = this.renderFeedIcon.bind(this);
@@ -304,6 +305,13 @@ class Homescreen extends Component {
 
 
       componentWillMount() {
+        var me = this;
+        setTimeout(()=>{
+          me.setState({
+          loadingImpact:false,
+        })
+        },200);
+        
         this.getfeedCount();
          this.isKeyAlreadyExists();
          if(!this.state.my_currency){
@@ -829,18 +837,18 @@ class Homescreen extends Component {
 
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
+
       if (this.state.renderComponent) {
-        // console.log('renderComponent',this.state.renderComponent);
         var cause = this.state.album[route.key][5]
         // var money = JSON.stringify(parseFloat(parseFloat(this.state.album[route.key][0]).toFixed(0)/parseFloat(this.state.my_rate).toFixed(0)).toFixed(0));
         
         // var Moneyfinalvalue = (Math.round(JSON.parse(money)* 100)/100).toLocaleString(); 
        
-        var runFinalvalue = (this.state.album[route.key][2] != null)?(Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString():0;
+        var runFinalvalue = (this.state.album[route.key][2] != null)?(Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2),{ minimumFractionDigits: 0}):0;
         //This was length copied pasted @Akash avoid such copy pastes dude
       
         
-        var causeAmountFinalvalue = (cause.amount != null && this.state.my_rate != null)?(Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString():0;
+        var causeAmountFinalvalue = (cause.amount != null && this.state.my_rate != null)?(Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2),{ minimumFractionDigits: 0}):0;
            
         if (cause.is_completed != true) {
         // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
@@ -873,7 +881,7 @@ class Homescreen extends Component {
                       </View>
                       <View style = {styles.wraptext2}>
                         <Text style = {styles.textMoneyraised2Label}> GOAL </Text>
-                        <Text style = {styles.textMoneyraised2}><Icon style={styles.textMoneyraised2}name={this.state.my_currency.toLowerCase()}></Icon> {causeAmountFinalvalue}</Text>
+                        <Text style = {styles.textMoneyraised2}><Icon style={styles.textMoneyraised2}name={this.state.my_currency.toLowerCase()}></Icon>  {causeAmountFinalvalue}</Text>
                       </View>
                     </View>
                   </View>
@@ -973,8 +981,8 @@ class Homescreen extends Component {
           cause = {}
         }
        var Overallimpact = this.state.overall_impact/this.state.my_rate;
-       var Impact = parseInt(Overallimpact);
-      if (this.props.myCauseNum != null ) {
+       var Impact = parseFloat(Overallimpact).toFixed(0);
+      if (!this.state.loadingImpact && this.props.myCauseNum != null) {
       return (
           <View style={{height:deviceheight,width:deviceWidth}}>
           <View style={commonStyles.Navbar}>
@@ -984,8 +992,10 @@ class Homescreen extends Component {
           <View style={styles.TotalRaisedTextWrap}>
            <View style={{flexDirection:'column'}}>           
             <Text style={styles.TotalRaisedText}>
+
             <Icon style={[styles.TotalRaisedText,{fontSize:styleConfig.FontSizeTitle+20}]}name={this.state.my_currency.toLowerCase()}></Icon>
-              <AnimateNumber value={Impact} formatter={(val) => {
+            <Text>{' '}</Text>
+              <AnimateNumber TotalRaisedimpact = {Impact} currencyString = {this.state.my_currency.slice(0,2)} value={Impact} formatter={(val) => {
                   return ' ' + parseFloat(val).toFixed(0)
                 }} ></AnimateNumber>        
            </Text>
@@ -1014,7 +1024,9 @@ class Homescreen extends Component {
       );
     }else{
       return(
+        <View style={{height:deviceheight,width:deviceWidth}}>
         <Lodingscreen/>
+        </View>
         );
     }
     }

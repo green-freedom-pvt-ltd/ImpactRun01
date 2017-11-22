@@ -770,14 +770,14 @@ class Profile extends Component {
                         <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'400'}}>All Time</Text>
                     </View>
                     <View style={{height:(this.state.height/100)*37,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
-                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><AnimateNumber value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
+                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><Text>{' '}</Text><AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
                         </Text>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
                     </View>
                     <View style={{height:(this.state.height/100)*30,width:this.state.width,backgroundColor:'yellow',flexDirection:'row'}}>
                         <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
                             <Text style={{left:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left',}} > 
-                                <AnimateNumber value={this.state.RunCountTotal} formatter={(val) => {
+                                <AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunCountTotal} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                   }} ></AnimateNumber>
                             </Text>
@@ -785,7 +785,7 @@ class Profile extends Component {
                         </View>
                        <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
                             <Text style={{right:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
-                                <AnimateNumber value={(this.state.my_distance == 'miles' ? this.state.RunTotalDistance*0.621 : this.state.RunTotalDistance)} formatter={(val) => {
+                                <AnimateNumber  currencyString = {this.state.my_currency.slice(0,2)} value={(this.state.my_distance == 'miles' ? this.state.RunTotalDistance*0.621 : this.state.RunTotalDistance)} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                 }} ></AnimateNumber>
                                 <Text style={{fontSize:styleConfig.FontSizeTitle-5,color:'grey'}}> {(this.state.my_distance == 'miles' ? 'mi' : 'km')}</Text>

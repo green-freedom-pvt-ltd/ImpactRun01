@@ -84,7 +84,6 @@ class Tabs extends Component {
           this.render = this.render.bind(this);
           this.ChangeCampaignCount = this.ChangeCampaignCount.bind(this);
           this.changePosition = this.changePosition.bind(this);
-          this.fetchDataonInternet = this.fetchDataonInternet.bind(this);
         }
         
         componentDidMount() {
@@ -125,7 +124,7 @@ class Tabs extends Component {
                 }
                 else{
                     console.log('resultsgetinternet');
-                    this.fetchData();
+                    this.fetchDataonInternet();
                 }
             })
         }
@@ -167,8 +166,10 @@ class Tabs extends Component {
                   runUnsynceddata:rundata,
                 })
                 rundata.map((result,i)=>{
-                    console.log('resultIrun ',result);
-                    this.postPastRun(result);
+                console.log('resultIrun ',result);
+                if(this.state.user != null){
+                   this.postPastRun(result);
+                }
                 })
                 }else{
                     console.log('someerror');
@@ -346,16 +347,21 @@ class Tabs extends Component {
                   overall_impact:causes.overall_impact,
 
               })
-              let myCauseNum = this.state.myCauseNum;
+                let myCauseNum = this.state.myCauseNum;
                 AsyncStorage.removeItem('CauseNumber',(err) => {
                    console.log("removed");
                 });
-
+                AsyncStorage.getItem('overall_impact',(err,result)=>{
+                  this.setState({
+                    oldoverall_impact:result,
+                  })
+                   AsyncStorage.setItem('oldoverall_impact',JSON.stringify(this.state.oldoverall_impact));
+                })
                 console.log('someresult ',myCauseNum,this.state.exchange_rates,this.state.overall_impact);
                 AsyncStorage.setItem('CauseNumber',JSON.stringify(myCauseNum));
                 AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
                 AsyncStorage.setItem('overall_impact',JSON.stringify(this.state.overall_impact));
-
+               
                 // AsyncStorage.multiSet(this.state.exchange_rates, (err) => {
                 //   console.log('myCauseErr' + err)
                 // })
@@ -371,7 +377,6 @@ class Tabs extends Component {
                 this.setState({
                   dataCauseNum:JSON.parse(result),
                 })
-                this.fetchLocalRunData();
                })
                
                 AsyncStorage.multiRemove(newData, (err) => {
@@ -397,7 +402,7 @@ class Tabs extends Component {
             this.setState({
               dataCauseNum:JSON.parse(result),
             })
-            this.fetchLocalRunData();
+            console.log('causenumber',this.state.dataCauseNum);
             if (this.state.dataCauseNum != null ) {
             try {
                 AsyncStorage.multiGet(this.state.dataCauseNum, (err, stores) => {
@@ -430,6 +435,8 @@ class Tabs extends Component {
               user: user,
               iconImpactleague:(user!= null)?{uri: base64Icon, scale: 6}:{},
             })
+            this.fetchLocalRunData();
+
             this.render();
             console.log("result",user,this.state.iconImpactleague);
           })
@@ -569,7 +576,7 @@ class Tabs extends Component {
                   });
                 }}>
                 <View>
-                   <Welcome my_currency = {this.props.my_currency} myCauseCount={this.props.dataCauseCount} fetchDataonInternet ={this.fetchDataonInternet} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
+                   <Welcome my_currency = {this.props.my_currency} myCauseCount={this.props.dataCauseCount}  user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
                 </View>
                 </TabBarIOS.Item>
 
