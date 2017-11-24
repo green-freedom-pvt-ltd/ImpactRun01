@@ -104,35 +104,46 @@ class Tabs extends Component {
         getData(){
             AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
                 console.log('results',result);
+                var newDate = new Date();
+                var convertepoch = newDate.getTime()/1000
+                var epochtime = parseFloat(convertepoch).toFixed(0);
                 if (result != null) {
                     console.log('results2',result);
                     this.setState({
                       causeFeatchVersion:JSON.parse(result),
                     })
-
-                    var newDate = new Date();
-                    var convertepoch = newDate.getTime()/1000
-                    var epochtime = parseFloat(convertepoch).toFixed(0);
+      
+                    
                     var fetchversion = parseInt(this.state.causeFeatchVersion)+(300);
                     if (fetchversion < epochtime) {
                         console.log('data',fetchversion);
                         this.fetchData();
                    
                    }else{
-                    this.getCause();
-                   }
+                     this.getCause();
                 }
+              }
                 else{
-                    console.log('resultsgetinternet');
-                    this.fetchDataonInternet();
-                }
+                    NetInfo.isConnected.fetch().then((isConnected) => {
+
+                       console.log('isConnected profile',isConnected);
+                       if (isConnected) {
+                        this.fetchData();
+                       };
+                    })
+                   }
             })
         }
         
         componentWillMount() { 
             NetInfo.isConnected.fetch().then((isConnected) => {
+            this.setState({
+                isConnected:isConnected
+            })
             console.log('isConnected profile',isConnected);
+            console.log('dataisCOnnected');
             if (isConnected) {
+                console.log('dataisCOnnected');
                 this.getData();
                 }else{
                 this.getCause();
