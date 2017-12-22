@@ -48,6 +48,7 @@ class ImpactLeague extends Component {
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
           LeaderBoardData: ds.cloneWithRows([]),
+          Tooltiplist: ds.cloneWithRows([]),
           loaded: false,
           refreshing: false,
           downrefresh:true,
@@ -55,6 +56,7 @@ class ImpactLeague extends Component {
           isMounted:true,
           my_rate:1.0,
           my_currency:"INR",
+          openTooltip:false,
 
         };
         this.fetchLeaderBoardData = this.fetchLeaderBoardData.bind(this);
@@ -62,6 +64,8 @@ class ImpactLeague extends Component {
         this.getUserData = this.getUserData.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.NavigateToDetail = this.NavigateToDetail.bind(this);
+        this.renderRowTooltiplist = this.renderRowTooltiplist.bind(this);
+
       }
 
       mixins: [TimerMixin]
@@ -71,23 +75,81 @@ class ImpactLeague extends Component {
         this.fetchDataLocally();
         this.getUserData();      
         setTimeout(() => {this.setState({downrefresh: false})}, 1000)
+        this.setState({
+          Tooltiplist:this.state.Tooltiplist.cloneWithRows([{'title':'help','functions':'help'},{'title':'exit League','functions':'exitLeague',}]),
+        })
       }
 
+      navigateTOhome(){
+        this.props.navigator.replace({
+        id:'tab',
+        passProps:{profileTab:'welcome', user:this.props.user},
+        navigator: this.props.navigator,
+        })
+      }
 
-     componentWillMount() {        
-          AsyncStorage.getItem('my_currency', (err, result) => {
+      navigateTOhelpCenter(){
+        this.props.navigator.replace({
+        id:'tab',
+        passProps:{profileTab:'help', user:this.props.user},
+        navigator: this.props.navigator,
+        })
+      }
+      
+      handleNetworkErrors(response){
+           console.log('responseStatus',response);
             this.setState({
-              my_currency:JSON.parse(result),
-          })
-          })     
+              NetworkResponcePostRun:response.status,
+            })
+            return response.json();
+        }
+
+      exitLeague(){
+        console.log('this.props.user.auth_token',this.props.user.auth_token)
+        var data = new FormData();
+        data.append("user",this.props.user.user_id)
+        data.append("team_code",this.props.user.team_code)
+        data.append("is_logout",'true');
+        fetch(apis.employeetoteamApi,{
+            method: 'put',
+            headers: {  
+              'Authorization':"Bearer "+ this.props.user.auth_token,
+              'Content-Type': 'multipart/form-data'
+            },
+            body:data
           
-       AsyncStorage.getItem('my_rate', (err, result) => {
-            this.setState({
-              my_rate:JSON.parse(result),
           })
-          }) 
+          .then(this.handleNetworkErrors.bind(this))
+          .then( jsonData => {
+            console.log('jsonData123',jsonData);
+            let userData = {
+              team_code:jsonData.team_code
+            }
+        // first user, delta values
+            AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
+             AsyncStorage.getItem('USERDATA', (err, result) => {
+              console.log('result', result)
+              this.navigateTOhome();
+             })
+            }) 
+          }).catch((error)=>{
+           console.log('erroremployeTeam', error);
+          })
+      }
 
-     }
+      componentWillMount() {        
+        AsyncStorage.getItem('my_currency', (err, result) => {
+          this.setState({
+            my_currency:JSON.parse(result),
+          })
+        })     
+            
+        AsyncStorage.getItem('my_rate', (err, result) => {
+          this.setState({
+            my_rate:JSON.parse(result),
+          })
+        }) 
+      }
 
       fetchDataLocally(){
         AsyncStorage.getItem('USERDATA', (err, result) => {
@@ -135,8 +197,9 @@ class ImpactLeague extends Component {
       }
 
     
-      fetchLeaderBoardData() {      
-        var token = this.state.user.auth_token;
+      fetchLeaderBoardData() {    
+        console.log('auth_token',this.props.user.auth_token,this.state.user) ;
+        var token = this.props.user.auth_token;
         var url = apis.ImpactLeagueTeamLeaderBoardV2Api;
         fetch(url,{
           method: "GET",
@@ -248,6 +311,70 @@ class ImpactLeague extends Component {
         }
 
 
+
+        rightIconRender(){
+        return(
+            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',paddingBottom:10}} onPress={()=>this.exitLeaguepopu()} >
+              <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'md-more'}></Icon>
+            </TouchableOpacity>
+          )
+      }
+
+      exitLeaguepopu(){
+        if (!this.state.openTooltip) {
+          this.setState({
+            openTooltip:true,
+          })
+        }else{
+          this.setState({
+            openTooltip:false,
+          })
+        }
+      }
+      
+      
+     
+
+      openTooltip(){
+        if (this.state.openTooltip) {
+          return(
+            <TouchableOpacity style={{position:'absolute',top:0,height:deviceHeight,width:deviceWidth,backgroundColor:'transparent'}} onPress={()=> this.exitLeaguepopu()}> 
+              <View style={{top:50,height:100,width:200,backgroundColor:'white',position:'absolute',right:30,shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
+                <ListView 
+                dataSource={this.state.Tooltiplist}
+                renderRow={this.renderRowTooltiplist}
+                style={styles.container}
+                >
+              </ListView>
+              </View>
+            </TouchableOpacity>
+            )
+        }else{
+          return;
+        }
+      }
+
+
+      renderRowTooltiplist(rowData){
+        console.log('rowData',rowData)
+        return(
+          <TouchableOpacity onPress={()=> this.onclickpopuRow(rowData)}style={{width:200,height:50,justifyContent: 'center',paddingLeft:10,}}>
+            <Text>{rowData.title}</Text>
+          </TouchableOpacity >
+        )
+      }
+      
+
+      onclickpopuRow(rowData){
+        console.log('rowData1', rowData);
+        if (rowData.functions === 'exitLeague') {
+          return this.exitLeague();
+        }else if(rowData.functions === 'help'){
+          return this.navigateTOhelpCenter();
+        }
+      } 
+      
+
       render(rowData,jsonData) {
         if (this.state.isMounted) {
         console.log('user',this.state.user);
@@ -261,7 +388,7 @@ class ImpactLeague extends Component {
         return (
 
         <View style={{height:deviceHeight,width:deviceWidth}}>
-          <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
+          <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()} rightIcon = {this.rightIconRender()}/>
           <View style={{height:((deviceHeight)/2)-100,width:deviceWidth}}>
               <Swiper style={styles.wrapper} height={((deviceHeight)/2)-100} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
                 <View>
@@ -313,7 +440,7 @@ class ImpactLeague extends Component {
                 style={styles.container}>
                 <View style={{width:deviceWidth,height:20,backgroundColor:'red'}}></View>
               </ListView>
-
+              {this.openTooltip()}
           </View>
         );
         }else{

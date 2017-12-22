@@ -93,7 +93,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     fontWeight:'400',
-    color:'white',
+    color:'black',
     fontSize:styleConfig.TitleFontSize,
     fontFamily:styleConfig.FontFamily,
   },

@@ -19,6 +19,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import styleConfig from '../../components/styleConfig';
 import Home from './home.ios.js'
+  const CleverTap = require('clevertap-react-native');
+
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class LodingRunScreen extends Component {
@@ -35,6 +37,7 @@ class LodingRunScreen extends Component {
     }
 
     componentDidMount() {
+      CleverTap.recordEvent('ON_LOAD_COUNTDOWN_SCREEN');
         this.animate(); 
       this.timeout = setTimeout(() => { 
         this.navigateToRunScreen();
@@ -80,14 +83,15 @@ class LodingRunScreen extends Component {
       });
     }
 
-    navigateToRunScreen(cause) {
+    navigateToRunScreen() {
+
       var cause = this.props.data;
       console.log('props data' + this.props.data.sponsors);
       this.props.navigator.replace({
         title: 'Gps',
         id:'runscreen',
         index: 0,
-        passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
+        passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData,killRundata:this.props.killRundata},
         navigator: this.props.navigator,
       });
       clearTimeout(this.timeout);
@@ -99,6 +103,11 @@ class LodingRunScreen extends Component {
       //   showTabBar: false,
       //   passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
       // });
+    }
+
+    onSkip(){
+      CleverTap.recordEvent('ON_SKIP_COUNTDOWN');
+      this.navigateToRunScreen();
     }
 
     render() {
@@ -141,7 +150,7 @@ class LodingRunScreen extends Component {
                   </View>
                   </View>
                   <View style={styles.loadingFlex}>
-                  <Text style={styles.navigateToRunScreen} onPress={()=> this.navigateToRunScreen()}>TAP TO START NOW</Text>
+                  <Text style={styles.navigateToRunScreen} onPress={()=> this.onSkip()}>TAP TO START NOW</Text>
                   </View>
               </View>
             </TouchableOpacity>

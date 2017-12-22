@@ -24,6 +24,7 @@
   import ModalDropdownCity from './ImpactLeagueComponents/modelindex.js';
   import ModalDropdownDepartment from './ImpactLeagueComponents/modelindex2.js';
   import ImpactLeague from './ImpactLeagueHome';
+  import ImageLoad from 'react-native-image-placeholder';
 
   class ImpactLeagueForm2 extends Component {
       
@@ -118,7 +119,7 @@
             Home:true,
           })
 
-          // this.RouteChangeField(responseJson)
+          this.navigateTOhome(responseJson)
 
         })
         .catch((error) => {
@@ -182,12 +183,10 @@
         console.log('data',data);
   		  return (
           <View>
-          <View style={commonStyles.Navbar}>
-              <Text style={commonStyles.menuTitle}>Impact League</Text>
-            </View>
+            <NavBar title={'Impact League'}/>
             <View style ={styles.container}>
-              <Image source={{uri:data.impactleague_banner}} style={styles.bannerimage}>
-              </Image>
+              <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.bannerimage} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:data.impactleague_banner}} style={styles.bannerimage}>        
+              </ImageLoad>
               <Text style={{padding:20, paddingTop:25,color:styleConfig.purplish_brown,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.fontSizer3}}>Just a couple of more questions</Text>
               <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
               <View>
@@ -197,7 +196,7 @@
                   <Text style={{color:'white'}}>SUBMIT</Text>
               </TouchableOpacity>
               </View>
-              <View style = {{top:-300,height:deviceHeight/2-200, width:deviceWidth,justifyContent: 'center',alignItems:'center'}}>
+              <View style = {{top:-deviceHeight/3,height:deviceHeight/2-200, width:deviceWidth,justifyContent: 'center',alignItems:'center'}}>
               <ModalDropdownCity onSelect={(idx, value) => this.onSelectCity(idx, value)} showsVerticalScrollIndicator={true} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown} defaultIndex ={1} animated={true} options={this.props.cities}>
               </ModalDropdownCity>    
               <ModalDropdownDepartment onSelect={(idx,value) => this.onSelectDepartment(idx,value)} defaultIndex ={3} textStyle={styles.textStyle} dropdownStyle={styles.dropdownStyle} style = {styles.dropdown}   options={this.props.departments}>
@@ -243,7 +242,8 @@ const styles = StyleSheet.create({
     shadowOffset: {
         height: 2,
       },
-      top:130,
+    position:'absolute',
+    bottom:20,
     backgroundColor:styleConfig.light_gold,
   },
   dropdown:{

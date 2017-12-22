@@ -1,8 +1,8 @@
 
 'use strict';
 
-import React, { Component } from 'react';
-import{
+  import React, { Component } from 'react';
+  import{
     StyleSheet,
     View,
     Image,
@@ -15,9 +15,9 @@ import{
     VibrationIOS,
     TextInput,
     NetInfo,
-    ActivityIndicatorIOS,
+    Linking,
+    ActivityIndicator,
   } from 'react-native';
-  
   import ImageLoad from 'react-native-image-placeholder';
   import apis from '../apis';
   import TimerMixin from 'react-timer-mixin';
@@ -37,6 +37,8 @@ import{
   import Profile from '../profile/profile.index';
   import Tab from '../homescreen/tab';
   const FBSDK = require('react-native-fbsdk');
+  const CleverTap = require('clevertap-react-native');
+
    var moment = require('moment');
 
   const {
@@ -97,40 +99,46 @@ import{
 
 
     snapshot(captureScreenShot){
-
+    CleverTap.recordEvent('ON_CLICK_TELL_YOUR_FRIENDS');
     takeSnapshot(this.refs[captureScreenShot], this.state.value)
-    .then(res =>
-      this.state.value.result !== "file"
-      ? res
-      : new Promise((success, failure) =>
-      // just a test to ensure res can be used in Image.getSize
-      Image.getSize(
-        res,
-        (width, height) => (console.log(res,width,height), success(res)),
-        failure
+      .then(res =>
+        this.state.value.result !== "file"
+        ? res
+        : new Promise((success, failure) =>
+        // just a test to ensure res can be used in Image.getSize
+        Image.getSize(
+          res,
+          (width, height) => (console.log(res,width,height), success(res)),
+          failure
+        )
+        )
+          
       )
-      )
-        
-    )
-    .then((res) => {
-      this.setState({
-        error: null,
-        res,
-        previewSource: { uri:
-          this.state.value.result === "base64"
-          ? "data:image/"+this.state.value.format+";base64,"+res
-          : res }
-      })
+      .then((res) => {
+        this.setState({
+          error: null,
+          res,
+          previewSource: { uri:
+            this.state.value.result === "base64"
+            ? "data:image/"+this.state.value.format+";base64,"+res
+            : res }
+        })
 
-      var shareOptions = {
-        // title: "ImpactRun",
-        // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
-        url:"data:image/"+this.state.value.format+";base64,"+res,
-        // subject: "Download ImpactRun Now " //  for email
-      }
-      Share.open(shareOptions)
-    })
-    .catch(error => (console.warn(error), this.setState({ error, res: null, previewSource: null })));
+        var shareOptions = {
+          // title: "ImpactRun",
+          // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+          url:"data:image/"+this.state.value.format+";base64,"+res,
+          // subject: "Download ImpactRun Now " //  for email
+        }
+        Share.open(shareOptions)
+        CleverTap.recordEvent('ON_CLICK_WORKOUT_SHARE',{
+          'distance': this.props.distance,
+          'time_elapsed':this.props.time,
+          'num_steps':this.props.noOfsteps,
+          'client_run_id':this.props.client_run_id,
+        })
+      })
+      .catch(error => (console.warn(error), this.setState({ error, res: null, previewSource: null })));
     }
 
     getUserData(){
@@ -143,6 +151,8 @@ import{
         })
        
         if (this.state.user) {
+         // this.SaveRunLocally();
+        
         this.ifConnectTonetPost();
         }else{
           this.SaveRunLocally();
@@ -198,6 +208,12 @@ import{
     }
 
     componentDidMount(){
+      CleverTap.recordEvent('ON_LOAD_SHARE_SCREEN',{
+        'distance': this.props.distance,
+        'time_elapsed':this.props.time,
+        'num_steps':this.props.noOfsteps,
+        'client_run_id':this.props.client_run_id,
+      });
       this.getUserData();  
       this.getILdata();   
       var cause = this.props.data;
@@ -209,19 +225,22 @@ import{
       //   AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
       //  console.log('after 2 sec');
       // },2000)
-       var time2 = this.props.time;
-      if (time2.length <= 2) {
-       var time = '00:'+'00:'+time2;
-      }else if (time2.length == 5) {
-       var time = '00:'+time2;
-      }else if (time2.length > 5 ) {
-       var time = time2;
-      };
-      this.setState({
-        Duration:time,
-      })
+       
+      
       this.getSavedRunCount();
-      this.AddruntoRunHistory(time);
+       var time2 = this.props.time;
+        if (time2.length <= 2) {
+         var time = '00:'+'00:'+time2;
+        }else if (time2.length == 5) {
+         var time = '00:'+time2;
+        }else if (time2.length > 5 ) {
+         var time = time2;
+        };
+
+        this.setState({
+          Duration:time,
+        })
+        this.AddruntoRunHistory(time);
 
     } 
 
@@ -263,22 +282,17 @@ import{
 
     handleNetworkErrors(response){
       console.log(response);
-       if(response.ok){
-        console.log('response.ok',response.ok);
+       this.setState({
+        networkRUnpoststatus:response.ok
+       })
+       
+        // AlertIOS.alert("Network error","There is some problem connecting to internet");
         return response.json();
-       }else{
-        this.PostRun();
-        this.setState({
-          postingRun:false,
-        })
-        AlertIOS.alert("Network error","There is some problem connecting to internet");
-        return ;
-       }
+       
        
     }
   
     SaveRunLocally(){
-      if (this.props.user) {
      var startPosition = this.props.StartLocation;
      var endPosition = this.props.EndLocation;
      var cause = this.props.data;
@@ -291,16 +305,11 @@ import{
      var date = this.props.StartRunTime;
      var endtime = this.props.EndRunTime;
      var RunNumber = this.state.RunNumber;
-     var userdata = this.props.user;
-     var user_id =JSON.stringify(userdata.user_id);
-     var token = JSON.stringify(userdata.auth_token);
-     var tokenparse = JSON.parse(token);
      var Runid = this.state.runid;
-     var calories_burnt = this.props.calories_burnt;
+      var calories_burnt = this.props.calories_burnt;
 
        let RID1  = {
         cause_run_title:cause.cause_title,
-        user_id:user_id,
         start_time: date,
         end_time: endtime,
         distance: parseFloat(distance).toFixed(1),
@@ -310,7 +319,7 @@ import{
         run_duration: time,
         is_flag:false,
         calories_burnt:calories_burnt,
-        team_id:this.state.impactleague_team_id,
+        team_id:(this.state.user != null)?this.state.user.team_code:null,
         start_location_lat:startPosition.latitude,
         start_location_long:startPosition.longitude,
         end_location_lat:endPosition.latitude,
@@ -318,11 +327,12 @@ import{
         no_of_steps:steps,
         is_ios:true,
         num_spikes:this.props.num_spikes,
-       
+        client_run_id:this.props.client_run_id,      
       };
+
       AsyncStorage.getItem('UnsyncedData', (err, result) => {
         console.log('result',result);
-        if (result != null) {
+        if (result != null && result != []) {
         var newRunArray = [];
         this.setState({
           UnsyncedData:JSON.parse(result),
@@ -334,8 +344,7 @@ import{
         AsyncStorage.removeItem('UnsyncedData',(err) => {
         });
         let localunsyncedRundata = Newunsyncedrun;
-        AsyncStorage.removeItem('UnsyncedData',(err) => {
-        });
+      
         AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
         })
       }else{
@@ -373,9 +382,7 @@ import{
      //      })
           
      //   });
-     }else{
-      return;
-     }
+     
   
     }
     
@@ -404,7 +411,53 @@ import{
         this.setState({
           postingRun:false,
         })
+      if (this.state.user.team_code === 0) {
+       var postrundata = JSON.stringify({
+          cause_run_title:cause.cause_title,
+          cause_id:cause.pk,
+          user_id:user_id,
+          start_time:date,
+          end_time:endtime,
+          distance: distance,
+          peak_speed: 1,
+          avg_speed:speed,
+          run_amount:impact,
+          run_duration: time,
+          is_flag:false,
+          calories_burnt:calories_burnt,
+          start_location_lat:startPosition.latitude,
+          start_location_long:startPosition.longitude,
+          end_location_lat:endPosition.latitude,
+          end_location_long:endPosition.longitude,
+          no_of_steps:steps,
+          client_run_id:_this.props.client_run_id,
+          is_ios:true,     
+          })
+      }else{
+       var postrundata = JSON.stringify({
+          cause_run_title:cause.cause_title,
+          cause_id:cause.pk,
+          user_id:user_id,
+          start_time:date,
+          end_time:endtime,
+          distance: distance,
+          peak_speed: 1,
+          avg_speed:speed,
+          run_amount:impact,
+          run_duration: time,
+          is_flag:false,
+          calories_burnt:calories_burnt,
+          team_id:' ',
+          start_location_lat:startPosition.latitude,
+          start_location_long:startPosition.longitude,
+          end_location_lat:endPosition.latitude,
+          end_location_long:endPosition.longitude,
+          no_of_steps:steps,
+          client_run_id:_this.props.client_run_id,
+          is_ios:true,     
+          })
       }
+      console.log('this.state.user.team_code',this.state.user.team_code);
       var distance = this.props.distance;
       var speed = this.props.speed;
       var impact = this.props.impact;
@@ -426,6 +479,8 @@ import{
       }else{
         var spikes = 0;
       }
+
+      
       console.log('num_spikes',num_spikes);
       // try{
       //   let response = await fetch('https://mywebsite.com/endpoint/');
@@ -445,48 +500,20 @@ import{
             'Accept': 'application/json',
             'Content-Type': 'application/json',           
           },
-          body:JSON.stringify({
-          cause_run_title:cause.cause_title,
-          cause_id:cause.pk,
-          user_id:user_id,
-          start_time:date,
-          end_time:endtime,
-          distance: distance,
-          peak_speed: 1,
-          avg_speed:speed,
-          run_amount:impact,
-          run_duration: time,
-          is_flag:false,
-          calories_burnt:calories_burnt,
-          team_id:_this.state.impactleague_team_id,
-          start_location_lat:startPosition.latitude,
-          start_location_long:startPosition.longitude,
-          end_location_lat:endPosition.latitude,
-          end_location_long:endPosition.longitude,
-          no_of_steps:steps,
-          is_ios:true,     
-          })
+          body:postrundata,
        })
       .then(_this.handleNetworkErrors.bind(_this))
       .then((userRunData) => { 
-        _this.RemoveUnsyncedDatawhenpost(userRunData);
+         console.log('userRunData',userRunData);
+        if (_this.state.networkRUnpoststatus) {
+         _this.RemoveUnsyncedDatawhenpost(userRunData);
          _this.setState({
           postingRun:false,
          })
-        AsyncStorage.removeItem('runversion',(err) => {
-           console.log("runversionremoved");
-        });
-        var epochtime = userRunData.version;
-        let responceversion = {
-         runversion:epochtime
-        }
-        AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),(data)=>{
-          console.log("removed version share ",responceversion);
-        })
-        .catch((error)=>{
-          _this.SaveRunLocally();
-         console.log("err",error);
-        })
+       }else{
+         _this.SaveRunLocally();
+        AlertIOS.alert('network error ',JSON.stringify(userRunData))
+       }
        })
       .catch((error)=>{
          _this.SaveRunLocally();
@@ -499,29 +526,38 @@ import{
     }
     catch (error) {
       console.log('somedata',error)
-
-       _this.SaveRunLocally();
+      _this.SaveRunLocally();
     }
     }, 3000);
   } 
+}
 
 
 
     RemoveUnsyncedDatawhenpost(userRunData){
+      AsyncStorage.getItem('UnsyncedData', (err, result) => {
+        this.setState({
+          UnsyncedData:JSON.parse(result),
+        })
         var newRunArray = [];
         console.log('this.state.UnsyncedData', this.state.UnsyncedData);
         if (this.state.UnsyncedData != [] || this.state.UnsyncedData != null) {
-        var removeIndex = this.state.UnsyncedData.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
-        this.state.UnsyncedData.splice(removeIndex, 1); 
+
+          var removeIndex = this.state.UnsyncedData.map(function(item) {
+            console.log('itemm',item,userRunData);
+           return item.start_time;
+            }).indexOf(userRunData.start_time); 
+          this.state.UnsyncedData.splice(removeIndex, 1); 
+          AsyncStorage.removeItem('UnsyncedData',(err) => {
+          });
+          let localunsyncedRundata = this.state.UnsyncedData;
+          AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
+            console.log('localunsyncedRundata',localunsyncedRundata);
+          })
         } 
-        AsyncStorage.removeItem('UnsyncedData',(err) => {
-        });
-        let localunsyncedRundata = this.state.UnsyncedData;
-        AsyncStorage.removeItem('UnsyncedData',(err) => {
-        });
-        AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
-          console.log('localunsyncedRundata',localunsyncedRundata);
-        })
+        
+        
+      })
     }
 
     DiscardRunfunction(){
@@ -534,7 +570,6 @@ import{
       var speed = this.props.speed;
       var impact = this.props.impact;
       var steps = this.props.noOfsteps;
-
       var date = this.props.StartRunTime;
       var endtime = this.props.EndRunTime;
       var cause = this.props.data;
@@ -558,13 +593,13 @@ import{
                run_duration: time,
                is_flag:false,
                calories_burnt:calories_burnt,
-               team_id:me.state.impactleague_team_id,
                start_location_lat:startPosition.latitude,
                start_location_long:startPosition.longitude,
                end_location_lat:endPosition.latitude,
                end_location_long:endPosition.longitude,
                no_of_steps:steps,
                is_ios:true,  
+               client_run_id:me.props.client_run_id,
              }
              var newRunArray = [];
              var runSavedata = newRunArray.push(newRun);
@@ -587,13 +622,14 @@ import{
                run_duration: time,
                is_flag:false,
                calories_burnt:calories_burnt,
-               team_id:me.state.impactleague_team_id,
+               team_id:me.state.user.team_code,
                start_location_lat:startPosition.latitude,
                start_location_long:startPosition.longitude,
                end_location_lat:endPosition.latitude,
                end_location_long:endPosition.longitude,
                no_of_steps:steps,
-               is_ios:true,  
+               is_ios:true, 
+               client_run_id:me.props.client_run_id, 
              }
              var newRunArray = [];
              var runSavedata = newRunArray.push(newRun);
@@ -691,6 +727,7 @@ import{
     }
 
     SadIconClick(){
+     CleverTap.recordEvent('ON_CLICK_SAD_WORKOUT');
      this.setState({
       sadView:true,
       happyView:false,
@@ -699,12 +736,86 @@ import{
     }
 
     HappyIconClick(){
+      CleverTap.recordEvent('ON_CLICK_HAPPY_WORKOUT');
       this.setState({
       sadView:false,
       happyView:true,
       firstModel:false,
      })
     }
+    
+    submitFeedBack(){
+      this.setState({
+        isPostingFeedBack:true,
+      })
+      if(this.state.user){
+         NetInfo.isConnected.fetch().done(
+      (isConnected) => { 
+        if (isConnected) {
+      fetch(apis.UserFeedBack, {
+            method: "post",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body:JSON.stringify({
+              "feedback":this.state.sadFeedbackText,
+              "user_id":this.state.user.user_id,
+              "tag":'sad_feedback',
+              "phone_number":this.state.user.phone_number,
+              "email":this.state.user.email,
+              "is_ios":true,
+              "is_chat":false,
+            })
+          })
+          .then((response) => response.json())
+          .then((response) => {
+            CleverTap.recordEvent('ON_SUBMIT_FEEDBACK');
+            this.setState({
+              isPostingFeedBack:false,
+              sadView:false,
+              happyView:true,
+              firstModel:false,
+            })
+            console.log('responce',response);
+            dismissKeyboard();
+            AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
+
+          })
+          .catch((err) => {
+            this.setState({
+              isPostingFeedBack:false,
+            })
+            console.log('err',err);
+          })
+          }else{
+          this.setState({
+            isPostingFeedBack:false,
+          })
+          AlertIOS.alert('No internet connection', 'Please connect your device to internet to submit feedback');
+       }
+        }) 
+       
+        }else{
+          this.setState({
+            isPostingFeedBack:false,
+          })
+            AlertIOS.alert('Please Login to submit feedback', 'Thank you for giving your feedback');
+
+        }
+
+    }
+
+     RateUshandleClick = () => {
+      CleverTap.recordEvent('ON_CLICK_RATE_US_AFTER_FEEDBACK');
+      Linking.canOpenURL('https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8').then(supported => {
+        if (supported) {
+          Linking.openURL('https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8');
+        } else {
+          console.log('Don\'t know how to open URI: ' + 'https://itunes.apple.com/us/app/impactrun/id1143265464?mt=8');
+        }
+      });
+    };
 
     viewData(){
       if (this.state.happyView) {
@@ -713,7 +824,7 @@ import{
             <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
             <View style={styles.modelBtnWrapsad}>
               <Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,bottom:10}}>Thank You ! Rate us on  App store, tell others about your experience.</Text>
-              <TouchableOpacity style={styles.modelbtnsadFeedback} onPress ={()=>this.HappyIconClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>RATE US</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.modelbtnsadFeedback} onPress ={()=>this.RateUshandleClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>RATE US</Text></TouchableOpacity>
             </View>
           </View>
           )
@@ -727,9 +838,9 @@ import{
                multiline = {true}
                numberOfLines = {10}
                onChangeText={(text) => this.setState({sadFeedbackText:text})}
-               value={this.state.sadFeedbackText}>
+               placeholder={this.state.sadFeedbackText}>
              </TextInput>
-              <TouchableOpacity style={styles.modelbtnsadFeedback}onPress ={()=>this.HappyIconClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>SUBMIT</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.modelbtnsadFeedback}onPress ={()=>this.submitFeedBack()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>SUBMIT</Text></TouchableOpacity>
             </View>
           </View>
         )
@@ -771,6 +882,22 @@ import{
         openlikeUnlike:false,
       })
     }
+    onPostsuccessView(){
+      if (this.state.isPostingFeedBack) {
+        return(
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight-114,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+          <Text style={{color:'white',fontWeight:'600'}}>Posting feedback...</Text>
+            <ActivityIndicator
+             style={{height: 80}}
+              size="large"
+            >
+            </ActivityIndicator>
+          </View>
+          )
+      }else{
+        return;
+      }
+    }
 
 
     render() {
@@ -782,74 +909,13 @@ import{
       var impact =this.props.impact;
       var time = this.props.time;
      
-      let shareOptions = {
-        // title: "ImpactRun",
-        // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
-        url:REACT_ICON,
-        // subject: "Download ImpactRun Now " //  for email
-      };
      if (this.state.userLoaded === true) {
       if (this.state.user === null ) {
        
         return(
        <View style={styles.container}>
           <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
-            <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
-              <View style={styles.wrapperRunContentImpact}>
-                <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
-                <Text style={styles.lableText}>Impact</Text>
-              </View>
-              <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
-               <View style={styles.wrapperRunContent}>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}<Text style={[styles.lableText,{fontSize:styleConfig.fontSizerlabel+5}]}> cal</Text> </Text>
-                  <Text style={styles.lableText}>Calories burned</Text>
-                </View>
-              <View style={styles.wrapperRunContent2}>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular' ,fontSize:styleConfig.fontSizerImpact-10,}}>{this.state.Duration}</Text>
-                <Text style={styles.lableText}>Duration</Text>
-              </View>
-              </View>
-            </View>
-            <View style={{height:deviceHeight/3+30,width:deviceWidth,backgroundColor:'white',}}>
-             <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
-            </View>
-            <View style={{flex:1 ,alignItems: 'center',justifyContent: 'center', flexDirection:'column',backgroundColor:'white'}}>
-             <View style={{height:styleConfig.navBarHeight-30,width:deviceWidth,flex:-1,flexDirection:'row',width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute',top:0}}>            
-                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.lableText}>How was it?</Text>
-                </View>
-                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.lableText}>Tell your friends!</Text>                 
-                </View>
-              </View>
-              <View style={{flex:-1,width:deviceWidth, flexDirection:'row'}}>
-                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <TouchableOpacity onPress={() => this.shareLinkWithShareDialog()} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
-                   <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="thumbs-up-down"></Icon2>
-                  </TouchableOpacity>
-                </View>
-                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <TouchableOpacity onPress={()=>Share.open(shareOptions)} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:styleConfig.bright_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
-                    <Icon style={{color:'white',fontSize:styleConfig.fontSizerlabel+20}}name={'md-share'}></Icon>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={{bottom:10,height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
-                <TouchableOpacity  onPress={() => this.navigateTOhome()}>
-                  <Text style={{color:styleConfig.bright_blue,fontFamily: 'Montserrat-Regular',}}>Skip ></Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Image>
-        </View>  
-       )
-      }else{
-      var username = (this.state.user != null)?this.state.user.first_name:'Awesome man'
-      return(
-        <View style={styles.container}>
-          <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
-           <View ref='captureScreenShot'>
+           <View ref='captureScreenShot' >
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
                 <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
@@ -887,6 +953,64 @@ import{
                   </TouchableOpacity>
                 </View>
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                  <TouchableOpacity onPress={()=>this.snapshot('captureScreenShot')} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:styleConfig.bright_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
+                    <Icon style={{color:'white',fontSize:styleConfig.fontSizerlabel+20}}name={'md-share'}></Icon>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={{bottom:10,height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
+                <TouchableOpacity  onPress={() => this.navigateTOhome()}>
+                  <Text style={{color:styleConfig.bright_blue,fontFamily: 'Montserrat-Regular',}}>Skip ></Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Image>
+          {this.openModelLikeUnlikeView()}
+        </View>  
+       )
+      }else{
+      var username = (this.state.user != null)?this.state.user.first_name:'Awesome man'
+      return(
+        <View style={styles.container}>
+          <Image source={require('../../images/backgroundLodingscreen.png')} style={styles.shadow}>
+            <View ref='captureScreenShot'>
+              <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
+                <View style={styles.wrapperRunContentImpact}>
+                  <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
+                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                  <Text style={styles.lableText}>Impact</Text>
+                </View>
+                <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
+                  <View style={styles.wrapperRunContent}>
+                    <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}<Text style={[styles.lableText,{fontSize:styleConfig.fontSizerlabel+5}]}> cal</Text> </Text>
+                    <Text style={styles.lableText}>Calories burned</Text>
+                  </View>
+                  <View style={styles.wrapperRunContent2}>
+                    <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular' ,fontSize:styleConfig.fontSizerImpact-10,}}>{this.state.Duration}</Text>
+                    <Text style={styles.lableText}>Duration</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={{height:deviceHeight/3+30,width:deviceWidth,backgroundColor:'white',}}>
+                <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
+              </View>
+            </View>
+            <View style={{flex:1 ,alignItems: 'center',justifyContent: 'center', flexDirection:'column',backgroundColor:'white'}}>
+             <View style={{height:styleConfig.navBarHeight-30,width:deviceWidth,flex:-1,flexDirection:'row',width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute',top:0}}>            
+                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                  <Text style={styles.lableText}>How was it?</Text>
+                </View>
+                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                  <Text style={styles.lableText}>Tell your friends!</Text>                 
+                </View>
+              </View>
+              <View style={{flex:-1,width:deviceWidth, flexDirection:'row'}}>
+                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
+                  <TouchableOpacity onPress={() => this.openModelLikeUnlike()} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
+                   <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="thumbs-up-down"></Icon2>
+                  </TouchableOpacity>
+                </View>
+                <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
                   <TouchableOpacity onPress={()=> this.snapshot('captureScreenShot')} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:styleConfig.bright_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
                     <Icon style={{color:'white',fontSize:styleConfig.fontSizerlabel+20}}name={'md-share'}></Icon>
                   </TouchableOpacity>
@@ -900,6 +1024,7 @@ import{
             </View>
           </Image>
           {this.openModelLikeUnlikeView()}
+          {this.onPostsuccessView()}
         </View>  
       )
      }
@@ -915,11 +1040,11 @@ import{
       if (this.state.postingRun) {
         return(
           <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.56)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
-            <ActivityIndicatorIOS
+            <ActivityIndicator
              style={{height: 80}}
               size="large"
             >
-            </ActivityIndicatorIOS>
+            </ActivityIndicator>
           </View>
           )
       }else{

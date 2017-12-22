@@ -23,6 +23,7 @@ import NavBar from '../navBarComponent';
 import LodingRunScreen from '../gpstracking/runlodingscreen'
 var { RNLocation: Location } = require('NativeModules');
 import ImageLoad from 'react-native-image-placeholder';
+const CleverTap = require('clevertap-react-native');
 
 class CauseDetail extends Component {
     
@@ -41,13 +42,17 @@ class CauseDetail extends Component {
 
     // Navigate to Run Screen
     NavigateToRunScreen(){
+      CleverTap.recordEvent('ON_CLICK_BEGIN_RUN',{
+        'cause_index':this.props.cause_index,
+        'cause_id':this.props.cause.pk,
+      });
       var me = this;
       var data = this.props.data;
       Location.getAuthorizationStatus(function(authorization) {
       if (authorization === "authorizedWhenInUse") {
       me.props.navigator.push({
          id:'runlodingscreen',
-         passProps: {data: data},
+         passProps: {data: data,killRundata:null},
            navigationOptions: {
               gesturesEnabled: false,
             },
@@ -144,7 +149,7 @@ class CauseDetail extends Component {
         )
       }else{
         return(
-          <TouchableOpacity style={styles.btnBeginRun} text={'BEGIN RUN'}onPress={() => this.NavigateToRunScreen()}>
+          <TouchableOpacity style={styles.btnBeginRun} text={'LET\'S GO'}onPress={() => this.NavigateToRunScreen()}>
             <Text style={styles.Btntext}>BEGIN RUN</Text>
           </TouchableOpacity>
         )

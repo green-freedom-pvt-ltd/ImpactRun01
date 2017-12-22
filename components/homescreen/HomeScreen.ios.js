@@ -48,6 +48,8 @@ import { takeSnapshot } from "react-native-view-shot";
 import Share, {ShareSheet, Button} from 'react-native-share';
 import LinearGradient from 'react-native-linear-gradient';
 import AnimateNumber from './numberAnimate.js';
+const CleverTap = require('clevertap-react-native');
+import getLocalData from '../getLocalData.js';
 
 var REQUEST_URL = 'http://Dev.impactrun.com/api/causes';
 var deviceWidth = Dimensions.get('window').width;
@@ -329,25 +331,75 @@ class Homescreen extends Component {
         PushNotificationIOS.requestPermissions();              
         this.PostSavedRundataIfInternetisOn();   
       }
+      
 
+
+      componentDidMount() { 
+       CleverTap.recordEvent('ON_LOAD_CAUSE_SELECTION'); 
+        AsyncStorage.getItem('my_rate', (err, result) => {
+          this.setState({
+            my_rate:(result != null )? JSON.parse(result):1,
+          })
+            
+        })
+        AsyncStorage.getItem('overall_impact', (err, result) => {
+          console.log('overall_impact', result);
+          this.setState({
+            overall_impact:(result != null)? JSON.parse(result):0,
+          }) 
+        })    
+
+        var provider = this.props.provider;
+        var causeNum = this.props.myCauseNum;
+       
+        if (causeNum != null || undefined) {
+          try {
+            AsyncStorage.multiGet(causeNum, (err, stores) => {
+
+                var _this = this
+                stores.map((item) => {
+
+                    let key = item[0];
+                    let val = JSON.parse(item[1]);
+                   
+                    let causesArr = _this.state.causes.slice()
+                    causesArr.push(val)  
+                    console.log('causesArr',causesArr);                
+                    _this.setState({causes: causesArr})
+                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
+                    _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
+                });
+              this.setState({
+                loadingimage:false,
+                navigation: Object.assign({}, this.state.navigation, {index: 0, routes: Object.keys(this.state.album).map(key => ({ key })), })
+              })
+          });
+          } catch (err) {
+            console.log(err)
+          } 
+        }else{
+          this.props.fetchDataonInternet();
+        }
+      }
 
 
       fetchLocalRunData(){
         var runNumber=[];
         var i;
         AsyncStorage.getItem('SaveRunCount', (err, result) => {
+
           this.setState({
             RunCount:JSON.parse(result),  
             loaded:true,             
-          })  
+          })   
           if (this.state.RunCount != null) {        
-          var runcount = this.state.RunCount;
-          console.log('runcount',this.state.RunCount);
-          for (i = 0; i < runcount+1; i++) {
-            runNumber.push("RID" + i )  ;
+            var runcount = this.state.RunCount;
+            console.log('runcount',this.state.RunCount);
+            for (i = 0; i < runcount+1; i++) {
+              runNumber.push("RID" + i )  ;
+            }
+            this.postPastRunoldSync();
           }
-          this.postPastRunoldSync();
-        }
         })
       }
        
@@ -357,6 +409,7 @@ class Homescreen extends Component {
         })
         console.log('thisrenderComponentState',this.state.renderComponent);
       }
+
 
 
     postPastRunoldSync(){
@@ -408,6 +461,7 @@ class Homescreen extends Component {
           end_location_long:RunData.end_location_long,
           no_of_steps:RunData.no_of_steps,
           is_ios:RunData.is_ios,
+          team_id:RunData.team_id,
         })
        })
 
@@ -417,9 +471,7 @@ class Homescreen extends Component {
          let responceversion = {
            runversion:epochtime
          }
-        AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),()=>{   
-          console.log("removed version",responceversion);
-        });      
+           
         this.RemoveStoredRun(runNumber);
        })
        }
@@ -557,51 +609,6 @@ class Homescreen extends Component {
       // }
 
 
-      componentDidMount() {  
-        AsyncStorage.getItem('my_rate', (err, result) => {
-          this.setState({
-            my_rate:(result != null )? JSON.parse(result):1,
-          })
-            
-        })
-      AsyncStorage.getItem('overall_impact', (err, result) => {
-          this.setState({
-            overall_impact:(result != null)? JSON.parse(result):0,
-          }) 
-        })    
-
-        var provider = this.props.provider;
-        var causeNum = this.props.myCauseNum;
-       
-        if (causeNum != null || undefined) {
-          try {
-            AsyncStorage.multiGet(causeNum, (err, stores) => {
-
-                var _this = this
-                stores.map((item) => {
-
-                    let key = item[0];
-                    let val = JSON.parse(item[1]);
-                   
-                    let causesArr = _this.state.causes.slice()
-                    causesArr.push(val)  
-                    console.log('causesArr',causesArr);                
-                    _this.setState({causes: causesArr})
-                    _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
-                    _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
-                });
-              this.setState({
-                loadingimage:false,
-                navigation: Object.assign({}, this.state.navigation, {index: 0, routes: Object.keys(this.state.album).map(key => ({ key })), })
-              })
-          });
-          } catch (err) {
-            console.log(err)
-          } 
-        }else{
-          this.props.fetchDataonInternet();
-        }
-      }
 
 
      
@@ -707,6 +714,7 @@ class Homescreen extends Component {
 
     // NAVIGATION
     navigateToRunScreen(cause) {
+
       var me = this;
       Location.getAuthorizationStatus(function(authorization) {
         if (authorization === "authorizedWhenInUse") {
@@ -719,13 +727,16 @@ class Homescreen extends Component {
         } else {
           cause = {}
         }
-
+        CleverTap.recordEvent('ON_CLICK_LETS_GO',{
+        'cause_index':me.state.navigation.index,
+        'cause_id':cause.pk,
+        });
         // Location.startUpdatingLocation();
         me.props.navigator.replace({
         title: 'Gps',
         id:'runlodingscreen',
         index: 0,
-        passProps:{data:cause,user:me.props.user,getUserData:me.props.getUserData},
+        passProps:{cause_index:me.state.navigation.index,data:cause,user:me.props.user,getUserData:me.props.getUserData,killRundata:null},
         sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
         navigator: me.props.navigator,
         });
@@ -771,6 +782,7 @@ class Homescreen extends Component {
     }
 
     navigateToCauseDetail(cause,some) {
+      CleverTap.recordEvent('ON_LOAD_CAUSE_DETAILS');
       console.log('some',some);
       this.props.navigator.push({
       title: 'Gps',
@@ -963,7 +975,7 @@ class Homescreen extends Component {
     }else{
       return(
         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >LET'S GO</Text>
+          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >{'LET\'S GO'}</Text>
         </TouchableOpacity>
       )
     }
@@ -984,9 +996,8 @@ class Homescreen extends Component {
        var Impact = parseFloat(Overallimpact).toFixed(0);
       if (!this.state.loadingImpact && this.props.myCauseNum != null) {
       return (
-          <View style={{height:deviceheight,width:deviceWidth}}>
+          <View style={{backgroundColor:'white',height:deviceheight,width:deviceWidth}}>
           <View style={commonStyles.Navbar}>
-            <Text style={commonStyles.menuTitle}>Impact</Text>
           </View>
           <View style={{justifyContent:'flex-end',backgroundColor:'transparent',height:deviceheight-114}}>
           <View style={styles.TotalRaisedTextWrap}>
@@ -995,7 +1006,7 @@ class Homescreen extends Component {
 
             <Icon style={[styles.TotalRaisedText,{fontSize:styleConfig.FontSizeTitle+20}]}name={this.state.my_currency.toLowerCase()}></Icon>
             <Text>{' '}</Text>
-              <AnimateNumber TotalRaisedimpact = {Impact} currencyString = {this.state.my_currency.slice(0,2)} value={Impact} formatter={(val) => {
+              <AnimateNumber myRate = {this.state.my_rate} TotalRaisedimpact = {Impact} currencyString = {this.state.my_currency.slice(0,2)} value={Impact} formatter={(val) => {
                   return ' ' + parseFloat(val).toFixed(0)
                 }} ></AnimateNumber>        
            </Text>
@@ -1070,7 +1081,7 @@ class Homescreen extends Component {
     },
     TotalRaisedText:{
        fontSize:styleConfig.FontSizeTitle+24,
-       color:'#33f373',
+       color:styleConfig.new_green,
        fontWeight:'800',
        fontFamily:styleConfig.FontFamily,
     },

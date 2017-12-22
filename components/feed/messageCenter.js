@@ -7,7 +7,8 @@ import {
   Image,
   Dimensions,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  WebView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
@@ -40,7 +41,10 @@ class MessageCenter extends Component {
   render() {
     return (
     <View>
-      <MessageCenterData getfeedCount={this.props.getfeedCount} navigator={this.props.navigator} />
+      <WebView
+        source={{uri: 'http://blog.impactapp.in/'}}
+        style={{marginTop: 20}}
+      />
     </View>
     );
   }

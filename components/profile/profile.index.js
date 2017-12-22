@@ -44,7 +44,7 @@ const my_rate = 1.0;
 class Profile extends Component {
       constructor(props) {
         super(props);
-         this.fetchRunDataLocally();
+      this.fetchRunDataLocally();
       //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
       //   console.log("fetchRunhistoryDataerr",err);
       // });
@@ -83,6 +83,7 @@ class Profile extends Component {
      componentWillMount() { 
         this.setState({
           user:this.props.user,
+          // runfeatching:this.props.isfetchingRun,
         })   
          
           AsyncStorage.getItem('my_currency', (err, result) => {
@@ -117,39 +118,43 @@ class Profile extends Component {
 
       fetchRunDataLocally(){
          AsyncStorage.getItem('RunFetchedData', (err, result) => {
+          console.log('RunFetchedData',result);
             this.setState({
               RunFetchedData:JSON.parse(result),
-          })
-            if (this.state.RunFetchedData === null) {
-              this.fetchRunhistoryData();
-            }
+            })
+            // if (this.state.RunFetchedData === null) {
+            //   this.fetchRunhistoryData();
+            // }
           })           
-          AsyncStorage.getItem('nextpage', (err, result) => {
-            this.setState({
-              nextPage:JSON.parse(result),
-          })     
-          if (this.state.nextPage === null) {
+          // AsyncStorage.getItem('nextpage', (err, result) => {
+          //   this.setState({
+          //     nextPage:JSON.parse(result),
+          // })     
+        //   if (this.state.nextPage === null) {
+        //   AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+        //     var RunData = JSON.parse(result);
+        //     console.log('RunData',RunData);
+        //     if (result != null || undefined) {
+        //       this.setState({
+        //         rawData: RunData,
+        //       })
+        //       this.fetch7DayData();
+        //       this.getRunCount();
+        //       this.fetchAmount();
+        //       this.fetchTotalDistance();
+        //     }else{
+        //        this.fetchRunhistoryData();
+        //     }
+        //   });
+        // }else{
           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
             var RunData = JSON.parse(result);
+            console.log('RunData',RunData);
             if (result != null || undefined) {
               this.setState({
                 rawData: RunData,
               })
-              this.fetch7DayData();
-              this.getRunCount();
-              this.fetchAmount();
-              this.fetchTotalDistance();
-            }else{
-               this.fetchRunhistoryData();
-            }
-          });
-        }else{
-           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-            var RunData = JSON.parse(result);
-            if (result != null || undefined) {
-              this.setState({
-                rawData: RunData,
-              })
+              console.log('nextPage');
               this.fetch7DayData();
               this.getRunCount();
               this.fetchAmount();
@@ -158,8 +163,8 @@ class Profile extends Component {
             }
           })
           
-        }
-        })
+        // }
+        // })
       }
 
 
@@ -196,6 +201,7 @@ class Profile extends Component {
 
           .then( response => response.json())
           .then( jsonDataobj => {
+            console.log('this.roeDta',this.state.rowData,jsonDataobj.results);
             this.setState({
               runfeatching:true,
               rawData: this.state.rawData.concat(jsonDataobj.results),
@@ -206,25 +212,7 @@ class Profile extends Component {
             AsyncStorage.setItem('RunFetchedData', JSON.stringify(1));
             let RunCount = this.state.RunCount;
             AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
-              if (jsonData.results != null || undefined) {
-                 AsyncStorage.removeItem('runversion',(err) => {
-                });
-                var newDate = new Date();
-                var convertepoch = newDate.getTime()/1000
-                var epochtime = parseFloat(convertepoch).toFixed(0);
-                let responceversion ={
-                  runversion:epochtime
-                }
-                AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                 AsyncStorage.getItem('runversion', (err, result) => {
-                  this.setState({
-                    runversion:JSON.parse(result).runversion,
-                  })
-                })
-            });
-              }else{
-                return;
-              }
+            
               let nextpage = this.state.nextPage;
               AsyncStorage.setItem('nextpage',JSON.stringify(nextpage));
               var storepage =  this.state.rawData;
@@ -256,7 +244,11 @@ class Profile extends Component {
 
 
      async nextPage(){
+      console.log('nextPage',this.state.nextPage);
         if (this.state.nextPage != null) {
+        this.setState({
+          runfeatching:true,
+        })
         var token = this.props.user.auth_token;
         var url = this.state.nextPage;
         fetch(url,{
@@ -268,8 +260,9 @@ class Profile extends Component {
         })
         .then( response => response.json() )
         .then( jsonData => {
+          console.log('jsonData',jsonData);
           this.setState({
-            rawData: this.state.rawData.concat(jsonData.results),
+            rawData: navigateToRunHistory.state.rawData.concat(jsonData.results),
             loaded: true,
             runfeatching:true,
             refreshing:false,
@@ -277,19 +270,8 @@ class Profile extends Component {
             loadingFirst:true,
             RunCount:jsonData.count,
           });
-          AsyncStorage.removeItem('runversion',(err) => {
-          });
-          var newDate = new Date();
-          var convertepoch = newDate.getTime()/1000
-          var epochtime = parseFloat(convertepoch).toFixed(0);
-          let responceversion = {
-            runversion:epochtime
-          }
-          AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-           this.setState({
-             runversion:responceversion
-           })
-          });
+          console.log('rawData',this.state.rawData);
+        
           let RunCount = this.state.RunCount;
           AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
           AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
@@ -304,7 +286,12 @@ class Profile extends Component {
            })
           this.LoadmoreView();
         })
-        .catch( error => console.log('Error fetching: ' + error) );
+        .catch( error => {
+          console.log('Error fetching: ' + error)
+          this.setState({
+            runfeatching:false,
+          })
+        });
 
        }else{
         this.setState({
@@ -600,6 +587,7 @@ class Profile extends Component {
       }
 
     navigateToRunHistory() {
+      console.log('this.state.rawData',this.state.rawData);
       this.props.navigator.push({
       title: 'RunHistory',
       component:RunHistory,
@@ -620,8 +608,7 @@ class Profile extends Component {
           return(
            <ActivityIndicatorIOS
                 style={{height: 20}}
-                size="small"
-              />
+                size="small" />
             )
         }else{
           return;
@@ -653,11 +640,10 @@ class Profile extends Component {
         if(this.state.runfeatching){
         return(
            <TouchableOpacity  style={styles.btnviewRun1 }>
-              <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}} >LOADING RUNS...</Text>
+              <Text style={{fontSize:14,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily:styleConfig.FontFamily}}>LOADING RUNS...</Text>
                <ActivityIndicatorIOS
                 style={{height: 20}}
-                size="small"
-              />
+                size="small"/>
              </TouchableOpacity>
           )
       }else{
@@ -839,7 +825,7 @@ class Profile extends Component {
                 </View>
               </View>
             </View>
-             {this.isloading()}
+             
           </View>
         );
       }else{
@@ -856,7 +842,7 @@ class Profile extends Component {
 
 
       isloading(){
-      if (this.state.runfeatching) {
+      if (this.state.runfeatching ) {
         return(
           <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
             <ActivityIndicator

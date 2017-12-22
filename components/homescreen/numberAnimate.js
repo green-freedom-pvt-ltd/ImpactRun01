@@ -10,10 +10,15 @@ import {
   Text,
   View,
   AsyncStorage,
+  Dimensions,
 } from 'react-native';
 import Timer from 'react-timer-mixin';
 
 const HALF_RAD = Math.PI/2
+
+
+
+var deviceWidth = Dimensions.get('window').width;
 
 export default class AnimateNumber extends Component {
 
@@ -29,9 +34,9 @@ export default class AnimateNumber extends Component {
   };
 
   static defaultProps = {
-    interval : 10,
+    interval :10,
     timing : 'linear',
-    steps : 50,
+    steps : 45,
     formatter : (val) => val,
     onFinish : () => {}
   };
@@ -75,27 +80,55 @@ export default class AnimateNumber extends Component {
 
   constructor(props:any) {
     super(props);
-    var data = '';
-     AsyncStorage.getItem('oldoverall_impact', (err, result) => {
-       data = JSON.parse(result);
-       console.log('oldoverall_impact',data);
-     })
      this.state = {
-      value : data,
-      displayValue :data,
+      value : 0,
+      displayValue : 0,
      }
     // default values of state and non-state variables
    
     this.dirty = false;
-    this.startFrom = data;
-    this.endWith = this.props.TotalRaisedimpact;
+    this.startFrom = 0;
+    this.endWith = 0;
   }
 
   componentDidMount() {
-    this.startFrom = this.state.value
-    this.endWith = this.props.value
-    this.dirty = true
-    this.startAnimate()
+    var data = [];
+    AsyncStorage.getItem('my_rate', (err, result) => {
+      var my_rate = (JSON.parse(result) != null)?JSON.parse(result):1.0;
+      AsyncStorage.getItem('oldoverall_impact', (err, result) => {
+      if (result != null) {
+        console.log('data ', data);
+        data.push(parseFloat(JSON.parse(result)/my_rate).toFixed(0));
+        console.log('oldoverall_impact',data,my_rate);
+        this.setState({
+          value:JSON.parse(data),
+          displayValue:this.props.value,
+        })
+        this.startFrom = JSON.parse(data);
+        this.endWith = this.props.value
+        this.dirty = true
+        this.startAnimate()
+        console.log('this.props.value',this.props.value);
+      }else{
+        data.push(JSON.parse('0'));
+        this.setState({
+          value:JSON.parse(data),
+          displayValue:JSON.parse(data),
+         })
+        this.startFrom = JSON.parse(data);
+        this.endWith = this.state.value
+        this.dirty = true
+        this.startAnimate(this.props.value-this.state.value)
+        console.log('this.props.value',this.props.value);
+      }
+      })
+    })
+    console.log('ccc',this.state.displayValue);
+   
+
+  }
+  comonentWillUnmount(){
+    // AsyncStorage.setItem('oldoverall_impact',JSON.stringify(this.props.value));
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -105,7 +138,7 @@ export default class AnimateNumber extends Component {
       this.startFrom = this.state.value
       this.endWith = nextProps.value
       this.dirty = true
-      this.startAnimate()
+      this.startAnimate(nextProps.value-this.state.value)
       return
     }
     // Check if iterate animation frame
@@ -114,12 +147,12 @@ export default class AnimateNumber extends Component {
     }
     if (this.direction === true) {
       if(parseFloat(this.state.value) <= parseFloat(this.props.value)) {
-        this.startAnimate();
+        this.startAnimate(nextProps.value);
       }
     }
     else if(this.direction === false){
       if (parseFloat(this.state.value) >= parseFloat(this.props.value)) {
-        this.startAnimate();
+        this.startAnimate(nextProps.value-this.state.value);
       }
     }
 
@@ -127,26 +160,23 @@ export default class AnimateNumber extends Component {
 
   render() {
     return (
-      <Text {...this.props} style={{paddingLeft:5}}>
+      <Text {...this.props} style={{paddingLeft:5,width:deviceWidth}}>
         {(Math.round(this.state.displayValue*100)/100).toLocaleString('en-'+this.props.currencyString,{ minimumFractionDigits: 0}) }
       </Text>)
    
   }
 
-  startAnimate() {
-
-    let progress = this.getAnimationProgress()
-
+  startAnimate(valueCount) {
+    var countByvalue = valueCount/10 
+    let progress = this.getAnimationProgress();
     Timer.setTimeout(() => {
-
       let value = (this.endWith - this.startFrom)/this.props.steps
-      if(this.props.countBy)
-        value = Math.sign(value)*Math.abs(this.props.countBy)
+      value = Math.sign(value)*Math.abs(1)
       let total = parseFloat(this.state.value) + parseFloat(value)
 
       this.direction = (value > 0)
       // animation terminate conditions
-      if (((this.direction) ^ (total <= this.endWith)) === 1) {
+      if (((this.direction) ^ (total <= this.endWith)) === this.props.countBy) {
         this.dirty = false
         total = this.endWith
         this.props.onFinish(total, this.props.formatter(total))
@@ -161,7 +191,6 @@ export default class AnimateNumber extends Component {
       })
 
     }, this.getTimingFunction(this.props.interval, progress))
-
   }
 
   getAnimationProgress():number {
@@ -176,6 +205,6 @@ export default class AnimateNumber extends Component {
       return this.props.timing(interval, progress)
     else
       return AnimateNumber.TimingFunctions['linear'](interval, progress)
+    }
   }
 
-}

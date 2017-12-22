@@ -88,7 +88,7 @@ class EndFeedBack extends Component {
          var user_id = this.props.user.user_id;
          var mybody;
          var date = new Date();
-         console.log('this.props.rowData',this.props.rowData,this.props.data);
+         console.log('this.props.rowData',this.props.rowData,this.props.data,this.props.sub_tag);
          var convertepoch = parseInt(date.getTime()/1000);
          if(this.props.sub_tag){
          mybody = JSON.stringify({
@@ -112,6 +112,7 @@ class EndFeedBack extends Component {
             "feedback_app_version":'1.0.7',
             "user_id":user_id,
             "tag":this.props.tag,
+            "sub_tag":(this.props.sub_tag)?this.props.sub_tag:'',
             "run_id":(this.props.runData)?this.props.runData.run_id:0,
             "phone_number":this.props.user.phone_number,
             "email":this.props.user.email,
@@ -185,11 +186,11 @@ class EndFeedBack extends Component {
         
         <View>
 
-        <View style={{marginTop:30,marginLeft:10,}}>
-          <Text style={{color:'black'}}>{data.header}</Text>
+        <View style={{marginTop:30,marginLeft:10,marginBottom:10}}>
+          <Text style={{color:'#595c5d',fontFamily:styleConfig.FontFamily,}}>{data.header}</Text>
         </View>
-        <View style={{marginTop:15,marginLeft:10,}}>
-          <Text style={{color:'black', fontFamily:styleConfig.FontFamily,}}>{data.discription}</Text>
+        <View style={{marginLeft:10,marginBottom:20,width:deviceWidth-20}}>
+          <Text style={{color:'#595c5d', fontFamily:styleConfig.FontFamily,}}>{data.discription}</Text>
         </View>
             <View style={styles.FaqSubmitWrap}>
                <View>
@@ -219,7 +220,7 @@ class EndFeedBack extends Component {
 const styles = StyleSheet.create({
   container: {
     height:deviceHeight,
-    backgroundColor: '#e2e5e6',
+    backgroundColor: 'white',
   },
   FaqSubmitWrap:{
     height:styleConfig.navBarHeight,
@@ -227,19 +228,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'center',
     alignItems:'flex-start',
-    backgroundColor:'#e1e1e8',
+    backgroundColor:'white',
     borderBottomWidth:2,
-    borderBottomColor:'#e1e1e8',
+    borderBottomColor:'white',
     marginTop:1,
   },
   textEdit: {
     height:40, 
     borderColor: '#e1e1e8', 
-    backgroundColor: 'white',
+    backgroundColor: '#ccc',
     borderRadius:8,
     width:deviceWidth-10,
     marginLeft:5,
-    color:'#4a4a4a',
+    color:'white',
     padding:10,
     marginRight:5,
   },

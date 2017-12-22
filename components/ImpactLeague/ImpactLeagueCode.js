@@ -144,6 +144,7 @@ class ImpactLeagueCode extends Component {
         // first user, delta values
         AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
          AsyncStorage.getItem('USERDATA', (err, result) => {
+          console.log('resultuser',result);
                 this.props.getUserData();
 
         })
@@ -180,8 +181,9 @@ class ImpactLeagueCode extends Component {
           }
 
         }
-       this.props.navigator.replace({
-        id:'impactleagueform2',
+
+        this.props.navigator.replace({
+          id:'impactleagueform2',
           passProps:{
             cities:city,
             departments:department,
@@ -189,15 +191,16 @@ class ImpactLeagueCode extends Component {
             data:responseJson,
             getUserData:this.props.getUserData,
           },
-        navigator: this.props.navigator,
+          navigator: this.props.navigator,
         })
       }
-     // this.setState({
-     //  city:city,
-     //  department:department,
-     //  data:responseJson,
-     //  FormScreen:true,
-     // })
+
+      // this.setState({
+      //  city:city,
+      //  department:department,
+      //  data:responseJson,
+      //  FormScreen:true,
+      // })
     }
      
 
@@ -239,13 +242,15 @@ class ImpactLeagueCode extends Component {
     }
 
     goBack(){
-      this.props.navigator.pop();
+      this.props.navigator.pop({
+
+      });
     }
 
     leftIconRender(){
       return(
         <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-           <Icon style={{color:'white',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+           <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
         </TouchableOpacity>
         )
     }
@@ -254,12 +259,7 @@ class ImpactLeagueCode extends Component {
       if (this.state.FormScreen!= true) {
   		  return (
           <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
-          <View style={commonStyles.Navbar}>
-          <TouchableOpacity style={{top:10,left:0,position:'absolute',height:70,width:70,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.goBack()} >
-           <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
-          </TouchableOpacity>
-          <Text style={commonStyles.menuTitle}>Impact League</Text>
-        </View>
+          <NavBar title={'Impact League'} leftIcon={this.leftIconRender()} />
           <View style={styles.container}>
           <View style={styles.ContentWrap}>
           <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
@@ -278,7 +278,7 @@ class ImpactLeagueCode extends Component {
             </TouchableOpacity>
             </View>
             <View>
-            <Text style={{marginTop:50,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>What's This?</Text>
+            <Text style={{marginTop:50,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>{'What\'s This?'}</Text>
             <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSize4,fontFamily:styleConfig.FontFamily,}}>{'Here, secret code is for Impact League. Impact League is a Walkathon oraganised by us where you and your colleagues compete with each other to raise charity.\nWalk. Help. Win! \n\nGreat idea right ? \nTo know more shoot us a mail at\ncontact@impactrun.com \n\nSee you soon.'}</Text>
             </View>
           </View>

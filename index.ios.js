@@ -250,7 +250,7 @@ class Application extends Component{
         runScreenRender(route,navigator){
           if (this.state.result != null) {
             return(
-                <RunScreen data={JSON.parse(this.state.result).data} navigator={navigator} {...route.passProps} />
+                <RunScreen data={JSON.parse(this.state.result).data} killRundata = {JSON.parse(this.state.result)} navigator={navigator} {...route.passProps} />
               )
           }else{
             return(

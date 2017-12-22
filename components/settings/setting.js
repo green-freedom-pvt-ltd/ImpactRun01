@@ -157,7 +157,7 @@ class Setting extends Component {
           if (!error) {
             _this.setState({ user : null});
             _this.props.onLogout && _this.props.onLogout();
-            let keys = ['UID234', 'UID345','USERDATA','fetchRunhistoryData','RunFetchedData'];
+            let keys = ['UID234', 'UID345','USERDATA','fetchRunhistoryData','RunFetchedData','runversion'];
               AsyncStorage.multiRemove(keys, (err) => {
               });
        
@@ -185,7 +185,7 @@ class Setting extends Component {
           'functionName':'',
          },
         {
-          'name':'ExchangeRate',
+          'name':'Currency',
           'iconName':'show-chart',
           'functionName':'',
          },
@@ -332,9 +332,11 @@ class Setting extends Component {
               console.log('thisCurrency',this.state.my_currency);
             }
           }
-          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate));
+          AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate),()=>{
+            this.navigateToHome();
+          });
           // my_currency = value;
-          this.navigateToHome();
+          
         })
 
         
@@ -372,7 +374,7 @@ class Setting extends Component {
             <Text>{DeviceInfo.getVersion()}</Text>
           )
         }
-        else if (rowData.name == 'ExchangeRate'){
+        else if (rowData.name == 'Currency'){
           var optionsdata = [ 'USD $',
                               'EUR €',
                               'JPY ¥',

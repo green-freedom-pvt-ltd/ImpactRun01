@@ -60,6 +60,18 @@ class Faqdata extends Component {
         );
       }
 
+      postfaqDataifInternet(){
+        NetInfo.isConnected.fetch().done(
+          (isConnected) => { this.setState({isConnected}); 
+            if (isConnected) {
+               this.SubmitFaq();
+            }else{
+              AlertIOS.alert("Network error","There is some problem connecting to internet");
+            }  
+          }
+        );
+      }
+
      
 
       navigateTOhome(){
@@ -128,9 +140,10 @@ class Faqdata extends Component {
             AlertIOS.alert('Thank you for submitting your question');
           })    
           .catch((err) => {
+            AlertIOS.alert('some error submitting question');
           })
 
-        this._textInput.setNativeProps({text: ''});
+          this._textInput.setNativeProps({text: ''});
         }
 
       _onRefresh(){
@@ -167,32 +180,30 @@ class Faqdata extends Component {
         }
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-110,width:deviceWidth}}>
+            <View style={{height:deviceHeight-114,width:deviceWidth}}>
               <ListView
-              refreshControl={
-                <RefreshControl
+                refreshControl={
+                  <RefreshControl
                   refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />}
+                  onRefresh={this._onRefresh.bind(this)}/>
+                }
                 dataSource={this.state.faqData}
                 renderRow={this.renderRow}
                 style={styles.container}>
               </ListView>
               <View style={styles.FaqSubmitWrap}>
-              <View>
-                <TextInput
-                ref={component => this._textInput = component} 
-                style={styles.textEdit}
-                onChangeText={(moreText) => this.setState({moreText})}
-                placeholder="If you have any question ask us!"
-                />
+                <View>
+                  <TextInput
+                  ref={component => this._textInput = component} 
+                  style={styles.textEdit}
+                  onChangeText={(moreText) => this.setState({moreText})}
+                  placeholder="If you have any question ask us!"/>
                 </View>
-                <TouchableOpacity onPress={() => this.SubmitFaq()} style={styles.submitFaqbtn}>
+                <TouchableOpacity onPress={() => this.postfaqDataifInternet()} style={styles.submitFaqbtn}>
                   <Text style={{color:'white'}}>Submit</Text>
                 </TouchableOpacity>
-
               </View>
-                  <KeyboardSpacer/>
+              <KeyboardSpacer/>
             </View>
           </View> 
         );
@@ -202,6 +213,8 @@ class Faqdata extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    height:deviceHeight-164,
+    width:deviceWidth,
     backgroundColor: '#f2f2f2',
   },
   thumb: {

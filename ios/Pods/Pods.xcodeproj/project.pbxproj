@@ -22,6 +22,7 @@
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		DAA953316F57093E75994CF4D991C4CB /* Pods-Impact.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Impact.debug.xcconfig"; sourceTree = "<group>"; };
+		F45255D23A0464FB6BFCA0A9EC766926 /* CleverTapSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CleverTapSDK.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,12 +37,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		02D13A173479CDE05C248806B72301ED /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9DEE02837EAB410ED3AC49F25784091E /* CleverTap-iOS-SDK */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		02E866CC1E1797104EFEDB9632013994 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				854BA4D08F38E9ED6E50E66A68158494 /* libPods-Impact.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		0C612243959B9CAA8343CCA7CF6F82B1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F45255D23A0464FB6BFCA0A9EC766926 /* CleverTapSDK.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */ = {
@@ -57,9 +74,19 @@
 			children = (
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
 				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				02D13A173479CDE05C248806B72301ED /* Pods */,
 				02E866CC1E1797104EFEDB9632013994 /* Products */,
 				AEAFF83DD88D72272DAE23ADB8673519 /* Targets Support Files */,
 			);
+			sourceTree = "<group>";
+		};
+		9DEE02837EAB410ED3AC49F25784091E /* CleverTap-iOS-SDK */ = {
+			isa = PBXGroup;
+			children = (
+				DB9B2C1175BD555A4CA9F478B4819A82 /* Main */,
+			);
+			name = "CleverTap-iOS-SDK";
+			path = "CleverTap-iOS-SDK";
 			sourceTree = "<group>";
 		};
 		AEAFF83DD88D72272DAE23ADB8673519 /* Targets Support Files */ = {
@@ -76,6 +103,14 @@
 				7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DB9B2C1175BD555A4CA9F478B4819A82 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				0C612243959B9CAA8343CCA7CF6F82B1 /* Frameworks */,
+			);
+			name = Main;
 			sourceTree = "<group>";
 		};
 		DDF01D9AE9AF2F5FC42D84076A1CB263 /* Pods-Impact */ = {

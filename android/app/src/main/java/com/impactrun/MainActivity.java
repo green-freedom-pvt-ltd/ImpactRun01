@@ -1,11 +1,8 @@
 package com.impactrun;
 
 import com.facebook.react.ReactActivity;
-import com.reactnativenavigation.NavigationReactPackage;
-import com.inprogress.reactnativeyoutube.ReactNativeYouTube;
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import com.reactlibrary.RNUUIDGeneratorPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 
 public class MainActivity extends ReactActivity {
 

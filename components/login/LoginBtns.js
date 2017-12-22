@@ -19,6 +19,8 @@ import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import Icon from 'react-native-vector-icons/Ionicons';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+const CleverTap = require('clevertap-react-native');
+
 class LoginBtns extends Component {
     
     constructor(props) {
@@ -47,7 +49,18 @@ class LoginBtns extends Component {
           })
         .then((response) => response.json())
         .then((userdata) => {
+            CleverTap.recordEvent('ON_LOGIN_SUCCESS', 
+                    { 
+                      'eid': userdata.auth_token, 
+                      'ios': true,
+                      'user_id': userdata.user_id,
+                      'is_sign_up_user': false,
+                      'Identity':userdata.user_id,
+                      'medium': 'fb',
+                    }
+                  );
             var userdata = userdata[0];
+             CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email,'Identity':userdata.user_id,});
             let userData = {
                 body_weight:userdata.body_weight,
                 first_name: userdata.first_name,
@@ -100,7 +113,17 @@ class LoginBtns extends Component {
       .then((userdata) => { 
        console.log('userdata',userdata);
          var userdata = userdata[0];
-             
+          CleverTap.recordEvent('ON_LOGIN_SUCCESS', 
+                    { 
+                      'eid': userdata.auth_token, 
+                      'ios': true,
+                      'user_id': userdata.user_id,
+                      'is_sign_up_user': false,
+                      'Identity':userdata.user_id,
+                      'medium': 'g+',
+                    }
+                  );
+          CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email, 'LeagueName': userdata.team_code,'Identity':userdata.user_id,});    
           let userData = {
               body_weight:userdata.body_weight,
               first_name: userdata.first_name,

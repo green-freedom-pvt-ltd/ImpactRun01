@@ -14,4 +14,5 @@
     UserFeedBack:'http://dev.impactrun.com/api/userFeedback/',
     ImpactLeagueTeamLeaderBoardV2Api:'http://dev.impactrun.com/api/teamboardv2/',
     ImpactLeagueLeaderboardV2Api:'http://dev.impactrun.com/api/teamleaderboardv2/',
+    employeetoteamApi:'http://dev.impactrun.com/api/employeetoteam/'
   }

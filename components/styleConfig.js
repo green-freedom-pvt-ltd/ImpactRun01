@@ -427,6 +427,7 @@ export default {
   light_gold:'#ffcd4d',
   fade_White:'#eeeeee',
   purplish_brown:'#453640',
+  new_green:'#33f373',
   //FontFamily
 
   FontFamily:'Montserrat-Regular',

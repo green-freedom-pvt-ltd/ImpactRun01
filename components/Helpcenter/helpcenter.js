@@ -86,6 +86,7 @@ class HelpCenter extends Component {
           showTabBar: true,
           passProps:{
             rowData:rowData,
+            user:this.props.user,
           }
         })
       }
@@ -100,7 +101,7 @@ class HelpCenter extends Component {
             data:rowData,
             tag:rowData.labelname,
             getUserData:this.props.getUserData,
-
+            user:this.props.user,
           }
         })
       }
@@ -161,7 +162,7 @@ class HelpCenter extends Component {
               },
               {'name':'More distance recorded',
                'header':'Got it. So awesome of you for letting us know !',
-               'discription':'Got it. Awesome of you for letting us know !\n \nThis might be due to poor GPS signals we are recieving from your device.\n \nBut no worries, tell us more. We would love to help.',
+               'discription':'This might be due to poor GPS signals we are recieving from your device.\n \nBut no worries, tell us more. We would love to help.',
                 'hint':'Enter feedback here',
                 'tag':'pastworkout',
                 'labelname':'more',
@@ -170,7 +171,7 @@ class HelpCenter extends Component {
 
               {'name':'Why is it scratched off',
                'header':'Got it.',
-               'discription':'Got it.\n \nA scratched or a flagged workout is a workout detected as humanly impossible in our system. Hence it is not counted.',
+               'discription':'A scratched or a flagged workout is a workout detected as humanly impossible in our system. Hence it is not counted.',
                'hint':'Enter feedback here',
                'tag':'pastworkout',
                'labelname':'scratched',
@@ -178,7 +179,7 @@ class HelpCenter extends Component {
               },
               {'name':"I wasn't in a vehicle",
                 'header':'Got it. Thanks for informing.',
-                'discription':'Got it. Thanks for informing.\n \n Our automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that.',
+                'discription':'Our automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that.',
                 'hint':'Enter feedback here',
                 'tag':'pastworkout',
                 'labelname':'notvehicle',
@@ -186,15 +187,15 @@ class HelpCenter extends Component {
               },
               {'name':'Impact missing in Leaderboard',
                 'header':'Got it. Thanks for informing.',
-                'discription':'Got it. Thanks for informing.\n \nSometimes your workouts take a few hours to sync on our database. Please wait for some time, and make sure that you are connected to internet.',
+                'discription':'Sometimes your workouts take a few hours to sync on our database. Please wait for some time, and make sure that you are connected to internet.',
                 'hint':'Enter feedback here',
                 'tag':'pastworkout',
                 'labelname':'leaderboardadd',
                 'inputLebel':'Issue still not resolved? Send feedback to us.',
               },
               {'name':'Something else',
-               'header':'',
-               'discription':'',
+               'header':'Thankyou for letting us know.',
+               'discription':'Please enter in detail what is the issue with workout.',
                'hint':'Enter feedback here',
                'tag':'pastworkout',
                'labelname':'stillelse',
@@ -223,7 +224,7 @@ class HelpCenter extends Component {
           'moreList':[
               {'name':'Distance not accurate',
                'header':'Got it. Thanks for informing',
-               'discription':'Got it.\n \nOur tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance. \n\nSometimes because of unreliability and low accuracy of these sensors it ends up recording wrong distance.\n \nWe are working hard everyday to make our tracking algorithm more robust. It would help a lot if you could tell us a bit more about the discrepancy you observed.',
+               'discription': 'Our tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance. \n\nSometimes because of unreliability and low accuracy of these sensors it ends up recording wrong distance.\n \nWe are working hard everyday to make our tracking algorithm more robust. It would help a lot if you could tell us a bit more about the discrepancy you observed.',
                'inputLebel':'Tell us more about the issue',
                'tag':'else',
                'labelname':'notaccurate',
@@ -241,7 +242,7 @@ class HelpCenter extends Component {
 
               {'name':'Impact missing in Leaderboard',
                'header':'Got it. Thanks for informing.',
-               'discription':'Got it.\n \nOur tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance. \n\nSometimes because of unreliability and low accuracy of these sensors it ends up recording wrong distance.\n \nWe are working hard everyday to make our tracking algorithm more robust. It would help a lot if you could tell us a bit more about the discrepancy you observed.',
+               'discription':'Our tracking algorithm uses a combination of GPS and motion sensors in the device to calculate distance. \n\nSometimes because of unreliability and low accuracy of these sensors it ends up recording wrong distance.\n \nWe are working hard everyday to make our tracking algorithm more robust. It would help a lot if you could tell us a bit more about the discrepancy you observed.',
                'inputLebel':'Issue still not resolved? Send feedback to us.',
                'tag':'else',
                'labelname':'leaderboardadd',
@@ -249,7 +250,7 @@ class HelpCenter extends Component {
               },
               {'name':"I wasn't in a vehicle",
                 'header':'Got it. Thanks for informing',
-                'discription':'Got it. Thanks for informing.\n \nOur automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that. ',
+                'discription':'Our automated algorithm detects when our app is used in a vehicle. Your workout is one of the 1.3 % of incorrectly detected cases. We are sorry for that. ',
                 'inputLebel':'Issue still not resolved? Send feedback to us.',
                 'tag':'else',
                 'labelname':'notvehicle',
@@ -257,7 +258,7 @@ class HelpCenter extends Component {
               },
               {'name':'Issue with GPS',
                 'header':'Got it.',
-                'discription':'Got it. \n\n GPS can be tricky when you are using the app indoors or when the weather is cloudy/rainy. Try to be in open areas. You can also try restarting the GPS through system settings.',
+                'discription':'GPS can be tricky when you are using the app indoors or when the weather is cloudy/rainy. Try to be in open areas. You can also try restarting the GPS through system settings.',
                 'inputLebel':'Issue still not resolved? Send feedback to us.',
                 'tag':'else',
                 'labelname':'gpsissue',
@@ -272,8 +273,8 @@ class HelpCenter extends Component {
                'hint':'Enter details here',
               },
               {'name':' Still something else',
-               'header':'',
-               'discription':'',
+               'header':'Thankyou for letting us know.',
+               'discription':'Please enter in detail what is the issue with workout.',
                'inputLebel':'Let us know about your issue. Send feedback to us.',
                'tag':'else',
                'labelname':'else',

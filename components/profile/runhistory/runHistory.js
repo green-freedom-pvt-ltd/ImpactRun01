@@ -29,14 +29,17 @@ import commonStyles from '../../styles';
 import Modal from '../../downloadsharemeal/CampaignModal'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import QuestionLists from '../../Helpcenter/listviewQuestions.js';
+import LoadingScreen from '../../LodingScreen';
+const CleverTap = require('clevertap-react-native');
+
 class RunHistory extends Component {
 
       constructor(props) {
         super(props);
         this.getWeightLocal();
         var ds = new ListView.DataSource({
-          rowHasChanged:(row1, row2) => row1.version !== row2.version,
-          sectionHeaderHasChanged:(section1, section2) => section1.version !== section2.version,
+          rowHasChanged:(row1, row2) => row1 !== row2,
+          sectionHeaderHasChanged:(section1, section2) => section1 !== section2,
         });
         this.state = {
           rowData:[],
@@ -47,6 +50,7 @@ class RunHistory extends Component {
           user:null ,
           loadingFirst:false,
           newarray:false,
+          runloading:true,
           enterWeightmodel:false,
           someData:null,
           my_rate:1.0,
@@ -92,6 +96,21 @@ class RunHistory extends Component {
 
         componentDidMount() {
           this.getUserData();
+           AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
+            if (result != null) {
+              var parseResult = JSON.parse(result);
+              this.setState({
+                runloading:false,
+                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(parseResult)),
+              })
+            }else{
+              var parseResult = [];
+              this.setState({
+                runloading:false,
+                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(parseResult)),
+              })
+            }
+            })
            AsyncStorage.getItem('UnsyncedData', (err, result) => {
               console.log( "result",JSON.parse(result));
               var rundata = JSON.parse(result);
@@ -137,6 +156,8 @@ class RunHistory extends Component {
                 })
               }
               })   
+
+
             this.state.someData =  this.props.rawData
             if (this.state.someData != null) {
               let sortedRuns = this.state.someData.sort((a,b) => {
@@ -149,9 +170,7 @@ class RunHistory extends Component {
                 // a must be equal to b
                 return 0;
               });
-              this.setState({
-                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(sortedRuns)),
-              })
+              
            }else{
 
            }
@@ -204,7 +223,7 @@ class RunHistory extends Component {
             },
             body:JSON.stringify({
             cause_run_title:RunData.cause_run_title,
-            user_id:RunData.user_id,
+            user_id:this.state.user.user_id,
             start_time:RunData.start_time,
             end_time:RunData.end_time,
             distance:RunData.distance,
@@ -221,6 +240,7 @@ class RunHistory extends Component {
             no_of_steps:RunData.no_of_steps,
             is_ios:RunData.is_ios,
             num_spikes:RunData.num_spikes,
+            team_id:RunData.team_id,
           })
          })
 
@@ -430,7 +450,7 @@ class RunHistory extends Component {
             let userbodyweight = {
               body_weight:response.body_weight
             }
-            
+            CleverTap.recordEvent('ON_SET_BODY_WEIGHT');
             AsyncStorage.mergeItem('USERDATA',JSON.stringify(userbodyweight),()=>{
               this.props.getUserData();
             var userWeight = response.body_weight;
@@ -452,6 +472,7 @@ class RunHistory extends Component {
 
 
     modelViewEnterWeight(){
+      CleverTap.recordEvent('ON_LOAD_WEIGHT_INPUT_DIALOG');
       return(
         <Modal
         style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
@@ -867,6 +888,7 @@ class RunHistory extends Component {
 
       render(rowData) {
         var fetchingRun = this.props.fetchRunData;
+         if (!this.state.runloading) {
           return (
             <View>
               <View style={{height:deviceHeight-styleConfig.navBarHeight}}>
@@ -877,8 +899,8 @@ class RunHistory extends Component {
                     refreshControl={
                     <RefreshControl
                       refreshing={this.state.refreshing}
-                      onRefresh={this._onRefresh.bind(this)}
-                    />}
+                      onRefresh={this._onRefresh.bind(this)}/>
+                    }
                   style={styles.listView}
                   dataSource={this.state.runHistoryData}
                   renderRow={this.renderRunsRow}/>
@@ -887,6 +909,13 @@ class RunHistory extends Component {
               </View>
             </View>
           )
+        }else{
+          return(
+            <View style={{height:deviceHeight-styleConfig.navBarHeight}}>
+              <LoadingScreen/>
+            </View>
+            )
+        }
       }
         
 

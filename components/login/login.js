@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 var {
     FBLoginManager
 } = require('react-native-facebook-login');
+const CleverTap = require('clevertap-react-native');
 
 import Lodingscreen from '../../components/LodingScreen';
 import styleConfig from '../../components/styleConfig';
@@ -40,11 +41,11 @@ class Login extends Component {
       constructor(props) {
           super(props);
           this.state = {
-              visibleHeight: Dimensions.get('window').height,
-              scroll: false,
-              user: null,
-              loaded: false,
-              mycauseDatatCount: null,
+            visibleHeight: Dimensions.get('window').height,
+            scroll: false,
+            user: null,
+            loaded: false,
+            mycauseDatatCount: null,
           };
           this._handleConnectivityChange = this._handleConnectivityChange.bind(this);
       }
@@ -102,6 +103,9 @@ class Login extends Component {
               });
           })
          
+      }
+      componentDidMount(){
+        CleverTap.recordEvent('ON_LOAD_LOGIN_SCREEN');
       }
 
       fetchDataonInternet(isConnected){
@@ -195,6 +199,18 @@ class Login extends Component {
                 })
                 .then(this.handleNetworkErrors.bind(this))
                 .then((userdata) => {
+                   CleverTap.recordEvent('ON_LOGIN_SUCCESS', 
+                    { 
+                      'eid': userdata.auth_token, 
+                      'ios': true,
+                      'user_id': userdata.user_id,
+                      'is_sign_up_user': false,
+                      'Identity':userdata.user_id,
+                      'medium': 'g+',
+                    }
+                  );
+                  CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email,'Identity':userdata.user_id,});
+
                     var userdata = userdata[0];
                     console.log('usrerloginGoogle',userdata);
                     let userData = {
@@ -225,6 +241,11 @@ class Login extends Component {
               })
             .catch((err) => {
                 console.log('WRONG SIGNIN Google', err);
+                CleverTap.recordEvent('ON_LOGIN_FAILED',{
+                  error:err,   
+                  medium:'g+'
+                });
+
             })
             .done();
       }
@@ -248,6 +269,18 @@ class Login extends Component {
               .then((response)=>response.json())
               .then((userdata) => {
                 var userdata = userdata[0];
+                CleverTap.recordEvent('ON_LOGIN_SUCCESS', 
+                  { 
+                    'eid': userdata.auth_token, 
+                    'ios': true,
+                    'user_id': userdata.user_id,
+                    'is_sign_up_user': false,
+                    'medium': 'fb'
+                  }
+                );
+                  CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email, 'LeagueName': userdata.team_code,'Identity':userdata.user_id,});
+
+                
                console.log('usrerloginfacebook',userdata);
             
                 let userData = {
@@ -275,6 +308,10 @@ class Login extends Component {
                })
               })
               .catch((err) => {
+                CleverTap.recordEvent('ON_LOGIN_FAILED',{
+                  error:err,   
+                  medium:'fb'
+                });
                 console.log('WRONG SIGNIN FB', err);
               })
             } else {
@@ -316,6 +353,10 @@ class Login extends Component {
       //       },
       //   })
       // }
+      onPressSkip(){
+        CleverTap.recordEvent('ON_CLICK_LOGIN_SKIP');
+        this.navigateToHome();
+      }
 
 
 
@@ -332,7 +373,7 @@ class Login extends Component {
           var user = this.state.user;
           var text = this.state.user ? "LOG OUT" : "LOGIN WITH FACEBOOK";
           return  (
-            <View>
+            <View style={{flex:1,backgroundColor:'white'}}>
               <Image source={require('../../images/login_background.png')} style={styles.shadow}>         
                 <View style={styles.center}>         
                   <Image source={require('../../images/Logo.png')} style={styles.logo}/>
@@ -356,7 +397,7 @@ class Login extends Component {
                     <View style={styles.skip}>
                       <Text style={{color:styleConfig.grey_70,fontFamily:styleConfig.FontFamily,}}>DON’T WANT TO LOGIN?</Text>
                       <TouchableOpacity       
-                       onPress={() => this.navigateToHome()}>
+                       onPress={() => this.onPressSkip()}>
                           <Text style={{marginLeft:5,color:styleConfig.fade_White,fontFamily: styleConfig.FontFamily,}}>SKIP</Text>
                       </TouchableOpacity>
                     </View>
