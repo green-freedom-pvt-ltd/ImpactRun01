@@ -39,8 +39,6 @@ class HelpCenter extends Component {
         this.state = {
             visibleHeight: Dimensions.get('window').height,
             HelpCenterTabs: ds.cloneWithRows([]),
-
-
         };
         this.renderRow = this.renderRow.bind(this);
       }
@@ -158,7 +156,7 @@ class HelpCenter extends Component {
                'hint':'Enter feedback here',
                'tag':'pastworkout',
                'labelname':'less',
-               'inputLebel':'',
+               'inputLebel':'Send feedback to us.',
               },
               {'name':'More distance recorded',
                'header':'Got it. So awesome of you for letting us know !',
@@ -166,7 +164,7 @@ class HelpCenter extends Component {
                 'hint':'Enter feedback here',
                 'tag':'pastworkout',
                 'labelname':'more',
-                'inputLebel':'',
+                'inputLebel':'Send feedback to us.',
               },
 
               {'name':'Why is it scratched off',
@@ -233,7 +231,7 @@ class HelpCenter extends Component {
               {'name':'Workout missing from history',
                'header':'Got it. Thanks for letting us know.',
                'discription':'Got it. Thanks for letting us know.\nPlease enter the details of your workout and submit. We\'ll look into it and add from backend.',
-               'inputLebel':'',
+               'inputLebel':'Tell us more about the issue',
                'tag':'else',
                'labelname':'workoutmissing',
                'hint':'Enter details here',
@@ -267,7 +265,7 @@ class HelpCenter extends Component {
               {'name':'Zero distance recorded',
                'header':'Got it.',
                'discription':'Please enter the details of your workout along with actual distance (in Kms) and submit. We will look into it and add.',
-               'inputLebel':'',
+               'inputLebel':'Please enter the details here',
                'tag':'else',
                'labelname':'zerodistance',
                'hint':'Enter details here',

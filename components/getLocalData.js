@@ -6,8 +6,8 @@ import {
 export default {
     getData(key) {
 	    return  AsyncStorage.getItem(key, (err, result) => {
-	        let data = JSON.parse(result);  
-	        return data;
+	        
+	        return JSON.parse(result);
 	    })
     }
 }

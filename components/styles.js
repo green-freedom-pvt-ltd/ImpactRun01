@@ -70,21 +70,33 @@ var styles = StyleSheet.create({
   },
   redButton: {
     height:50,
-    backgroundColor:styleConfig.bright_blue,
+    backgroundColor:'white',
     width:width/2-10, 
     justifyContent:'center',
     alignItems: 'center',
     borderRadius:30,
+    shadowColor: '#000000',
+     shadowOpacity: 0.4,
+     shadowRadius: 4,
+     shadowOffset: {
+      height: 2,
+     },
 
   },
   greenButton: {
     height:50,
-    backgroundColor:styleConfig.bright_blue,
+    backgroundColor:'white',
     width: 100,
     width:width/2-10,
     alignItems: 'center',
     justifyContent:'center',
     borderRadius:30,
+    shadowColor: '#ccc',
+     shadowOpacity: 0.1,
+     shadowRadius: 10,
+     shadowOffset: {
+      height: 2,
+     },
   },
   menuTitle:{
     backgroundColor:'transparent',

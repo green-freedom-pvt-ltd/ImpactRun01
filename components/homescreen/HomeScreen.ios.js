@@ -249,11 +249,9 @@ class Homescreen extends Component {
 
       isKeyAlreadyExists(){
          AsyncStorage.getItem('my_currency', (err, result) => {
-          console.log('resas', result);
           if (result == null)
           {
             result = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-            console.log('resas', result,JSON.stringify(result));
             AsyncStorage.setItem('my_currency',JSON.stringify(result));
 
           }else{
@@ -263,7 +261,6 @@ class Homescreen extends Component {
           // AsyncStorage.removeItem('my_currency',(err) => {
           // });
 
-          console.log('resultmy_currency ',this.state.my_currency,result);
           AsyncStorage.setItem('my_currency',result);
         }
           this.getExchangeRate();
@@ -277,13 +274,11 @@ class Homescreen extends Component {
 
       getExchangeRate(){
         AsyncStorage.getItem('exchangeRates', (err, result) => {
-          console.log('exchangeRates',result);
           this.setState({
           exchange_rates:JSON.parse(result),  
           })
           if(this.state.exchange_rates){
             for (var i = 0; i < this.state.exchange_rates.length; i++) { 
-              // console.log('this.state.exchange_rates[i].currency',this.state.exchange_rates[i].currency,this.state.my_currency);
               if (this.state.exchange_rates[i].currency == this.state.my_currency){
                 this.setState({
                   my_rate:this.state.exchange_rates[i].rate,
@@ -297,10 +292,8 @@ class Homescreen extends Component {
               my_rate: 1.0,
             })
           }
-          console.log('countr', this.state.my_rate);
           var my_rate = JSON.stringify(this.state.my_rate);
           AsyncStorage.setItem('my_rate',my_rate);
-          // console.log('countr', DeviceInfo.getDeviceCountry());
 
         })
       }
@@ -321,7 +314,6 @@ class Homescreen extends Component {
           if (typeof this.props.my_currency != 'undefined'){
             if(mycurrency != this.props.my_currency){
               mycurrency = this.props.my_currency;
-              console.log('mycurrency ',mycurrency);
                AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
             }           
           }
@@ -364,7 +356,6 @@ class Homescreen extends Component {
                    
                     let causesArr = _this.state.causes.slice()
                     causesArr.push(val)  
-                    console.log('causesArr',causesArr);                
                     _this.setState({causes: causesArr})
                     _this.setState({album : Object.assign({}, _this.state.album, {[val.cause_title]: [val.amount_raised,val.amount,val.total_runs,val.cause_completed_image,val.is_completed,val]})})
                     _this.setState({brief : Object.assign({}, _this.state.brief, {[val.cause_brief]: val.cause_image})})
@@ -394,7 +385,6 @@ class Homescreen extends Component {
           })   
           if (this.state.RunCount != null) {        
             var runcount = this.state.RunCount;
-            console.log('runcount',this.state.RunCount);
             for (i = 0; i < runcount+1; i++) {
               runNumber.push("RID" + i )  ;
             }
@@ -407,7 +397,6 @@ class Homescreen extends Component {
         this.setState({
           renderComponent:false,
         })
-        console.log('thisrenderComponentState',this.state.renderComponent);
       }
 
 
@@ -434,7 +423,6 @@ class Homescreen extends Component {
           loaded:true,             
           }) 
          var RunData = this.state.MyRunVal;
-         console.log('RunData',RunData);
          if (RunData != null) {
          fetch(apis.runApi, {
           method: "POST",
@@ -501,47 +489,6 @@ class Homescreen extends Component {
 
 
 
-
-      // getFeedFromlocal(){
-      //   AsyncStorage.getItem('feedData', (err, result) => { 
-      //   if (result != null || undefined) {
-      //     var feeddata = JSON.parse(result);  
-      //     this.setState({
-      //      loaded: true,
-      //     }) 
-      //   }else{
-      //     this.fetchifinternet();
-      //   }
-      //   });
-      // }
-      
-      // fetchifinternet(){
-      //    NetInfo.isConnected.fetch().done(
-      //     (isConnected) => { this.setState({isConnected}); 
-      //       if (isConnected) {
-      //         this.fetchFeedData();
-      //       }else{
-      //         this.getFeedFromlocal();
-      //       } 
-      //     }
-      //   );
-      // }
-
-      // fetchFeedData() {
-      //   var url = 'http://dev.impactrun.com/api/messageCenter/';
-      //   fetch(url)
-      //   .then( response => response.json() )
-      //   .then( jsonData => {
-      //   this.setState({
-      //     loaded: true,
-      //     notificationCount:jsonData.count,
-      //   });
-      //   // console.log("jsonData.results",jsonData);
-      //   AsyncStorage.setItem('feedData', JSON.stringify(jsonData.results), () => {
-      //   });
-      //   })
-      //   .catch( error => console.log('Error fetching: ' + error) );
-      // }
   
       PostSavedRundataIfInternetisOn(){
         if(this.props.user) {
@@ -593,25 +540,6 @@ class Homescreen extends Component {
         }
       }
 
-
-      //  _handleStartShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-      //   // Should we become active when the user presses down on the circle?
-      
-      //   console.log('myparesesponced');
-      //   return false;
-      // }
-
-      // _handleMoveShouldSetPanResponder(e: Object, gestureState: Object): boolean {
-      //   // Should we become active when the user moves a touch over the circle?\
-        
-      //   console.log('myparesesponced');
-      //   return true;
-      // }
-
-
-
-
-     
 
 
     
@@ -783,7 +711,6 @@ class Homescreen extends Component {
 
     navigateToCauseDetail(cause,some) {
       CleverTap.recordEvent('ON_LOAD_CAUSE_DETAILS');
-      console.log('some',some);
       this.props.navigator.push({
       title: 'Gps',
       id:'causedetail',
@@ -833,7 +760,6 @@ class Homescreen extends Component {
             width: event.nativeEvent.layout.width,
             height: event.nativeEvent.layout.height
         })
-        // console.log('height',this.state.height);
     };
    
    putComma(data){
@@ -863,7 +789,6 @@ class Homescreen extends Component {
         var causeAmountFinalvalue = (cause.amount != null && this.state.my_rate != null)?(Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2),{ minimumFractionDigits: 0}):0;
            
         if (cause.is_completed != true) {
-        // console.log("{this.state.album[route.key][1]",this.state.album[route.key][1]+"   "+route.key+"   "+this.state.album[route.key][3]);
         return (
           
           <View onLayout={(event) => this.measureView(event)} style={styles.page}  >        

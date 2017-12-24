@@ -164,83 +164,83 @@ class ProfileForm extends Component {
         if(this.state.number != " " && (this.state.number.length > 9)){
           if (this.state.birthday != " " ){
           if (this.state.body_weight != " " ) {
-        var user_id = this.props.user.user_id;
-        var auth_token = this.props.user.auth_token;
-        console.log("auth_token",auth_token);
-        var nameArr = this.state.name.split(/\s+/);
-        this.state.first_name = nameArr.slice(0, -1).join(" ");
-        this.state.last_name = nameArr.pop();
-        var date = moment(this.state.date).format('MM/DD/YYYY');
-        var number = parseInt(this.state.number);
-        console.log('number',number);
-        var weight = parseInt(this.state.body_weight);
-        fetch(apis.userDataapi + user_id + "/", {
-            method: "put",
-            headers: {  
-              'Authorization':"Bearer "+ auth_token,
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body:JSON.stringify({
-            "email":this.state.email,
-            "phone_number":number,
-            "birthday":date,
-            "first_name":this.state.first_name,
-            "last_name":this.state.last_name,
-            "body_weight":weight,
-            "gender_user":this.state.gender,
-            })
+      var user_id = this.props.user.user_id;
+      var auth_token = this.props.user.auth_token;
+      console.log("auth_token",auth_token);
+      var nameArr = this.state.name.split(/\s+/);
+      this.state.first_name = nameArr.slice(0, -1).join(" ");
+      this.state.last_name = nameArr.pop();
+      var date = moment(this.state.date).format('MM/DD/YYYY');
+      var number = parseInt(this.state.number);
+      console.log('number',number);
+      var weight = parseInt(this.state.body_weight);
+      fetch(apis.userDataapi + user_id + "/", {
+          method: "put",
+          headers: {  
+            'Authorization':"Bearer "+ auth_token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body:JSON.stringify({
+          "email":this.state.email,
+          "phone_number":number,
+          "birthday":date,
+          "first_name":this.state.first_name,
+          "last_name":this.state.last_name,
+          "body_weight":weight,
+          "gender_user":this.state.gender,
           })
-          .then(this.handleNetworkErrors.bind(this))
-          .then((response) => {
-          this.faddingAnimationDispaly(); 
-            this.setState({
-              SuccessfullySaved:true,
-            })
-            console.log('submited',response);
-            let keys = ['UID234', 'UID345','USERDATA',];
-              AsyncStorage.multiRemove(keys, (err) => {
-            });
-
-              console.log("responce",response);
-              var userdata = response;
-                    // first user, delta values
-              let userData = {
-                  body_weight:userdata.body_weight,
-                  first_name: userdata.first_name,
-                  user_id: userdata.user_id,
-                  last_name: userdata.last_name,
-                  gender_user: userdata.gender_user,
-                  email: userdata.email,
-                  phone_number: userdata.phone_number,
-                  Birth_day: userdata.birthday,
-                  social_thumb: userdata.social_thumb,
-                  auth_token: userdata.auth_token,
-                  total_amount: userdata.total_amount,
-                  is_signup: userdata.sign_up,
-                  total_distance: userdata.total_distance,
-                  team_code: userdata.team_code,
-              };
-
-              AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
-                  AsyncStorage.getItem('USERDATA', (err, result) => {
-                    this.props.getUserData();
-                    var _this = this;
-                    setTimeout(function(){
-                    _this.faddingAnimation();
-                    },1000)
-                    setTimeout(function(){  
-                    _this.setState({
-                      SuccessfullySaved:false,
-                    });
-                  },2000);
-                    console.log("userresult ",result);
-                  })
-               })
-          })    
-          .catch((err) => {
-            console.log('err',err);
+        })
+        .then(this.handleNetworkErrors.bind(this))
+        .then((response) => {
+        this.faddingAnimationDispaly(); 
+          this.setState({
+            SuccessfullySaved:true,
           })
+          console.log('submited',response);
+          let keys = ['UID234', 'UID345','USERDATA',];
+            AsyncStorage.multiRemove(keys, (err) => {
+          });
+
+            console.log("responce",response);
+            var userdata = response;
+                  // first user, delta values
+            let userData = {
+                body_weight:userdata.body_weight,
+                first_name: userdata.first_name,
+                user_id: userdata.user_id,
+                last_name: userdata.last_name,
+                gender_user: userdata.gender_user,
+                email: userdata.email,
+                phone_number: userdata.phone_number,
+                Birth_day: userdata.birthday,
+                social_thumb: userdata.social_thumb,
+                auth_token: userdata.auth_token,
+                total_amount: userdata.total_amount,
+                is_signup: userdata.sign_up,
+                total_distance: userdata.total_distance,
+                team_code: userdata.team_code,
+            };
+
+            AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
+                AsyncStorage.getItem('USERDATA', (err, result) => {
+                  this.props.getUserData();
+                  var _this = this;
+                  setTimeout(function(){
+                  _this.faddingAnimation();
+                  },1000)
+                  setTimeout(function(){  
+                  _this.setState({
+                    SuccessfullySaved:false,
+                  });
+                },2000);
+                  console.log("userresult ",result);
+                })
+             })
+        })    
+        .catch((err) => {
+          console.log('err',err);
+        })
         }else{
            AlertIOS.alert("Please enter body weight", "Field required* ");
         }

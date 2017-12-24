@@ -241,6 +241,7 @@ class RunHistory extends Component {
             is_ios:RunData.is_ios,
             num_spikes:RunData.num_spikes,
             team_id:RunData.team_id,
+            client_run_id:RunData.client_run_id,
           })
          })
 
@@ -472,7 +473,7 @@ class RunHistory extends Component {
 
 
     modelViewEnterWeight(){
-      CleverTap.recordEvent('ON_LOAD_WEIGHT_INPUT_DIALOG');
+      
       return(
         <Modal
         style={[styles.modelStyle,{backgroundColor:'rgba(12,13,14,0.1)'}]}
@@ -519,6 +520,7 @@ class RunHistory extends Component {
         this.setState({
           enterWeightmodel:true,
         })
+        CleverTap.recordEvent('ON_LOAD_WEIGHT_INPUT_DIALOG');
       }
 
       whyIamNotSeeingCaloriePopup(){
@@ -536,8 +538,8 @@ class RunHistory extends Component {
           title:'Select issue',         
           // id:'listquestions',
           component:QuestionLists,
-          // navigationBarHidden: false,
-          // showTabBar: true,
+          navigationBarHidden: false,
+          showTabBar: true,
           passProps:{
             rowData:this.props.rowData,
             runData:rowData,

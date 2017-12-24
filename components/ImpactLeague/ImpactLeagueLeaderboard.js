@@ -63,11 +63,11 @@ class ImpactLeagueLeaderBoard extends Component {
       }
 
       componentDidMount() {
-         this.FetchDataifInternet();
-         this.setState({
-          teamname:this.props.team_name,
-          Tooltiplist:this.state.Tooltiplist.cloneWithRows([{'title':'help','functions':'help'},{'title':'exit League','functions':'exitLeague',}]),
-         })
+          this.FetchDataifInternet();
+          this.setState({
+            teamname:this.props.team_name,
+            Tooltiplist:this.state.Tooltiplist.cloneWithRows([{'title':'Help','functions':'help'},{'title':'Exit League','functions':'exitLeague',}]),
+          })
       }
 
      
@@ -94,12 +94,12 @@ class ImpactLeagueLeaderBoard extends Component {
               team_code:jsonData.team_code
             }
         // first user, delta values
-           AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
+            AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
              AsyncStorage.getItem('USERDATA', (err, result) => {
               console.log('result', result)
               this.navigateTOhome();
              })
-           }) 
+            }) 
             AlertIOS.alert('title',JSON.stringify(jsonData));
           }).catch((error)=>{
            console.log('erroremployeTeam', error);
@@ -286,9 +286,9 @@ class ImpactLeagueLeaderBoard extends Component {
 
       exitLeaguepopu(){
         if (!this.state.openTooltip) {
-        this.setState({
-          openTooltip:true,
-        })
+          this.setState({
+            openTooltip:true,
+          })
         }else{
           this.setState({
             openTooltip:false,
@@ -353,17 +353,15 @@ class ImpactLeagueLeaderBoard extends Component {
                 <RefreshControl
                   refreshing={this.state.refreshing}
                   onRefresh={this._onRefresh.bind(this)}
-                />}
-                dataSource={this.state.ImpactLeagueLeaderBoardData}
+                />} dataSource={this.state.ImpactLeagueLeaderBoardData}
                 renderRow={this.renderRow}
-                style={styles.container}
-                >
+                style={styles.container}>
               </ListView>
             </View> 
             {this.openTooltip()}
           </View>
-        );
-      }
+          );
+        }
       }
 }
 

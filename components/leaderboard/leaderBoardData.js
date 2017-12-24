@@ -190,17 +190,16 @@ class LeaderboardData extends Component {
       render() {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white',height:deviceHeight-100,width:deviceWidth,paddingBottom:53}}>
-            {this.swwipeDowntoRefress()}
-               <ListView
+            <View style={{backgroundColor:'white',height:deviceHeight-114,width:deviceWidth}}>
+              {this.swwipeDowntoRefress()}
+              <ListView
                 style={styles.container}
                 renderRow={this.renderRow}
                 refreshControl={
                 <RefreshControl
                   refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />}
-                dataSource={this.state.LeaderBoard}/>
+                  onRefresh={this._onRefresh.bind(this)}/>}
+                  dataSource={this.state.LeaderBoard}/>
              </View>
             
           </View> 
@@ -227,7 +226,9 @@ class LeaderboardData extends Component {
   
 
 const styles = StyleSheet.create({
-
+container:{
+  height:300,
+}
   thumb: {
     height:styleConfig.navBarHeight-30,
     width:styleConfig.navBarHeight-30,

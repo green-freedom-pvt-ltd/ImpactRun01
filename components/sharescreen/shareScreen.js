@@ -226,7 +226,7 @@
       //  console.log('after 2 sec');
       // },2000)
        
-      
+      // this.SaveRunLocally();
       this.getSavedRunCount();
        var time2 = this.props.time;
         if (time2.length <= 2) {
@@ -270,8 +270,8 @@
     ifConnectTonetPost(){
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
+
         if (isConnected) {
-          console.log("openVersion");
            this.PostRun();
           }else{
            this.SaveRunLocally();
@@ -281,7 +281,6 @@
     }
 
     handleNetworkErrors(response){
-      console.log(response);
        this.setState({
         networkRUnpoststatus:response.ok
        })
@@ -331,57 +330,31 @@
       };
 
       AsyncStorage.getItem('UnsyncedData', (err, result) => {
-        console.log('result',result);
         if (result != null && result != []) {
         var newRunArray = [];
         this.setState({
           UnsyncedData:JSON.parse(result),
         })
-        var runSavedata = newRunArray.push(RID1);
-        console.log('runSavedata ',newRunArray);
-        var Newunsyncedrun = newRunArray.concat(JSON.parse(result));
-        console.log('Newunsyncedrun',Newunsyncedrun);
+        newRunArray.push(RID1);
+        if (this.state.UnsyncedData.client_run_id != this.props.client_run_id ) {
+          var Newunsyncedrun = newRunArray.concat(JSON.parse(result));
+        }else{
+          var Newunsyncedrun = JSON.parse(result);
+        }
         AsyncStorage.removeItem('UnsyncedData',(err) => {
         });
         let localunsyncedRundata = Newunsyncedrun;
-      
         AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
         })
       }else{
         var newRunArray = [];
-        var runSavedata = newRunArray.push(RID1);
+        newRunArray.push(RID1);
         AsyncStorage.setItem('UnsyncedData', JSON.stringify(newRunArray), (data) => {
-          console.log('resuktdata ',data);
+          
         })
       }
       })
-      // var RunNO = "RID"+saveRuns;
-      // let multi_set_pairs = [
-      //     [RunNO, JSON.stringify(RID1)],
-      // ]
-      //  let multi_merge_pairs = [
-      //     [RunNO, JSON.stringify(RID1)],
-      // ]
-
-     // AsyncStorage.setItem(RunNO,JSON.stringify(RID1));
-     //  AsyncStorage.multiSet(multi_set_pairs, (err) => {
-     //      AsyncStorage.multiMerge(multi_merge_pairs, (err) => {
-     //          AsyncStorage.multiGet([RunNO], (err, stores) => {
-     //              stores.map((result, i, store) => {
-     //                  let key = store[i][0];
-     //                  let val = store[i][1];
-     //                  this.setState({
-     //                   userRunData:val,
-     //                  })
-     //              });                 
-     //          })
-     //        .then((userRunData) => { 
-     //          // AlertIOS.alert('userndata',JSON.stringify(userRunData));
-     //        })
-     //        .done();
-     //      })
-          
-     //   });
+  
      
   
     }
@@ -403,14 +376,32 @@
  
 
     async PostRun(){
-      if (this.props.user) {
-        this.setState({
-          postingRun:true
-        })
+
+     
+      var _this = this;
+      var distance = this.props.distance;
+      var speed = this.props.speed;
+      var impact = this.props.impact;
+      var steps = this.props.noOfsteps;
+      var time = this.props.time;
+      var date = this.props.StartRunTime;
+      var endtime = this.props.EndRunTime;
+      var userdata = this.state.user;
+      var user_id =JSON.stringify(userdata.user_id);
+      var token = JSON.stringify(userdata.auth_token);
+      var tokenparse = JSON.parse(token);
+      var calories_burnt = this.props.calories_burnt;
+      var startPosition = this.props.StartLocation;
+      var endPosition = this.props.EndLocation;
+      var cause = this.props.data;
+      var num_spikes = parseInt(this.props.num_spikes);
+      if (num_spikes != 0) {
+        var spikes = parseInt(this.props.num_spikes)
       }else{
-        this.setState({
-          postingRun:false,
-        })
+        var spikes = 0;
+      }
+
+
       if (this.state.user.team_code === 0) {
        var postrundata = JSON.stringify({
           cause_run_title:cause.cause_title,
@@ -447,7 +438,7 @@
           run_duration: time,
           is_flag:false,
           calories_burnt:calories_burnt,
-          team_id:' ',
+          team_id:this.state.user.team_code,
           start_location_lat:startPosition.latitude,
           start_location_long:startPosition.longitude,
           end_location_lat:endPosition.latitude,
@@ -457,31 +448,8 @@
           is_ios:true,     
           })
       }
-      console.log('this.state.user.team_code',this.state.user.team_code);
-      var distance = this.props.distance;
-      var speed = this.props.speed;
-      var impact = this.props.impact;
-      var steps = this.props.noOfsteps;
-      var time = this.props.time;
-      var date = this.props.StartRunTime;
-      var endtime = this.props.EndRunTime;
-      var userdata = this.state.user;
-      var user_id =JSON.stringify(userdata.user_id);
-      var token = JSON.stringify(userdata.auth_token);
-      var tokenparse = JSON.parse(token);
-      var calories_burnt = this.props.calories_burnt;
-      var startPosition = this.props.StartLocation;
-      var endPosition = this.props.EndLocation;
-      var cause = this.props.data;
-      var num_spikes = parseInt(this.props.num_spikes);
-      if (num_spikes != 0) {
-        var spikes = parseInt(this.props.num_spikes)
-      }else{
-        var spikes = 0;
-      }
 
       
-      console.log('num_spikes',num_spikes);
       // try{
       //   let response = await fetch('https://mywebsite.com/endpoint/');
       //   let responseJson = await response.json();
@@ -491,7 +459,6 @@
 
       // }
       var _this = this;
-      setTimeout( function(){
       try{
       fetch(apis.runApi, {
          method: "POST",
@@ -528,8 +495,7 @@
       console.log('somedata',error)
       _this.SaveRunLocally();
     }
-    }, 3000);
-  } 
+  
 }
 
 
@@ -540,11 +506,9 @@
           UnsyncedData:JSON.parse(result),
         })
         var newRunArray = [];
-        console.log('this.state.UnsyncedData', this.state.UnsyncedData);
         if (this.state.UnsyncedData != [] || this.state.UnsyncedData != null) {
 
           var removeIndex = this.state.UnsyncedData.map(function(item) {
-            console.log('itemm',item,userRunData);
            return item.start_time;
             }).indexOf(userRunData.start_time); 
           this.state.UnsyncedData.splice(removeIndex, 1); 
@@ -552,7 +516,6 @@
           });
           let localunsyncedRundata = this.state.UnsyncedData;
           AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
-            console.log('localunsyncedRundata',localunsyncedRundata);
           })
         } 
         
@@ -622,7 +585,7 @@
                run_duration: time,
                is_flag:false,
                calories_burnt:calories_burnt,
-               team_id:me.state.user.team_code,
+               team_id:(me.state.user != null )?me.state.user.team_code:null,
                start_location_lat:startPosition.latitude,
                start_location_long:startPosition.longitude,
                end_location_lat:endPosition.latitude,
@@ -777,7 +740,6 @@
               happyView:true,
               firstModel:false,
             })
-            console.log('responce',response);
             dismissKeyboard();
             AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
 

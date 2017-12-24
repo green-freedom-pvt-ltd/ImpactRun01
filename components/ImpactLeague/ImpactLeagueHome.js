@@ -76,7 +76,7 @@ class ImpactLeague extends Component {
         this.getUserData();      
         setTimeout(() => {this.setState({downrefresh: false})}, 1000)
         this.setState({
-          Tooltiplist:this.state.Tooltiplist.cloneWithRows([{'title':'help','functions':'help'},{'title':'exit League','functions':'exitLeague',}]),
+          Tooltiplist:this.state.Tooltiplist.cloneWithRows([{'title':'Help','functions':'help'},{'title':'Exit League','functions':'exitLeague',}]),
         })
       }
 
@@ -433,8 +433,7 @@ class ImpactLeague extends Component {
                refreshControl={
                 <RefreshControl
                   refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />}
+                  onRefresh={this._onRefresh.bind(this)}/>}
                 dataSource={this.state.LeaderBoardData}
                 renderRow={this.renderRow}
                 style={styles.container}>
@@ -452,7 +451,7 @@ class ImpactLeague extends Component {
         }
        }else{
           return(
-            <LoginBtns/>
+            <LodingScreen/>
             )
        }
      }

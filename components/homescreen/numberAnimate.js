@@ -97,9 +97,7 @@ export default class AnimateNumber extends Component {
       var my_rate = (JSON.parse(result) != null)?JSON.parse(result):1.0;
       AsyncStorage.getItem('oldoverall_impact', (err, result) => {
       if (result != null) {
-        console.log('data ', data);
         data.push(parseFloat(JSON.parse(result)/my_rate).toFixed(0));
-        console.log('oldoverall_impact',data,my_rate);
         this.setState({
           value:JSON.parse(data),
           displayValue:this.props.value,
@@ -108,22 +106,19 @@ export default class AnimateNumber extends Component {
         this.endWith = this.props.value
         this.dirty = true
         this.startAnimate()
-        console.log('this.props.value',this.props.value);
       }else{
-        data.push(JSON.parse('0'));
+        data.push(JSON.parse(this.props.value));
         this.setState({
-          value:JSON.parse(data),
-          displayValue:JSON.parse(data),
+          value:JSON.parse(this.props.value),
+          displayValue:JSON.parse(this.props.value),
          })
-        this.startFrom = JSON.parse(data);
+        this.startFrom = JSON.parse(this.props.value);
         this.endWith = this.state.value
         this.dirty = true
         this.startAnimate(this.props.value-this.state.value)
-        console.log('this.props.value',this.props.value);
       }
       })
     })
-    console.log('ccc',this.state.displayValue);
    
 
   }

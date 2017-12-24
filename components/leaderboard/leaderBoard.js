@@ -343,7 +343,7 @@ var iphone7Plus = 736;
           if (this.state.fetched === true) {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white',height:deviceHeight-100,width:deviceWidth,paddingBottom:53}}>
+            <View style={{backgroundColor:'white',height:deviceHeight-114,width:deviceWidth,paddingBottom:53}}>
             {this.swwipeDowntoRefress()}
                <ListView
                 style={styles.container}

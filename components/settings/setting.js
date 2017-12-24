@@ -55,7 +55,6 @@ class Setting extends Component {
       }
       componentDidMount() {
         AsyncStorage.getItem('my_currency', (err, result) => {
-            console.log('my_curreny',result);
             my_currency.push( JSON.parse(result));
             
          })
@@ -63,7 +62,6 @@ class Setting extends Component {
       }
       componentWillMount() {        
           AsyncStorage.getItem('my_currency', (err, result) => {
-            console.log('my_curreny',result);
             this.setState({
               my_currency:JSON.parse(result),
           })
@@ -75,16 +73,12 @@ class Setting extends Component {
             'INR ₹'
           ]
 
-          // console.log('this.state.my_currency',this.state.my_currency);
           for (var i=0;i<optionsdata.length - 1; i++){
 
-            // console.log('optionsdata[i].substring(0,3)',optionsdata[i].substring(0,3),this.state.my_currency);
             if(optionsdata[i].substring(0,3) == this.state.my_currency){ 
-              console.log('optionsdata[i]',optionsdata[i]);
               this.setState({
                 my_currency:optionsdata[i],
               })
-              console.log('this.state.my_currency',this.state.my_currency);
             }
           }
 
@@ -96,11 +90,16 @@ class Setting extends Component {
           })
             if(this.state.my_distance != '')
             {
+            if (this.state.my_distance) {
             this.setState({
               my_distance:this.state.my_distance,
             })
+            }else{
+              this.setState({
+              my_distance:'km',
+            })
             }
-            // console.log('my_distance', this.state.my_distance);
+          }
           })     
 
       }
@@ -168,7 +167,6 @@ class Setting extends Component {
       }
 
       componentDidMount() {
-        console.log('props',this.props,this.props.getUserData);
         var settingsLists = [
           {'name':'Share',
           'iconName':'share',
@@ -212,13 +210,11 @@ class Setting extends Component {
               user:user,
               loaded:true
             })
-            console.log('this.state.Usr ', this.state.user);
               this.setState({
                 text:(this.state.user) ? 'LOGOUT':'LOGIN',
                 IconText: (this.state.user) ? 'md-log-out':'md-log-in'
               })
             ;
-            console.log('this.state.Usr ', this.state.text);
           })  
       }
 
@@ -266,7 +262,6 @@ class Setting extends Component {
 
 
       navigateToHome() {
-        // console.log('hual', this.state.my_currency);
         this.props.navigator.push({
             title: 'Gps',
             id: 'tab',
@@ -329,7 +324,6 @@ class Setting extends Component {
 
               })
 
-              console.log('thisCurrency',this.state.my_currency);
             }
           }
           AsyncStorage.setItem('my_rate',JSON.stringify(this.state.my_rate),()=>{
@@ -346,11 +340,9 @@ class Setting extends Component {
 
       onSelectDistance(idx,value){
          AsyncStorage.getItem('my_currency', (err, result) => {
-            console.log('my_curreny',result);
              this.setState({
               my_currency : JSON.parse(result),
              }) 
-            console.log('this.state.my_currency',this.state.my_currency);
          })
         this.setState({
           value:value,

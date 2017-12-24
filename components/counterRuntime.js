@@ -37,7 +37,7 @@
 
     var duration = moment.duration(length);
     var formattedDuration = '';
-    var formattedDurationcustom = '00';
+    var formattedDurationcustom = '00:00';
     formattedDuration += hours(duration) + ':';
     formattedDuration += minutes(duration) + ':';
     formattedDuration += seconds(duration)
@@ -46,7 +46,7 @@
     }else if(formattedDuration.slice(3,5) != "00"){
       formattedDurationcustom = formattedDuration.slice(3,8);
     }else if(formattedDuration.slice(6,8) != "00"){
-      formattedDurationcustom = formattedDuration.slice(6,8);
+      formattedDurationcustom = formattedDuration.slice(3,8);
     } 
     return formattedDurationcustom;
   }

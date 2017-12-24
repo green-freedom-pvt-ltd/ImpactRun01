@@ -90,24 +90,8 @@ class EndFeedBack extends Component {
          var date = new Date();
          console.log('this.props.rowData',this.props.rowData,this.props.data,this.props.sub_tag);
          var convertepoch = parseInt(date.getTime()/1000);
-         if(this.props.sub_tag){
-         mybody = JSON.stringify({
-            "feedback":this.state.moreText,
-            "feedback_app_version":'1.0.7',
-            "user_id":user_id,
-            "tag":this.props.tag,
-            "sub_tag":this.props.subtag,
-            "run_id":(this.props.runData)?this.props.runData.run_id:0,
-            "phone_number":this.props.user.phone_number,
-            "email":this.props.user.email,
-            "is_ios":true,
-            "is_chat":false,
-            "client_time_stamp":convertepoch,
-            })
-   
-         }
-         else{
-         mybody = JSON.stringify({
+       
+          mybody = JSON.stringify({
             "feedback":this.state.moreText,
             "feedback_app_version":'1.0.7',
             "user_id":user_id,
@@ -119,9 +103,9 @@ class EndFeedBack extends Component {
             "is_ios":true,
             "is_chat":false,
             "client_time_stamp":convertepoch,
-            })
+          })
 
-         }
+         
          
          fetch(apis.UserFeedBack, {
             method: "post",
@@ -240,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius:8,
     width:deviceWidth-10,
     marginLeft:5,
-    color:'white',
+    color:'black',
     padding:10,
     marginRight:5,
   },

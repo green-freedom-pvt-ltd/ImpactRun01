@@ -48,7 +48,6 @@ import getLocalData from '../getLocalData.js';
 var pastRunSyncTime = [];
 const CleverTap = require('clevertap-react-native');
 AsyncStorage.getItem('pastRunSyncTime', (err, result) => {
-    console.log('getItem ',result);
     if (result != null) {
         pastRunSyncTime.push(JSON.parse(result));
     }else{
@@ -96,19 +95,17 @@ class Tabs extends Component {
         getUserData() {
             getLocalData.getData('USERDATA')
             .then((user)=>{
-                let userdata = JSON.parse(user);
                 this.setState({
-                    user: userdata,
+                    user: JSON.parse(user),
                     iconImpactleague:(user!= null)?{uri: base64Icon, scale: 6}:{},
                 })
+                this.fetchCauseDataonInternet();
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
                 var pastTimestamp = JSON.parse(pastRunSyncTime);
-                console.log('epochtime',parseInt(epochtime),pastTimestamp);
                 if (this.state.user != null) {         
                     if (parseInt(epochtime) > pastTimestamp) {
-                        console.log('after30second');
                         this.syncCallRunhistory();
                     }
                 }
@@ -127,13 +124,11 @@ class Tabs extends Component {
                     getLocalData.getData('runversion')
                     .then((runversion)=>{
                         if (runversion != null){
-                            console.log('nullnot');
                             this.setState({
-                              runversion:JSON.parse(result).runversion,
+                              runversion:JSON.parse(runversion).runversion,
                             })
                             this.fetchRunhistoryupdataData();
                         }else{
-                            console.log('null');
                             this.setState({
                                 runversion:0,
                             })
@@ -147,14 +142,12 @@ class Tabs extends Component {
 
         fetchLocalRunData(){
             AsyncStorage.getItem('UnsyncedData', (err, result) => {
-                console.log( "result12",JSON.parse(result));
                 var rundata = JSON.parse(result); 
                 if (rundata != null && rundata != [] ) {
                     this.setState({
                       runUnsynceddata:rundata,
                     })
                     rundata.map((result,i)=>{
-                        console.log('resultIrun ',result);
                         if(this.state.user != null){
                            this.postPastRun(result);
                         }
@@ -178,7 +171,6 @@ class Tabs extends Component {
                 var token = this.state.user.auth_token;
                 var runversionfetch =this.state.runversion;
                 var url ='http://dev.impactrun.com/api/runs/'+'?client_version='+runversionfetch;
-                console.log('mydataurl',url);
                 fetch(url,{
                   method: "GET",
                   headers: {
@@ -188,7 +180,6 @@ class Tabs extends Component {
                 })
                 .then( response => response.json())
                 .then( jsonData => { 
-                    console.log('response: ',jsonData)
                     if(jsonData.count > 0 ){
                         console.log('jsonData',jsonData.results);
                         var epochtime = jsonData.results[jsonData.results.length-1].version;                  
@@ -206,7 +197,6 @@ class Tabs extends Component {
                         var newDate = new Date();
                         var pastRunSyncTimeepoch = newDate.getTime()/1000
                         var pastRunSyncepochtime = parseFloat(pastRunSyncTimeepoch).toFixed(0);
-                        console.log('pastRunSyncepochtime',pastRunSyncepochtime);
                         var setpostPastRunTime = parseInt(pastRunSyncepochtime)+30;
                         AsyncStorage.setItem("pastRunSyncTime",JSON.stringify(setpostPastRunTime),()=>{
                         });               
@@ -218,13 +208,11 @@ class Tabs extends Component {
                             itemsProcessed ++ ;
                             var newRunAddedFrombackend = [];         
                             var objIndex = runArray.findIndex(obj => obj.start_time == item.start_time);
-                            console.log("objIndexSec",item.start_time,objIndex);
                             if (objIndex === -1) {
                                 array.push(item);
                             }
                             runArray[objIndex] = item;
                             if (itemsProcessed === jsonData.results.length) {
-                                console.log("array1",array)   
                                 // if (jsonData.count > 5) {                      
                                 let fetchRunhistoryData = array.concat(runArray);
                                 AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
@@ -258,7 +246,6 @@ class Tabs extends Component {
                                 var newDate = new Date();
                                 var pastRunSyncTimeepoch = newDate.getTime()/1000
                                 var pastRunSyncepochtime = parseFloat(parseInt(pastRunSyncTimeepoch)+30).toFixed(0);
-                                console.log('pastRunSyncepochtime',pastRunSyncepochtime);
                                 AsyncStorage.setItem("pastRunSyncTime",JSON.stringify(pastRunSyncepochtime),()=>{
                                 });
                             });
@@ -280,7 +267,7 @@ class Tabs extends Component {
         }
 
         componentWillMount() { 
-           this.fetchCauseDataonInternet();
+           
             NetInfo.isConnected.addEventListener(
               'change',
               this.handleFirstConnectivityChange
@@ -301,10 +288,7 @@ class Tabs extends Component {
                 this.setState({
                     isConnected:isConnected
                 })
-                console.log('isConnected profile',isConnected);
-                console.log('dataisCOnnected');
                 if (isConnected) {
-                    console.log('dataisCOnnected');
                     this.fetchData();
                     this.getCauseDataEvery300Sec();
                 }else{
@@ -315,10 +299,9 @@ class Tabs extends Component {
 
 
         fetchData(dataValue) {  
-            // console.log('tokena', token);
-            // console.log('auth_token', auth_token);
             // Adding token for viewing causes via employee module pn 
             if (this.state.user) {
+
                 var token = this.state.user.auth_token;
                 var auth_token = "Bearer " + token;
                 this.getCauseFromApi(auth_token)
@@ -340,12 +323,10 @@ class Tabs extends Component {
             .then((response)=> response.json())
             .then((causes) => {
                 var causes = causes;
-                console.log('causes',causes);
                 let causesData = []
                 let newData = []
                 var itemsProcessed = 0;
                 causes.results.forEach((item, i) => {                    
-                    console.log("i",item);
                     itemsProcessed++;
                     if (item.is_active || item.is_completed) {
                         this.state.indexcause = this.state.indexcause + 1
@@ -373,31 +354,24 @@ class Tabs extends Component {
                 overall_impact:causes.overall_impact,
 
             })
-            console.log('overall_impact1', this.state.overall_impact);
             let myCauseNum = this.state.myCauseNum;
             AsyncStorage.removeItem('CauseNumber',(err) => {
-               console.log("removed");
             });
             AsyncStorage.getItem('overall_impact',(err,result)=>{
                 AsyncStorage.removeItem('oldoverall_impact',(err) => {
-                    console.log("removed");
                 });
                 this.setState({
                     oldoverall_impact:result,
                 })
-                console.log('result1', result);
                 AsyncStorage.setItem('oldoverall_impact',JSON.stringify(this.state.oldoverall_impact));
             })
-            console.log('someresult ',myCauseNum,this.state.exchange_rates,this.state.overall_impact);            
             AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
             AsyncStorage.setItem('overall_impact',JSON.stringify(this.state.overall_impact));
             AsyncStorage.setItem('CauseNumber',JSON.stringify(myCauseNum));        
             var newDate = new Date();
             var convertepoch = newDate.getTime()/1000
             var epochtime = parseFloat(convertepoch).toFixed(0);
-            console.log('epochtime',epochtime);
             AsyncStorage.removeItem('causeFeatchVersion',(err) => {
-                console.log("causeFeatchVersion");
             });
             AsyncStorage.setItem('causeFeatchVersion',JSON.stringify(epochtime));
             AsyncStorage.getItem('CauseNumber', (err, result) => {
@@ -407,7 +381,6 @@ class Tabs extends Component {
                 })
             })          
             AsyncStorage.multiRemove(newData, (err) => {
-                console.log("multiremovecause");
             })
             AsyncStorage.multiSet(causesData, (err) => {
             })
@@ -415,18 +388,15 @@ class Tabs extends Component {
 
         getCauseDataEvery300Sec(){
             AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
-                console.log('results',result);
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
                 if (result != null) {
-                    console.log('results2',result);
                     this.setState({
                       causeFeatchVersion:JSON.parse(result),
                     })        
                     var fetchversion = parseInt(this.state.causeFeatchVersion)+(300);
                     if (fetchversion < epochtime) {
-                        console.log('data',fetchversion);
                         NetInfo.isConnected.fetch().then((isConnected) => {
                             if (isConnected) {
                               this.fetchData();
@@ -438,8 +408,6 @@ class Tabs extends Component {
                 }
                 else{
                     NetInfo.isConnected.fetch().then((isConnected) => {
-
-                       console.log('isConnected profile',isConnected);
                        if (isConnected) {
                         this.fetchData();
                        };
@@ -455,7 +423,6 @@ class Tabs extends Component {
                 this.setState({
                   dataCauseNum:JSON.parse(result),
                 })
-                console.log('causenumber',this.state.dataCauseNum);
                 if (this.state.dataCauseNum != null ) {
                     try {
                         AsyncStorage.multiGet(this.state.dataCauseNum, (err, stores) => {
@@ -490,7 +457,6 @@ class Tabs extends Component {
 
         nextPage(nextpage){
             AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-            console.log('JSON.parse(result)next', JSON.parse(result));
             var runArray = (JSON.parse(result) != null)?JSON.parse(result):[];   
             var _this =this;
             var token = this.state.user.auth_token;
@@ -504,7 +470,6 @@ class Tabs extends Component {
             })
             .then( response => response.json() )
             .then( jsonData => {
-            console.log('jsonData',jsonData);
             var nextpagesec = jsonData.next;  
             var itemsProcessed = 0;
             var runversion = jsonData.results;
@@ -514,7 +479,6 @@ class Tabs extends Component {
                 itemsProcessed++;
                 var newRunAddedFrombackend = [];                
                 var objIndex = runArray.findIndex(obj => obj.start_time == item.start_time);
-                console.log("objIndexSec",item.start_time,objIndex);
                 if (objIndex === -1) {
                   array.push(item);
                 }
@@ -532,7 +496,6 @@ class Tabs extends Component {
                            })
                         });
                       });
-                     console.log("array",array)   
                     let fetchRunhistoryData = array.concat(runArray);
                     AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
                          _this.LoadMoverRunView(nextpagesec);
@@ -557,7 +520,6 @@ class Tabs extends Component {
         
 
         handleNetworkErrors(response){
-           console.log('responseStatus',response);
             this.setState({
               NetworkResponcePostRun:response.status,
               isRunResponseOk:response.ok,
@@ -570,7 +532,6 @@ class Tabs extends Component {
             var _this = this;
             let tokenparse = this.state.user.auth_token;
             let RunData = result; 
-            console.log('RunData',RunData,tokenparse);
             fetch(apis.runApi, {
                 method: "POST",
                 headers: {  
@@ -597,26 +558,23 @@ class Tabs extends Component {
                     no_of_steps:RunData.no_of_steps,
                     is_ios:RunData.is_ios,
                     num_spikes:RunData.num_spikes,
-                    team_id:parseInt(RunData.team_id),
+                    team_id:RunData.team_id,
                     client_run_id:RunData.client_run_id,
                 })
             })
             .then(_this.handleNetworkErrors.bind(_this))
             .then((userRunData) => {
-                console.log('userRunData',userRunData,this.state.isRunResponseOk);
                
                 CleverTap.recordEvent('ON_RUN_SYNC',{
                     'upload_result':'success',
                     'client_run_id':userRunData.client_run_id,
                     'http_status':this.state.NetworkResponcePostRun,
                 }); 
-                console.log('userRunData',userRunData);
                 var remvedfetcheddata = this.state.runUnsynceddata
                 var listToremove =[];
                 listToremove.push(userRunData.start_time);
                 var removeIndex = remvedfetcheddata.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
                 remvedfetcheddata.splice(removeIndex, 1);   
-                console.log('remvedfetcheddata',JSON.stringify(remvedfetcheddata));
                 if (remvedfetcheddata != null) {
                     AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
                     });
@@ -625,7 +583,6 @@ class Tabs extends Component {
                     });
                 }           
             }).catch((error)=>{
-                console.log('error',error);
                 CleverTap.recordEvent('ON_RUN_SYNC',{
                     'upload_result':'failed',
                     'client_run_id':RunData.client_run_id,
@@ -646,11 +603,9 @@ class Tabs extends Component {
             }else{
                  this.getCause();
             }      
-            console.log('isConnected',this.state.isConnected);
         }
    
         handleNetworkErrors(response){
-            console.log('response',response);
             return response.json();
         }
 
