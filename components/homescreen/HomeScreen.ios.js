@@ -83,7 +83,7 @@ class Homescreen extends Component {
           previewSource: '',
           error: null,
           res: null,
-          my_currency:'USD',
+          my_currency:'INR',
           renderComponent:true,
           value: {
             format: "png",
@@ -251,8 +251,8 @@ class Homescreen extends Component {
          AsyncStorage.getItem('my_currency', (err, result) => {
           if (result == null)
           {
-            result = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-            AsyncStorage.setItem('my_currency',JSON.stringify(result));
+            
+            AsyncStorage.setItem('my_currency',JSON.stringify('INR ₹'));
 
           }else{
           this.setState({
@@ -309,16 +309,7 @@ class Homescreen extends Component {
         
         this.getfeedCount();
          this.isKeyAlreadyExists();
-         if(!this.state.my_currency){
-          var mycurrency = this.getmyCurrency(DeviceInfo.getDeviceCountry());
-          if (typeof this.props.my_currency != 'undefined'){
-            if(mycurrency != this.props.my_currency){
-              mycurrency = this.props.my_currency;
-               AsyncStorage.setItem('my_currency',JSON.stringify(mycurrency));
-            }           
-          }
-         
-        }
+       
         // this.fetchifinternet();      
         PushNotificationIOS.requestPermissions();              
         this.PostSavedRundataIfInternetisOn();   

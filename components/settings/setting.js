@@ -53,6 +53,7 @@ class Setting extends Component {
         this.renderRow = this.renderRow.bind(this);
         // this.getUserData = this.getUserData.bind(this);
       }
+      
       componentDidMount() {
         AsyncStorage.getItem('my_currency', (err, result) => {
             my_currency.push( JSON.parse(result));
