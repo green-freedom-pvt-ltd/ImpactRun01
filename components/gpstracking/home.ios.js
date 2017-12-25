@@ -410,8 +410,20 @@ class Home extends Component {
 
 
   checkForTooFast(location){
-          var location = location;
-          if (this.state.activityType.type != 'IN_VEHICLE' || this.state.activityType.type != 'ON_BICYCLE') {
+        var location = location;
+        if (this.state.activityType.type === 'IN_VEHICLE' || this.state.activityType.type === 'ON_BICYCLE') {   
+            CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
+                'detected_by':'activity_recognition '+ this.state.activityType.type,
+                'distance':this.state.distanceTravelled,
+                'time_elapsed':TimeFormatter(this.state.mainTimer),
+                'num_steps':this.state.numberOfSteps,
+                'client_run_id':this.state.client_run_id,
+                'speed':this.state.currentSpeed + ' km/hr'
+            });
+            if (this.state.currentSpeed != null) {
+               this.usainBoltPopup();
+            }         
+        }else{
             const {distanceTravelled,prevDistance } = this.state
             const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
             const newTimeStamp = location.timestamp;
@@ -432,19 +444,6 @@ class Home extends Component {
               this.caloriCounterStart(newTimeStamp);
             }else{
               console.log("Nanvalue")
-            }         
-        }else{
-            CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
-                'detected_by':'activity_recognition '+ this.state.activityType.type,
-                'distance':this.state.distanceTravelled,
-                'time_elapsed':TimeFormatter(this.state.mainTimer),
-                'num_steps':this.state.numberOfSteps,
-                'client_run_id':this.state.client_run_id,
-                'speed':this.state.currentSpeed + ' km/hr'
-            });
-            if (this.state.currentSpeed != null) {
-               this.usainBoltPopup();
-
             }
         }
           

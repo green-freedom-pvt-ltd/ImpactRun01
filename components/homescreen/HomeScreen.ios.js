@@ -252,7 +252,7 @@ class Homescreen extends Component {
           if (result == null)
           {
             
-            AsyncStorage.setItem('my_currency',JSON.stringify('INR ₹'));
+            AsyncStorage.setItem('my_currency',JSON.stringify('INR'));
 
           }else{
           this.setState({
