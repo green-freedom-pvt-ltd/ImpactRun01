@@ -150,7 +150,7 @@ var iphone7Plus = 736;
         var myflex = (this.state.user.user_id === rowData.user_id)?1:0;
         // console.log('rodatacount',this.state.userCount,this.state.responce);
         var textColor = (this.state.user.user_id === rowData.user_id)?"white":"#4a4a4a";
-        var backgroundcolor=(this.state.user.user_id === rowData.user_id)?'#ffcd4d':"white";
+        var backgroundcolor=(this.state.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:"white";
         var myposition = (this.state.user.user_id === rowData.user_id)?'absolute':'relative';
         var mytop = (this.state.user.user_id === rowData.user_id)?-100:0;
         var visiblity = (this.state.user.user_id === rowData.user_id)?0:1;
@@ -454,7 +454,7 @@ var styles = StyleSheet.create({
     height:styleConfig.navBarHeight-10,
     width:styleConfig.navBarHeight-10,
     borderRadius:(styleConfig.navBarHeight-10)/2,
-    backgroundColor:'#ffcd4d',
+    backgroundColor:styleConfig.light_sky_blue,
     borderColor:'#ccc',
     borderWidth:2,
   },

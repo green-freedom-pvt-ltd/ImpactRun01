@@ -651,7 +651,7 @@ class Profile extends Component {
             <NavBar  navigator = {this.props.navigator}title = {'Profile'} rightIcon = {this.rightIconRender()} rightBtn = {this.navigateToProfileForm}/>
             <View style ={styles.profileWraper}>
                 <View style={{height:responsiveHeight(10),width:responsiveWidth(100),backgroundColor:'white',top:responsiveHeight(4.0625)-10}}>
-                    <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance}  getUserData={this.props.getUserData} user={this.state.user} navigator={this.props.navigator}></UserProfile>
+                    <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.props.fetchUserdata} totalKm={this.state.RunTotalDistance}  getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
                 </View>
                 <View onLayout={(event) => this.measureView(event)} style={{height:responsiveHeight(20),top:responsiveHeight(8)-10,width:responsiveWidth(100),backgroundColor:'white',}}>
                     <View style={{height:responsiveHeight(3),width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*20)/100)*10}}>

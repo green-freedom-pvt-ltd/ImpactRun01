@@ -452,7 +452,6 @@ class Homescreen extends Component {
     
 
     distancebetweenCards(width){
-      console.log('width',width-deviceWidth);
       if (deviceheight === iphone6) {
        return width-deviceWidth+80
       }else if (Dimensions.get('window').height === iphone5){
@@ -495,7 +494,6 @@ class Homescreen extends Component {
       const inputRange = routes.map((x, i) => i);
 
       const translateOutputRange = inputRange.map(i => {
-        console.log('indexCause',width*(currentIndex - i) - (95 * (currentIndex - i)),' Data : ',currentIndex,width,i,(currentIndex - i),(responsiveWidth(4.44444) * (currentIndex - i)))
         return width * (currentIndex - i) - (responsiveWidth(25) * (currentIndex - i));
       });
       const scaleOutputRange = inputRange.map(i => {
@@ -755,7 +753,6 @@ class Homescreen extends Component {
 
      // RENDER_PAGE
     _renderPage = (props,data,route) => {
-      console.log('this._buildCoverFlowStyle(props)',this._buildCoverFlowStyle(props));
       return (
         <TabViewPage
           ref={(instance) => this.list = instance}
@@ -1009,7 +1006,7 @@ class Homescreen extends Component {
     },
 
     causeBrief:{
-      width:deviceWidth-125,
+      width:responsiveWidth(71)-20,
       color:styleConfig.black,
       fontSize:styleConfig.causeDisc,
       fontWeight:'400',

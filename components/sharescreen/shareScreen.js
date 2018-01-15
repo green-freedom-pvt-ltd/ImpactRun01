@@ -91,7 +91,6 @@
 
         sadFeedbackText:'enter your feedback'
        };
-      this.viewData = this.viewData.bind(this);
       this.isloading = this.isloading.bind(this);
       this.getUserData = this.getUserData.bind(this);
       this.handleNetworkErrors = this.handleNetworkErrors.bind(this);
@@ -378,190 +377,13 @@
     }
  
 
-    async PostRun(){
-
-     
-      var _this = this;
-      var distance = this.props.distance;
-      var speed = this.props.speed;
-      var impact = this.props.impact;
-      var steps = this.props.noOfsteps;
-      var time = this.props.time;
-      var date = this.props.StartRunTime;
-      var endtime = this.props.EndRunTime;
-      var userdata = this.state.user;
-      var user_id =JSON.stringify(userdata.user_id);
-      var token = JSON.stringify(userdata.auth_token);
-      var tokenparse = JSON.parse(token);
-      var calories_burnt = this.props.calories_burnt;
-      var startPosition = this.props.StartLocation;
-      var endPosition = this.props.EndLocation;
-      var cause = this.props.data;
-      var num_spikes = parseInt(this.props.num_spikes);
-      if (num_spikes != 0) {
-        var spikes = parseInt(this.props.num_spikes)
-      }else{
-        var spikes = 0;
-      }
-
-
-      if (this.state.user.team_code === 0) {
-       var postrundata = JSON.stringify({
-          cause_run_title:cause.cause_title,
-          cause_id:cause.pk,
-          user_id:user_id,
-          start_time:date,
-          end_time:endtime,
-          distance: distance,
-          peak_speed: 1,
-          avg_speed:speed,
-          run_amount:impact,
-          run_duration: time,
-          is_flag:false,
-          calories_burnt:calories_burnt,
-          start_location_lat:startPosition.latitude,
-          start_location_long:startPosition.longitude,
-          end_location_lat:endPosition.latitude,
-          end_location_long:endPosition.longitude,
-          no_of_steps:steps,
-          client_run_id:_this.props.client_run_id,
-          is_ios:true,     
-          })
-      }else{
-       var postrundata = JSON.stringify({
-          cause_run_title:cause.cause_title,
-          cause_id:cause.pk,
-          user_id:user_id,
-          start_time:date,
-          end_time:endtime,
-          distance: distance,
-          peak_speed: 1,
-          avg_speed:speed,
-          run_amount:impact,
-          run_duration: time,
-          is_flag:false,
-          calories_burnt:calories_burnt,
-          team_id:this.state.user.team_code,
-          start_location_lat:startPosition.latitude,
-          start_location_long:startPosition.longitude,
-          end_location_lat:endPosition.latitude,
-          end_location_long:endPosition.longitude,
-          no_of_steps:steps,
-          client_run_id:_this.props.client_run_id,
-          is_ios:true,     
-          })
-      }
-
-      
-      // try{
-      //   let response = await fetch('https://mywebsite.com/endpoint/');
-      //   let responseJson = await response.json();
-
-      // }
-      // catch{
-
-      // }
-      var _this = this;
-      try{
-      fetch(apis.runApi, {
-         method: "POST",
-         headers: {  
-            'Authorization':"Bearer "+ tokenparse,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',           
-          },
-          body:postrundata,
-       })
-      .then(_this.handleNetworkErrors.bind(_this))
-      .then((userRunData) => { 
-         console.log('userRunData',userRunData);
-         this.postlocationdata(userRunData,tokenparse);
-        if (_this.state.networkRUnpoststatus) {
-         _this.RemoveUnsyncedDatawhenpost(userRunData);
-         _this.setState({
-          postingRun:false,
-         })
-       }else{
-         _this.SaveRunLocally();
-        AlertIOS.alert('network error ',JSON.stringify(userRunData))
-       }
-       })
-      .catch((error)=>{
-         _this.SaveRunLocally();
-        console.log("errorPostrunShare ",error);
-        _this.setState({
-          postingRun:false,
-        })
-
-      })
-    }
-    catch (error) {
-      console.log('somedata',error)
-      _this.SaveRunLocally();
-    }
-  
-}
+    
 
 
 
-postlocationdata(data,tokenparse){
-  console.log('postLocationData', data);
-  var _this = this;
-  this.props.locationArray.forEach(function(item) {
-  console.log('postLocationData1', item);
-  fetch(apis.postLocationData, {
-         method: "POST",
-         headers: {  
-            'Authorization':"Bearer "+ tokenparse,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',           
-          },
-          body:JSON.stringify({
-            run_id: data.run_id,
-            client_run_id: data.client_run_id,
-            batch_num:0,
-            start_time_epoch: data.start_time_epoch,
-            end_time_epoch: data.end_time_epoch,
-            was_in_vehicle:true,
-            location_array:item
-          }),
-       })
-      .then(_this.handleNetworkErrors.bind(_this))
-      .then((userRunData) => { 
-         console.log('userRunDatalocationarray',userRunData);
-      }).catch((err)=>{
-        console.log('postlocationdataerror',err);
-      })
-    })
-}
 
 
-
-    RemoveUnsyncedDatawhenpost(userRunData){
-      AsyncStorage.getItem('UnsyncedData', (err, result) => {
-        this.setState({
-          UnsyncedData:JSON.parse(result),
-        })
-        var newRunArray = [];
-        console.log('UnsyncedData',JSON.parse(result) != null);
-        if (this.state.UnsyncedData != null) {
-          if (this.state.UnsyncedData != []) {
-          console.log('UnsyncedData',JSON.parse(result) != null);
-          var removeIndex = this.state.UnsyncedData.map(function(item) {
-           return item.start_time;
-            }).indexOf(userRunData.start_time); 
-          this.state.UnsyncedData.splice(removeIndex, 1); 
-          AsyncStorage.removeItem('UnsyncedData',(err) => {
-          });
-          let localunsyncedRundata = this.state.UnsyncedData;
-          AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
-          })
-        } 
-      }
-        
-        
-      })
-    }
+   
 
     DiscardRunfunction(){
       return this.navigateTOhome();
@@ -819,13 +641,38 @@ postlocationdata(data,tokenparse){
       });
     };
 
+
+    closePopupsadView(){
+      this.setState({
+        sadView:false,
+        openlikeUnlike:false,
+      })
+    }
+
+    closePopuphappyView(){
+      this.setState({
+        happyView:false,
+        openlikeUnlike:false,
+      })
+    }
+
+    closePopupfirstModel(){
+      this.setState({
+        firstModel:false,
+        openlikeUnlike:false,
+      })
+    }
+
     viewData(){
       if (this.state.happyView) {
         return(
           <View  style={styles.contentWrap}>
+           <TouchableOpacity style={{top:5,position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopuphappyView()}>
+             <Icon style={{color:'black',fontSize:30,fontWeight:'600'}}name={'ios-close'}></Icon>
+           </TouchableOpacity>
             <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
             <View style={styles.modelBtnWrapsad}>
-              <Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,bottom:10}}>Thank You ! Rate us on  App store, tell others about your experience.</Text>
+              <Text style={{width:deviceWidth-120,textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,bottom:10}}>Thank You ! Rate us on  App store, tell others about your experience.</Text>
               <TouchableOpacity style={styles.modelbtnsadFeedback} onPress ={()=>this.RateUshandleClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>RATE US</Text></TouchableOpacity>
             </View>
           </View>
@@ -833,6 +680,9 @@ postlocationdata(data,tokenparse){
       }else if(this.state.sadView){
         return(
           <View  style={styles.contentWrap}>
+          <TouchableOpacity style={{top:5,position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupsadView()}>
+             <Icon style={{color:'black',fontSize:30,fontWeight:'600'}}name={'ios-close'}></Icon>
+           </TouchableOpacity>
             <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
             <View style={styles.modelBtnWrapsad}>
             <TextInput  
@@ -849,6 +699,9 @@ postlocationdata(data,tokenparse){
       }else if(this.state.firstModel){
         return(
           <View  style={styles.contentWrap}>
+          <TouchableOpacity style={{top:5,position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupfirstModel()}>
+             <Icon style={{color:'black',fontSize:30,fontWeight:'600'}}name={'ios-close'}></Icon>
+           </TouchableOpacity>
             <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>How was you run ?</Text>
             <View style={styles.modelBtnWrap}>
               <TouchableOpacity style={styles.modelbtnSad} onPress ={()=>this.SadIconClick()}><Icon style={{color:styleConfig.bright_blue,fontSize:((deviceHeight/3)/100)*40,}} name={'md-sad'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily}}>NOT GOOD!</Text></TouchableOpacity>
@@ -877,6 +730,7 @@ postlocationdata(data,tokenparse){
     openModelLikeUnlike(){
       this.setState({
         openlikeUnlike:true,
+        firstModel:true,
       })
     }
     closemodel(){
@@ -921,16 +775,16 @@ postlocationdata(data,tokenparse){
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
                 <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.LatoBlack}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                 <Text style={styles.lableText}>Impact</Text>
               </View>
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
                <View style={styles.wrapperRunContent}>
-                  <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}<Text style={[styles.lableText,{fontSize:styleConfig.fontSizerlabel+5}]}> cal</Text> </Text>
+                  <Text style={{color:'#4a4a4a',fontFamily:styleConfig.LatoBlack,fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}<Text style={[styles.lableText,{fontSize:styleConfig.fontSizerlabel+5}]}> cal</Text> </Text>
                   <Text style={styles.lableText}>Calories burned</Text>
                 </View>
               <View style={styles.wrapperRunContent2}>
-                <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular' ,fontSize:styleConfig.fontSizerImpact-10,}}>{this.state.Duration}</Text>
+                <Text style={{color:'#4a4a4a',fontFamily:styleConfig.LatoBlack ,fontSize:styleConfig.fontSizerImpact-10,}}>{this.state.Duration}</Text>
                 <Text style={styles.lableText}>Duration</Text>
               </View>
               </View>
@@ -978,17 +832,17 @@ postlocationdata(data,tokenparse){
             <View ref='captureScreenShot'>
               <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
                 <View style={styles.wrapperRunContentImpact}>
-                  <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                  <Text style={{marginBottom:10,fontWeight:'800',color:'black',fontSize:styleConfig.fontSizerImpact-10,opacity:.80}}>Thank You {username}</Text>
+                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.LatoBlack}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                   <Text style={styles.lableText}>Impact</Text>
                 </View>
                 <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
                   <View style={styles.wrapperRunContent}>
-                    <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular',fontSize:styleConfig.fontSizerImpact-10}}>{parseFloat(this.props.calories_burnt).toFixed(1)}<Text style={[styles.lableText,{fontSize:styleConfig.fontSizerlabel+5}]}> cal</Text> </Text>
+                    <Text style={{color:'black',fontFamily: styleConfig.LatoBlack,fontSize:styleConfig.fontSizerImpact-10,opacity:.80}}>{parseFloat(this.props.calories_burnt).toFixed(1)}<Text style={[styles.lableText,{fontSize:styleConfig.fontSizerlabel+5}]}> cal</Text> </Text>
                     <Text style={styles.lableText}>Calories burned</Text>
                   </View>
                   <View style={styles.wrapperRunContent2}>
-                    <Text style={{color:'#4a4a4a',fontFamily: 'Montserrat-Regular' ,fontSize:styleConfig.fontSizerImpact-10,}}>{this.state.Duration}</Text>
+                    <Text style={{color:'black',fontFamily: styleConfig.LatoBlack ,fontSize:styleConfig.fontSizerImpact-10,opacity:.80}}>{this.state.Duration}</Text>
                     <Text style={styles.lableText}>Duration</Text>
                   </View>
                 </View>
@@ -1116,11 +970,7 @@ postlocationdata(data,tokenparse){
     alignItems: 'center',
    },
    modelWrap:{
-    padding:20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:"white",
-    borderRadius:5,
+
    },
    iconWrapmodel:{
      justifyContent: 'center',

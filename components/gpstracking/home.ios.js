@@ -49,7 +49,6 @@ var calories = 0;
 
 
 
-
 class Home extends Component {
     mixins: [TimerMixin]
    
@@ -65,7 +64,7 @@ class Home extends Component {
         floorsDescended: 0,
         currentPace: 0,
         currentCadence: 0,
-        isRunning:true,
+        isRunning:false,
         mainTimer:0,
         mainTimerpriv:0,
         speed:0,
@@ -117,6 +116,8 @@ class Home extends Component {
         },
         client_run_id:null,
         speedBetweenTwoPoint:0,
+        locationArray:[],
+        locationObjectsArray:[],
       };
     }
 
@@ -139,7 +140,7 @@ class Home extends Component {
     this.getWeight();
     this.saveDataperiodcally(); 
     this._startStepCounterUpdates()
-    this._handleStartStop();
+   
     this.updatePaceButtonStyle(); 
     this.getSpeedEvery30Sec();
       var d = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -160,12 +161,17 @@ class Home extends Component {
   appKillDuringData(){   
       if (this.props.killRundata != null) {
       let runData = this.props.killRundata;
+      console.log('runData',runData);
       this.setState ({
         distanceTravelled:Number(runData.distance) + Number(this.state.distanceTravelled),
-        mainTimerpriv:Number(runData.time)+Number(this.state.mainTimer),
         calorieBurned:Number(runData.calories_burnt)+Number(this.state.calorieBurned),
+        locationArray:(runData.locationArray === 1)?[]:runData.locationArray,
+        mainTimer:runData.time,
       })
-     }  
+       this._handleStartStop(runData.time);
+     } else{
+      this._handleStartStop(this.state.mainTimer);
+     }
   }
   
   getWeight(){
@@ -203,6 +209,7 @@ class Home extends Component {
             calories_burnt:this.state.calorieBurned,
             StartRunTime:this.state.myrundate,
             noOfsteps:this.state.numberOfSteps,
+            ocationArray:this.state.locationArray,
            }
           AsyncStorage.setItem('runDataAppKill',JSON.stringify(Rundata));
           AsyncStorage.getItem('runDataAppKill', (err, result) => {
@@ -219,6 +226,7 @@ class Home extends Component {
               EndLocation:this.state.newlatlong,
               StartRunTime:this.state.myrundate,
               noOfsteps:this.state.numberOfSteps,
+              locationArray:this.state.locationArray,
           }
           AsyncStorage.setItem('runDataAppKill',JSON.stringify(Rundata)); 
           AsyncStorage.getItem('runDataAppKill', (err, result) => {
@@ -236,25 +244,26 @@ class Home extends Component {
   }
 
 
-  _handleStartStop(){
-    let {isRunning,FirstTime,mainTimer,lapTimer} = this.state;
-    if(!this.state.isRunning){
+  _handleStartStop(mainTimer){
+    let {isRunning,FirstTime,lapTimer} = this.state;
+    console.log('mainTimer',mainTimer,this.state.locationArray);
+    if(this.state.isRunning){
+      this.state.locationArray.push(this.state.locationObjectsArray);
       clearInterval(this.interval);
       this.setState({
-        isRunning:false
+        isRunning:false,
       });
       return;
     }else{ 
-      if (this.state.isRunning) {
+      if (!this.state.isRunning) {
         this.setState({
           mainTimerStart:new Date(),
-          lapTimerStart:new Date(),
           isRunning:true,
+          locationObjectsArray:[],
         })
         this.interval = setInterval(()=>{
         this.setState({
-            mainTimer:new Date() - this.state.mainTimerStart + mainTimer + this.state.mainTimerpriv,
-            lapTimer:new Date() - this.state.lapTimerStart + lapTimer,
+            mainTimer:new Date() - this.state.mainTimerStart + mainTimer,
         })
         },30);
       }; 
@@ -306,18 +315,7 @@ class Home extends Component {
       })
     })     
 
-    
-    AsyncStorage.getItem('runDataAppKill', (err, result) => {
-    var datarun =JSON.parse(result);
-      if (datarun != null) { 
-        
-        distancePriv = this.state.distanceTravelledsec;
-        timepriv = this.state.storedRunduration;
-        calories = datarun.calories_burnt;
-      }else{
-       
-      }   
-    });    
+   
 
     AsyncStorage.getItem('USERDATA', (err, result) => {
         var user = JSON.parse(result);
@@ -367,6 +365,21 @@ class Home extends Component {
           StartLocation:location.coords, 
         })
       }
+      console.log('location',location);
+
+      var locationObject =  {
+        "acc": location.coords.accuracy,
+        "stc": this.state.numberOfSteps,
+        "lon": location.coords.longitude,
+        "ts":  location.timestamp,
+        "ber": 199,
+        "lat": location.coords.latitude,
+        "alt": location.coords.altitude,
+        "spd": location.coords.speed,
+        "nspk": this.state.num_spikes,
+        "dis": this.state.distanceTravelled,
+      };
+     this.state.locationObjectsArray.push(locationObject) ;
       this.setState({
         sourceCount:false,
       })
@@ -411,7 +424,7 @@ class Home extends Component {
 
   checkForTooFast(location){
         var location = location;
-        if (this.state.activityType.type === 'IN_VEHICLE' || this.state.activityType.type === 'ON_BICYCLE') {   
+        if (this.state.activityType.type === 'AUTOMOTIVE' || this.state.activityType.type === 'BICYCLE') {   
             CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
                 'detected_by':'activity_recognition '+ this.state.activityType.type,
                 'distance':this.state.distanceTravelled,
@@ -597,6 +610,7 @@ class Home extends Component {
     // Location.stopUpdatingLocation();
     clearInterval(this.IntervelSaveRun);
     clearInterval(this.getSpeedEvery30Sec);
+    clearInterval(this.interval);
     // this.clearLocationUpdate();
     DeviceEventEmitter.removeListener('locationUpdated');
     ActivityRecognition.stop()
@@ -628,13 +642,12 @@ class Home extends Component {
       this.CleverTapOnpauseEvent('user_clicked',this.state.distanceTravelled,TimeFormatter(this.state.mainTimer),this.state.numberOfSteps);
       this.setState({
         enabled:false,
-        isRunning:!this.state.isRunning,
         prevLatLng:null,
       });  
        setTimeout(()=>{ 
         this.updatePaceButtonStyle();
-        this._handleStartStop();     
-       },100) ;
+        this._handleStartStop(this.state.mainTimer);     
+       },30) ;
           
       
     }else{   
@@ -647,13 +660,12 @@ class Home extends Component {
       this.setState({
         isMoving:isMoving,
         enabled:true,
-        isRunning:!this.state.isRunning,
         prevLatLng:null,
       });  
        setTimeout(()=>{ 
         this.updatePaceButtonStyle();
-        this._handleStartStop();     
-       },100) ;
+        this._handleStartStop(this.state.mainTimer);     
+       },30) ;
     } 
     
   }
@@ -665,8 +677,7 @@ class Home extends Component {
      var _this = this;
     if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
       
-      Location.stopUpdatingLocation();
-      clearInterval(this.IntervelSaveRun);
+  
       _this.EndRunConfimationForlongRun();  
      }else{
       _this.EndRunConfimation();
@@ -685,14 +696,16 @@ class Home extends Component {
       this.setState({
         onCarDetectedEndRunModel:false,
         enabled: !this.state.enabled,   
-        isRunning:!this.state.isRunning,  
       });
       this.updatePaceButtonStyle();
       this.clearLocationUpdate();
-      this._handleStartStop();
+      this._handleStartStop(this.state.mainTimer);
+      Location.stopUpdatingLocation();
+      clearInterval(this.IntervelSaveRun);
       AsyncStorage.removeItem('runDataAppKill');
       PushNotification.cancelAllLocalNotifications();
       this.navigateTOShareScreen();
+
      
   }
 
@@ -704,7 +717,6 @@ class Home extends Component {
           
           this.setState({
             enabled:false,
-            isRunning:false,
             currentSpeed:0,
           })
           setTimeout(()=>{ 
@@ -713,16 +725,15 @@ class Home extends Component {
             })
            },1000) ;
           this.updatePaceButtonStyle();
-          this._handleStartStop(); 
+          this._handleStartStop(this.state.mainTimer); 
         }else{
           this.setState({
             ussainBoltCount:this.state.ussainBoltCount+1,   
             enabled:false,
-            isRunning:false,
             currentSpeed:0,
           })
           this.updatePaceButtonStyle();
-          this._handleStartStop();
+          this._handleStartStop(this.state.mainTimer);
            setTimeout(()=>{ 
             this.setState({
               open:true,
@@ -930,6 +941,7 @@ class Home extends Component {
           noOfsteps:this.state.numberOfSteps,
           num_spikes:this.state.num_spikes,
           client_run_id:this.state.client_run_id,
+          locationArray:this.state.locationArray,
           },
         navigator: this.props.navigator,
 

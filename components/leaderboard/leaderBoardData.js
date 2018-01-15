@@ -147,7 +147,7 @@ class LeaderboardData extends Component {
         var myflex = (this.props.user.user_id === rowData.user_id)?1:0;
         // console.log('rodatacount',this.state.userCount,this.state.responce);
         var textColor = (this.props.user.user_id === rowData.user_id)?"white":"#4a4a4a";
-        var backgroundcolor=(this.props.user.user_id === rowData.user_id)?'#ffcd4d':"white";
+        var backgroundcolor=(this.props.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:"white";
         var myposition = (this.props.user.user_id === rowData.user_id)?'absolute':'relative';
         var mytop = (this.props.user.user_id === rowData.user_id)?-100:0;
         var visiblity = (this.props.user.user_id === rowData.user_id)?0:1;

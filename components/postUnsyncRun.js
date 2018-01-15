@@ -86,7 +86,9 @@ export default {
 
       async postlocationdata(RunData,data,tokenparse,rundata,user){
           var _this = this;
+          console.log('RunData',RunData);
           var item =  RunData.locationArray[0] ;
+          console.log('item',item);
           if (RunData.locationArray.length != 0) {
           fetch(apis.postLocationData, {
                  method: "POST",

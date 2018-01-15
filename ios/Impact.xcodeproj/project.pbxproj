@@ -36,6 +36,10 @@
 		3841D7271F4DEDC100BE50D5 /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38226FB11F4ADAE400CA4280 /* Montserrat-Thin.ttf */; };
 		3841D7281F4DEDC100BE50D5 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38226FAF1F4ADAD800CA4280 /* Montserrat-Bold.ttf */; };
 		3841D72A1F4DF0FD00BE50D5 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3841D7291F4DF0FD00BE50D5 /* Montserrat-Light.ttf */; };
+		38534C78200C850200DD6362 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38534C43200C84EE00DD6362 /* Lato-Black.ttf */; };
+		38534C79200C850200DD6362 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38534C44200C84EE00DD6362 /* Lato-Bold.ttf */; };
+		38534C7A200C850200DD6362 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38534C45200C84EE00DD6362 /* Lato-Light.ttf */; };
+		38534C7B200C850200DD6362 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 38534C46200C84EE00DD6362 /* Lato-Regular.ttf */; };
 		387850D51F4DC9DF00910BA6 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 387850CF1F4DC9DE00910BA6 /* Crashlytics.framework */; };
 		387850D61F4DC9DF00910BA6 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 387850D01F4DC9DE00910BA6 /* Fabric.framework */; };
 		387850D71F4DC9DF00910BA6 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 387850D11F4DC9DF00910BA6 /* FBSDKCoreKit.framework */; };
@@ -449,6 +453,10 @@
 		3841D7001F4DEB4B00BE50D5 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		3841D7011F4DEB4B00BE50D5 /* Montserrat-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Thin.ttf"; sourceTree = "<group>"; };
 		3841D7291F4DF0FD00BE50D5 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.ttf"; sourceTree = "<group>"; };
+		38534C43200C84EE00DD6362 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
+		38534C44200C84EE00DD6362 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		38534C45200C84EE00DD6362 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		38534C46200C84EE00DD6362 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
 		387850CF1F4DC9DE00910BA6 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		387850D01F4DC9DE00910BA6 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		387850D11F4DC9DF00910BA6 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
@@ -677,6 +685,10 @@
 			children = (
 				38226FB01F4ADAE400CA4280 /* Montserrat-Regular.ttf */,
 				38226FB11F4ADAE400CA4280 /* Montserrat-Thin.ttf */,
+				38534C43200C84EE00DD6362 /* Lato-Black.ttf */,
+				38534C44200C84EE00DD6362 /* Lato-Bold.ttf */,
+				38534C45200C84EE00DD6362 /* Lato-Light.ttf */,
+				38534C46200C84EE00DD6362 /* Lato-Regular.ttf */,
 				38226FAF1F4ADAD800CA4280 /* Montserrat-Bold.ttf */,
 				FB7AE7F41B27429DB2CB5DA2 /* Entypo.ttf */,
 				EA7442DC8B7141A2B0FBE5FD /* EvilIcons.ttf */,
@@ -1432,6 +1444,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38534C78200C850200DD6362 /* Lato-Black.ttf in Resources */,
+				38534C79200C850200DD6362 /* Lato-Bold.ttf in Resources */,
+				38534C7A200C850200DD6362 /* Lato-Light.ttf in Resources */,
+				38534C7B200C850200DD6362 /* Lato-Regular.ttf in Resources */,
 				3841D72A1F4DF0FD00BE50D5 /* Montserrat-Light.ttf in Resources */,
 				3841D7261F4DEDC100BE50D5 /* Montserrat-Regular.ttf in Resources */,
 				3841D7271F4DEDC100BE50D5 /* Montserrat-Thin.ttf in Resources */,

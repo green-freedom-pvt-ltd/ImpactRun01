@@ -277,9 +277,8 @@ class ImpactLeagueLeaderBoard extends Component {
         };
         var textColor=(this.props.user.user_id === rowData.user_id)?'#fff':"#4a4a4a";
         var backgroundColor = (this.props.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:'#fff';
-        var position = (this.props.user.user_id === rowData.user_id)?'absolute':'relative';
         return (
-          <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor,position:position}]}>
+          <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
               <View style={style}>
                 <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:textColor,}}>{rowID} </Text> 
               </View> 
@@ -416,7 +415,6 @@ class ImpactLeagueLeaderBoard extends Component {
                 renderRow={this.renderRow}
                 style={styles.container}>
               </ListView>
-              {this.userLeagueRow()}
             </View> 
             {this.openTooltip()}
           </View>

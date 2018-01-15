@@ -100,6 +100,10 @@
 	<string>This allows us to get your step-count so that we can track your workout more accurately.</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Lato-Black.ttf</string>
+		<string>Lato-Bold.ttf</string>
+		<string>Lato-Light.ttf</string>
+		<string>Lato-Regular.ttf</string>
 		<string>Montserrat-Thin.ttf</string>
 		<string>Montserrat-Light.ttf</string>
 		<string>Montserrat-Regular.ttf</string>
