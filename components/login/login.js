@@ -23,7 +23,10 @@ const CleverTap = require('clevertap-react-native');
 
 import Lodingscreen from '../../components/LodingScreen';
 import styleConfig from '../../components/styleConfig';
-import Tabs from '../homescreen/tab'
+import Tabs from '../homescreen/tab';
+import fetchDatafromApi from '../getDataFromApi.js';
+import setDataLocally from '../setLocalData.js';
+import fetchCauseData from '../fetchCauseData.js';
 import {
     GoogleSignin,
     GoogleSigninButton
@@ -62,10 +65,11 @@ class Login extends Component {
               this.fetchDataonInternet();
             }
         );
+        CleverTap.recordEvent('ON_LOAD_LOGIN_SCREEN');
           
       }
 
-      componentWilliUnmount(){
+      componentWillUnmount(){
         NetInfo.removeEventListener(
             'change',
             this._handleConnectivityChange
@@ -96,17 +100,10 @@ class Login extends Component {
               .then((user) => {
                   console.log('Token:' + user);
               });
-          AsyncStorage.multiGet(['UID234', 'UID345'], (err, stores) => {
-              stores.map((result, i, store) => {
-                  let key = store[i][0];
-                  let val = store[i][1];
-              });
-          })
          
       }
-      componentDidMount(){
-        CleverTap.recordEvent('ON_LOAD_LOGIN_SCREEN');
-      }
+
+      
 
       fetchDataonInternet(isConnected){
         console.log('isConnected',isConnected);
@@ -137,49 +134,15 @@ class Login extends Component {
             token = this.state.user.auth_token;
             auth_token = "Bearer " + token;
         }
-
-        fetch(apis.causeListapi,{
-            method: "GET",
-            headers: {  
-              'Authorization':auth_token,
-              'Content-Type':'application/json',
-                }
+       fetchCauseData.getCauseFromApi(auth_token)
+        .then((causeNumber)=>{
+            this.setState({
+                dataCauseNum:causeNumber,
             })
-            .then(response => response.json())
-            .then((causes) => {
-              var causes = causes;
-              console.log('causes',causes);
-              let causesData = []
-              let exchangeRate = []
-              let newData = []
-              causes.results.forEach((item, i) => {
-                  if (item.is_active || item.is_completed) {
-                      causesData.push(['cause' + i, JSON.stringify(item)])
-                      newData.push('cause' + i);
-                  };
-              })
-              this.setState({
-                  myCauseNum: newData,
-                  causes:causes.results,
-                  exchange_rates:causes.exchange_rates,
-                  overall_impact:causes.overall_impact,
-              })
-              // console.log('ec', this.state.exchange_rates);
-              // console.log('ec2', exchangeRate);
-              let myCauseNum = this.state.myCauseNum;
-              AsyncStorage.setItem('myCauseNumindex',JSON.stringify(myCauseNum));
-              AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
-              // AsyncStorage.multiSet(exchangeRate, (err) => {
-              //     console.log('ExchangeRate' + err)
-              // })
-
-              AsyncStorage.multiSet(causesData, (err) => {
-                  console.log('myCauseErr' + err)
-              })
-            })
-            .catch((err)=>{
-             console.log("errorcauseapi ",err)
-            })
+        })
+        .catch((err)=>{
+         console.log("errorcauseapi ",err)
+        })
       }
 
       _signInGoogle() {
@@ -189,16 +152,16 @@ class Login extends Component {
                 user: user,
                 loaded: true,
             });
-            console.log("user",user);
-            var access_token = user.accessToken;
-            fetch("http://dev.impactrun.com/api/users/", {
-                    method: "GET",
-                    headers: {
-                        'Authorization': "Bearer google-oauth2 " + user.accessToken,
-                    }
-                })
-                .then(this.handleNetworkErrors.bind(this))
-                .then((userdata) => {
+            let headerData = {
+              method: "GET",
+              headers: {
+                  'Authorization': "Bearer google-oauth2 " + user.accessToken,
+              }
+            }
+            fetchDatafromApi.fetchData("http://dev.impactrun.com/api/users/",headerData)
+              .then((userdata) => {
+                   var userdata = userdata[0];
+                   console.log('userdata',userdata);
                    CleverTap.recordEvent('ON_LOGIN_SUCCESS', 
                     { 
                       'eid': userdata.auth_token, 
@@ -211,8 +174,8 @@ class Login extends Component {
                   );
                   CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email,'Identity':userdata.user_id,});
 
-                    var userdata = userdata[0];
-                    console.log('usrerloginGoogle',userdata);
+                    
+                    console.log('usrerloginGoogle',userdata.body_weight);
                     let userData = {
                       body_weight:userdata.body_weight,
                       first_name: userdata.first_name,
@@ -229,15 +192,16 @@ class Login extends Component {
                       total_distance: userdata.total_distance,
                       team_code: userdata.team_code,
                     };
-                    console.log("userdata",userdata);
-                     AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
-                      AsyncStorage.getItem('USERDATA', (err, result) => {
-                        console.log("userresult ",result);
-                      })
-                      this.navigateToHome();
-                     })
+                    setDataLocally.setUserData('USERDATA',JSON.stringify(userData))
+                    .then((userdata)=>{
+                       this.navigateToHome();
+                       console.log('setUserData',userdata);
+                    })
+                    .catch((err)=>{
+                      setDataLocally.setUserData('USERDATA',JSON.stringify(userData))
+                      console.log('error',err);
+                    })
                 })
-                .done();
               })
             .catch((err) => {
                 console.log('WRONG SIGNIN Google', err);
@@ -258,16 +222,18 @@ class Login extends Component {
                   user: data,
                   loaded: true,
               });
+
               _this.props.onLogin && _this.props.onLogin();
               var Fb_token = data.credentials.token;
-              fetch("http://dev.impactrun.com/api/users/", {
-                  method: "GET",
-                  headers: {
-                      'Authorization': "Bearer facebook " + Fb_token,
-                  }
-              })
-              .then((response)=>response.json())
+              let headerData = {
+                method: "GET",
+                headers: {
+                    'Authorization': "Bearer facebook " + Fb_token,
+                }
+              }
+              fetchDatafromApi.fetchData("http://dev.impactrun.com/api/users/",headerData)
               .then((userdata) => {
+                console.log('userData',userdata);
                 var userdata = userdata[0];
                 CleverTap.recordEvent('ON_LOGIN_SUCCESS', 
                   { 
@@ -278,11 +244,8 @@ class Login extends Component {
                     'medium': 'fb'
                   }
                 );
-                  CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email, 'LeagueName': userdata.team_code,'Identity':userdata.user_id,});
-
-                
-               console.log('usrerloginfacebook',userdata);
-            
+                CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email, 'LeagueName': userdata.team_code,'Identity':userdata.user_id,});                
+                console.log('usrerloginfacebook',userdata);            
                 let userData = {
                     body_weight:userdata.body_weight,
                     first_name: userdata.first_name,
@@ -298,14 +261,16 @@ class Login extends Component {
                     is_signup: userdata.sign_up,
                     total_distance: userdata.total_distance,
                     team_code: userdata.team_code,
-                };
-               
-               AsyncStorage.setItem('USERDATA',JSON.stringify(userData), () => {
-                  AsyncStorage.getItem('USERDATA', (err, result) => {
-                    console.log("userresult ",result);
-                  })
-                _this.navigateToHome();
-               })
+                };               
+                setDataLocally.setUserData('USERDATA',JSON.stringify(userData))
+                .then((userdata)=>{
+                   _this.navigateToHome();
+                    console.log('setUserData',userdata);
+                })
+                .catch((err)=>{
+                  setDataLocally.setUserData('USERDATA',JSON.stringify(userData))
+                  console.log('error',err);
+                })
               })
               .catch((err) => {
                 CleverTap.recordEvent('ON_LOGIN_FAILED',{
@@ -325,34 +290,14 @@ class Login extends Component {
             title: 'Gps',
             id: 'tab',
             passProps: {
-              dataCauseCount: this.state.mycauseDataCount,
-              dataCauseNum: this.state.myCauseNum,
+              dataCauseNum: this.state.dataCauseNum,
               causes:this.state.causes,
-              exchange_rates:this.state.exchange_rates,
-              overall_impact:this.state.overall_impact,
             },
             navigator: this.props.navigator,
         })
       }
 
 
-      // navigateToHome() {
-      //   this.props.navigator.push({
-      //       title: 'Homescreen',
-      //       component:Tabs,
-      //       navigationBarHidden: true,
-      //       title: 'Homescreen',
-      //       screen:'route',
-      //       navigatorStyle: {
-      //         navBarHidden:true,
-      //       },
-      //       passProps: {
-      //         dataCauseCount: this.state.mycauseDataCount,
-      //         dataCauseNum: this.state.myCauseNum,
-      //         causes:this.state.causes
-      //       },
-      //   })
-      // }
       onPressSkip(){
         CleverTap.recordEvent('ON_CLICK_LOGIN_SKIP');
         this.navigateToHome();

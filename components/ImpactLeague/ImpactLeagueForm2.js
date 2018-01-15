@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
       },
     position:'absolute',
     bottom:20,
-    backgroundColor:styleConfig.light_gold,
+    backgroundColor:styleConfig.light_sky_blue,
   },
   dropdown:{
     width:deviceWidth-79,

@@ -79,9 +79,7 @@ class HelpCenter extends Component {
         navigateToHelp(rowData){
         this.props.navigator.push({
           title:'Questions',         
-          component:Faq,
-          navigationBarHidden: false,
-          showTabBar: true,
+          id:'faq',
           passProps:{
             rowData:rowData,
             user:this.props.user,
@@ -92,9 +90,7 @@ class HelpCenter extends Component {
       navigateToFeedbackPage(rowData){
         this.props.navigator.push({
           title:'Feedback',         
-          component:EndFeedBack,
-          navigationBarHidden: false,
-          showTabBar: true,
+          id:'feedback',
           passProps:{
             data:rowData,
             tag:rowData.labelname,
@@ -105,12 +101,9 @@ class HelpCenter extends Component {
       }
 
       navigateToListOfQuestions(rowData){
-
         this.props.navigator.push({
           title:'Select issue',         
-          component:QuestionLists,
-          navigationBarHidden: false,
-          showTabBar: true,
+          id:'listquestions',
           passProps:{
            rowData:rowData,
            data:rowData.moreList,
@@ -125,9 +118,7 @@ class HelpCenter extends Component {
        navigateToRunhistory(rowData){
         this.props.navigator.push({
           title:'Select Workout',         
-          component:RunHistory,
-          navigationBarHidden: false,
-          showTabBar: true,
+          id:'runhistory',
           passProps:{
             rowData:rowData,
             rawData:this.state.rawData,
@@ -310,7 +301,7 @@ class HelpCenter extends Component {
         return (
           <TouchableOpacity  onPress={()=> this.navigateToNextPage(rowData)}style={{paddingLeft:20,height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",}}>           
             <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',alignItems:'flex-start'}}>
-              <Text style={{color:'#595c5d'}}>{rowData.name}</Text>
+              <Text style={{fontWeight:'600',color:'#595c5d',fontFamily:styleConfig.LatoBlack,fontSize:styleConfig.helpCenterListFontSize,opacity:.90}}>{rowData.name}</Text>
             </View>
             <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',}}>
                 <IconSec style={{color:'#c1c6c7',fontSize:20,}}name={'ios-arrow-forward'}></IconSec>
@@ -322,8 +313,9 @@ class HelpCenter extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
+              <NavBar title={'Help'}/>
                 <ListView
-                style={{top:0,height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',}}
+                style={{top:10,height:deviceHeight,width:deviceWidth,backgroundColor:'white',}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
                 dataSource={this.state.HelpCenterTabs}

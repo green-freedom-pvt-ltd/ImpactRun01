@@ -189,8 +189,8 @@ class LeaderboardData extends Component {
 
       render() {
         return (
-          <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white',height:deviceHeight-114,width:deviceWidth}}>
+          <View style={{height:deviceHeight-styleConfig.tabHeight-150,width:deviceWidth}}>
+            <View style={{backgroundColor:'red',height:deviceHeight-styleConfig.tabHeight-50,width:deviceWidth}}>
               {this.swwipeDowntoRefress()}
               <ListView
                 style={styles.container}
@@ -205,7 +205,7 @@ class LeaderboardData extends Component {
           </View> 
         );
       }
-      }
+      
 
 
 
@@ -227,8 +227,8 @@ class LeaderboardData extends Component {
 
 const styles = StyleSheet.create({
 container:{
-  height:300,
-}
+  height:deviceHeight-styleConfig.tabHeight-150,
+},
   thumb: {
     height:styleConfig.navBarHeight-30,
     width:styleConfig.navBarHeight-30,

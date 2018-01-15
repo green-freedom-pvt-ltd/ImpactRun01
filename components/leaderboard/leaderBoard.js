@@ -227,14 +227,16 @@ var iphone7Plus = 736;
       fetchLeaderBoard() {
         AsyncStorage.removeItem('leaderBoard' + this.state.value,(err) => {
         });
-
+         this.setState({
+            fetched:false,
+          });
         var token = this.state.user.auth_token;
         console.log("token",token);
         var stateValue = '';
-        if (this.state.value == 'Most Impact Last 7 days'){
+        if (this.state.value == 'Last 7 days'){
           stateValue = 'last_7';
         }
-        else if (this.state.value == 'Most Impact Last 30 days'){
+        else if (this.state.value == 'Last 30 days'){
           stateValue = 'last_30'; 
         }
         else if(this.state.value == 'All Time'){
@@ -264,7 +266,12 @@ var iphone7Plus = 736;
           });  
           
         })
-        .catch( error => console.log('Error fetching: ' + error) );
+        .catch( (error) => {
+          console.log('Error fetching: ' + error)
+          this.setState({
+            fetched:false,
+          });
+        });
       }
 
 
@@ -343,7 +350,7 @@ var iphone7Plus = 736;
           if (this.state.fetched === true) {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white',height:deviceHeight-114,width:deviceWidth,paddingBottom:53}}>
+            <View style={{backgroundColor:'white',height:deviceHeight-styleConfig.tabHeight-styleConfig.navBarHeight-10,width:deviceWidth,paddingBottom:53}}>
             {this.swwipeDowntoRefress()}
                <ListView
                 style={styles.container}
@@ -375,8 +382,8 @@ var iphone7Plus = 736;
       renderImpactLeagueIcon(){
         if (this.props.user != null) {
         return(
-          <TouchableOpacity style={{flex:1,backgroundColor:'transparent',padding:5,top:-10,justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.navigateToImpactLeague()} >
-            <Icon style={{textAlign:'center',fontSize:26}} name ={'trophy'}></Icon>
+          <TouchableOpacity style={{flex:1,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',}} onPress={()=>this.navigateToImpactLeague()} >
+            <Icon style={{textAlign:'center',fontSize:26,opacity:.80}} name ={'trophy'}></Icon>
           </TouchableOpacity>
           );
          }else{
@@ -416,10 +423,10 @@ var styles = StyleSheet.create({
     width:deviceWidth,
     backgroundColor:'white',
     shadowColor: '#000000',
-    shadowRadius:4,
+    shadowRadius:2,
     shadowOpacity: 0.1,
     shadowOffset: {
-      height: 0,
+      height: 3,
     },
   },
   last7dayText:{
@@ -444,9 +451,9 @@ var styles = StyleSheet.create({
 
 
   thumb: {
-    height:styleConfig.navBarHeight-30,
-    width:styleConfig.navBarHeight-30,
-    borderRadius:(styleConfig.navBarHeight-30)/2,
+    height:styleConfig.navBarHeight-10,
+    width:styleConfig.navBarHeight-10,
+    borderRadius:(styleConfig.navBarHeight-10)/2,
     backgroundColor:'#ffcd4d',
     borderColor:'#ccc',
     borderWidth:2,
@@ -460,27 +467,26 @@ var styles = StyleSheet.create({
     flexDirection:'row',
     padding:5,
     width:deviceWidth,
-    
     borderColor:'#CCC',
   },
   txt: {
     fontSize:styleConfig.fontSizerleaderBoardContent+2,
-    fontWeight:'400',
+    fontWeight:'800',
     textAlign: 'left',
     marginLeft:10,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: styleConfig.LatoRegular,
   },
   txtSec:{
    color:styleConfig.warm_grey_three,
    fontSize:styleConfig.fontSizerleaderBoardContent+2,
-   fontWeight:'400',
-   fontFamily: 'Montserrat-Regular',
+   fontWeight:'800',
+   fontFamily: styleConfig.LatoRegular,
   },
   txtSec2:{
    color:'black',
    fontSize:styleConfig.fontSizerleaderBoardContent+2,
-   fontWeight:'600',
-   fontFamily: 'Montserrat-Regular',
+   fontWeight:'800',
+   fontFamily: styleConfig.LatoRegular,
   },
   mycardLeaderBoard:{
     alignItems: 'center',

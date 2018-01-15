@@ -31,6 +31,10 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import QuestionLists from '../../Helpcenter/listviewQuestions.js';
 import LoadingScreen from '../../LodingScreen';
 const CleverTap = require('clevertap-react-native');
+import fetchRundata from '../../fetchRundata';
+import getLocalData from '../../getLocalData';
+import postUnsyncRun from '../../postUnsyncRun';
+import NavBar from '../../navBarComponent';
 
 class RunHistory extends Component {
 
@@ -57,7 +61,6 @@ class RunHistory extends Component {
           my_currency:"INR",
         };
         this.renderRunsRow = this.renderRunsRow.bind(this);
-        this.fetchRunhistoryupdataData = this.fetchRunhistoryupdataData.bind(this);
         this.covertmonthArrayToMap = this.covertmonthArrayToMap.bind(this);
         this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
       }
@@ -93,6 +96,37 @@ class RunHistory extends Component {
         }) 
      }
 
+      sortByAttribute(array, ...attrs) {
+      // generate an array of predicate-objects contains
+      // property getter, and descending indicator
+      let predicates = attrs.map(pred => {
+        let descending = pred.charAt(0) === '-' ? -1 : 1;
+        pred = pred.replace(/^-/, '');
+        return {
+          getter: o => o[pred],
+          descend: descending
+        };
+      });
+      console.log('array',array);
+      // schwartzian transform idiom implementation. aka: "decorate-sort-undecorate"
+      return array.map(item => {
+        return {
+          src: item,
+          compareValues: predicates.map(predicate => predicate.getter(item))
+        };
+      })
+      .sort((o1, o2) => {
+        let i = -1, result = 0;
+        while (++i < predicates.length) {
+          if (o1.compareValues[i] < o2.compareValues[i]) result = -1;
+          if (o1.compareValues[i] > o2.compareValues[i]) result = 1;
+          if (result *= predicates[i].descend) break;
+        }
+        return result;
+      })
+      .map(item => item.src);
+}
+
 
         componentDidMount() {
           this.getUserData();
@@ -101,8 +135,10 @@ class RunHistory extends Component {
               var parseResult = JSON.parse(result);
               this.setState({
                 runloading:false,
-                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(parseResult)),
+                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.sortByAttribute(parseResult, '-start_time'))),
+                
               })
+              console.log('datashorting',this.state.runHistoryData,this.sortByAttribute(parseResult, '-start_time'));
             }else{
               var parseResult = [];
               this.setState({
@@ -157,25 +193,12 @@ class RunHistory extends Component {
               }
               })   
 
-
-            this.state.someData =  this.props.rawData
-            if (this.state.someData != null) {
-              let sortedRuns = this.state.someData.sort((a,b) => {
-                if (a.version < b.version) {
-                  return -1;
-                }
-                if (a.version > b.version) {
-                  return 1;
-                }
-                // a must be equal to b
-                return 0;
-              });
-              
-           }else{
-
-           }
       }
-      
+
+
+
+
+            
 
        handleFirstConnectivityChange(isConnected) {
             console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
@@ -189,92 +212,18 @@ class RunHistory extends Component {
         }
 
         fetchLocalRunData(){
-            AsyncStorage.getItem('UnsyncedData', (err, result) => {
-              console.log( "result",JSON.parse(result));
-              var rundata = JSON.parse(result);
+            postUnsyncRun.fetchLocalRunData(this.state.user).
+            then((runData)=>{
               this.setState({
-                runUnsynceddata:rundata,
-                RunCount:(rundata != null)? rundata.length:0,
+                RunCount:0,
               })
-              if (rundata != null){ 
-              rundata.map((result,i)=>{
-                 console.log('resultIrun ',result);
-                if (this.state.user != null) {
-                  this.postPastRun(result);
-                }else{
-                  console.log('no user for post run');
-                }
-               })
-              }
-            })     
+               console.log('pastrunData',runData);
+                
+            })    
         }
 
 
 
-        postPastRun(result){
-          let tokenparse = this.state.user.auth_token;
-          let RunData = result; 
-          fetch(apis.runApi, {
-            method: "POST",
-            headers: {  
-              'Authorization':"Bearer "+ tokenparse,
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',    
-            },
-            body:JSON.stringify({
-            cause_run_title:RunData.cause_run_title,
-            user_id:this.state.user.user_id,
-            start_time:RunData.start_time,
-            end_time:RunData.end_time,
-            distance:RunData.distance,
-            peak_speed: 1,
-            avg_speed:RunData.avg_speed,
-            run_amount:RunData.run_amount,
-            run_duration:RunData.run_duration,
-            is_flag:false,
-            calories_burnt:RunData.calories_burnt,
-            start_location_lat:RunData.start_location_lat,
-            start_location_long:RunData.start_location_long,
-            end_location_lat:RunData.end_location_lat,
-            end_location_long:RunData.end_location_long,
-            no_of_steps:RunData.no_of_steps,
-            is_ios:RunData.is_ios,
-            num_spikes:RunData.num_spikes,
-            team_id:RunData.team_id,
-            client_run_id:RunData.client_run_id,
-          })
-         })
-
-        .then((response) => response.json())
-        .then((userRunData) => { 
-          console.log('userRunData',userRunData);
-          var remvedfetcheddata = this.state.runUnsynceddata
-          var listToremove =[];
-          listToremove.push(userRunData.start_time);
-          var removeIndex = remvedfetcheddata.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
-          remvedfetcheddata.splice(removeIndex, 1);   
-          console.log('remvedfetcheddata',JSON.stringify(remvedfetcheddata));
-          if (remvedfetcheddata != null) {
-          AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
-          });
-          }else{
-            this.setState({
-              RunCount:0
-            })
-            AsyncStorage.setItem('UnsyncedData', JSON.stringify([]), () => {
-            });
-          }
-          var epochtime = userRunData.version;
-           let responceversion = {
-             runversion:epochtime
-           }
-          AsyncStorage.mergeItem("runversion",JSON.stringify(responceversion),()=>{   
-            console.log("removed version",responceversion);
-          });      
-         }).catch((error)=>{
-            console.log('error',error);
-         })
-        } 
 
     
 
@@ -537,9 +486,7 @@ class RunHistory extends Component {
         this.props.navigator.push({
           title:'Select issue',         
           // id:'listquestions',
-          component:QuestionLists,
-          navigationBarHidden: false,
-          showTabBar: true,
+          id:'listquestions',
           passProps:{
             rowData:this.props.rowData,
             runData:rowData,
@@ -673,167 +620,11 @@ class RunHistory extends Component {
         }
       }
 
-      fetchRunhistoryupdataData(){
-        var _this = this;
-        var mergerowData = [];
-        var token = this.props.user.auth_token;
-        var runversionfetch =this.state.runversion;
-        var url ='http://dev.impactrun.com/api/runs/'+'?client_version='+runversionfetch;
-        console.log('mydataurl',url);
-        fetch(url,{
-          method: "GET",
-          headers: {
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-          }
-        })
-        .then( response => response.json() )
-        .then( jsonData => {
-         
-          console.log('response: ',jsonData)
-           if(jsonData.count > 0 ){
-            
-              var newDate = new Date();
-              var convertepoch = newDate.getTime()/1000
-              var epochtime = parseFloat(convertepoch).toFixed(0);
-              let responceversion = {
-                runversion:epochtime
-              }
-              let keys = ['runversion'];
-              AsyncStorage.multiRemove(keys, (err) => {
-                AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                  _this.setState({
-                     runversion:responceversion.runversion,
-                   })
-                });
-              });
-               
-            var runversion = jsonData.results;
-            var array = this.props.rawData;
-            runversion.forEach(function(item) {
-             var newRunAddedFrombackend = [];         
-              console.log("array",array)   
-              objIndex = array.findIndex(obj => obj.start_time == item.start_time);
-              objIndexSec = array.findIndex(obj => obj.start_time != item.start_time);
-             console.log("objIndexSec",objIndexSec,item.start_time,objIndex);
-              if (objIndex === -1) {
-                array.push(item);
-              }
-               array[objIndex] = item;
-              })
-
-
-                this.rows = array;
-                console.log("runHistoryData",this.rows);
-                 this.setState({
-                   runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.rows)),
-                   refreshing:false,
-                 });
-
-                 let fetchRunhistoryData = this.rows;
-                 AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-
-                 })
-                 if (jsonData.count > 5) {
-                   if (jsonData.next) {
-                    var nextpage = jsonData.next
-                    this.nextPage(nextpage);
-
-                   };
-                 }
-         }else{
-          var newDate = new Date();
-            var convertepoch = newDate.getTime()/1000
-            var epochtime = parseFloat(convertepoch).toFixed(0);
-            let responceversion = {
-              runversion:epochtime
-            }
-            let keys = ['runversion'];
-            AsyncStorage.multiRemove(keys, (err) => {
-              AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                _this.setState({
-                   runversion:responceversion.runversion,
-                 })
-              });
-            });
-          _this.setState({
-            refreshing:false,
-          })
-        }
-        })
-         .catch(function(err) {
-          _this.setState({
-            refreshing:false,
-          })
-          console.log('err123',err);
-          return err;
-
-        })
-
-
-      }
 
 
 
-      nextPage(nextpage){
-       var _this =this;
-        var token = this.props.user.auth_token;
-        var url = nextpage;
-        fetch(url,{
-          method: "GET",
-          headers: {
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-          }
-        })
-        .then( response => response.json() )
-        .then( jsonData => {
-          var nextpagesec = jsonData.next;
-          console.log('jsonData',jsonData)
-          var newDate = new Date();
-          var convertepoch = newDate.getTime()/1000
-          var epochtime = parseFloat(convertepoch).toFixed(0);
-          let responceversion = {
-            runversion:epochtime
-          }
-          let keys = ['runversion'];
-          AsyncStorage.multiRemove(keys, (err) => {
-            AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-              _this.setState({
-                 runversion:responceversion.runversion,
-               })
-            });
-          });
-               
-          var runversion = jsonData.results;
-          var array = this.props.rawData;
-          runversion.forEach(function(item) {
-            var newRunAddedFrombackend = [];         
-            console.log("array",array)   
-            objIndex = array.findIndex(obj => obj.start_time == item.start_time);
-            objIndexSec = array.findIndex(obj => obj.start_time != item.start_time);
-            console.log("objIndexSec",objIndexSec,item.start_time,objIndex);
-            if (objIndex === -1) {
-              array.push(item);
-            }
-            array[objIndex] = item;
-          })
-          this.rows = array;
-          console.log("runHistoryData",this.rows);
-          this.setState({
-            runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.rows)),
-            refreshing:false,
-          });
-          let fetchRunhistoryData = this.rows;
-          AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-          })
 
-          this.LoadmoreView(nextpagesec);
-        })
-        .catch( error => console.log('Error fetching: ' + error) );
 
-       
-      }
 
 
       covertmonthArrayToMap(rowData) {
@@ -865,15 +656,48 @@ class RunHistory extends Component {
 
       _onRefresh() {
         this.setState({refreshing: true});
-        this.fetchRunhistoryupdataData();
+        getLocalData.getData('runversion')
+        .then((runversion)=>{
+           NetInfo.isConnected.fetch().then((isConnected) => {
+          if (isConnected) {
+          if (this.state.runversion != null ) {
+            console.log('runversion123',runversion);
+            fetchRundata.fetchRunhistoryupdataData(this.state.user,this.state.runversion)
+            .then((runData)=>{
+              console.log('runData12',this.sortByAttribute(runData, '-start_time'));
+              let runDatasoted = (runData != null )?this.sortByAttribute(runData, '-start_time'):[];
+              this.setState({
+                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(runDatasoted)),
+                refreshing:false,
+              });
+            })
+          }else{
+
+            console.log('runversion123',runversion);
+            var runversion = 0;
+             fetchRundata.fetchRunhistoryupdataData(this.state.user,this.state.runversion)
+            .then((runData)=>{
+              let runDatasoted = (runData != null )?this.sortByAttribute(runData, '-start_time'):[];
+              this.setState({
+                runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(runDatasoted)),
+                refreshing:false,
+              });
+            })
+          }
+        }else{
+          this.setState({
+            refreshing:false,
+          });
+        }
+        })
+
+        }).catch((err)=>{
+          console.log('err',err);
+        })
+        
       }
 
-      LoadmoreView(nextpagesec){
-        if (nextpagesec != null) {
-          this.nextPage(nextpagesec);
-        };
-      }
-
+      
       goBack(){
           this.props.navigator.pop({});
       }
@@ -887,13 +711,21 @@ class RunHistory extends Component {
           return;
         }
       }
+       leftIconRender(){
+          return(
+            <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <Icon3 style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
+            </TouchableOpacity>
+          )
+        }
 
       render(rowData) {
         var fetchingRun = this.props.fetchRunData;
          if (!this.state.runloading) {
           return (
             <View>
-              <View style={{height:deviceHeight-styleConfig.navBarHeight}}>
+            <NavBar title={'Run History'} leftIcon={this.leftIconRender()}/>
+              <View style={{height:deviceHeight-styleConfig.navBarHeight-20}}>
               {this.headerFromHelp()}
               {this.RunNotSyncedButton()}
                  <ListView
@@ -970,6 +802,7 @@ const styles = StyleSheet.create({
   modelWrap:{
     top:-70,
     padding:20,
+    height:deviceHeight/3,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:"white",

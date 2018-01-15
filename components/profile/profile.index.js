@@ -16,6 +16,8 @@ import{
     AsyncStorage,
   } from 'react-native';
 var {FBLoginManager} = require('react-native-facebook-login');
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 import apis from '../apis';
 import ImageLoad from 'react-native-image-placeholder';
 import ProfileForm from './profileForm';
@@ -24,11 +26,13 @@ import LodingView from '../LodingScreen';
 import LoginBtn from '../login/LoginBtns'
 import styleConfig from '../../components/styleConfig';
 import UserProfile from './profileHeader';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import AnimateNumber from 'react-native-animate-number';
 import commonStyles from '../styles';
 import NavBar from '../navBarComponent';
+import fetchRundata from '../fetchRundata';
+import getLocalData from '../getLocalData';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var heightInpersentage = (deviceHeight-114)/100;
@@ -44,10 +48,7 @@ const my_rate = 1.0;
 class Profile extends Component {
       constructor(props) {
         super(props);
-      this.fetchRunDataLocally();
-      //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-      //   console.log("fetchRunhistoryDataerr",err);
-      // });
+   
       
 
         this.state = {
@@ -62,9 +63,11 @@ class Profile extends Component {
           prevKm:0,
           levelKm:0,
           my_rate:1.0,
+          loadingRuns:true,
           my_currency:"INR",
           RunFetchedData:null,
           progressVal:0,
+
           navigation: {
             index: 1,
             routes: [],
@@ -76,15 +79,17 @@ class Profile extends Component {
         this.fetch7DayData = this.fetch7DayData.bind(this);
         this.fetchAmount =  this.fetchAmount.bind(this);
         this.fetchTotalDistance = this.fetchTotalDistance.bind(this);
-        this.getUserData = this.getUserData.bind(this);
+        this.navigateToProfileForm = this.navigateToProfileForm.bind(this);
       }
 
 
      componentWillMount() { 
         this.setState({
           user:this.props.user,
+          
           // runfeatching:this.props.isfetchingRun,
-        })   
+        }) 
+         console.log('loadingRuns',this.state.loadingRuns);
          
           AsyncStorage.getItem('my_currency', (err, result) => {
             this.setState({
@@ -109,200 +114,100 @@ class Profile extends Component {
             // my_distance=this.state.my_distance;
             console.log('my_distance',this.state.my_distance);
           })     
-
-      //  AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-      // });
+          
+          if (this.props.user) {
+            NetInfo.isConnected.fetch().then((isConnected) => {
+                if (isConnected) {
+                   this.getRunData();
+                }else{
+                    getLocalData.getData('fetchRunhistoryData')
+                     .then((fetchRunhistoryData)=>{
+                         if (fetchRunhistoryData != null || fetchRunhistoryData != undefined) {
+                          this.setState({
+                            rawData:fetchRunhistoryData,
+                            loadingRuns:false,
+                          })
+                          console.log('nextPage');
+                          this.fetch7DayData();
+                          this.getRunCount();
+                          this.fetchAmount();
+                          this.fetchTotalDistance();
+                       
+                          console.log('loadingRuns',this.state.loadingRuns);
+                        }
+                     })
+                }
+              })
+          };
      
      }
 
 
-      fetchRunDataLocally(){
-         AsyncStorage.getItem('RunFetchedData', (err, result) => {
-          console.log('RunFetchedData',result);
-            this.setState({
-              RunFetchedData:JSON.parse(result),
-            })
-            // if (this.state.RunFetchedData === null) {
-            //   this.fetchRunhistoryData();
-            // }
-          })           
-          // AsyncStorage.getItem('nextpage', (err, result) => {
-          //   this.setState({
-          //     nextPage:JSON.parse(result),
-          // })     
-        //   if (this.state.nextPage === null) {
-        //   AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-        //     var RunData = JSON.parse(result);
-        //     console.log('RunData',RunData);
-        //     if (result != null || undefined) {
-        //       this.setState({
-        //         rawData: RunData,
-        //       })
-        //       this.fetch7DayData();
-        //       this.getRunCount();
-        //       this.fetchAmount();
-        //       this.fetchTotalDistance();
-        //     }else{
-        //        this.fetchRunhistoryData();
-        //     }
-        //   });
-        // }else{
-          AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-            var RunData = JSON.parse(result);
-            console.log('RunData',RunData);
-            if (result != null || undefined) {
-              this.setState({
-                rawData: RunData,
-              })
-              console.log('nextPage');
-              this.fetch7DayData();
-              this.getRunCount();
-              this.fetchAmount();
-              this.fetchTotalDistance();
-              this.LoadmoreView();
+
+    navigateToProfileForm() {
+        this.props.navigator.push({
+            title: 'Profile Edit',
+            id:'profileform',
+            passProps:{user:this.props.user,getUserData:this.props.getUserData}        
+        })
+    }
+
+
+     getRunData(){
+      getLocalData.getData('runversion')
+        .then((runversion)=>{
+            if (runversion != null){
+                this.setState({
+                  runversion:JSON.parse(runversion).runversion,
+                })
+                fetchRundata.fetchRunhistoryupdataData(this.props.user,this.state.runversion)
+               .then((runData)=>{
+                console.log('runData',runData);
+
+             
+                  // console.log('getrunDataifrunversion',runData);
+                  if (runData != null || undefined) {
+                    this.setState({
+                      rawData:runData,
+                      loadingRuns:false,
+                    })
+                    console.log('nextPage');
+                    this.fetch7DayData();
+                    this.getRunCount();
+                    this.fetchAmount();
+                    this.fetchTotalDistance();
+                 
+                    console.log('loadingRuns',this.state.loadingRuns);
+                  }
+                })
+               
+            }else{
+                this.setState({
+                    runversion:0,
+                })
+               fetchRundata.fetchRunhistoryupdataData(this.props.user,this.state.runversion)
+               .then((runData)=>{
+                // console.log('getrunDataifrunversion0',runData);
+               
+                  // console.log('RunData',runData);
+                  if (runData != null || undefined) {
+                    this.setState({
+                      rawData:runData,
+                      loadingRuns:false,
+                    })
+                    console.log('nextPage');
+                    this.fetch7DayData();
+                    this.getRunCount();
+                    this.fetchAmount();
+                    this.fetchTotalDistance();
+                  }
+                })
+              
             }
-          })
-          
-        // }
-        // })
-      }
+        }) 
+     }
 
 
-
-      fetchRunhistoryData() {
-        if (this.props.user != null || this.state.user != null) {
-        var token = (this.props.user != null)?this.props.user.auth_token:this.state.user.auth_token;
-        var url = apis.runListapi;
-        fetch(url,{
-          method: "GET",
-          headers: {
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-          }
-        })
-        .then( response => response.json() )
-        .then( jsonData => {
-
-          this.setState({
-            runfeatching:true,
-            rawData:jsonData.results,
-            RunCount:jsonData.count,
-            nextPage:jsonData.next,
-          });
-
-          if (this.state.nextPage != null) {
-          fetch(this.state.nextPage,{
-          method: "GET",
-          headers: {
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-            }
-          })
-
-          .then( response => response.json())
-          .then( jsonDataobj => {
-            console.log('this.roeDta',this.state.rowData,jsonDataobj.results);
-            this.setState({
-              runfeatching:true,
-              rawData: this.state.rawData.concat(jsonDataobj.results),
-              nextPage:jsonDataobj.next,
-              RunCount:jsonDataobj.count,
-            })
-
-            AsyncStorage.setItem('RunFetchedData', JSON.stringify(1));
-            let RunCount = this.state.RunCount;
-            AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
-            
-              let nextpage = this.state.nextPage;
-              AsyncStorage.setItem('nextpage',JSON.stringify(nextpage));
-              var storepage =  this.state.rawData;
-              let fetchRunhistoryData = this.state.rawData;
-              AsyncStorage.setItem('fetchRunhistoryData',JSON.stringify(storepage));
-              this.LoadmoreView();
-          })
-          }else{
-            var storepage = this.state.rawData;
-            AsyncStorage.setItem('fetchRunhistoryData',JSON.stringify(storepage));
-              this.fetch7DayData();
-              this.getRunCount();
-              this.fetchAmount();
-              this.fetchTotalDistance();
-              this.setState({
-               runfeatching:false,
-              })
-          }
-        })
-         .catch( error => console.log('Error fetching: ' + error) );
-         };
-      }
-
-
-      async LoadmoreView(){
-        this.nextPage();
-      }
-
-
-
-     async nextPage(){
-      console.log('nextPage',this.state.nextPage);
-        if (this.state.nextPage != null) {
-        this.setState({
-          runfeatching:true,
-        })
-        var token = this.props.user.auth_token;
-        var url = this.state.nextPage;
-        fetch(url,{
-          method: "GET",
-          headers: {
-            'Authorization':"Bearer "+ token,
-            'Content-Type':'application/x-www-form-urlencoded',
-          }
-        })
-        .then( response => response.json() )
-        .then( jsonData => {
-          console.log('jsonData',jsonData);
-          this.setState({
-            rawData: navigateToRunHistory.state.rawData.concat(jsonData.results),
-            loaded: true,
-            runfeatching:true,
-            refreshing:false,
-            nextPage:jsonData.next,
-            loadingFirst:true,
-            RunCount:jsonData.count,
-          });
-          console.log('rawData',this.state.rawData);
-        
-          let RunCount = this.state.RunCount;
-          AsyncStorage.setItem('RunCount', JSON.stringify(RunCount));
-          AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
-         });
-          AsyncStorage.removeItem('nextpage',(err) => {
-         });
-          let nextpage = this.state.nextPage;
-          AsyncStorage.setItem('nextpage', JSON.stringify(nextpage));
-          let fetchRunhistoryData = this.state.rawData.concat();
-          AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-
-           })
-          this.LoadmoreView();
-        })
-        .catch( error => {
-          console.log('Error fetching: ' + error)
-          this.setState({
-            runfeatching:false,
-          })
-        });
-
-       }else{
-        this.setState({
-           runfeatching:false,
-        })
-        this.getRunCount();
-        this.fetchAmount();
-        this.fetchTotalDistance();
-        this.fetch7DayData();
-       }
-      }
 
       fetchAmount(){
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
@@ -590,7 +495,7 @@ class Profile extends Component {
       console.log('this.state.rawData',this.state.rawData);
       this.props.navigator.push({
       title: 'RunHistory',
-      component:RunHistory,
+      id:'runhistory',
       passProps:{rawData:this.state.rawData,user:this.props.user,getUserData:this.props.getUserData},
       })
     }
@@ -615,19 +520,6 @@ class Profile extends Component {
         }
       }
      
-     getUserData(){
-      AsyncStorage.getItem('USERDATA', (err, result) => {
-           let user = JSON.parse(result);
-            this.setState({
-              user:user,
-            })
-            console.log('datauseer',user);
-            this.fetchRunhistoryData();
-            this.props.getUserData();
-        }) 
-     }
-
-
       removeallRun(){
           AsyncStorage.removeItem('fetchRunhistoryData',(err) => {
               console.log("fetchRunhistoryDataerr",err);
@@ -685,14 +577,14 @@ class Profile extends Component {
           var hunderdPercentageHeightBar = Math.ceil(maxvalue*100)/100;
         }
 
-        var MaxBarHeight = ((((heightInpersentage*54)/100)*75)/100)*80 ;
-        var barHeightRatio = ((((heightInpersentage*54)/100)*75)/100)*80/hunderdPercentageHeightBar;
-        var barHeight = (barHeightRatio*rupees)-5;
+        var MaxBarHeight = ((((responsiveHeight(24))/100)*75)/100)*80 ;
+        var barHeightRatio = (responsiveHeight(20)-2)/hunderdPercentageHeightBar;
+        var barHeight = (barHeightRatio*rupees);
         // console.log('barHeight',barHeight);
         // console.log('rupees',rupees);
         
         var chartWidth = (deviceWidth/100)*80;
-        var barWidth = chartWidth/15;
+        var barWidth = chartWidth/10;
         if (typeof rupees == 'undefined') {
            var iconrupees;
         }else{
@@ -702,8 +594,8 @@ class Profile extends Component {
        
         return (
             <View key={index} style={{flex:1,justifyContent: 'flex-end',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#CACACA'}}>
-                 <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}}>{iconrupees}{rupees}</Text>
-                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:3,bottom:3,alignItems: 'center',}}>
+                 <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.LatoBlack, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',fontWeight:'600'}}>{iconrupees}{rupees}</Text>
+                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:2,bottom:3,alignItems: 'center',}}>
  
                 </View>
 
@@ -722,11 +614,19 @@ class Profile extends Component {
         return (
             <View key={index}style={{justifyContent: 'flex-end',flex:1,backgroundColor:'white',alignItems: 'center',}}>
                <View style={{flexDirection:'column'}}> 
-                    <Text style={{fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>{days}</Text>
+                    <Text style={{fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.LatoBlack, color:'grey',fontWeight:'800'}}>{days}</Text>
                </View>
             </View>
           
         )    
+    }
+
+    rightIconRender(){
+      return(
+         <TouchableOpacity onPress={()=>this.navigateToProfileForm()} style={{flex:1,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',}}>
+            <Icon name = {'edit'} style={{fontSize:responsiveFontSize(3),color:'#000',opacity:.80}}></Icon>
+         </TouchableOpacity>
+        )
     }
 
     render() {
@@ -734,35 +634,37 @@ class Profile extends Component {
         var Xaxis = dataP.map(this.getXRows);
 
         var maxvalue = Math.max.apply(Math, dataRupees);
-        // console.log('dataRupees',maxvalue);
+        console.log('dataRupees',maxvalue);
         if(this.state.my_currency == 'INR'){
-          var hunderdPercentageHeightBar = Math.ceil(maxvalue / 10) * 10;
+          var hunderdPercentageHeightBar = (Math.ceil(maxvalue / 10) * 10 != -Infinity)?Math.ceil(maxvalue / 10)*10:0;
+          console.log('hunderdPercentageHeightBar',hunderdPercentageHeightBar);
         }
         else
         {
-          var hunderdPercentageHeightBar =  Math.ceil(maxvalue*100)/100; //parseFloat(maxvalue).toFixed(2);
+          var hunderdPercentageHeightBar = (Math.ceil(maxvalue / 100) * 10 != -Infinity)?Math.ceil(maxvalue / 100)*10:0; //parseFloat(maxvalue).toFixed(2);
         }
         // console.log('dataRupees23',hunderdPercentageHeightBar);
-        if ( this.state.user != null ) {
+        if ( this.props.user != null ) {
           // console.log('my_currencylower',this.state.my_currency.toLowerCase());
         return (
           <View style={styles.container}>
+            <NavBar  navigator = {this.props.navigator}title = {'Profile'} rightIcon = {this.rightIconRender()} rightBtn = {this.navigateToProfileForm}/>
             <View style ={styles.profileWraper}>
-                <View style={{height:(heightInpersentage*45/100)*40,width:deviceWidth,backgroundColor:'white',justifyContent: 'center',}}>
-                    <UserProfile height={(heightInpersentage*40/100)*35} progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance} style={styles.scrollTabWrapper} getUserData={this.props.getUserData} user={this.state.user} navigator={this.props.navigator}></UserProfile>
+                <View style={{height:responsiveHeight(10),width:responsiveWidth(100),backgroundColor:'white',top:responsiveHeight(4.0625)-10}}>
+                    <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.fetchUserdata} totalKm={this.state.RunTotalDistance}  getUserData={this.props.getUserData} user={this.state.user} navigator={this.props.navigator}></UserProfile>
                 </View>
-                <View onLayout={(event) => this.measureView(event)} style={{height:(heightInpersentage*45/100)*60,width:deviceWidth,backgroundColor:'white'}}>
-                    <View style={{height:(this.state.height/100)*20,width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*20)/100)*10}}>
-                        <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'400'}}>All Time</Text>
+                <View onLayout={(event) => this.measureView(event)} style={{height:responsiveHeight(20),top:responsiveHeight(8)-10,width:responsiveWidth(100),backgroundColor:'white',}}>
+                    <View style={{height:responsiveHeight(3),width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*20)/100)*10}}>
+                        <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'600'}}>All Time</Text>
                     </View>
-                    <View style={{height:(this.state.height/100)*37,width:this.state.width,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
-                        <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.fontSizerImpact-7,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2><Text>{' '}</Text><AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
+                    <View style={{backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
+                        <Text style={{fontSize:styleConfig.profileTotalRaised, color:'#33f373',fontWeight:'800',fontFamily:styleConfig.LatoBlack}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.profileTotalRaised-5,fontWeight:'800'}}name={this.state.my_currency.toLowerCase()}></Icon2><Text>{''}</Text><AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
                         </Text>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
                     </View>
                     <View style={{height:(this.state.height/100)*30,width:this.state.width,backgroundColor:'yellow',flexDirection:'row'}}>
                         <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
-                            <Text style={{left:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left',}} > 
+                            <Text style={{left:20,fontSize:styleConfig.profileTotalRunsfont, color:'black',fontWeight:'800',fontFamily:styleConfig.LatoBlack, textAlign:'left',opacity:.80}} > 
                                 <AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunCountTotal} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                   }} ></AnimateNumber>
@@ -770,7 +672,7 @@ class Profile extends Component {
                             <Text style={{left:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walks & Runs </Text>                       
                         </View>
                        <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
-                            <Text style={{right:20,fontSize:styleConfig.FontSizeTitle+3, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
+                            <Text style={{right:20,fontSize:styleConfig.profileTotalRunsfont, color:'black',fontWeight:'800',fontFamily:styleConfig.LatoBlack, textAlign:'right',opacity:.80}} >
                                 <AnimateNumber  currencyString = {this.state.my_currency.slice(0,2)} value={(this.state.my_distance == 'miles' ? this.state.RunTotalDistance*0.621 : this.state.RunTotalDistance)} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                 }} ></AnimateNumber>
@@ -783,12 +685,12 @@ class Profile extends Component {
             </View>
 
             <View style ={styles.profileWraper2}>                          
-              <View style={{flex:-1,height:((heightInpersentage*55)/100)*75,width:deviceWidth,backgroundColor:'white',justifyContent: 'flex-end',alignItems: 'center',}}>
+              <View style={{height:responsiveHeight(24),width:deviceWidth,backgroundColor:'transparent',alignItems: 'center',}}>
                 <View style={styles.container2}>
                  
-                   <View style={{flex:-1,flexDirection:'row',height:((((heightInpersentage*55)/100)*75)/100)*80,width:(deviceWidth/100)*80,backgroundColor:'white'}}>                
+                   <View style={{flex:-1,flexDirection:'row',height:responsiveHeight(24),width:(deviceWidth/100)*80,backgroundColor:'white'}}>                
                     <View style={{flexDirection:'column',flex:1,}}>
-                       <View style={{alignItems: 'flex-start', flex:1,borderTopWidth:1,borderTopColor:'#CACACA'}}>
+                       <View style={{alignItems: 'flex-start', flex:1,borderTopWidth:1,borderTopColor:'rgba(0, 0, 0, 0.10)'}}>
                         <View style ={{height:30,width:100,justifyContent: 'center',alignItems:'center',top:-15,left:-65}}>
                           <Text style={{textAlign:'center', fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',}}>
                              <Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerlabel-2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}>
@@ -796,8 +698,8 @@ class Profile extends Component {
                           </Text>
                          </View>
                       </View>
-                       <View style={{flex:1,}}></View>
-                       <View style={{alignItems: 'flex-start', flex:1,borderTopWidth:1,borderTopColor:'#CACACA'}}>
+                       <View style={{flex:1}}></View>
+                       <View style={{alignItems: 'flex-start', flex:1,borderTopWidth:1,borderTopColor:'rgba(0, 0, 0, 0.10)'}}>
                         <View style = {{height:30,width:100,justifyContent: 'center',alignItems: 'center',top:-15,left:-65}}>
                           <Text style={{textAlign:'center',fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.FontFamily, color:'grey',backgroundColor:'transparent',}}>
                              <Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerlabel-2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}>
@@ -817,22 +719,22 @@ class Profile extends Component {
                   </View>
                  </View>
               </View>
-              <View style={{height:((heightInpersentage*55)/100)*25,width:deviceWidth,backgroundColor:'white'}}>
-                <View style={{flex:1,backgroundColor:'white',padding:(deviceWidth/100)*3,paddingLeft:(deviceWidth/100)*10,paddingRight:(deviceWidth/100)*10}}>
+              <View style={{backgroundColor:'white',top:responsiveHeight(2.65625)}}>
+                <View style={{backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
-                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'400'}}>See Workouts</Text>
+                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'600'}}>SEE PAST WORKOUTS</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-             
+             {this.isloading()}
           </View>
         );
       }else{
         return(
           <View>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
-           <LoginBtn getUserData={this.getUserData}/>
+           <LoginBtn getUserData={this.props.getUserData}/>
            </View>
            </View>
 
@@ -842,9 +744,9 @@ class Profile extends Component {
 
 
       isloading(){
-      if (this.state.runfeatching ) {
+      if (this.state.loadingRuns) {
         return(
-          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight-styleConfig.tabHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
             <ActivityIndicator
              style={{height: 80}}
               size="large"
@@ -862,15 +764,6 @@ class Profile extends Component {
 
 
 var styles = StyleSheet.create({
-  scrollTabWrapper:{
-    position:'relative',
-    width:deviceWidth,
-    backgroundColor:'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height:200,
-    top:-250,
-  },
   menuTitle:{
     left:20,
     color:'#fafafa',
@@ -883,7 +776,7 @@ var styles = StyleSheet.create({
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor:"grey",
+      backgroundColor:"white",
       justifyContent: 'center',
       shadowColor: 'black',
       shadowOpacity: 0.4,
@@ -894,7 +787,8 @@ var styles = StyleSheet.create({
       }
   },
   btnviewRun2:{
-      flex:1,
+      height:responsiveHeight(7),
+      width:responsiveWidth(83.8235294118),
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',
@@ -919,19 +813,19 @@ var styles = StyleSheet.create({
     height:deviceHeight-200,
   },
   container: {
-    flex:-1,
-    height:heightInpersentage*100,
-    justifyContent: 'center',
+    width:deviceWidth,
+    height:responsiveHeight(100)-responsiveHeight(10),
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     backgroundColor: 'white',
     flexDirection:'column',
   },
    container2: {
-    flex:-1,
+    height:responsiveHeight(24),
     width:deviceWidth,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     flexDirection:'column',
   },
   chart: {
@@ -939,13 +833,12 @@ var styles = StyleSheet.create({
     height:styleConfig.barChatHight,
   },
   profileWraper:{
-    height:heightInpersentage*45,
-    width:deviceWidth,
+    flex:-1,
     backgroundColor:'white',
+    top:10,
   },
   profileWraper2:{
-    height:heightInpersentage*55,
-    width:deviceWidth,
+    top:responsiveHeight(10.5)+responsiveHeight(2.5),
     backgroundColor:'white',
   }
 

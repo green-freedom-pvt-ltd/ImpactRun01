@@ -13,7 +13,7 @@ var iphone6Plus = 736;
 var iphone6SPlus = 736;
 var iphone7Plus = 736;
 
-
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 import { Platform } from 'react-native';
 var FONT_LABEL1   = 18;
 var FONT_LABEL2  =16;
@@ -155,21 +155,21 @@ function functionPadding(){
 
 function PaddingCard(){
   if (Dimensions.get('window').height === 736 && Dimensions.get('window').width === 414){
-    return 8;
+    return 15;
   }else if (Dimensions.get('window').height === iphone7Plus) {
-    return 10
+    return 15
   }else if(Dimensions.get('window').height === iphone6s){
-    return 7
+    return 10
   }else if(Dimensions.get('window').height === iphone5 ){
-    return 5
+    return 10
   }else if(Dimensions.get('window').height === iphone5 ){
-    return 5
+    return 10
   }else if(Dimensions.get('window').height === iphone6 ){
-    return 5
+    return 10
   }else if(Dimensions.get('window').height < iphone5 ){
-    return 4
+    return 8
   }else{
-    return 5
+    return 8
   }
 }
 
@@ -387,6 +387,22 @@ function FontSizeLogin(){
 
 
 export default {
+  fontTotalRaised:responsiveFontSize(5.5),
+  labelTotalRaised:responsiveFontSize(2),
+  causeTitle:responsiveFontSize(2.6),
+  ngoText:responsiveFontSize(1.4),
+  causeDisc:responsiveFontSize(1.8),
+  textRaisedPersent:responsiveFontSize(1.2),
+  lableCause:responsiveFontSize(1.2),
+  causeTotalrun:responsiveFontSize(2.3),
+  cardIconFontSize:responsiveFontSize(1.5),
+  profileNameFont:responsiveFontSize(2.7),
+  profileLevelBarlabelFont:responsiveFontSize(1.2),
+  profileLevelFont:responsiveFontSize(1.4),
+  profileTotalRaised:responsiveFontSize(5.4),
+  profileTotalRunsfont:responsiveFontSize(3.2),
+  helpCenterListFontSize:responsiveFontSize(2),
+  fontNavTitle:responsiveFontSize(2.7),
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),
@@ -410,8 +426,10 @@ export default {
   TitleFontSize:TitleFontSize(),
   barChatFontSize:barChatFontSize(),
   PaddingCard:PaddingCard(),
+
   // navHight
-  navBarHeight:navBarHeight(),
+  navBarHeight:responsiveHeight(8),
+  tabHeight:responsiveHeight(10),
   // fontColors
   white_three:'#d8d8d8',
   bright_sky_blue:'#00b9ff',
@@ -437,5 +455,10 @@ export default {
   bright_blue:'#0077ff',
   warm_grey_three:'#8a8a8a',
   light_sky_blue:'#00c1f2',
+  black:"#000000",
+  LatoRegular:'Lato-Regular',
+  LatoLight:'Lato-Light',
+  LatoBold:'Lato-Bold',
+  LatoBlack:'Lato-Black',
 
 }

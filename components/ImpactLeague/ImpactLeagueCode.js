@@ -345,7 +345,7 @@ class ImpactLeagueCode extends Component {
       shadowOffset: {
           height: 2,
         },
-      backgroundColor:styleConfig.light_gold,
+      backgroundColor:styleConfig.light_sky_blue,
     },
 
     Errtext:{

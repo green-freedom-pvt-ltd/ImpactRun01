@@ -44,6 +44,7 @@ class ProfileForm extends Component {
         SuccessfullySaved:false,
          fadeAnim: new Animated.Value(1),
       };
+      this.putRequestUser = this.putRequestUser.bind(this);
     }
     _refresh() {
       return new Promise((resolve) => {
@@ -234,6 +235,7 @@ class ProfileForm extends Component {
                     SuccessfullySaved:false,
                   });
                 },2000);
+                  this.goBack();
                   console.log("userresult ",result);
                 })
              })
@@ -303,7 +305,7 @@ class ProfileForm extends Component {
     leftIconRender(){
      return(
       <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent', height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-        <Icon3 style={{color:'white',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon3>
+        <Icon3 style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={'ios-arrow-back'}></Icon3>
       </TouchableOpacity>
       )
     }
@@ -311,7 +313,7 @@ class ProfileForm extends Component {
     rightIconRender(){
       return(
         <TouchableOpacity style={{height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.putRequestUser()} >
-          <Text style={{color:'white'}}>SAVE</Text>
+          <Text style={{color:'black' , opacity:.80 , fontWeight:'600', fontFamily:styleConfig.LatoBlack}}>SAVE</Text>
         </TouchableOpacity>
       )
     }
@@ -377,6 +379,7 @@ class ProfileForm extends Component {
                 mode="date"/> : <View />
          return (
           <View>
+            <NavBar title={'Profile Edit'} leftIcon={this.leftIconRender()} rightIcon={this.rightIconRender()} rightBtn = {this.putRequestUser}/>
             <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
             <View style={styles.FromWrap}>
              
@@ -434,8 +437,9 @@ class ProfileForm extends Component {
 
 var styles = StyleSheet.create({
   container:{
-    height:heightInpersentage*100,
-    backgroundColor:'#f4f4f4',
+    height:heightInpersentage*100-10,
+    backgroundColor:'white',
+    top:10,
   },
   ProfileTextInput2:{
     width:deviceWidth,
@@ -444,10 +448,13 @@ var styles = StyleSheet.create({
   },
   FromWrap:{
     borderRadius:5,
-    backgroundColor:'#f4f4f4',
+    backgroundColor:'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top:10,
   },
   ProfileTextInput:{
-    width:deviceWidth-30,
+    width:deviceWidth-40,
     borderBottomWidth:1,
     padding:5,
     borderBottomColor:'rgba(29, 29, 38, 0.10)',
@@ -470,9 +477,9 @@ var styles = StyleSheet.create({
     padding:5,
     paddingLeft:0,
     height:40,
-    fontWeight:'400',
+    fontWeight:'600',
     color:'#4a4a4a',
-    fontFamily:styleConfig.FontFamily,
+    fontFamily:styleConfig.LatoBlack,
   },
 
 });

@@ -12,6 +12,7 @@ import{
   import Icon from 'react-native-vector-icons/FontAwesome';
   var deviceWidth = Dimensions.get('window').width;
   var deviceHeight = Dimensions.get('window').height;
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
   class levelBar extends Component {
    constructor(props) {
@@ -84,9 +85,9 @@ import{
         <View style={styles.Maincontainer}>
           <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.props.userName +" "+this.props.lastname}</Text>
           <View style={[styles.wrapLevelKm,{width:this.props.widthBar}]}>
-           <Text style={styles.kmtext}><Icon style={{fontSize:styleConfig.fontSizerlabel-2}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.prevKm : parseFloat(this.props.prevKm/this.state.my_rate).toFixed(2))}</Text><Text  style={styles.kmtext2}><Icon  style={{fontSize:styleConfig.fontSizerlabel-2}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.levelKm : parseFloat(this.props.levelKm/this.state.my_rate).toFixed(2))}</Text>
+           <Text style={styles.kmtext}><Icon style={{fontSize:styleConfig.profileLevelBarlabelFont}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.prevKm : parseFloat(this.props.prevKm/this.state.my_rate).toFixed(2))}</Text><Text  style={styles.kmtext2}><Icon  style={{fontSize:styleConfig.profileLevelBarlabelFont}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.levelKm : parseFloat(this.props.levelKm/this.state.my_rate).toFixed(2))}</Text>
          </View>
-         <LevelBarComponent unfilledColor={'grey'} height={6} width={this.props.widthBar} progress={this.props.progressVal}  />
+         <LevelBarComponent unfilledColor={'grey'} height={responsiveHeight(0.9)} width={responsiveWidth(70)} progress={this.props.progressVal}  />
          <Text style = {[styles.leveltext,{width:this.props.widthBar}]}>Level {this.props.level}</Text>
         </View>
         )
@@ -107,33 +108,35 @@ import{
       color:styleConfig.greyish_brown_two,
       fontFamily:styleConfig.FontFamily,
       fontWeight:"600",
-      fontSize:styleConfig.FontSizeDisc+7,
-      marginBottom:5,
+      fontSize:styleConfig.profileNameFont,
+      marginBottom:responsiveHeight(1.2),
     },
     kmtext:{
-      fontWeight:'500',
+      fontWeight:'800',
       color:styleConfig.greyish_brown_two,
-      fontFamily:styleConfig.FontFamily,
-      fontSize:styleConfig.fontSizerlabel-2,
+      fontFamily:styleConfig.LatoRegular,
+      fontSize:styleConfig.profileLevelBarlabelFont,
       flex:1,
+      opacity:.80,
 
     },
      kmtext2:{
-      fontWeight:'500',
+      fontWeight:'800',
       color:styleConfig.greyish_brown_two,
-      fontFamily:styleConfig.FontFamily,
-      fontSize:styleConfig.fontSizerlabel-2,
+      fontFamily:styleConfig.LatoRegular,
+      fontSize:styleConfig.profileLevelBarlabelFont,
       flex:1,
       alignItems: 'flex-end',
       justifyContent: 'flex-end',
       textAlign:'right',
+      opacity:.80,
     },
     leveltext:{
-      top:3,
+      top:responsiveHeight(0.46875),
       color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.fontSizerlabel,
-      fontWeight:'500',
-      fontFamily:styleConfig.FontFamily3,
+      fontSize:styleConfig.profileLevelFont,
+      fontWeight:'800',
+      fontFamily:styleConfig.LatoBlack,
     }
   })
 

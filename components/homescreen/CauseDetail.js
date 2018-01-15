@@ -24,7 +24,8 @@ import LodingRunScreen from '../gpstracking/runlodingscreen'
 var { RNLocation: Location } = require('NativeModules');
 import ImageLoad from 'react-native-image-placeholder';
 const CleverTap = require('clevertap-react-native');
-
+ import { takeSnapshot } from "react-native-view-shot";
+  import Share, {ShareSheet, Button} from 'react-native-share';
 class CauseDetail extends Component {
     
 
@@ -32,6 +33,12 @@ class CauseDetail extends Component {
         super(props);
         this.state = {
          isDenied:false,
+         value: {
+          format: "png",
+          quality: 0.9,
+          result: "base64",
+          snapshotContentContainer: false,
+        },
         }
         this.NavigateToRunScreen = this.NavigateToRunScreen.bind(this);
     }
@@ -42,9 +49,11 @@ class CauseDetail extends Component {
 
     // Navigate to Run Screen
     NavigateToRunScreen(){
+      console.log('cause',this.props.data);
       CleverTap.recordEvent('ON_CLICK_BEGIN_RUN',{
         'cause_index':this.props.cause_index,
-        'cause_id':this.props.cause.pk,
+        'cause_id':this.props.data.pk,
+
       });
       var me = this;
       var data = this.props.data;
@@ -68,6 +77,52 @@ class CauseDetail extends Component {
       }
      })
     }
+
+
+
+    snapshot(captureScreenShot){
+    CleverTap.recordEvent('ON_CLICK_TELL_YOUR_FRIENDS');
+    takeSnapshot(this.refs[captureScreenShot], this.state.value)
+      .then(res =>
+        this.state.value.result !== "file"
+        ? res
+        : new Promise((success, failure) =>
+        // just a test to ensure res can be used in Image.getSize
+        Image.getSize(
+          res,
+          (width, height) => (console.log(res,width,height), success(res)),
+          failure
+        )
+        )
+          
+      )
+      .then((res) => {
+        this.setState({
+          error: null,
+          res,
+          previewSource: { uri:
+            this.state.value.result === "base64"
+            ? "data:image/"+this.state.value.format+";base64,"+res
+            : res }
+        })
+
+        var shareOptions = {
+          // title: "ImpactRun",
+          // message:"I ran "+distance+" kms and raised " +impact+ " rupees for "+cause.partners[0].partner_ngo+" on #Impactrun. Kudos "+cause.sponsors[0].sponsor_company+" for sponsoring my run.",
+          url:"data:image/"+this.state.value.format+";base64,"+res,
+          // subject: "Download ImpactRun Now " //  for email
+        }
+        Share.open(shareOptions)
+        CleverTap.recordEvent('ON_CLICK_WORKOUT_SHARE',{
+          'distance': this.props.distance,
+          'time_elapsed':this.props.time,
+          'num_steps':this.props.noOfsteps,
+          'client_run_id':this.props.client_run_id,
+        })
+      })
+      .catch(error => (console.warn(error), this.setState({ error, res: null, previewSource: null })));
+    }
+
 
 
     navigateToIOSsetting(){
@@ -143,14 +198,14 @@ class CauseDetail extends Component {
      CauseDetailpageBtn(data){
       if (data.is_completed) {
         return(
-          <TouchableOpacity style={styles.btnBeginRun} >
-              <Text style={styles.Btntext}>TELL YOUR FRIENDS</Text>
+          <TouchableOpacity style={styles.btnBeginRun}  onPress = {()=> this.snapshot('captureScreenShot')}>
+              <Text style={styles.Btntext}>Tell Your Friends</Text>
           </TouchableOpacity>
         )
       }else{
         return(
-          <TouchableOpacity style={styles.btnBeginRun} text={'LET\'S GO'}onPress={() => this.NavigateToRunScreen()}>
-            <Text style={styles.Btntext}>BEGIN RUN</Text>
+          <TouchableOpacity style={styles.btnBeginRun} onPress={() => this.NavigateToRunScreen()}>
+            <Text style={styles.Btntext}>{'Let\'s Go'}</Text>
           </TouchableOpacity>
         )
       }
@@ -162,8 +217,8 @@ class CauseDetail extends Component {
         return (
               <View style={{position:'absolute',height:deviceHeight-114,width:deviceWidth,backgroundColor: '#fff'}}> 
                 <NavBar title = {'OVERVIEW'} leftIcon = {this.leftIconRender()}/>
-                  <View style={{height:deviceHeight-15,width:deviceWidth}}>
-                    <ScrollView>
+                  <View style={{height:deviceHeight-15,width:deviceWidth}} >
+                    <ScrollView ref='captureScreenShot'>
                       <View style={styles.container}>
                      {this.DiscriptionImage(data)}
                       <View style={styles.textwraper}>
@@ -196,15 +251,15 @@ class CauseDetail extends Component {
     position:"absolute",
     width:deviceWidth,
     height:30,
-    backgroundColor:'rgba(255, 255, 255, 0.75)',
+    backgroundColor:'transparent',
     bottom:0,
   },
   slidesponser:{
-    paddingTop:0,
+    paddingTop:10,
     paddingBottom:5,
-    fontSize:12,
+    fontSize:styleConfig.ngoText+2,
     color:styleConfig.black_two,
-    fontFamily:styleConfig.FontFamily,
+    fontFamily:styleConfig.LatoLight,
   },
    backbtn:{
     paddingLeft:10,
@@ -219,19 +274,21 @@ class CauseDetail extends Component {
   },
   causeTitle:{
     height:25,
-    fontSize:20,
-    fontWeight:'400',
+    fontSize:styleConfig.causeTitle+2,
+    fontWeight:'800',
     letterSpacing:1,
-    color:styleConfig.greyish_brown_two,
-    fontFamily:styleConfig.FontFamily,
+    color:'black',
+    fontFamily:styleConfig.LatoBlack,
+    opacity:.80,
   },
   Disctext:{
-    fontSize:14,
-    letterSpacing:0.5,
+    fontSize:styleConfig.causeDisc+2,
     marginBottom:100,
+    letterSpacing:1,
     color:styleConfig.black_two,
     top:10,
-    fontFamily:styleConfig.FontFamily,
+    fontFamily:styleConfig.LatoRegular,
+    lineHeight:20,
   },
   bytext:{
     paddingBottom:10,
@@ -251,7 +308,7 @@ class CauseDetail extends Component {
      backgroundColor:'transparent',
      color:'white',
      fontSize:20,
-     fontFamily:styleConfig.FontFamily,
+     fontFamily:styleConfig.LatoRegular,
   },
   closebtn:{
     left:10,
@@ -270,10 +327,11 @@ class CauseDetail extends Component {
     paddingBottom:20,
     backgroundColor:'transparent',
     fontWeight:'300',
-    fontFamily:styleConfig.FontFamily,
+    fontFamily:styleConfig.LatoLight,
     left:5,
-    color:styleConfig.greyish_brown_two,
+    color:"white",
     fontWeight:'400',
+    fontSize:styleConfig.causeDisc,
   },
   textwraper:{
     padding:10,

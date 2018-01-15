@@ -14,6 +14,8 @@ import FaqData from './faq/faqData';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styleConfig from './styleConfig';
 import commonStyles from './styles';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 class ThankyouScreen extends Component {
@@ -45,14 +47,17 @@ class ThankyouScreen extends Component {
 		render() {
       var data = this.props.data;
 	    return (
+        <View>
+        <View style={{backgroundColor:styleConfig.light_sky_blue,width:deviceWidth,height:20}}></View>
 		    <View style={styles.Navbar}>
-          <View style={styles.LeftButton} onPress={()=>this.leftBtnfunction()}>
+          <TouchableOpacity style={styles.LeftButton} onPress={()=>this.leftBtnfunction()}>
            {this.leftIcon()}
-           </View>        
+           </TouchableOpacity>        
             <Text  numberOfLines={1} style={styles.menuTitle}>{this.props.title}</Text>
-           <View style={styles.RightButton} onPress={()=>this.rightBtnfunction()} >
+           <TouchableOpacity style={styles.RightButton} onPress={()=>this.rightBtnfunction()} >
            {this.rightIcon()}
-          </View> 
+          </TouchableOpacity> 
+        </View>
         </View>
 		  );
 	  }
@@ -63,14 +68,14 @@ var styles = StyleSheet.create({
 
   RightButton: {
    height:64,
-   width:50,
-   paddingTop:15,
+   width:64,
    justifyContent:'center',
-   alignItems:'center',
+   alignItems:'flex-end',
+   backgroundColor:'transparent',
+   paddingRight:responsiveWidth(6.1),
   },
 
    Navbar:{
-    paddingTop:20,
     position:'relative',
     height:styleConfig.navBarHeight,
     width:deviceWidth,
@@ -79,11 +84,12 @@ var styles = StyleSheet.create({
     alignItems:'center',
     backgroundColor:'white',
     shadowColor: '#000000',
-      shadowOpacity: 0.8,
-      shadowRadius: 1,
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
       shadowOffset: {
-        height: 0,
+        height: 1,
       },
+
   },
 
 
@@ -93,10 +99,11 @@ var styles = StyleSheet.create({
     textAlign:'center',
     justifyContent: 'center',
     alignItems: 'center',
-    fontWeight:'400',
-    color:'#2a2a2a',
-    fontSize:styleConfig.TitleFontSize,
-    fontFamily:styleConfig.FontFamily,
+    fontWeight:'800',
+    color:'#000',
+    fontSize:styleConfig.fontNavTitle,
+    fontFamily:styleConfig.LatoBlack,
+    opacity:.80,
   },
 
   LeftButton: {

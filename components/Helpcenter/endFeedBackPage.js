@@ -10,6 +10,7 @@ import {
   AlertIOS,
   ActivityIndicator,
   NetInfo,
+  Keyboard,
 } from 'react-native';
 import apis from '../apis';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -17,6 +18,8 @@ import styleConfig from '../styleConfig';
 import Modal from '../downloadsharemeal/CampaignModal'
 import LoginBtns from '../login/LoginBtns'
 import Icon from 'react-native-vector-icons/Ionicons';
+import NavBar from '../navBarComponent';
+
 var dismissKeyboard = require('dismissKeyboard');
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -61,20 +64,16 @@ class EndFeedBack extends Component {
         this.props.navigator.pop({});
     }
 
-      // navigateToHome(rowData){
-
-      //   this.props.navigator.push({
-      //     title:'Select issue',         
-      //     // component:QuestionLists,
-      //     // navigationBarHidden: false,
-      //     // showTabBar: true,
-      //     Component:'tab',
-      //     passProps:{
-      //      getUserData:this.props.getUserData,
-      //      user:this.props.user,
-      //     }
-      //   })
-      // }
+      navigateToHome(rowData){
+        this.props.navigator.push({
+          title:'Select issue',         
+          id:'tab',
+          passProps:{
+           getUserData:this.props.getUserData,
+           user:this.props.user,
+          }
+        })
+      }
 
     postFeedback(){
       NetInfo.isConnected.fetch().then((isConnected) => {
@@ -88,8 +87,9 @@ class EndFeedBack extends Component {
          var user_id = this.props.user.user_id;
          var mybody;
          var date = new Date();
-         console.log('this.props.rowData',this.props.rowData,this.props.data,this.props.sub_tag);
-         var convertepoch = parseInt(date.getTime()/1000);
+          var convertepoch = parseInt(date.getTime()/1000);
+         console.log('this.props.rowData',this.props.rowData,this.props.data,this.props.sub_tag,convertepoch);
+        
        
           mybody = JSON.stringify({
             "feedback":this.state.moreText,
@@ -121,9 +121,10 @@ class EndFeedBack extends Component {
               isPostingFeedBack:false,
             })
             console.log('responce',response);
-            dismissKeyboard()
+            
             AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
-
+             Keyboard.dismiss();
+             this.navigateToHome();
           })
           .catch((err) => {
             this.setState({
@@ -142,7 +143,9 @@ class EndFeedBack extends Component {
       })
     }
 
-
+    onhideKEy(){
+      Keyboard.dismiss();
+    }
     onPostsuccessView(){
       if (this.state.isPostingFeedBack) {
         return(
@@ -159,6 +162,16 @@ class EndFeedBack extends Component {
         return;
       }
     }
+
+
+
+    leftIconRender(){
+          return(
+            <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+            </TouchableOpacity>
+          )
+        }
   
  
 
@@ -167,14 +180,14 @@ class EndFeedBack extends Component {
       console.log("Title ", this.props.title);
       return (
         <View style={styles.container}>
-        
+        <NavBar title = {'Feedback'} leftIcon={this.leftIconRender()}/>
         <View>
 
         <View style={{marginTop:30,marginLeft:10,marginBottom:10}}>
-          <Text style={{color:'#595c5d',fontFamily:styleConfig.FontFamily,}}>{data.header}</Text>
+          <Text style={{color:'#595c5d',fontFamily:styleConfig.LatoBlack,}}>{data.header}</Text>
         </View>
         <View style={{marginLeft:10,marginBottom:20,width:deviceWidth-20}}>
-          <Text style={{color:'#595c5d', fontFamily:styleConfig.FontFamily,}}>{data.discription}</Text>
+          <Text style={{color:'#595c5d', fontFamily:styleConfig.LatoRegular,}}>{data.discription}</Text>
         </View>
             <View style={styles.FaqSubmitWrap}>
                <View>
@@ -189,7 +202,7 @@ class EndFeedBack extends Component {
                 
               </View>
               <TouchableOpacity onPress={() => this.postFeedback()} style={styles.submitFaqbtn}>
-                  <Text style={{color:'white'}}>Submit</Text>
+                  <Text style={{color:'white',fontFamily:styleConfig.FontFamily}}>SUBMIT</Text>
 
                 </TouchableOpacity>
                 

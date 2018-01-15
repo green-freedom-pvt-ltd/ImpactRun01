@@ -155,7 +155,7 @@ export default class AnimateNumber extends Component {
 
   render() {
     return (
-      <Text {...this.props} style={{paddingLeft:5,width:deviceWidth}}>
+      <Text {...this.props} style={{paddingLeft:5,width:deviceWidth,letterSpacing:1}}  >
         {(Math.round(this.state.displayValue*100)/100).toLocaleString('en-'+this.props.currencyString,{ minimumFractionDigits: 0}) }
       </Text>)
    

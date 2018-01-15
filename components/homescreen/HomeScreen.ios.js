@@ -25,7 +25,7 @@ import ReactNative,{
   TouchableWithoutFeedback
 } from 'react-native';
 
-
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 import {Navigator} from 'react-native-deprecated-custom-components';
 import LodingRunScreen from '../gpstracking/runlodingscreen';
@@ -300,6 +300,7 @@ class Homescreen extends Component {
 
 
       componentWillMount() {
+        console.log('responsiveFontSize(2.8)',responsiveFontSize(2.8));
         var me = this;
         setTimeout(()=>{
           me.setState({
@@ -312,7 +313,7 @@ class Homescreen extends Component {
        
         // this.fetchifinternet();      
         PushNotificationIOS.requestPermissions();              
-        this.PostSavedRundataIfInternetisOn();   
+        
       }
       
 
@@ -325,7 +326,8 @@ class Homescreen extends Component {
           })
             
         })
-        AsyncStorage.getItem('overall_impact', (err, result) => {
+        getLocalData.getData('overall_impact')
+        .then ((result )=> {
           console.log('overall_impact', result);
           this.setState({
             overall_impact:(result != null)? JSON.parse(result):0,
@@ -365,24 +367,7 @@ class Homescreen extends Component {
       }
 
 
-      fetchLocalRunData(){
-        var runNumber=[];
-        var i;
-        AsyncStorage.getItem('SaveRunCount', (err, result) => {
-
-          this.setState({
-            RunCount:JSON.parse(result),  
-            loaded:true,             
-          })   
-          if (this.state.RunCount != null) {        
-            var runcount = this.state.RunCount;
-            for (i = 0; i < runcount+1; i++) {
-              runNumber.push("RID" + i )  ;
-            }
-            this.postPastRunoldSync();
-          }
-        })
-      }
+      
        
       componentWillUnmount() {
         this.setState({
@@ -392,72 +377,7 @@ class Homescreen extends Component {
 
 
 
-    postPastRunoldSync(){
-      var userdata = this.props.user;
-      var user_id =JSON.stringify(userdata.user_id);
-
-      var token = JSON.stringify(userdata.auth_token);
-      var tokenparse = JSON.parse(token);
-      var runNumber=[];
-      var i;
-      var runcount = this.state.RunCount;
-      for (i = 0; i < runcount+1; i++) {
-          runNumber.push("RID" + i )  ;
-      }
-      
-      AsyncStorage.multiGet(runNumber, (err, stores) => {
-        stores.map((result, i, store) => {
-          let key = store[i][0];
-          let val = store[i][1];
-          this.setState({
-          MyRunVal:JSON.parse(val),  
-          loaded:true,             
-          }) 
-         var RunData = this.state.MyRunVal;
-         if (RunData != null) {
-         fetch(apis.runApi, {
-          method: "POST",
-          headers: {  
-            'Authorization':"Bearer "+ tokenparse,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',    
-          },
-          body:JSON.stringify({
-          cause_run_title:RunData.cause_run_title,
-          user_id:RunData.user_id,
-          start_time:RunData.start_time,
-          end_time:RunData.end_time,
-          distance:RunData.distance,
-          peak_speed: 1,
-          avg_speed:RunData.avg_speed,
-          run_amount:RunData.run_amount,
-          run_duration:RunData.run_duration,
-          is_flag:false,
-          calories_burnt:RunData.calories_burnt,
-          start_location_lat:RunData.start_location_lat,
-          start_location_long:RunData.start_location_long,
-          end_location_lat:RunData.end_location_lat,
-          end_location_long:RunData.end_location_long,
-          no_of_steps:RunData.no_of_steps,
-          is_ios:RunData.is_ios,
-          team_id:RunData.team_id,
-        })
-       })
-
-      .then((response) => response.json())
-      .then((userRunData) => { 
-       var epochtime = userRunData.version;
-         let responceversion = {
-           runversion:epochtime
-         }
-           
-        this.RemoveStoredRun(runNumber);
-       })
-       }
-      });
-      })
-    }
-
+ 
 
 
 
@@ -481,18 +401,6 @@ class Homescreen extends Component {
 
 
   
-      PostSavedRundataIfInternetisOn(){
-        if(this.props.user) {
-          NetInfo.isConnected.fetch().done(
-          (isConnected) => {
-            if (isConnected) {
-              this.fetchLocalRunData();
-            }else{
-            }
-          }
-         );  
-        }
-      }
 
 
       cardImageheight(){
@@ -521,8 +429,8 @@ class Homescreen extends Component {
             <View>
               <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.cover} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_image}} style={styles.cover}>        
               </ImageLoad>
-              <View style={{paddingLeft:15,flex:-1,backgroundColor:'rgba(255, 255, 255, 0.75)',top:-30,height:30,justifyContent:'center'}}>
-                  <Text style={{fontWeight:'400', fontSize:styleConfig.FontSize3,  color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+              <View style={{paddingLeft:15,width:responsiveWidth(71),backgroundColor:'rgba(255, 255, 255, 0.75)',top:-30,height:30,justifyContent:'center'}}>
+                  <Text style={{fontWeight:'400', fontSize:styleConfig.causeDisc-2,  color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {cause.cause_category}
                   </Text>
               </View>
@@ -544,6 +452,7 @@ class Homescreen extends Component {
     
 
     distancebetweenCards(width){
+      console.log('width',width-deviceWidth);
       if (deviceheight === iphone6) {
        return width-deviceWidth+80
       }else if (Dimensions.get('window').height === iphone5){
@@ -579,11 +488,15 @@ class Homescreen extends Component {
     _buildCoverFlowStyle = ({ layout, position, route, navigationState,data }) => {
       var data = data;
       const { width } = layout;
+      console.log('distancebetweenCards',this.distancebetweenCards(width),responsiveWidth(4.44444));
       const { routes,SecondRoute } = navigationState;
       const currentIndex = routes.indexOf(route);
+
       const inputRange = routes.map((x, i) => i);
+
       const translateOutputRange = inputRange.map(i => {
-        return width * (currentIndex - i) - (this.distancebetweenCards(width) * (currentIndex - i));
+        console.log('indexCause',width*(currentIndex - i) - (95 * (currentIndex - i)),' Data : ',currentIndex,width,i,(currentIndex - i),(responsiveWidth(4.44444) * (currentIndex - i)))
+        return width * (currentIndex - i) - (responsiveWidth(25) * (currentIndex - i));
       });
       const scaleOutputRange = inputRange.map(i => {
         if (currentIndex === i) {
@@ -620,6 +533,8 @@ class Homescreen extends Component {
           { scale },
         ],
         opacity,
+        backgroundColor:'transparent',
+        paddingLeft:-100,
       };
     };
      
@@ -654,7 +569,6 @@ class Homescreen extends Component {
         me.props.navigator.replace({
         title: 'Gps',
         id:'runlodingscreen',
-        index: 0,
         passProps:{cause_index:me.state.navigation.index,data:cause,user:me.props.user,getUserData:me.props.getUserData,killRundata:null},
         sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
         navigator: me.props.navigator,
@@ -720,17 +634,17 @@ class Homescreen extends Component {
     functionForIphone4Brief(cause){
       if (Dimensions.get('window').height === 667) {
       return(
-        <Text  numberOfLines={3} style={styles.causeBrief}>{cause.cause_brief}</Text>
+        <Text  numberOfLines={2} style={styles.causeBrief}>{cause.cause_brief}</Text>
         )
       }else if(Dimensions.get('window').height === 568){
       
           return(
-          <Text  numberOfLines={3} style={styles.causeBrief}>{cause.cause_brief}</Text>
+          <Text  numberOfLines={2} style={styles.causeBrief}>{cause.cause_brief}</Text>
           )
     
       }else if(Dimensions.get('window').height > 667){
           return(
-          <Text  numberOfLines={3} style={styles.causeBrief}>{cause.cause_brief}</Text>
+          <Text  numberOfLines={2} style={styles.causeBrief}>{cause.cause_brief}</Text>
           )
     
       }else if(Dimensions.get('window').height < 568){
@@ -781,27 +695,27 @@ class Homescreen extends Component {
            
         if (cause.is_completed != true) {
         return (
-          
+          <View style={{width:deviceWidth,backgroundColor:'transparent',height:responsiveHeight(51),justifyContent: 'center',alignItems: 'center',}}>
           <View onLayout={(event) => this.measureView(event)} style={styles.page}  >        
            <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause,this.state.album[route.key][9])} >
             <View  style={styles.album}>
               {this.showImage(cause)}
-              <View style={{flex:1,top:-30,justifyContent:'center',backgroundColor:"transparent", paddingTop:30}}>
-              <View style={{justifyContent: 'center',alignItems: 'center',backgroundColor:'transparent',paddingBottom:styleConfig.PaddingCard}}>
-                <View style={{width:deviceWidth-125}}>
+              <View style={{flex:-1,top:-30,backgroundColor:"transparent",paddingLeft:responsiveWidth(3),paddingRight:responsiveWidth(3)}}>
+              <View style={{marginTop:responsiveHeight(1.2),height:responsiveHeight(7.4),backgroundColor:'transparent'}}>
+                <View style={{flex:1}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{color:styleConfig.warm_grey_three,fontFamily:styleConfig.FontFamily,fontSize:styleConfig.FontSize4-2,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
+                  <Text numberOfLines={1} style={{marginTop:responsiveHeight(1),color:styleConfig.black,opacity:.50,fontFamily:styleConfig.LatoRegular,fontSize:styleConfig.ngoText,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
                 </View>
               </View>
-              <View style={{justifyContent: 'center',alignItems: 'center',backgroundColor:'transparent',paddingBottom:styleConfig.PaddingCard}}>
+              <View style={{backgroundColor:'transparent'}}>
                   {this.functionForIphone4Brief(cause)}
               </View>
               <View style={styles.barWrap}>
-                  <View style={{width:deviceWidth-125}}>
+                  <View>
                     <View style = {styles.wraptext}>
-                      <Text style = {styles.textMoneyraisedlableRemainingpercentage}>{100-parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
+                      <Text style = {styles.textMoneyraisedlableRemainingpercentage}>{parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
                     </View>
-                    <ProgressBar unfilledColor={'black'} height={styleConfig.barHeight} width={deviceWidth-125} progress={cause.amount_raised/cause.amount}/>
+                    <ProgressBar unfilledColor={'black'} height={responsiveHeight(0.9375)} width={responsiveWidth(65)} progress={cause.amount_raised/cause.amount}/>
                     <View style = {styles.TextWaperforCuaseRaisedAmount}>
                       <View style = {styles.wraptext2}>
                         <Text style = {styles.textMoneyraisedlabel}> WALK & RUNS </Text>
@@ -809,7 +723,7 @@ class Homescreen extends Component {
                       </View>
                       <View style = {styles.wraptext2}>
                         <Text style = {styles.textMoneyraised2Label}> GOAL </Text>
-                        <Text style = {styles.textMoneyraised2}><Icon style={styles.textMoneyraised2}name={this.state.my_currency.toLowerCase()}></Icon>  {causeAmountFinalvalue}</Text>
+                        <Text style = {styles.textMoneyraised2}><Icon style={{fontSize:styleConfig.cardIconFontSize,color:'#000', fontWeight:'600',textAlign:'right',fontFamily:styleConfig.LatoBlack,opacity:.80}}name={this.state.my_currency.toLowerCase()}></Icon>{causeAmountFinalvalue}</Text>
                       </View>
                     </View>
                   </View>
@@ -818,16 +732,19 @@ class Homescreen extends Component {
             </View>
             </TouchableWithoutFeedback>
           </View>
+          </View>
         );
        }else{
         return(
+        <View style={{width:deviceWidth,backgroundColor:'transparent',height:responsiveHeight(50),justifyContent: 'center',alignItems: 'center',}}>
           <View style={styles.page} ref={(instance) => this.rows.push(instance)}>        
             <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause)} >
             <View style={styles.album} >
-              <Image source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5,}}>
+              <Image source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5, resizeMode: "contain",}}>
               </Image>
             </View>
             </TouchableWithoutFeedback>
+          </View>
           </View>
           )
       }
@@ -838,6 +755,7 @@ class Homescreen extends Component {
 
      // RENDER_PAGE
     _renderPage = (props,data,route) => {
+      console.log('this._buildCoverFlowStyle(props)',this._buildCoverFlowStyle(props));
       return (
         <TabViewPage
           ref={(instance) => this.list = instance}
@@ -884,14 +802,14 @@ class Homescreen extends Component {
    
     if (cause.is_completed) {
       return(
-         <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=> this.snapshot()}>
-            <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >TELL YOUR FRIENDS</Text>
+         <TouchableOpacity  style={styles.btnbegin2}  onPress={()=> this.snapshot()}>
+            <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.LatoBlack}} >Tell your friends</Text>
           </TouchableOpacity>
       )
     }else{
       return(
-        <TouchableOpacity  style={styles.btnbegin2} text={'BEGIN RUN'} onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.FontFamily}} >{'LET\'S GO'}</Text>
+        <TouchableOpacity  style={styles.btnbegin2}  onPress={()=>this.navigateToRunScreen(cause)}>
+          <Text style={{fontSize:18,color:'white',fontWeight:'600',fontFamily:styleConfig.LatoBlack}} >{'Let\'s Go'}</Text>
         </TouchableOpacity>
       )
     }
@@ -913,20 +831,19 @@ class Homescreen extends Component {
       if (!this.state.loadingImpact && this.props.myCauseNum != null) {
       return (
           <View style={{backgroundColor:'white',height:deviceheight,width:deviceWidth}}>
-          <View style={commonStyles.Navbar}>
-          </View>
-          <View style={{justifyContent:'flex-end',backgroundColor:'transparent',height:deviceheight-114}}>
+          <View style={{backgroundColor:'white',height:deviceheight}}>
           <View style={styles.TotalRaisedTextWrap}>
            <View style={{flexDirection:'column'}}>           
             <Text style={styles.TotalRaisedText}>
 
-            <Icon style={[styles.TotalRaisedText,{fontSize:styleConfig.FontSizeTitle+20}]}name={this.state.my_currency.toLowerCase()}></Icon>
+            <Icon style={[styles.TotalRaisedText,{fontSize:styleConfig.fontTotalRaised-5}]}name={this.state.my_currency.toLowerCase()}></Icon>
             <Text>{' '}</Text>
               <AnimateNumber myRate = {this.state.my_rate} TotalRaisedimpact = {Impact} currencyString = {this.state.my_currency.slice(0,2)} value={Impact} formatter={(val) => {
                   return ' ' + parseFloat(val).toFixed(0)
-                }} ></AnimateNumber>        
+                }} ></AnimateNumber>  
+
            </Text>
-          <Text style={styles.totaltextlable}>Total Impact</Text>
+           <Text style={styles.totaltextlable}>Impact so far</Text>     
           </View>
            </View>
           <TabViewAnimated
@@ -936,10 +853,7 @@ class Homescreen extends Component {
              renderScene={this._renderPage}
              onRequestChangeTab={this._handleChangeTab}>
              </TabViewAnimated>
-             
-
-             
-             <View style={styles.BtnWraperWrap}>
+              <View style={styles.BtnWraperWrap}>
               <View style={styles.btnWrap}>
                {this.BiginRunBtn(cause)}
               </View>
@@ -973,62 +887,57 @@ class Homescreen extends Component {
 
     BtnWraperWrap:{
       backgroundColor:'white',
-      height:((deviceheight-120)/100)*13,
+      height:responsiveHeight(13.3125),
       width:deviceWidth,
       justifyContent: 'center',
       alignItems: 'center',
+      top:responsiveHeight(24)-responsiveHeight(7.8125),
     },
     TotalRaisedTextWrap:{
-       height:((deviceheight-120)/100)*15,
+       top:responsiveHeight(10.2),
        width:deviceWidth,
-       backgroundColor:'transparent',
-       justifyContent:'center',
-       alignItems:'center'
+       backgroundColor:'white',
+       alignItems: 'center',
+       height:responsiveHeight(7.8125),
     },
     totaltextlable:{
-       flex:1,
        justifyContent:'center',
        textAlign:'center',
-       fontSize:styleConfig.FontSize4,
+       fontSize:styleConfig.labelTotalRaised,
        color:'grey',
        fontWeight:'600',
-
-
+       fontFamily:styleConfig.LatoRegular,
+       top:0,
     },
     TotalRaisedText:{
-       fontSize:styleConfig.FontSizeTitle+24,
+       fontSize:styleConfig.fontTotalRaised,
        color:styleConfig.new_green,
        fontWeight:'800',
-       fontFamily:styleConfig.FontFamily,
+       fontFamily:styleConfig.LatoBlack,
     },
     btnWrap:{
-      flex:1,
-      width:deviceWidth-100,
-      paddingBottom:((deviceheight-120)/100)*5,
+      
+      width:responsiveWidth(71.1111111111),
+      height:responsiveHeight(6.75)
     },
 
     container: {
       backgroundColor:'white',
-      padding:((deviceheight-120)/100)*3,
       paddingLeft:0,
-      height:((deviceheight-120)/100)*77,
+      height:responsiveHeight(52),
       justifyContent: 'center',
+      top:responsiveHeight(24)-responsiveHeight(7.8125),
     },
 
     page:{
-      marginLeft:50,
-      flex:-1,
-      width:deviceWidth-100,
+      height:responsiveHeight(50),
+      width:responsiveWidth(71),
       backgroundColor:'white',
-      paddingLeft:10,
-      paddingRight:10,
-      alignItems: 'center',
-      justifyContent: 'center',
       shadowColor: '#000000',
       shadowOpacity: 0.2,
       shadowRadius: 3,
       shadowOffset: {
-        height: 4,
+        height: 0,
       },
       borderRadius:5,
     },
@@ -1050,8 +959,8 @@ class Homescreen extends Component {
     },
      
      cover: {
-      height:((deviceheight-120)/100)*35,
-      width:deviceWidth-100,
+      height:responsiveHeight(25),
+      width:responsiveWidth(71),
       borderRadius:5,
       justifyContent:'flex-end',
      },
@@ -1090,25 +999,27 @@ class Homescreen extends Component {
     },
 
     causeTitle:{
-      color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSizeTitle+4,
-      fontWeight:'600',
-      fontFamily:styleConfig.FontFamily,
-      paddingBottom:styleConfig.PaddingCard,
+      color:styleConfig.black,
+      fontSize:styleConfig.causeTitle,
+      fontWeight:'800',
+      fontFamily:styleConfig.LatoBlack,
+      height:responsiveHeight(3.4375),
+      backgroundColor:'transparent',
+      opacity:.80,
     },
 
     causeBrief:{
       width:deviceWidth-125,
-      color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSize4,
+      color:styleConfig.black,
+      fontSize:styleConfig.causeDisc,
       fontWeight:'400',
-      fontFamily:styleConfig.FontFamily3,
+      fontFamily:styleConfig.LatoRegular,
+      opacity:.70,
     },
   
     barWrap:{
       justifyContent: 'flex-start',
-      backgroundColor:'white',
-      alignItems: 'center',
+      backgroundColor:'transparent',
     },
 
     wraptext:{
@@ -1121,7 +1032,7 @@ class Homescreen extends Component {
       flexDirection:'row',
       backgroundColor:'white',
       alignItems:'center',
-      paddingTop:styleConfig.PaddingCard,
+      paddingTop:responsiveHeight(1.7),
     },
 
     wraptext2:{
@@ -1132,53 +1043,56 @@ class Homescreen extends Component {
     textMoneyraisedlableRemainingpercentage:{
       left:0,
       color:'grey',
-      fontSize:styleConfig.FontSize4-2,
-      fontWeight:'400',
-      fontFamily:styleConfig.FontFamily,
-      paddingBottom:styleConfig.PaddingCard,
+      fontSize:styleConfig.textRaisedPersent,
+      fontWeight:'800',
+      fontFamily:styleConfig.LatoBlack,
     },
     textMoneyraisedlabel:{
       left:0,
-      color:'grey',
-      fontSize:styleConfig.FontSize4-2,
-      fontWeight:'400',
-      fontFamily:styleConfig.FontFamily,
+      color:styleConfig.black,
+      fontSize:styleConfig.lableCause,
+      fontWeight:'800',
+      fontFamily:styleConfig.LatoBlack,
+      opacity:.50,
     },
     textMoneyraised:{
-      left:0,
-      color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSizeTitle,
-      fontWeight:'400',
-      fontFamily:styleConfig.FontFamily,
+      left:-2,
+      color:'#000',
+      fontSize:styleConfig.causeTotalrun,
+      fontWeight:'800',
+      fontFamily:styleConfig.LatoBlack,
+      opacity:.80,
     },
     textMoneyraised2:{
       left:0,
-      color:styleConfig.greyish_brown_two,
-      fontSize:styleConfig.FontSizeTitle,
-      fontWeight:'400',
+      color:'#000',
+      fontSize:styleConfig.causeTotalrun,
+      fontWeight:'800',
       textAlign:'right',
-      fontFamily:styleConfig.FontFamily,
+      fontFamily:styleConfig.LatoBlack,
+      opacity:.80,
     },
     textMoneyraised2Label:{
       left:0,
-      color:'grey',
-      fontSize:styleConfig.FontSize4-2,
-      fontWeight:'400',
+      color:styleConfig.black,
+      fontSize:styleConfig.lableCause,
+      fontWeight:'800',
       textAlign:'right',
-      fontFamily:styleConfig.FontFamily,
+      fontFamily:styleConfig.LatoBlack,
+      opacity:.50,
     },
     btnbegin2:{
       flex:1,
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor:'#00c1f2',
+      backgroundColor:styleConfig.light_sky_blue,
       justifyContent: 'center',
       shadowColor: '#000000',
-      shadowOpacity: 0.4,
-      shadowRadius: 4,
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
       shadowOffset: {
-        height: 3,
+        height: 2,
       },
     },
     notificationBatch:{
@@ -1252,4 +1166,4 @@ class Homescreen extends Component {
 
   export default Homescreen;
 
-
+ 

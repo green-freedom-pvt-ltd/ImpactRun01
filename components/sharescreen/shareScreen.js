@@ -151,9 +151,9 @@
         })
        
         if (this.state.user) {
-         // this.SaveRunLocally();
+         this.SaveRunLocally();
         
-        this.ifConnectTonetPost();
+       
         }else{
           this.SaveRunLocally();
           AlertIOS.alert('Login', 'please login to create impact');
@@ -214,20 +214,9 @@
         'num_steps':this.props.noOfsteps,
         'client_run_id':this.props.client_run_id,
       });
-      this.getUserData();  
-      this.getILdata();   
-      var cause = this.props.data;
-      this.setState({
-        thankYouimageIndex:Math.floor(Math.random() * cause.cause_thank_you_image_v2.length)
-      })
-      // var data = this.props.data;
-      // setTimeout(function(){
-      //   AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
-      //  console.log('after 2 sec');
-      // },2000)
-       
-      // this.SaveRunLocally();
-      this.getSavedRunCount();
+      this.getUserData(); 
+
+      this.getILdata(); 
        var time2 = this.props.time;
         if (time2.length <= 2) {
          var time = '00:'+'00:'+time2;
@@ -240,7 +229,20 @@
         this.setState({
           Duration:time,
         })
-        this.AddruntoRunHistory(time);
+        this.AddruntoRunHistory(time);  
+      var cause = this.props.data;
+      this.setState({
+        thankYouimageIndex:Math.floor(Math.random() * cause.cause_thank_you_image_v2.length)
+      })
+      // var data = this.props.data;
+      // setTimeout(function(){
+      //   AlertIOS.alert('Thankyou','Impact created on cause '+ '"'+data.cause_title+'"');
+      //  console.log('after 2 sec');
+      // },2000)
+       
+      // this.SaveRunLocally();
+     
+      
 
     } 
 
@@ -270,9 +272,9 @@
     ifConnectTonetPost(){
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
-
+       console.log('isConnected',isConnected);
         if (isConnected) {
-           this.PostRun();
+           this.SaveRunLocally();
           }else{
            this.SaveRunLocally();
           }
@@ -326,7 +328,8 @@
         no_of_steps:steps,
         is_ios:true,
         num_spikes:this.props.num_spikes,
-        client_run_id:this.props.client_run_id,      
+        client_run_id:this.props.client_run_id,   
+        locationArray:this.props.locationArray,   
       };
 
       AsyncStorage.getItem('UnsyncedData', (err, result) => {
@@ -472,6 +475,7 @@
       .then(_this.handleNetworkErrors.bind(_this))
       .then((userRunData) => { 
          console.log('userRunData',userRunData);
+         this.postlocationdata(userRunData,tokenparse);
         if (_this.state.networkRUnpoststatus) {
          _this.RemoveUnsyncedDatawhenpost(userRunData);
          _this.setState({
@@ -500,14 +504,49 @@
 
 
 
+postlocationdata(data,tokenparse){
+  console.log('postLocationData', data);
+  var _this = this;
+  this.props.locationArray.forEach(function(item) {
+  console.log('postLocationData1', item);
+  fetch(apis.postLocationData, {
+         method: "POST",
+         headers: {  
+            'Authorization':"Bearer "+ tokenparse,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',           
+          },
+          body:JSON.stringify({
+            run_id: data.run_id,
+            client_run_id: data.client_run_id,
+            batch_num:0,
+            start_time_epoch: data.start_time_epoch,
+            end_time_epoch: data.end_time_epoch,
+            was_in_vehicle:true,
+            location_array:item
+          }),
+       })
+      .then(_this.handleNetworkErrors.bind(_this))
+      .then((userRunData) => { 
+         console.log('userRunDatalocationarray',userRunData);
+      }).catch((err)=>{
+        console.log('postlocationdataerror',err);
+      })
+    })
+}
+
+
+
     RemoveUnsyncedDatawhenpost(userRunData){
       AsyncStorage.getItem('UnsyncedData', (err, result) => {
         this.setState({
           UnsyncedData:JSON.parse(result),
         })
         var newRunArray = [];
-        if (this.state.UnsyncedData != [] || this.state.UnsyncedData != null) {
-
+        console.log('UnsyncedData',JSON.parse(result) != null);
+        if (this.state.UnsyncedData != null) {
+          if (this.state.UnsyncedData != []) {
+          console.log('UnsyncedData',JSON.parse(result) != null);
           var removeIndex = this.state.UnsyncedData.map(function(item) {
            return item.start_time;
             }).indexOf(userRunData.start_time); 
@@ -518,6 +557,7 @@
           AsyncStorage.setItem('UnsyncedData', JSON.stringify(localunsyncedRundata), (data) => {
           })
         } 
+      }
         
         
       })
@@ -881,7 +921,7 @@
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
                 <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                 <Text style={styles.lableText}>Impact</Text>
               </View>
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
@@ -939,7 +979,7 @@
               <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
                 <View style={styles.wrapperRunContentImpact}>
                   <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:'#33f373',fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                   <Text style={styles.lableText}>Impact</Text>
                 </View>
                 <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
@@ -973,7 +1013,7 @@
                   </TouchableOpacity>
                 </View>
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <TouchableOpacity onPress={()=> this.snapshot('captureScreenShot')} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:styleConfig.bright_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
+                  <TouchableOpacity onPress={()=> this.snapshot('captureScreenShot')} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:styleConfig.light_sky_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
                     <Icon style={{color:'white',fontSize:styleConfig.fontSizerlabel+20}}name={'md-share'}></Icon>
                   </TouchableOpacity>
                 </View>

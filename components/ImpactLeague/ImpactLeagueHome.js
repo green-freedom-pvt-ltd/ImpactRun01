@@ -31,6 +31,7 @@ var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 import impactleagueleaderboard from '../ImpactLeague/ImpactLeagueLeaderboard';
 import Swiper from 'react-native-swiper';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 var iphone5 = 568;
 var iphone5s = 568;
@@ -268,7 +269,7 @@ class ImpactLeague extends Component {
         rowID++
         var me = this;
         var textColor=(me.state.user.team_code === rowData.team_id)?'#fff':"#4a4a4a";
-        var backgroundColor =(me.state.user.team_code === rowData.team_id)?'#ffcd4d':'#fff';
+        var backgroundColor =(me.state.user.team_code === rowData.team_id)?styleConfig.light_sky_blue:'#fff';
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
             <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
@@ -305,7 +306,7 @@ class ImpactLeague extends Component {
       leftIconRender(){
           return(
             <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'black',fontSize:35,fontWeight:'bold'}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+              <Icon style={{color:'black',fontSize:responsiveFontSize(4),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
           )
         }
@@ -314,8 +315,8 @@ class ImpactLeague extends Component {
 
         rightIconRender(){
         return(
-            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',paddingBottom:10}} onPress={()=>this.exitLeaguepopu()} >
-              <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'md-more'}></Icon>
+            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',}} onPress={()=>this.exitLeaguepopu()} >
+              <Icon style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80,}}name={'md-more'}></Icon>
             </TouchableOpacity>
           )
       }
@@ -400,7 +401,7 @@ class ImpactLeague extends Component {
                  
                   <View style={{alignItems:'center', justifyContent:'center',     paddingTop: 20}}>
                       <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
-                      <Text style={{fontSize:styleConfig.fontSizerImpact, color:'orange',fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
+                      <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
                       {typeof this.state.total_amount == 'undefined' ? 0 :  (this.state.my_currency == 'INR' ? parseFloat(this.state.total_amount).toFixed(0) : parseFloat(this.state.total_amount/this.state.my_rate).toFixed(2)) }
                       </Text>
                   </View>
@@ -549,22 +550,22 @@ const styles = StyleSheet.create({
     width:deviceWidth-200,
     color:'#4a4a4a',
     fontSize: styleConfig.fontSizerleaderBoardContent+2,
-    fontWeight:'600',
+    fontWeight:'800',
     textAlign: 'left',
     marginLeft:10,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: styleConfig.LatoRegular,
   },
   txt3: {
     color:'white',
     fontSize: 13,
-    fontWeight:'400',
-    fontFamily: 'Montserrat-Regular',
+    fontWeight:'800',
+    fontFamily: styleConfig.LatoRegular,
   },
   txtSec:{
    fontSize:styleConfig.fontSizerleaderBoardContent+2,
-   fontWeight:'400',
+   fontWeight:'800',
    textAlign:'center',
-   fontFamily: 'Montserrat-Regular',
+   fontFamily: styleConfig.LatoRegular,
   },
 });
  export default ImpactLeague;

@@ -33,10 +33,19 @@ class Faq extends Component {
           this.props.navigator.pop({});
       }
 
+      leftIconRender(){
+          return(
+            <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <Icon style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+            </TouchableOpacity>
+          )
+        }
+
   		render() {
   		  return (
           <View>
-  			    <FaqData user = {this.props.user}/>
+            <NavBar title={'Questions'} leftIcon={this.leftIconRender()}/>
+  			    <FaqData  navigator = {this.props.navigator} user = {this.props.user}/>
           </View>
   			);
   	  }

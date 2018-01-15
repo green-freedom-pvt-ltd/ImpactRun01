@@ -398,17 +398,17 @@ class Setting extends Component {
       renderRow(rowData) {
         var alignItems = (rowData.name === 'Logout')? 'flex-start':'flex-start';
         // console.log('rowData',rowData);
-        var marginTop = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?deviceHeight-440:0;
+        var marginTop = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?200:0;
         var borderBottomWidth = (rowData.name === 'Logout' || rowData.name === 'help')?0:0.5;
         return (
           <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
-            <View style={{flex:-1,width:50,justifyContent: 'center',alignItems: 'center',}}>
+            <View style={{borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',flex:-1,width:50,justifyContent: 'center',alignItems: 'center',}}>
                {this.ListIconfirst(rowData)}
             </View>
             <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',alignItems:alignItems}}>
               <Text style={{color:'#595c5d'}}>{(rowData.name == 'Logout' ? (this.state.user != null ? rowData.name : 'Login') : rowData.name)}</Text>
             </View>
-            <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',}}>
+            <View style={{height:50,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',backgroundColor:'white'}}>
              {this.getDevVersion(rowData)}
             </View>
           </TouchableOpacity>
@@ -417,11 +417,10 @@ class Setting extends Component {
 
       render() {
          return (
-              <View style={{height:deviceHeight,width:deviceWidth}}>
+              <View style={{height:deviceHeight-styleConfig.tabHeight,width:deviceWidth}}>
                  <NavBar title={'Settings'}/>      
-
-                <ListView
-                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#e2e5e6',top:5,}}
+               <ListView
+                style={{height:deviceHeight-styleConfig.tabHeight,width:deviceWidth,backgroundColor:'white',top:5,}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
                 dataSource={this.state.SettingTabs}

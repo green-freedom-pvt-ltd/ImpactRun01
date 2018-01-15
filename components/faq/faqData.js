@@ -13,6 +13,7 @@ import {
   NetInfo,
   AsyncStorage,
   RefreshControl,
+  Keyboard,
 } from 'react-native';
 import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
@@ -64,13 +65,18 @@ class Faqdata extends Component {
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
+              if(this.props.user){
                this.SubmitFaq();
+             }else{
+               AlertIOS.alert("Failed","Please Login To submit your question.");
+             }
             }else{
               AlertIOS.alert("Network error","There is some problem connecting to internet");
             }  
           }
         );
       }
+      
 
      
 
@@ -137,9 +143,13 @@ class Faqdata extends Component {
           })
           .then((response) => response.json())
           .then((response) => { 
+            console.log('response',response);
             AlertIOS.alert('Thank you for submitting your question');
+            Keyboard.dismiss(0);
+            this.navigateTOhome();
           })    
           .catch((err) => {
+            console.log('err',err);
             AlertIOS.alert('some error submitting question');
           })
 
@@ -179,8 +189,8 @@ class Faqdata extends Component {
           return this.renderLoadingView();
         }
         return (
-          <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{height:deviceHeight-114,width:deviceWidth}}>
+          <View style={{height:deviceHeight,width:deviceWidth,top:10}}>
+            <View style={{height:deviceHeight-styleConfig.tabHeight-20,width:deviceWidth}}>
               <ListView
                 refreshControl={
                   <RefreshControl
@@ -197,6 +207,7 @@ class Faqdata extends Component {
                   ref={component => this._textInput = component} 
                   style={styles.textEdit}
                   onChangeText={(moreText) => this.setState({moreText})}
+                  onSubmitEditing={Keyboard.dismiss}
                   placeholder="If you have any question ask us!"/>
                 </View>
                 <TouchableOpacity onPress={() => this.postfaqDataifInternet()} style={styles.submitFaqbtn}>
@@ -213,7 +224,7 @@ class Faqdata extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height:deviceHeight-164,
+    height:deviceHeight-styleConfig.tabHeight-20,
     width:deviceWidth,
     backgroundColor: '#f2f2f2',
   },

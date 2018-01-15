@@ -23,10 +23,11 @@ import apis from '../../components/apis';
 import styleConfig from '../../components/styleConfig';
 import ProfileForm from '../profile/profileForm.js';
 import EventEmitter from 'EventEmitter';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var REQUEST_URL = apis.causeListapi;
-// var Analytics = require('react-native-firebase-analytics');
 var base64Icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABICAYAAACqT5alAAAABGdBTUEAALGPC/xhBQAABOFJREFUeAHtmlmIFEcYx2dUxDt4YTSieCAqHkgkJARU9EFFgygeICIi+qCgQRHFh4CQhzwsgSiJeGD0yQNR8SDg8WBWvFZNRFkkEW/BCKsuisQcuvl9Zqbt6emq6aquaWd2+4P/dPVX31lfV3X1dGcyhtTU1HQdVAotNgw/08pUodrl04SrvYKl4k8rXGqEqr0/y3K7hSQ+NEhkIrKdDeTLKforxu8bONguCd9CYaCBUjWLrkzncDWXL0rs76PCLwhsCtgcJUDXMu8j4Z3ZbPY4iawHL10nVMpeG43AVvoehPSvgNcrhB+VJXYzJP2cBXMPzSVRFUPkDsCTlTpIC2AMDTLfnssqDcLoszAFBOM8PNT6bWJrbJhjA95Cv718G/3DChsrkr6k5Z7vEVW+zMkvHiOBhlzSTQo/WQU/CvsZQrvBY/AEPM0df+YYpNkwhoFuoHsOYzlOBbakKuQbSbgBDAqx3DOEF5W1ieptiCKM3B3kBB5xOUrAjcB2R9fDM1bYaBDDjwp53lnoHPZ69Y2FBD1AL6LtXU2vVbL47YDuaIX1R5LwNUXnEpRtV2NJ9iL6RoOGfGvwPbo1ipiisFch1D5E8DW8+gwOPgYqOhRURNBklf4T+XlBG2HnyHUGPwETKlilURwB/lIYqPX8IvCbQkjYx4D3NEXbJGHRfwPGec4UDWTEjyl5CaM4FzRoDCwT1/mNx1e09ylimQa/HkOy6l4CXRRyKras9vdUnT7+Q187avMT4uqK8BdgkkZJFsUdXj9K8phYC8pBUZKVqTW/HM5zNmflk5VFS7Z5ci+eA2xGWUzo6N3cyUkRxFDQLqBUJBfotz2tIb+DocoEMQo8BC5pad4ZRjuCb8G/4CaYmO+TI+e3gUv6EWNvi+r3U9BGoDc459DrzFwy07F5L8TuTniyw5KE5Vbmgv7GyJqCxHQnCMucXgDugrgkK+eFEkZE5kwJmSjdckfYDwar8pMVVEkoSv+nYAYYDvqAIcBqF4Sea5LVVx5hZe2RNeAw8/UPju6IQVgHKoH+IYiOppnpJ3S4tbPh7MS5V6mm8T8mNgnLM6yxozIMx2kbm8YJM6qvcLTXxpljnV029owTzjnZZuPMoc45Br7exp5Vwjirw9kJG4eOdL52ZCe6GVbIYUBu8EnTkehRFktaVVjMUOUbHL4pNllWjvxX9mVZPeiMU9pW4GhCJX6Nn8m6eBLpI4gPQF2Zk5Yt4/JEEorihGA6gVNlSlp2VPImobKIoNqCGiCXniu6g6HxlZVpIBoC/BxcBXFI/oj7AVTKQ0ogy8ApgcrjpTz/ngYmFX+C/EbQN2Cyek4JvidYBF4BFcn8HwdaV09mJSIlmUZVtvA3lFB31m298XAWQcKG0oQTHvDE3aUVTnzIE3aYVjjhAU/cXYurcBvXQ8wmQl6nyvvg4GvVthpfI9Gb7+uXl3u/8yfDFR+v8poE3Re4fBn3XeVl6YuIZOXx0DV95HMRu+l6DvePHVGxgX7FLHuO64TtI0lIs8UlrH1dWmrQmawTkFnrkxtD2/vix8eP0zyPsnyVJ9TIyu1fzf/nGvzGvS31xlecbyKjhOr/uO1xFAWdTIu7pNOEdZdDc+hLK9wcqqjLIa2wbnSaQ19a4eZQRV0OcXda8tXbSZ0Dx33yBUBK6QhoRuA/Om5HY4SRRjAAAAAASUVORK5CYII=";
 var settingicon = 'data:image/png;base64,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'
 var Profileicon = 'data:image/png;base64,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';
@@ -39,12 +40,17 @@ import Leaderboard from '../leaderboard/leaderBoard';
 import Faq from '../faq/faq';
 import Helpcenter from '../Helpcenter/helpcenter';
 import Setting from '../settings/setting';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Lodingscreen from '../LodingScreen';
 import MessageCenter from '../feed/messageCenter';
 import ImpactLeague from '../ImpactLeague/ImpactLeagueHome';
 import HelpCenter from '../Helpcenter/helpcenter';
 import getLocalData from '../getLocalData.js';
+import fetchDatafromApi from '../getDataFromApi.js';
+import setLocalData from '../setLocalData.js';
+import postUnsyncRun from '../postUnsyncRun.js';
+import fetchRundata from '../fetchRundata.js';
+import fetchCauseData from '../fetchCauseData.js';
 var pastRunSyncTime = [];
 const CleverTap = require('clevertap-react-native');
 AsyncStorage.getItem('pastRunSyncTime', (err, result) => {
@@ -65,31 +71,30 @@ class Tabs extends Component {
             super(props);       
             this.state = {
                 selectedTab: 'welcome',
-                notifCount: 1,
-                myFeedStoredCount: 0,
-                presses: 0,
-                feedCount: 0,
                 loaded: false,
                 myCusesDataExist: null,
                 user: {},
                 open: false,
-                userSignup: false,
-                countCampaign: 0,
-                indexcause:-1,
                 overall_impact:'',
                 isFetchingRuns:false,
                 NetworkResponcePostRun:null,
                 isLodaingCause:false,
+                latestaRunVersion:0,
+                dataCauseNum:null,
             };
             this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
             this.getUserData = this.getUserData.bind(this);
-            this.render = this.render.bind(this);
-            this.ChangeCampaignCount = this.ChangeCampaignCount.bind(this);
-            this.changePosition = this.changePosition.bind(this);
         }
         
         componentDidMount() {
-            this.getUserData(); 
+            this.getUserData();
+            if (this.props.dataCauseNum) {
+                console.log('this.prop.dataCauseNum',this.props.dataCauseNum);
+                this.setState({
+                    dataCauseNum:this.props.dataCauseNum,
+                    isLodaingCause:true,
+                })
+            }; 
         }
 
         getUserData() {
@@ -99,7 +104,9 @@ class Tabs extends Component {
                     user: JSON.parse(user),
                     iconImpactleague:(user!= null)?{uri: base64Icon, scale: 6}:{},
                 })
-                this.fetchCauseDataonInternet();
+                if (this.state.dataCauseNum === null) {
+                   this.fetchCauseDataonInternet();
+                };
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
@@ -120,151 +127,19 @@ class Tabs extends Component {
         syncCallRunhistory(){
             NetInfo.isConnected.fetch().then((isConnected) => {
                 if (isConnected) {
-                    this.fetchLocalRunData();
-                    getLocalData.getData('runversion')
-                    .then((runversion)=>{
-                        if (runversion != null){
-                            this.setState({
-                              runversion:JSON.parse(runversion).runversion,
-                            })
-                            this.fetchRunhistoryupdataData();
-                        }else{
-                            this.setState({
-                                runversion:0,
-                            })
-                            this.fetchRunhistoryupdataData();
-                        }
-                    })        
+                    this.postRunData();                     
                 }
             })
         }
 
 
-        fetchLocalRunData(){
-            AsyncStorage.getItem('UnsyncedData', (err, result) => {
-                var rundata = JSON.parse(result); 
-                if (rundata != null && rundata != [] ) {
-                    this.setState({
-                      runUnsynceddata:rundata,
-                    })
-                    rundata.map((result,i)=>{
-                        if(this.state.user != null){
-                           this.postPastRun(result);
-                        }
-                    })
-                }else{
-                    console.log('someerror');
-                }
-            })     
+        postRunData(){
+            postUnsyncRun.fetchLocalRunData(this.state.user).
+            then((runData)=>{
+               console.log('pastrunData',runData);
+            })    
         }
 
-
-        fetchRunhistoryupdataData(){
-            getLocalData.getData('fetchRunhistoryData')
-            .then((fetchRunhistoryData)=>{
-                var runArray = (JSON.parse(fetchRunhistoryData) != null)?JSON.parse(fetchRunhistoryData):[];
-                this.setState({
-                    isFetchingRuns:true,
-                })
-                var _this = this;
-                var mergerowData = [];
-                var token = this.state.user.auth_token;
-                var runversionfetch =this.state.runversion;
-                var url ='http://dev.impactrun.com/api/runs/'+'?client_version='+runversionfetch;
-                fetch(url,{
-                  method: "GET",
-                  headers: {
-                    'Authorization':"Bearer "+ token,
-                    'Content-Type':'application/x-www-form-urlencoded',
-                  }
-                })
-                .then( response => response.json())
-                .then( jsonData => { 
-                    if(jsonData.count > 0 ){
-                        console.log('jsonData',jsonData.results);
-                        var epochtime = jsonData.results[jsonData.results.length-1].version;                  
-                        let responceversion = {
-                            runversion:epochtime
-                        }
-                        let keys = ['runversion','pastRunSyncTime'];
-                        AsyncStorage.multiRemove(keys, (err) => {
-                            AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                                _this.setState({
-                                   runversion:responceversion.runversion,
-                                })
-                            });
-                        });
-                        var newDate = new Date();
-                        var pastRunSyncTimeepoch = newDate.getTime()/1000
-                        var pastRunSyncepochtime = parseFloat(pastRunSyncTimeepoch).toFixed(0);
-                        var setpostPastRunTime = parseInt(pastRunSyncepochtime)+30;
-                        AsyncStorage.setItem("pastRunSyncTime",JSON.stringify(setpostPastRunTime),()=>{
-                        });               
-                        var runversion = jsonData.results;
-                        var array = [];
-                        var itemsProcessed = 0;
-                        var _this = this;
-                        runversion.forEach(function(item) {
-                            itemsProcessed ++ ;
-                            var newRunAddedFrombackend = [];         
-                            var objIndex = runArray.findIndex(obj => obj.start_time == item.start_time);
-                            if (objIndex === -1) {
-                                array.push(item);
-                            }
-                            runArray[objIndex] = item;
-                            if (itemsProcessed === jsonData.results.length) {
-                                // if (jsonData.count > 5) {                      
-                                let fetchRunhistoryData = array.concat(runArray);
-                                AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-                                    if (jsonData.next != null) {
-                                    var nextpage = jsonData.next
-                                    _this.nextPage(nextpage,runArray);
-                                   }else{
-                                    _this.setState({
-                                     isFetchingRuns:false,
-                                    })
-                                   }
-                                })
-
-                            };
-                        })
-                           
-                    }else{
-                        var _this = this;
-                        var newDate = new Date();
-                        var convertepoch = newDate.getTime()/1000
-                        var epochtime = parseFloat(convertepoch).toFixed(0);
-                        let responceversion = {
-                          runversion:epochtime
-                        }
-                        let keys = ['runversion','pastRunSyncepochtime'];
-                        AsyncStorage.multiRemove(keys, (err) => {
-                            AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                                _this.setState({
-                                   runversion:responceversion.runversion,
-                                })
-                                var newDate = new Date();
-                                var pastRunSyncTimeepoch = newDate.getTime()/1000
-                                var pastRunSyncepochtime = parseFloat(parseInt(pastRunSyncTimeepoch)+30).toFixed(0);
-                                AsyncStorage.setItem("pastRunSyncTime",JSON.stringify(pastRunSyncepochtime),()=>{
-                                });
-                            });
-                        });                   
-                        _this.setState({
-                           refreshing:false,
-                        })
-                    }           
-                })
-                .catch(function(err) {
-                    _this.setState({
-                        refreshing:false,
-                        isFetchingRuns:false,
-                    })
-                    console.log('err123',err);
-                    return err;
-                })  
-            })   
-        }
 
         componentWillMount() { 
            
@@ -289,7 +164,6 @@ class Tabs extends Component {
                     isConnected:isConnected
                 })
                 if (isConnected) {
-                    this.fetchData();
                     this.getCauseDataEvery300Sec();
                 }else{
                    this.getCause();
@@ -301,93 +175,37 @@ class Tabs extends Component {
         fetchData(dataValue) {  
             // Adding token for viewing causes via employee module pn 
             if (this.state.user) {
-
                 var token = this.state.user.auth_token;
                 var auth_token = "Bearer " + token;
-                this.getCauseFromApi(auth_token)
+                fetchCauseData.getCauseFromApi(auth_token)
+                .then((causeNumber)=>{
+                    this.setState({
+                        dataCauseNum:causeNumber,
+                        isLodaingCause:true,
+                    })
+                    console.log('causeFetchedSuccess',causeNumber);
+                })
             }else{
                 var auth_token = '';
-                this.getCauseFromApi(auth_token);
+                fetchCauseData.getCauseFromApi(auth_token)
+                .then((cause)=>{
+                    this.setState({
+                        dataCauseNum:cause,
+                        isLodaingCause:true,
+                    })
+                    console.log('causeFetchedSuccess',cause);
+                })
             }            
         }
 
 
-        getCauseFromApi(auth_token){
-            fetch(REQUEST_URL,{
-                method: "GET",
-                headers: {  
-                    'Authorization':auth_token,
-                    'Content-Type':'application/json',
-                }
-            })
-            .then((response)=> response.json())
-            .then((causes) => {
-                var causes = causes;
-                let causesData = []
-                let newData = []
-                var itemsProcessed = 0;
-                causes.results.forEach((item, i) => {                    
-                    itemsProcessed++;
-                    if (item.is_active || item.is_completed) {
-                        this.state.indexcause = this.state.indexcause + 1
-                        causesData.push(['causes' + this.state.indexcause, JSON.stringify(item)])
-                        newData.push('causes' + this.state.indexcause);
-                    };
+        
 
-                    if(itemsProcessed === causes.count) {
-                        this.AfterFetchcause(newData,causesData,causes);
-                    }
-                })                                                 
-            })
-            .catch((err)=>{
-                console.log("errorcauseapi ",err)
-                if (err != null) {
-                    this.getCause();
-                };
-            })
-        }
-
-        AfterFetchcause(newData,causesData,causes){    
-            this.setState({
-                myCauseNum: newData,
-                exchange_rates:causes.exchange_rates,
-                overall_impact:causes.overall_impact,
-
-            })
-            let myCauseNum = this.state.myCauseNum;
-            AsyncStorage.removeItem('CauseNumber',(err) => {
-            });
-            AsyncStorage.getItem('overall_impact',(err,result)=>{
-                AsyncStorage.removeItem('oldoverall_impact',(err) => {
-                });
-                this.setState({
-                    oldoverall_impact:result,
-                })
-                AsyncStorage.setItem('oldoverall_impact',JSON.stringify(this.state.oldoverall_impact));
-            })
-            AsyncStorage.setItem('exchangeRates',JSON.stringify(this.state.exchange_rates));
-            AsyncStorage.setItem('overall_impact',JSON.stringify(this.state.overall_impact));
-            AsyncStorage.setItem('CauseNumber',JSON.stringify(myCauseNum));        
-            var newDate = new Date();
-            var convertepoch = newDate.getTime()/1000
-            var epochtime = parseFloat(convertepoch).toFixed(0);
-            AsyncStorage.removeItem('causeFeatchVersion',(err) => {
-            });
-            AsyncStorage.setItem('causeFeatchVersion',JSON.stringify(epochtime));
-            AsyncStorage.getItem('CauseNumber', (err, result) => {
-                this.setState({
-                  dataCauseNum:JSON.parse(result),
-                  isLodaingCause:true,
-                })
-            })          
-            AsyncStorage.multiRemove(newData, (err) => {
-            })
-            AsyncStorage.multiSet(causesData, (err) => {
-            })
-        }
+        
 
         getCauseDataEvery300Sec(){
-            AsyncStorage.getItem('causeFeatchVersion', (err, result) => {
+            getLocalData.getData('causeFeatchVersion')
+            .then((result)=>{
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
                 var epochtime = parseFloat(convertepoch).toFixed(0);
@@ -395,23 +213,17 @@ class Tabs extends Component {
                     this.setState({
                       causeFeatchVersion:JSON.parse(result),
                     })        
-                    var fetchversion = parseInt(this.state.causeFeatchVersion)+(300);
+                    var fetchversion = parseInt(this.state.causeFeatchVersion)+(30);
                     if (fetchversion < epochtime) {
-                        NetInfo.isConnected.fetch().then((isConnected) => {
-                            if (isConnected) {
-                              this.fetchData();
-                            };
-                        })
+                            this.fetchData();
                     }else{
+                        console.log('leaked',fetchversion,epochtime);
                         this.getCause();
                     }
                 }
                 else{
-                    NetInfo.isConnected.fetch().then((isConnected) => {
-                       if (isConnected) {
-                        this.fetchData();
-                       };
-                    })
+                    this.fetchData();
+                       
                 }
             })
         }
@@ -419,28 +231,14 @@ class Tabs extends Component {
 
 
         getCause(){
-            AsyncStorage.getItem('CauseNumber', (err, result) => {
-                this.setState({
-                  dataCauseNum:JSON.parse(result),
-                })
-                if (this.state.dataCauseNum != null ) {
-                    try {
-                        AsyncStorage.multiGet(this.state.dataCauseNum, (err, stores) => {
-                            var _this = this
-                            stores.map((item) => {
-                                let key = item[0];
-                                let val = JSON.parse(item[1]);
-                                this.setState({
-                                    myCusesDataExist: val,
-                                    isLodaingCause:true,
-                                })
-
-                             
-                            })
-                        });
-                    }catch (err) {
-                        console.log(err)
-                    }
+            getLocalData.getData('CauseNumber')
+            .then((result)=>{  
+                if (result != null ) {
+                    console.log('this.state.dataCauseNum',result)
+                    this.setState({
+                       dataCauseNum:JSON.parse(result),
+                       isLodaingCause:true,
+                    })
                 }else{
                     this.fetchCauseDataonInternet();
                 }
@@ -453,145 +251,26 @@ class Tabs extends Component {
                 'change',
                 this._handleConnectivityChange
             );
-        }
-
-        nextPage(nextpage){
-            AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-            var runArray = (JSON.parse(result) != null)?JSON.parse(result):[];   
-            var _this =this;
-            var token = this.state.user.auth_token;
-            var url = nextpage;
-            fetch(url,{
-                method: "GET",
-                headers: {
-                    'Authorization':"Bearer "+ token,
-                    'Content-Type':'application/x-www-form-urlencoded',
-                }
-            })
-            .then( response => response.json() )
-            .then( jsonData => {
-            var nextpagesec = jsonData.next;  
-            var itemsProcessed = 0;
-            var runversion = jsonData.results;
-            var array = [];
-            var _this = this;
-            runversion.forEach(function(item) {
-                itemsProcessed++;
-                var newRunAddedFrombackend = [];                
-                var objIndex = runArray.findIndex(obj => obj.start_time == item.start_time);
-                if (objIndex === -1) {
-                  array.push(item);
-                }
-                runArray[objIndex] = item;
-                if (itemsProcessed === jsonData.results.length) {
-                    var epochtime = jsonData.results[jsonData.results.length-1].version;
-                      let responceversion = {
-                        runversion:epochtime
-                      }
-                      let keys = ['runversion'];
-                      AsyncStorage.multiRemove(keys, (err) => {
-                        AsyncStorage.setItem("runversion",JSON.stringify(responceversion),()=>{
-                          _this.setState({
-                             runversion:responceversion.runversion,
-                           })
-                        });
-                      });
-                    let fetchRunhistoryData = array.concat(runArray);
-                    AsyncStorage.setItem('fetchRunhistoryData', JSON.stringify(fetchRunhistoryData), () => {
-                         _this.LoadMoverRunView(nextpagesec);
-                    })
-                   
-                }
-            })        
-            })
-            .catch( error => console.log('Error fetching: ' + error) );
-            })
-       
-        }
-
-
-
-
-        LoadMoverRunView(nextpagesec){
-            if (nextpagesec != null) {
-                this.nextPage(nextpagesec);
-            };
-        }
+        }    
         
 
         handleNetworkErrors(response){
+            console.log('response',response);
             this.setState({
               NetworkResponcePostRun:response.status,
               isRunResponseOk:response.ok,
             })
-            return response.json();
-        }
-
-
-        postPastRun(result){
-            var _this = this;
-            let tokenparse = this.state.user.auth_token;
-            let RunData = result; 
-            fetch(apis.runApi, {
-                method: "POST",
-                headers: {  
-                  'Authorization':"Bearer "+ tokenparse,
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',    
-                },
-                body:JSON.stringify({
-                    cause_run_title:RunData.cause_run_title,
-                    user_id:this.state.user.user_id,
-                    start_time:RunData.start_time,
-                    end_time:RunData.end_time,
-                    distance:RunData.distance,
-                    peak_speed: 1,
-                    avg_speed:RunData.avg_speed,
-                    run_amount:RunData.run_amount,
-                    run_duration:RunData.run_duration,
-                    is_flag:false,
-                    calories_burnt:RunData.calories_burnt,
-                    start_location_lat:RunData.start_location_lat,
-                    start_location_long:RunData.start_location_long,
-                    end_location_lat:RunData.end_location_lat,
-                    end_location_long:RunData.end_location_long,
-                    no_of_steps:RunData.no_of_steps,
-                    is_ios:RunData.is_ios,
-                    num_spikes:RunData.num_spikes,
-                    team_id:RunData.team_id,
-                    client_run_id:RunData.client_run_id,
+            if (response.ok == true) {
+                let newDate = new Date();
+                let convertepoch = newDate.getTime()/1000
+                let epochtime = parseFloat(convertepoch).toFixed(0);
+                this.setState({
+                  latestaRunVersion:epochtime,
                 })
-            })
-            .then(_this.handleNetworkErrors.bind(_this))
-            .then((userRunData) => {
-               
-                CleverTap.recordEvent('ON_RUN_SYNC',{
-                    'upload_result':'success',
-                    'client_run_id':userRunData.client_run_id,
-                    'http_status':this.state.NetworkResponcePostRun,
-                }); 
-                var remvedfetcheddata = this.state.runUnsynceddata
-                var listToremove =[];
-                listToremove.push(userRunData.start_time);
-                var removeIndex = remvedfetcheddata.map(function(item) { return item.start_time; }).indexOf(userRunData.start_time); 
-                remvedfetcheddata.splice(removeIndex, 1);   
-                if (remvedfetcheddata != null) {
-                    AsyncStorage.setItem('UnsyncedData', JSON.stringify(remvedfetcheddata), () => {
-                    });
-                }else{
-                    AsyncStorage.setItem('UnsyncedData', JSON.stringify([]), () => {
-                    });
-                }           
-            }).catch((error)=>{
-                CleverTap.recordEvent('ON_RUN_SYNC',{
-                    'upload_result':'failed',
-                    'client_run_id':RunData.client_run_id,
-                    'message_from_server':error,
-                    'http_status':this.state.NetworkResponcePostRun,
-                });
-            })
-        }   
-      
+            };
+            return response.json();
+        }  
+
      
         handleFirstConnectivityChange(isConnected) {
             this.setState({
@@ -605,33 +284,11 @@ class Tabs extends Component {
             }      
         }
    
-        handleNetworkErrors(response){
-            return response.json();
-        }
-
-        
-        ChangeCampaignCount() {
-            this.setState({
-                countCampaign: 1,
-            })
-        }
-
-        changePosition(){
-            this.setState({
-               open: false,
-            })
-        }
-
         
         loadingScreen(){
             return(
                 <Lodingscreen/>
             )
-        }
-
-
-        handleSaveButton() { 
-            rightButtonHandler.emitEvent('saveButtonPressed'); 
         }
 
         navigateToProfileForm() {
@@ -664,107 +321,34 @@ class Tabs extends Component {
 
         render() {
             if (this.state.isLodaingCause) {
+             
                 return (
-                <View style={{flex:1}}>     
-                  <TabBarIOS 
-                    style={{height:100,padding:10}}
-                    unselectedTintColor="grey"
-                    tintColor={styleConfig.bright_blue}
-                    barTintColor="white" 
-                    selectedTab={this.state.selectedTab} 
-                    navigator={this.props.navigator}>
-
-                    <TabBarIOS.Item
-                      selected={this.state.selectedTab === 'settings'}
-                      icon={{uri: settingicon, scale: 5.5}}
-                      title="Settings"
-                      onPress={() => {
-                          this.setState({
-                              selectedTab: 'settings',
-                          });
-                      }}>
-                    <Setting navigator={this.props.navigator} />
-                    </TabBarIOS.Item>
-                    <TabBarIOS.Item
-                        selected={this.state.selectedTab === 'profile'}
-                        title="Me"
-                        icon={{uri: Profileicon, scale: 5}}
-                        onPress={() => {
-                            this.setState({
-                                selectedTab: 'profile',
-                            });
-                    }}>
-                    <NavigatorIOS
-                        ref="nav"
-                        translucent={false}
-                        navigationBarHidden={false}
-                        style={{flex:1}}
-                        tintColor='black'
-                        titleTextColor='black'
-                        shadowHidden={false}
-                        barTintColor='white'
-                        initialRoute={{
-                        showTabBar: true,
-                        rightButtonTitle: (this.state.user)?'edit':'',
-                        onRightButtonPress: () => this.navigateToProfileForm(),
-                        title:'Profile',
-                        component:Profile,
-                        passProps:{user:this.state.user,getUserData:this.getUserData,isfetchingRun:this.state.isFetchingRuns}
-                    }}/>               
-                    </TabBarIOS.Item>                   
-                    <TabBarIOS.Item
-                      selected={this.state.selectedTab === 'welcome'}
-                      title="Home"
-                      icon={{uri: RunIcon, scale: 5}}
-                      onPress={() => {
-                      this.setState({
-                          selectedTab: 'welcome',
-                      });
-                    }}>
-                    <View>
-                       <Welcome my_currency = {this.props.my_currency} myCauseCount={this.props.dataCauseCount}  user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
-                    </View>
-                    </TabBarIOS.Item>
-
-                    <TabBarIOS.Item
-                        selected={this.state.selectedTab === 'Leaderboard'}
-                        title="Leaderboard"
-                        icon={{uri: GroupImage, scale: 3.5}}
-                        onPress={() => {
-                            this.setState({
-                                selectedTab: 'Leaderboard',
-                            });
-                        }}>
-                      <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
-                    </TabBarIOS.Item>
-                    <TabBarIOS.Item
-                        selected={this.state.selectedTab === 'help'}
-                        title="Help"
-                        icon={{uri: FaqImage, scale: 5}}
-                        onPress={() => {
-
-                            this.setState({
-                                selectedTab: 'help',
-                                myFeedStoredCount:this.state.FeedCount
-                            });
-                      }}>
-                     <NavigatorIOS
-                        ref="Help"
-                        translucent={false}
-                        navigationBarHidden={false}
-                        style={{flex:1}}
-                        tintColor='black'
-                        titleTextColor='black'
-                        shadowHidden={false}
-                        barTintColor={'white'}
-                        initialRoute={{
-                        showTabBar: true,
-                        title:'Help',
-                        component:HelpCenter,
-                        passProps:{user:this.state.user,getUserData:this.getUserData}
-                        }}/>                
-                        </TabBarIOS.Item>
-                  </TabBarIOS>
+                <View style={{flex:1}}>
+                   <View style={{flex:1}}> 
+                   {this.returnCurrentTabUi()}
+                   </View>      
+                   <View style={{position:'absolute',bottom:0,height:styleConfig.tabHeight,width:deviceWidth,flexDirection:'row',borderTopWidth:1,borderTopColor:'#e6e6e6',backgroundColor:'white'}}>
+                    <TouchableOpacity onPress={()=> this.changeTab('help')} style={styles.tabBtn}>
+                        <Icon name = "help" style={[styles.tabIcon,{color:(this.state.selectedTab === 'help')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'help')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
+                        <Text style = {{color:(this.state.selectedTab === 'help')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'help')?responsiveFontSize(1.5):responsiveFontSize(1.2)}}>Help</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=> this.changeTab('profile')} style={styles.tabBtn}>
+                       <Icon name = "person" style={[styles.tabIcon,{color:(this.state.selectedTab === 'profile')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'profile')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'profile')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'profile')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Me</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=> this.changeTab('welcome')} style={styles.tabBtn}>
+                       <Icon name ={'view-carousel'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'welcome')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'welcome')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'welcome')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'welcome')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Home</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=> this.changeTab('Leaderboard')} style={styles.tabBtn}>
+                       <Icon name ={'equalizer'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Leaderboard</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=> this.changeTab('settings')} style={styles.tabBtn}>
+                       <Icon name ={'settings'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Settings</Text>
+                    </TouchableOpacity>
+                   </View>
                 </View>
               );
             }else{
@@ -773,6 +357,45 @@ class Tabs extends Component {
                 )
             }
 
+        }
+        
+
+        changeTab(tab){
+            this.setState({
+              selectedTab:tab,
+            
+            })
+        }
+
+        returnCurrentTabUi(){
+            if (this.state.selectedTab === 'help') {
+               return(
+
+                  <HelpCenter user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
+                )
+            } else if (this.state.selectedTab === 'profile') {
+                return(
+                  <Profile user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
+                )
+
+            }else if (this.state.selectedTab === 'welcome') {
+                return(
+                  <Welcome my_currency = {this.props.my_currency} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>
+                )
+
+            }else if (this.state.selectedTab === 'Leaderboard') {
+                return(
+                  <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
+                )
+
+            }else if (this.state.selectedTab === 'settings') {
+                return(
+                  <Setting navigator={this.props.navigator} />
+                )
+
+            }else{
+                return;
+            }
         }
 
 }
@@ -787,7 +410,127 @@ class Tabs extends Component {
             height: 50,
             width: 50,
         },
+        tabIcon:{
+            fontSize:responsiveFontSize(4),
+        },
+        tabBtn:{
+            flex:1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection:'column',
+
+        },
+        tabnameText:{
+            fontFamily:styleConfig.LatoRegular,
+        }
 
     })
 
 export default Tabs;
+
+
+
+
+
+
+
+
+// <TabBarIOS 
+//                     style={{height:100,padding:10}}
+//                     unselectedTintColor="grey"
+//                     tintColor={styleConfig.bright_blue}
+//                     barTintColor="white" 
+//                     selectedTab={this.state.selectedTab} 
+//                     navigator={this.props.navigator}>
+
+//                     <TabBarIOS.Item
+//                       selected={this.state.selectedTab === 'settings'}
+//                       icon={{uri: settingicon, scale: 5.5}}
+//                       title="Settings"
+//                       onPress={() => {
+//                           this.setState({
+//                               selectedTab: 'settings',
+//                           });
+//                       }}>
+//                     <Setting navigator={this.props.navigator} />
+//                     </TabBarIOS.Item>
+//                     <TabBarIOS.Item
+//                         selected={this.state.selectedTab === 'profile'}
+//                         title="Me"
+//                         icon={{uri: Profileicon, scale: 5}}
+//                         onPress={() => {
+//                             this.setState({
+//                                 selectedTab: 'profile',
+//                             });
+//                     }}>
+//                     <NavigatorIOS
+//                         ref="nav"
+//                         translucent={false}
+//                         navigationBarHidden={false}
+//                         style={{flex:1}}
+//                         tintColor='black'
+//                         titleTextColor='black'
+//                         shadowHidden={false}
+//                         barTintColor='white'
+//                         initialRoute={{
+//                         showTabBar: true,
+//                         rightButtonTitle: (this.state.user)?'edit':'',
+//                         onRightButtonPress: () => this.navigateToProfileForm(),
+//                         title:'Profile',
+//                         component:Profile,
+//                         passProps:{user:this.state.user,getUserData:this.getUserData,isfetchingRun:this.state.isFetchingRuns}
+//                     }}/>               
+//                     </TabBarIOS.Item>                   
+//                     <TabBarIOS.Item
+//                       selected={this.state.selectedTab === 'welcome'}
+//                       title="Home"
+//                       icon={{uri: RunIcon, scale: 5}}
+//                       onPress={() => {
+//                       this.setState({
+//                           selectedTab: 'welcome',
+//                       });
+//                     }}>
+//                     <View>
+//                        <Welcome my_currency = {this.props.my_currency} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>                    
+//                     </View>
+//                     </TabBarIOS.Item>
+
+//                     <TabBarIOS.Item
+//                         selected={this.state.selectedTab === 'Leaderboard'}
+//                         title="Leaderboard"
+//                         icon={{uri: GroupImage, scale: 3.5}}
+//                         onPress={() => {
+//                             this.setState({
+//                                 selectedTab: 'Leaderboard',
+//                             });
+//                         }}>
+//                       <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
+//                     </TabBarIOS.Item>
+//                     <TabBarIOS.Item
+//                         selected={this.state.selectedTab === 'help'}
+//                         title="Help"
+//                         icon={{uri: FaqImage, scale: 5}}
+//                         onPress={() => {
+
+//                             this.setState({
+//                                 selectedTab: 'help',
+//                                 myFeedStoredCount:this.state.FeedCount
+//                             });
+//                       }}>
+//                      <NavigatorIOS
+//                         ref="Help"
+//                         translucent={false}
+//                         navigationBarHidden={false}
+//                         style={{flex:1}}
+//                         tintColor='black'
+//                         titleTextColor='black'
+//                         shadowHidden={false}
+//                         barTintColor={'white'}
+//                         initialRoute={{
+//                         showTabBar: true,
+//                         title:'Help',
+//                         component:HelpCenter,
+//                         passProps:{user:this.state.user,getUserData:this.getUserData}
+//                         }}/>                
+//                         </TabBarIOS.Item>
+//                   </TabBarIOS>

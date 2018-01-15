@@ -129,7 +129,7 @@ class levelBarComponent extends Component {
     };
     const progressStyle = {
       backgroundColor: color,
-      height:styleConfig.barHeight,
+      height:this.props.height,
       borderRadius:10,
       width: innerWidth,
       transform: [{

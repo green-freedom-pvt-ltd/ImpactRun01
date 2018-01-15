@@ -16,7 +16,6 @@ import{
   } from 'react-native';
 import TimerMixin from 'react-timer-mixin';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import styleConfig from '../../components/styleConfig';
 import Home from './home.ios.js'
   const CleverTap = require('clevertap-react-native');
@@ -32,17 +31,19 @@ class LodingRunScreen extends Component {
       this.animatedValue2 = new Animated.Value(0)
       this.animatedValue3 = new Animated.Value(0)
       this.state = {
-        seconds: 5
+        seconds: 3
       };
     }
 
     componentDidMount() {
-      CleverTap.recordEvent('ON_LOAD_COUNTDOWN_SCREEN');
-        this.animate(); 
+      CleverTap.recordEvent('ON_LOAD_COUNTDOWN_SCREEN',{
+        'cause_id':this.props.data.pk,
+      });
+      this.animate(); 
       this.timeout = setTimeout(() => { 
         this.navigateToRunScreen();
-      },5000);
-      this.refs.circularProgress.performLinearAnimation(100, 5000);
+      },3000);
+     
       this.interval = setInterval(this.tick.bind(this), 1000);
     } 
 
@@ -74,7 +75,8 @@ class LodingRunScreen extends Component {
 }
 
     componentWillUnmount() {
-      clearInterval(this.interval);    
+      clearInterval(this.interval);
+      clearTimeout(this.timeout);  
     }
 
     tick() {
@@ -87,22 +89,14 @@ class LodingRunScreen extends Component {
 
       var cause = this.props.data;
       console.log('props data' + this.props.data.sponsors);
-      this.props.navigator.replace({
+      this.props.navigator.push({
         title: 'Gps',
         id:'runscreen',
-        index: 0,
         passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData,killRundata:this.props.killRundata},
         navigator: this.props.navigator,
       });
       clearTimeout(this.timeout);
-      
-      // this.props.navigator.replace({
-      //   title: 'Gps',
-      //   component:Home,
-      //   navigationBarHidden: true,
-      //   showTabBar: false,
-      //   passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData},
-      // });
+      clearInterval(this.interval);
     }
 
     onSkip(){
@@ -120,7 +114,7 @@ class LodingRunScreen extends Component {
       var _this = this;
         return (    
           <View class={styles.container}>
-            <TouchableOpacity style={[styles.overlay,{transform:[{scale:scaleText}]}]} onPress={()=> this.navigateToRunScreen()}>
+            <TouchableOpacity style={[styles.overlay,{transform:[{scale:scaleText}]}]}>
               <View style={styles.LoadingWrap}>
               <View style={styles.loadingFlex}>
                  <Image style={styles.sponsorLogo} source={{uri:data.sponsors[0].sponsor_logo}}></Image>
@@ -130,27 +124,12 @@ class LodingRunScreen extends Component {
                 </View>
                   <View style={styles.loadingFlex}>
                   <View style={styles.circleWrap}>
-                  <AnimatedCircularProgress
-                    ref='circularProgress'
-                    size={150}
-                    width={5}
-                    fill={100}
-                    prefill={0}
-                    tintColor={styleConfig.bright_blue}
-                    rotation={0}
-                    backgroundColor="#fafafa">
-                    {
-                      (fill) => (
-                        <View style={styles.secondWrap}>
-                        <Text style={styles.second}>{second}</Text>
-                        </View>
-                      )
-                    }
-                  </AnimatedCircularProgress>
+                    <View style={styles.secondWrap}>
+                      <Text style={styles.second}>{second}</Text>
+                    </View> 
                   </View>
                   </View>
                   <View style={styles.loadingFlex}>
-                  <Text style={styles.navigateToRunScreen} onPress={()=> this.onSkip()}>TAP TO START NOW</Text>
                   </View>
               </View>
             </TouchableOpacity>

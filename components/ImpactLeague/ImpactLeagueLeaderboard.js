@@ -25,6 +25,7 @@ import NavBar from '../navBarComponent';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 const CleverTap = require('clevertap-react-native');
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -42,7 +43,8 @@ class ImpactLeagueLeaderBoard extends Component {
           my_rate:1.0,
           my_currency:"INR",
           openTooltip:false,
-
+          rowID:0,
+          totalkms:0,
         };
         this.renderRow = this.renderRow.bind(this);
         this.renderRowTooltiplist = this.renderRowTooltiplist.bind(this);
@@ -65,6 +67,7 @@ class ImpactLeagueLeaderBoard extends Component {
       componentDidMount() {
           this.FetchDataifInternet();
           this.setState({
+            UserLeaguedata:this.props.user.user_id,
             teamname:this.props.team_name,
             Tooltiplist:this.state.Tooltiplist.cloneWithRows([{'title':'Help','functions':'help'},{'title':'Exit League','functions':'exitLeague',}]),
           })
@@ -140,6 +143,16 @@ class ImpactLeagueLeaderBoard extends Component {
      
       FetchLeaderBoardLocally(){
         AsyncStorage.getItem('ILleaderBoardData'+this.props.Team_id, (err, result) => {
+          result.forEach((item,i)=>{
+            if (item.user_id === this.props.user_id) {
+               var totalkms = (item.amount == null)?'0':item.amount;
+              this.setState({
+                  UserLeaguedata:item,
+                  rowID:i,
+                  totalkms:totalkms,
+              })
+            };
+          })
           var boardData = JSON.parse(result);        
           if (boardData != null) {
             this.setState({
@@ -191,7 +204,17 @@ class ImpactLeagueLeaderBoard extends Component {
             }
           })
           .then( response => response.json() )
-          .then( jsonData => {          
+          .then( jsonData => {
+          jsonData.results.forEach((item,i)=>{
+            if (item.user_id === this.props.user_id) {
+               var totalkms = (item.amount == null)?'0':item.amount;
+              this.setState({
+                  UserLeaguedata:item,
+                  rowID:i,
+                  totalkms:totalkms,
+              })
+            };
+          })
           this.setState({
             ImpactLeagueLeaderBoardData: this.state.ImpactLeagueLeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
@@ -245,10 +268,18 @@ class ImpactLeagueLeaderBoard extends Component {
             'width':25,
           }
         ];
+        if (this.props.user.user_id === rowData.user_id) {
+          this.setState({
+            UserLeaguedata:rowData,
+            rowID:rowID,
+            totalkms:totalkms,
+          })
+        };
         var textColor=(this.props.user.user_id === rowData.user_id)?'#fff':"#4a4a4a";
-        var backgroundColor = (this.props.user.user_id === rowData.user_id)?'#ffcd4d':'#fff';
+        var backgroundColor = (this.props.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:'#fff';
+        var position = (this.props.user.user_id === rowData.user_id)?'absolute':'relative';
         return (
-          <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
+          <View style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor,position:position}]}>
               <View style={style}>
                 <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:textColor,}}>{rowID} </Text> 
               </View> 
@@ -264,7 +295,7 @@ class ImpactLeagueLeaderBoard extends Component {
       leftIconRender(){
         return(
           <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'black',fontSize:35,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+              <Icon style={{color:'black',fontSize:responsiveFontSize(4),fontWeight:'bold',opacity:.80}}name={'ios-arrow-back'}></Icon>
             </TouchableOpacity>
         )
       }
@@ -278,8 +309,8 @@ class ImpactLeagueLeaderBoard extends Component {
       }
       rightIconRender(){
         return(
-            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',paddingBottom:10}} onPress={()=>this.exitLeaguepopu()} >
-              <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'md-more'}></Icon>
+            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end'}} onPress={()=>this.exitLeaguepopu()} >
+              <Icon style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={'md-more'}></Icon>
             </TouchableOpacity>
           )
       }
@@ -337,7 +368,35 @@ class ImpactLeagueLeaderBoard extends Component {
           return this.navigateTOhelpCenter();
         }
       } 
-
+      
+      userLeagueRow(){
+        let style = [
+          styles.row, 
+          {
+            'alignItems': 'center',
+            'justifyContent': 'center',
+            'alignItems': 'center',
+            'height':25,
+            'width':25,
+          }
+        ];
+        
+        var rowData = this.state.UserLeaguedata;
+        var textColor=(this.props.user.user_id === rowData.user_id)?'#fff':"#4a4a4a";
+        return(
+          <View style={[styles.cardLeaderBoard,{backgroundColor:styleConfig.light_sky_blue}]}>
+              <View style={style}>
+                <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:13,color:textColor,}}>{this.state.rowID} </Text> 
+              </View> 
+              <View>{this.socialthumb(rowData)}</View>       
+                <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
+                <View style={{justifyContent: 'center',alignItems: 'center',}}>
+                <Text style={[styles.txtSec,{color:textColor}]}>
+                <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(this.state.totalkms).toFixed(0) : parseFloat(this.state.totalkms/this.state.my_rate).toFixed(2))} </Text>
+              </View>
+          </View>
+        )
+      }
 
       render() {
         if (!this.state.loaded) {
@@ -347,7 +406,7 @@ class ImpactLeagueLeaderBoard extends Component {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
            <NavBar title={this.state.teamname} leftIcon={this.leftIconRender()} rightIcon = {this.rightIconRender()}/>
-            <View onPress={()=> this.exitLeaguepopu()} style={{backgroundColor:'white', height:deviceHeight-75,width:deviceWidth}}>
+            <View onPress={()=> this.exitLeaguepopu()} style={{top:10,backgroundColor:'white', height:deviceHeight-styleConfig.tabHeight-15,width:deviceWidth}}>
                <ListView 
                 refreshControl={
                 <RefreshControl
@@ -357,6 +416,7 @@ class ImpactLeagueLeaderBoard extends Component {
                 renderRow={this.renderRow}
                 style={styles.container}>
               </ListView>
+              {this.userLeagueRow()}
             </View> 
             {this.openTooltip()}
           </View>
@@ -374,9 +434,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection:'row',
     padding:10,
-    left:5,
-    borderRadius:5,
-    width:deviceWidth-10,
+    width:deviceWidth,
+    height:styleConfig.navBarHeight,
     borderBottomWidth:1,
     borderColor:'#CCC',
   },
@@ -384,22 +443,22 @@ const styles = StyleSheet.create({
     flex:1,
     color:'#4a4a4a',
     fontSize: styleConfig.fontSizerleaderBoardContent+2,
-    fontWeight:'600',
+    fontWeight:'800',
     textAlign: 'left',
     marginLeft:10,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily:styleConfig.LatoRegular,
   },
   txtSec:{
     color:'#4a4a4a',
     fontSize:styleConfig.fontSizerleaderBoardContent+2,
-    fontWeight:'400',
-    fontFamily: 'Montserrat-Regular',
+    fontWeight:'800',
+    fontFamily: styleConfig.LatoRegular,
   },
    thumb: {
-    height:styleConfig.navBarHeight-30,
-    width:styleConfig.navBarHeight-30,
-    borderRadius:(styleConfig.navBarHeight-30)/2,
-    backgroundColor:'#ffcd4d',
+    height:styleConfig.navBarHeight-10,
+    width:styleConfig.navBarHeight-10,
+    borderRadius:(styleConfig.navBarHeight-10)/2,
+    backgroundColor:styleConfig.light_sky_blue,
     marginBottom: 5,
      borderColor:'#ccc',
      borderWidth:2,
