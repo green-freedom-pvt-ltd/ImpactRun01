@@ -142,10 +142,10 @@ class UserProfile extends Component {
           <View>
           <View style={styles.userimagwrap}>
               <View style={styles.UserImageWrap}>
-              <View style={{height:responsiveHeight(10),width:responsiveHeight(10),borderRadius:responsiveHeight(10)/2}}>
-                {this.social_thumb(responsiveHeight(10))}
+                <View style={{height:responsiveHeight(10),width:responsiveHeight(10),borderRadius:responsiveHeight(10)/2}}>
+                  {this.social_thumb(responsiveHeight(10))}
                 </View>
-                </View>
+              </View>
               <View style={styles.barWrap}>
               <LevelBar height={responsiveHeight(.9375)} progressVal={this.props.progressVal} level = {this.props.level} prevKm = {this.props.prevKm} levelKm = {this.props.levelKm} userName={this.props.user.first_name} lastname={this.props.user.last_name} widthBar={responsiveWidth(70)} totalKm={this.props.totalKm}/>
             </View>
@@ -176,6 +176,7 @@ var styles = StyleSheet.create({
    justifyContent: 'center',
    alignItems: 'center',
    backgroundColor:'white',
+   left:responsiveWidth(3),
   },
   UserImage:{
     flex:1

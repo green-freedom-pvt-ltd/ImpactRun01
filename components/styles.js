@@ -76,10 +76,10 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius:30,
     shadowColor: '#000000',
-     shadowOpacity: 0.4,
-     shadowRadius: 4,
+     shadowOpacity: 0.1,
+     shadowRadius: 2,
      shadowOffset: {
-      height: 2,
+      height: 1,
      },
 
   },
@@ -93,9 +93,9 @@ var styles = StyleSheet.create({
     borderRadius:30,
     shadowColor: '#ccc',
      shadowOpacity: 0.1,
-     shadowRadius: 10,
+     shadowRadius: 1,
      shadowOffset: {
-      height: 2,
+      height: 1,
      },
   },
   menuTitle:{

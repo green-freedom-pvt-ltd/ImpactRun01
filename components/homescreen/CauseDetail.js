@@ -26,6 +26,8 @@ import ImageLoad from 'react-native-image-placeholder';
 const CleverTap = require('clevertap-react-native');
  import { takeSnapshot } from "react-native-view-shot";
   import Share, {ShareSheet, Button} from 'react-native-share';
+  import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 class CauseDetail extends Component {
     
 
@@ -199,13 +201,13 @@ class CauseDetail extends Component {
       if (data.is_completed) {
         return(
           <TouchableOpacity style={styles.btnBeginRun}  onPress = {()=> this.snapshot('captureScreenShot')}>
-              <Text style={styles.Btntext}>Tell Your Friends</Text>
+              <Text style={styles.Btntext}>TELL YOUR FRIENDS</Text>
           </TouchableOpacity>
         )
       }else{
         return(
           <TouchableOpacity style={styles.btnBeginRun} onPress={() => this.NavigateToRunScreen()}>
-            <Text style={styles.Btntext}>{'Let\'s Go'}</Text>
+            <Text style={styles.Btntext}>{'LET\'S GO'}</Text>
           </TouchableOpacity>
         )
       }
@@ -216,8 +218,8 @@ class CauseDetail extends Component {
       var data = this.props.data
         return (
               <View style={{position:'absolute',height:deviceHeight-114,width:deviceWidth,backgroundColor: '#fff'}}> 
-                <NavBar title = {'OVERVIEW'} leftIcon = {this.leftIconRender()}/>
-                  <View style={{height:deviceHeight-15,width:deviceWidth}} >
+                <NavBar title = {'Overview'} leftIcon = {this.leftIconRender()}/>
+                  <View style={{height:deviceHeight-styleConfig.navBarHeight-20,width:deviceWidth}} >
                     <ScrollView ref='captureScreenShot'>
                       <View style={styles.container}>
                      {this.DiscriptionImage(data)}
@@ -297,9 +299,9 @@ class CauseDetail extends Component {
     position: 'absolute', 
     left: 0, 
     right: 0, 
-    bottom:48,
+    bottom:0,
     width:deviceWidth,
-    height:60,
+    height:responsiveHeight(7.1875),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:'#00c1f2'
@@ -308,6 +310,7 @@ class CauseDetail extends Component {
      backgroundColor:'transparent',
      color:'white',
      fontSize:20,
+     fontWeight:'600',
      fontFamily:styleConfig.LatoRegular,
   },
   closebtn:{

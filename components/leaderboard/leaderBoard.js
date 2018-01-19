@@ -29,6 +29,7 @@ import{
   import ModalDropDown from './modelindex.js'
  var base64Icon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABICAYAAACqT5alAAAABGdBTUEAALGPC/xhBQAABOFJREFUeAHtmlmIFEcYx2dUxDt4YTSieCAqHkgkJARU9EFFgygeICIi+qCgQRHFh4CQhzwsgSiJeGD0yQNR8SDg8WBWvFZNRFkkEW/BCKsuisQcuvl9Zqbt6emq6aquaWd2+4P/dPVX31lfV3X1dGcyhtTU1HQdVAotNgw/08pUodrl04SrvYKl4k8rXGqEqr0/y3K7hSQ+NEhkIrKdDeTLKforxu8bONguCd9CYaCBUjWLrkzncDWXL0rs76PCLwhsCtgcJUDXMu8j4Z3ZbPY4iawHL10nVMpeG43AVvoehPSvgNcrhB+VJXYzJP2cBXMPzSVRFUPkDsCTlTpIC2AMDTLfnssqDcLoszAFBOM8PNT6bWJrbJhjA95Cv718G/3DChsrkr6k5Z7vEVW+zMkvHiOBhlzSTQo/WQU/CvsZQrvBY/AEPM0df+YYpNkwhoFuoHsOYzlOBbakKuQbSbgBDAqx3DOEF5W1ieptiCKM3B3kBB5xOUrAjcB2R9fDM1bYaBDDjwp53lnoHPZ69Y2FBD1AL6LtXU2vVbL47YDuaIX1R5LwNUXnEpRtV2NJ9iL6RoOGfGvwPbo1ipiisFch1D5E8DW8+gwOPgYqOhRURNBklf4T+XlBG2HnyHUGPwETKlilURwB/lIYqPX8IvCbQkjYx4D3NEXbJGHRfwPGec4UDWTEjyl5CaM4FzRoDCwT1/mNx1e09ylimQa/HkOy6l4CXRRyKras9vdUnT7+Q187avMT4uqK8BdgkkZJFsUdXj9K8phYC8pBUZKVqTW/HM5zNmflk5VFS7Z5ci+eA2xGWUzo6N3cyUkRxFDQLqBUJBfotz2tIb+DocoEMQo8BC5pad4ZRjuCb8G/4CaYmO+TI+e3gUv6EWNvi+r3U9BGoDc459DrzFwy07F5L8TuTniyw5KE5Vbmgv7GyJqCxHQnCMucXgDugrgkK+eFEkZE5kwJmSjdckfYDwar8pMVVEkoSv+nYAYYDvqAIcBqF4Sea5LVVx5hZe2RNeAw8/UPju6IQVgHKoH+IYiOppnpJ3S4tbPh7MS5V6mm8T8mNgnLM6yxozIMx2kbm8YJM6qvcLTXxpljnV029owTzjnZZuPMoc45Br7exp5Vwjirw9kJG4eOdL52ZCe6GVbIYUBu8EnTkehRFktaVVjMUOUbHL4pNllWjvxX9mVZPeiMU9pW4GhCJX6Nn8m6eBLpI4gPQF2Zk5Yt4/JEEorihGA6gVNlSlp2VPImobKIoNqCGiCXniu6g6HxlZVpIBoC/BxcBXFI/oj7AVTKQ0ogy8ApgcrjpTz/ngYmFX+C/EbQN2Cyek4JvidYBF4BFcn8HwdaV09mJSIlmUZVtvA3lFB31m298XAWQcKG0oQTHvDE3aUVTnzIE3aYVjjhAU/cXYurcBvXQ8wmQl6nyvvg4GvVthpfI9Gb7+uXl3u/8yfDFR+v8poE3Re4fBn3XeVl6YuIZOXx0DV95HMRu+l6DvePHVGxgX7FLHuO64TtI0lIs8UlrH1dWmrQmawTkFnrkxtD2/vix8eP0zyPsnyVJ9TIyu1fzf/nGvzGvS31xlecbyKjhOr/uO1xFAWdTIu7pNOEdZdDc+hLK9wcqqjLIa2wbnSaQ19a4eZQRV0OcXda8tXbSZ0Dx33yBUBK6QhoRuA/Om5HY4SRRjAAAAAASUVORK5CYII=";
   const CleverTap = require('clevertap-react-native');
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 var iphone5 = 568;
 var iphone5s = 568;
@@ -63,6 +64,7 @@ var iphone7Plus = 736;
         };
         this.renderRow = this.renderRow.bind(this);
         this.getUserData = this.getUserData.bind(this);
+        this.navigateToImpactLeague = this.navigateToImpactLeague.bind(this);
       }
 
 
@@ -160,24 +162,25 @@ var iphone7Plus = 736;
             'alignItems': 'center',
             'justifyContent': 'center',
             'alignItems': 'center',
+            'left':responsiveWidth(3),
           }
         ];
         return (
           <View  style={[styles.cardLeaderBoard,{backgroundColor:backgroundcolor,borderBottomWidth:this.borderBottomWidth()}]}>
            <View style={styles.flexbox1}>
             <View style={style}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:styleConfig.fontSizer4,color:textColor,}}>{rowData.ranking}</Text>
+              <Text style={{fontFamily: 'Montserrat-Bold',fontWeight:'800',fontSize:styleConfig.ListViewTitelText,color:textColor,}}>{rowData.ranking}</Text>
             </View>
            </View>
             <View style={styles.flexbox}>
             <Image style={styles.thumb} source={{uri:rowData.social_thumb}}></Image>
             </View>
             <View style={styles.flexbox2}>
-            <Text style={[styles.txt,{color:textColor}]}>{rowData.first_name} {rowData.last_name}</Text>
+            <Text style={[styles.txt,{color:textColor}]}>{this.capitalizeFirstLetter(rowData.first_name)} {rowData.last_name}</Text>
             </View >
             <View style={styles.flexbox3}>
             <Text style={[styles.txtSec,{color:textColor}]}>
-            <Icon style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) }</Text>
+            <Icon style={{color:textColor,fontSize:styleConfig.ListViewTitelText,fontWeight:'800'}}name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) }</Text>
             </View>
           </View>
         );
@@ -345,8 +348,13 @@ var iphone7Plus = 736;
         this.fetchLeaderBoardLocally(value);
       }
 
+      capitalizeFirstLetter (userName) {
+        return userName.charAt(0).toUpperCase() + userName.slice(1);
+       }
+
+
       renderLeaderboadScreen(dataleaderboad){
-        if (this.state.user != null || undefined) {
+        if (this.props.user != null || undefined) {
           if (this.state.fetched === true) {
         return (
           <View style={{height:deviceHeight,width:deviceWidth}}>
@@ -371,10 +379,16 @@ var iphone7Plus = 736;
      
         }else{
         return(
-          <View style={{justifyContent: 'center', alignItems: 'center', width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-150,}}>
-          <Text style={{fontFamily: 'Montserrat-Regular',bottom:50,fontSize:16,}}>Please Login To See Leaderboard</Text>
-          <LoginBtn getUserData = {this.getUserData} />
-          </View>
+          <View>
+            <View style = {{width:deviceWidth,justifyContent:'center',alignItems:'center'}}>
+            <Text style={{top:responsiveHeight(8),fontSize:responsiveFontSize(2.2),FontFamily:styleConfig.LatoRegular,fontWeight:'600',opacity:.80}}>Please login to see leaderboard.</Text>
+            </View>
+           <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
+
+           <LoginBtn getUserData={this.props.getUserData}/>
+           </View>
+           </View>
+
           )
         }
       }
@@ -382,8 +396,8 @@ var iphone7Plus = 736;
       renderImpactLeagueIcon(){
         if (this.props.user != null) {
         return(
-          <TouchableOpacity style={{flex:1,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',}} onPress={()=>this.navigateToImpactLeague()} >
-            <Icon style={{textAlign:'center',fontSize:26,opacity:.80}} name ={'trophy'}></Icon>
+          <TouchableOpacity style={{flex:1,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',paddingRight:responsiveWidth(6.1)}} onPress={()=>this.navigateToImpactLeague()} >
+            <Image style={{height:25,width:22}}source={require('../../images/cup.png')}></Image>
           </TouchableOpacity>
           );
          }else{
@@ -397,7 +411,7 @@ var iphone7Plus = 736;
         var dataleaderboad = this.state.LeaderBoardResult;
         return (
           <View>
-            <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()}/>      
+            <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/>      
             <View style= {styles.textlast7daysWrap}>
               <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
               </ModalDropDown>
@@ -431,7 +445,7 @@ var styles = StyleSheet.create({
   },
   last7dayText:{
     color:styleConfig.greyish_brown_two,
-    fontSize:15,
+    fontSize:responsiveFontSize(1.8),
     fontWeight:'400',
     fontFamily:styleConfig.FontFamily,
   },
@@ -451,12 +465,11 @@ var styles = StyleSheet.create({
 
 
   thumb: {
-    height:styleConfig.navBarHeight-10,
-    width:styleConfig.navBarHeight-10,
-    borderRadius:(styleConfig.navBarHeight-10)/2,
+    height:styleConfig.navBarHeight-20,
+    width:styleConfig.navBarHeight-20,
+    borderRadius:(styleConfig.navBarHeight-20)/2,
     backgroundColor:styleConfig.light_sky_blue,
-    borderColor:'#ccc',
-    borderWidth:2,
+    left:responsiveWidth(4),
   },
   separator: {
       height: 1,
@@ -465,28 +478,28 @@ var styles = StyleSheet.create({
   cardLeaderBoard:{
     alignItems: 'center',
     flexDirection:'row',
-    padding:5,
     width:deviceWidth,
+    height:styleConfig.ListViewHeight,
     borderColor:'#CCC',
   },
   txt: {
-    fontSize:styleConfig.fontSizerleaderBoardContent+2,
+    fontSize:styleConfig.ListViewTitelText,
     fontWeight:'800',
     textAlign: 'left',
-    marginLeft:10,
-    fontFamily: styleConfig.LatoRegular,
+    marginLeft:responsiveWidth(8),
+    fontFamily: styleConfig.MontSerratBold,
   },
   txtSec:{
    color:styleConfig.warm_grey_three,
-   fontSize:styleConfig.fontSizerleaderBoardContent+2,
+   fontSize:styleConfig.ListViewTitelText,
    fontWeight:'800',
-   fontFamily: styleConfig.LatoRegular,
+   fontFamily: styleConfig.MontSerratRegular,
   },
   txtSec2:{
    color:'black',
-   fontSize:styleConfig.fontSizerleaderBoardContent+2,
+   fontSize:styleConfig.ListViewTitelText,
    fontWeight:'800',
-   fontFamily: styleConfig.LatoRegular,
+   fontFamily: styleConfig.MontSerratRegular,
   },
   mycardLeaderBoard:{
     alignItems: 'center',
@@ -502,15 +515,15 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
   },
   flexbox3:{
-    height:50,
-    flex:1,
     alignItems: 'center',
     justifyContent: 'center',
+    right:responsiveWidth(5),
+    backgroundColor:'transparent',
 
   },
   flexbox2:{
     height:50,
-    width:deviceWidth-170,
+    width:deviceWidth,
     flex:-1,
     alignItems: 'flex-start',
     justifyContent: 'center',

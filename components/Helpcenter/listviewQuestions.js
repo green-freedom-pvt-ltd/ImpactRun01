@@ -24,6 +24,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Faq from '../faq/faq';
 import EndFeedBack from './endFeedBackPage';
 import NavBar from '../navBarComponent';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
@@ -82,7 +83,7 @@ class QuestionLists extends Component {
     leftIconRender(){
           return(
             <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <IconSec style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></IconSec>
+              <IconSec style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></IconSec>
             </TouchableOpacity>
           )
         }

@@ -89,7 +89,6 @@ class Profile extends Component {
           
           // runfeatching:this.props.isfetchingRun,
         }) 
-         console.log('loadingRuns',this.state.loadingRuns);
          
           AsyncStorage.getItem('my_currency', (err, result) => {
             this.setState({
@@ -171,7 +170,6 @@ class Profile extends Component {
                       rawData:runData,
                       loadingRuns:false,
                     })
-                    console.log('nextPage');
                     this.fetch7DayData();
                     this.getRunCount();
                     this.fetchAmount();
@@ -195,7 +193,6 @@ class Profile extends Component {
                       rawData:runData,
                       loadingRuns:false,
                     })
-                    console.log('nextPage');
                     this.fetch7DayData();
                     this.getRunCount();
                     this.fetchAmount();
@@ -239,7 +236,6 @@ class Profile extends Component {
 
       fetch7DayData(){
         AsyncStorage.getItem('fetchRunhistoryData', (err, result) => {
-          console.log('result',JSON.parse(result));
         if (result != null || undefined) {
        
         var RunData = JSON.parse(result);
@@ -492,7 +488,6 @@ class Profile extends Component {
       }
 
     navigateToRunHistory() {
-      console.log('this.state.rawData',this.state.rawData);
       this.props.navigator.push({
       title: 'RunHistory',
       id:'runhistory',
@@ -557,7 +552,6 @@ class Profile extends Component {
             width: event.nativeEvent.layout.width,
             height: event.nativeEvent.layout.height
         })
-        console.log('height',this.state.height);
     }
     
     getXRows(item,index) {
@@ -594,8 +588,8 @@ class Profile extends Component {
        
         return (
             <View key={index} style={{flex:1,justifyContent: 'flex-end',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#CACACA'}}>
-                 <Text style={{ top:-10,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.LatoBlack, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',fontWeight:'600'}}>{iconrupees}{rupees}</Text>
-                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:2,bottom:3,alignItems: 'center',}}>
+                 <Text style={{ top:-5,fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.LatoBlack, color:'grey',backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',fontWeight:'600'}}>{iconrupees}{rupees}</Text>
+                <View style={{flexDirection:'column',width:barWidth,height:barHeight,backgroundColor:styleConfig.light_sky_blue,borderRadius:2,bottom:responsiveHeight(.7),alignItems: 'center',}}>
  
                 </View>
 
@@ -612,9 +606,9 @@ class Profile extends Component {
         }
         
         return (
-            <View key={index}style={{justifyContent: 'flex-end',flex:1,backgroundColor:'white',alignItems: 'center',}}>
+            <View key={index}style={{justifyContent: 'center',flex:1,backgroundColor:'white',alignItems: 'center',}}>
                <View style={{flexDirection:'column'}}> 
-                    <Text style={{fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.LatoBlack, color:'grey',fontWeight:'800'}}>{days}</Text>
+                    <Text style={{fontSize:styleConfig.fontSizerlabel-2,fontFamily:styleConfig.LatoBlack, color:'grey',fontWeight:'900'}}>{days}</Text>
                </View>
             </View>
           
@@ -622,11 +616,14 @@ class Profile extends Component {
     }
 
     rightIconRender(){
+      if (this.props.user) {
       return(
-         <TouchableOpacity onPress={()=>this.navigateToProfileForm()} style={{flex:1,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',}}>
+         <TouchableOpacity onPress={()=>this.navigateToProfileForm()} style={{flex:1,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',paddingRight:responsiveWidth(6.1)}}>
             <Icon name = {'edit'} style={{fontSize:responsiveFontSize(3),color:'#000',opacity:.80}}></Icon>
          </TouchableOpacity>
-        )
+        ) 
+      }
+
     }
 
     render() {
@@ -634,10 +631,8 @@ class Profile extends Component {
         var Xaxis = dataP.map(this.getXRows);
 
         var maxvalue = Math.max.apply(Math, dataRupees);
-        console.log('dataRupees',maxvalue);
         if(this.state.my_currency == 'INR'){
           var hunderdPercentageHeightBar = (Math.ceil(maxvalue / 10) * 10 != -Infinity)?Math.ceil(maxvalue / 10)*10:0;
-          console.log('hunderdPercentageHeightBar',hunderdPercentageHeightBar);
         }
         else
         {
@@ -648,37 +643,37 @@ class Profile extends Component {
           // console.log('my_currencylower',this.state.my_currency.toLowerCase());
         return (
           <View style={styles.container}>
-            <NavBar  navigator = {this.props.navigator}title = {'Profile'} rightIcon = {this.rightIconRender()} rightBtn = {this.navigateToProfileForm}/>
+            <NavBar  navigator = {this.props.navigator}title = {'Profile'} rightIcon = {this.rightIconRender()} />
             <View style ={styles.profileWraper}>
                 <View style={{height:responsiveHeight(10),width:responsiveWidth(100),backgroundColor:'white',top:responsiveHeight(4.0625)-10}}>
                     <UserProfile progressVal={this.state.progressVal} level={this.state.level} prevKm = {this.state.prevKm} fetchTotalDistance={this.fetchTotalDistance} fetchAmount ={this.fetchAmount} getRunCount = {this.getRunCount} fetch7DayData={this.fetch7DayData} levelKm={this.state.levelKm}fetchUserData={this.props.fetchUserdata} totalKm={this.state.RunTotalDistance}  getUserData={this.props.getUserData} user={this.props.user} navigator={this.props.navigator}></UserProfile>
                 </View>
                 <View onLayout={(event) => this.measureView(event)} style={{height:responsiveHeight(20),top:responsiveHeight(8)-10,width:responsiveWidth(100),backgroundColor:'white',}}>
                     <View style={{height:responsiveHeight(3),width:this.state.width,justifyContent: 'center',alignItems: 'center',padding:(((this.state.height/100)*20)/100)*10}}>
-                        <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'600'}}>All Time</Text>
+                        <Text style={{fontFamily:styleConfig.FontFamily,fontWeight:'600',fontSize:responsiveFontSize(2),opacity:.80}}>All Time</Text>
                     </View>
-                    <View style={{backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
-                        <Text style={{fontSize:styleConfig.profileTotalRaised, color:'#33f373',fontWeight:'800',fontFamily:styleConfig.LatoBlack}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.profileTotalRaised-5,fontWeight:'800'}}name={this.state.my_currency.toLowerCase()}></Icon2><Text>{''}</Text><AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
+                    <View style={{backgroundColor:'white',justifyContent: 'center',alignItems: 'center',height:responsiveHeight(10)}}>
+                        <Text style={{fontSize:styleConfig.profileTotalRaised-5, color:'#33f373',fontWeight:'900',fontFamily:styleConfig.LatoBlack}} ><Icon2 style={{color:'#33f373',fontSize:styleConfig.profileTotalRaised-10,fontWeight:'900'}}name={this.state.my_currency.toLowerCase()}></Icon2><Text>{''}</Text><AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunTotalAmount2/this.state.my_rate} formatter={(val) => {return ' ' + (this.state.my_currency == 'INR' ? parseFloat(val).toFixed(0) : parseFloat(val).toFixed(2))}} ></AnimateNumber>
                         </Text>
                         <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Impact </Text>
                     </View>
                     <View style={{height:(this.state.height/100)*30,width:this.state.width,backgroundColor:'yellow',flexDirection:'row'}}>
                         <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
-                            <Text style={{left:20,fontSize:styleConfig.profileTotalRunsfont, color:'black',fontWeight:'800',fontFamily:styleConfig.LatoBlack, textAlign:'left',opacity:.80}} > 
+                            <Text style={{left:responsiveWidth(8),fontSize:styleConfig.profileTotalRunsfont, color:'black',fontWeight:'800',fontFamily:styleConfig.LatoBlack, textAlign:'left',opacity:.80}} > 
                                 <AnimateNumber currencyString = {this.state.my_currency.slice(0,2)} value={this.state.RunCountTotal} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                   }} ></AnimateNumber>
                             </Text>
-                            <Text style={{left:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walks & Runs </Text>                       
+                            <Text style={{left:responsiveWidth(8),fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walks & Runs </Text>                       
                         </View>
                        <View style={{flex:1,backgroundColor:'white',justifyContent: 'center'}}>
-                            <Text style={{right:20,fontSize:styleConfig.profileTotalRunsfont, color:'black',fontWeight:'800',fontFamily:styleConfig.LatoBlack, textAlign:'right',opacity:.80}} >
+                            <Text style={{right:responsiveWidth(8),fontSize:styleConfig.profileTotalRunsfont, color:'black',fontWeight:'800',fontFamily:styleConfig.LatoBlack, textAlign:'right',opacity:.80}} >
                                 <AnimateNumber  currencyString = {this.state.my_currency.slice(0,2)} value={(this.state.my_distance == 'miles' ? this.state.RunTotalDistance*0.621 : this.state.RunTotalDistance)} formatter={(val) => {
                                     return ' ' + parseFloat(val).toFixed(0)
                                 }} ></AnimateNumber>
                                 <Text style={{fontSize:styleConfig.FontSizeTitle-5,color:'grey'}}> {(this.state.my_distance == 'miles' ? 'mi' : 'km')}</Text>
                              </Text>
-                            <Text style={{right:20,fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
+                            <Text style={{right:responsiveWidth(8),fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Distance covered </Text>
                         </View>
                     </View>
                 </View>
@@ -719,10 +714,10 @@ class Profile extends Component {
                   </View>
                  </View>
               </View>
-              <View style={{backgroundColor:'white',top:responsiveHeight(2.65625)}}>
+              <View style={{backgroundColor:'white',top:responsiveHeight(2)}}>
                 <View style={{backgroundColor:'white',justifyContent: 'center',alignItems: 'center',}}>
                   <TouchableOpacity onPress={()=>this.navigateToRunHistory()} style={styles.btnviewRun2}>
-                    <Text style={{fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'600'}}>SEE PAST WORKOUTS</Text>
+                    <Text style={{fontSize:responsiveFontSize(2.1),fontFamily:styleConfig.FontFamily, color:'grey',fontWeight:'600'}}>SEE PAST WORKOUTS</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -733,7 +728,12 @@ class Profile extends Component {
       }else{
         return(
           <View>
+            <NavBar  navigator = {this.props.navigator}title = {'Profile'} rightIcon = {this.rightIconRender()} />
+            <View style = {{width:deviceWidth,justifyContent:'center',alignItems:'center'}}>
+            <Text style={{top:responsiveHeight(8),fontSize:responsiveFontSize(2.2),FontFamily:styleConfig.LatoRegular,fontWeight:'600',opacity:.80}}>Please login to see your profile.</Text>
+            </View>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
+
            <LoginBtn getUserData={this.props.getUserData}/>
            </View>
            </View>
@@ -788,7 +788,7 @@ var styles = StyleSheet.create({
   },
   btnviewRun2:{
       height:responsiveHeight(7),
-      width:responsiveWidth(83.8235294118),
+      width:responsiveWidth(79),
       borderRadius:5,
       justifyContent: 'center',
       alignItems: 'center',
@@ -796,9 +796,9 @@ var styles = StyleSheet.create({
       justifyContent: 'center',
       shadowColor: 'black',
       shadowOpacity: 0.2,
-      shadowRadius: 8,
+      shadowRadius: 2,
       shadowOffset: {
-        height: 7,
+        height: 1,
       }
   },
   tabContent1:{

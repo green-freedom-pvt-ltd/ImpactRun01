@@ -50,6 +50,5 @@
     } 
     return formattedDurationcustom;
   }
-
   module.exports = convert;
 })()

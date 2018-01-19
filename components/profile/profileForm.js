@@ -29,6 +29,8 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import NavBar from '../navBarComponent';
 import apis from '../apis';
 var dismissKeyboard = require('dismissKeyboard');
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 var moment = require('moment');
 var heightInpersentage = (deviceHeight-64)/100;
 class ProfileForm extends Component {
@@ -45,6 +47,7 @@ class ProfileForm extends Component {
          fadeAnim: new Animated.Value(1),
       };
       this.putRequestUser = this.putRequestUser.bind(this);
+      this.goBack = this.goBack.bind(this);
     }
     _refresh() {
       return new Promise((resolve) => {
@@ -89,7 +92,6 @@ class ProfileForm extends Component {
       }else{
         var weight = " ";
       }
-     console.log("newDate",date);
      this.setState({
       name:user.first_name +" "+ user.last_name,
       first_name:"",
@@ -121,7 +123,6 @@ class ProfileForm extends Component {
     }
 
   handleNetworkErrors(response){
-        console.log("response",response);
        if(response.ok){
         console.log("response",response);
         return response.json()
@@ -167,13 +168,11 @@ class ProfileForm extends Component {
           if (this.state.body_weight != " " ) {
       var user_id = this.props.user.user_id;
       var auth_token = this.props.user.auth_token;
-      console.log("auth_token",auth_token);
       var nameArr = this.state.name.split(/\s+/);
       this.state.first_name = nameArr.slice(0, -1).join(" ");
       this.state.last_name = nameArr.pop();
       var date = moment(this.state.date).format('MM/DD/YYYY');
       var number = parseInt(this.state.number);
-      console.log('number',number);
       var weight = parseInt(this.state.body_weight);
       fetch(apis.userDataapi + user_id + "/", {
           method: "put",
@@ -198,12 +197,10 @@ class ProfileForm extends Component {
           this.setState({
             SuccessfullySaved:true,
           })
-          console.log('submited',response);
           let keys = ['UID234', 'UID345','USERDATA',];
             AsyncStorage.multiRemove(keys, (err) => {
           });
 
-            console.log("responce",response);
             var userdata = response;
                   // first user, delta values
             let userData = {
@@ -305,14 +302,14 @@ class ProfileForm extends Component {
     leftIconRender(){
      return(
       <TouchableOpacity style={{paddingLeft:10,backgroundColor:'transparent', height:styleConfig.navBarHeight,width:50,justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-        <Icon3 style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={'ios-arrow-back'}></Icon3>
+        <Icon3 style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={'ios-arrow-back'}></Icon3>
       </TouchableOpacity>
       )
     }
 
     rightIconRender(){
       return(
-        <TouchableOpacity style={{height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'center',}} onPress={()=>this.putRequestUser()} >
+        <TouchableOpacity style={{height:styleConfig.navBarHeight,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',paddingRight:responsiveWidth(6.1)}} onPress={()=>this.putRequestUser()} >
           <Text style={{color:'black' , opacity:.80 , fontWeight:'600', fontFamily:styleConfig.LatoBlack}}>SAVE</Text>
         </TouchableOpacity>
       )
@@ -379,7 +376,7 @@ class ProfileForm extends Component {
                 mode="date"/> : <View />
          return (
           <View>
-            <NavBar title={'Profile Edit'} leftIcon={this.leftIconRender()} rightIcon={this.rightIconRender()} rightBtn = {this.putRequestUser}/>
+            <NavBar title={'Profile Edit'} leftbtn = {this.goBack}leftIcon={this.leftIconRender()} rightIcon={this.rightIconRender()} rightBtn = {this.putRequestUser}/>
             <ScrollView onPress={()=> this.setState({showDatePicker:false})} style={styles.container}>
             <View style={styles.FromWrap}>
              

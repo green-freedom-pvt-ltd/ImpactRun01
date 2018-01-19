@@ -14,7 +14,8 @@ import{
     AlertIOS,
     Platform,
     ActivityIndicator,
-    AsyncStorage
+    AsyncStorage,
+    Linking
   } from 'react-native';
 import commonStyles from '../styles';
 import apis from '../apis';
@@ -25,6 +26,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ImpactLeagueForm2 from './ImpactLeagueForm2'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 
 var ApiUtils = {  
   checkStatus: function(response) {
@@ -145,7 +148,7 @@ class ImpactLeagueCode extends Component {
         AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
          AsyncStorage.getItem('USERDATA', (err, result) => {
           console.log('resultuser',result);
-                this.props.getUserData();
+          this.props.getUserData();
 
         })
         })    
@@ -250,9 +253,21 @@ class ImpactLeagueCode extends Component {
     leftIconRender(){
       return(
         <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-           <Icon style={{color:'black',fontSize:30,fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
+           <Icon style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold'}}name={'ios-arrow-back'}></Icon>
         </TouchableOpacity>
         )
+    }
+
+
+    navigatetoUrl(){
+      var url = 'mailto:contact@impactrun.com';
+      Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(this.props.url);
+      } else {
+        console.log('Don\'t know how to open URI: ' + this.props.url);
+      }
+    });
     }
     
     render() {
@@ -279,7 +294,7 @@ class ImpactLeagueCode extends Component {
             </View>
             <View>
             <Text style={{marginTop:50,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>{'What\'s This?'}</Text>
-            <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSize4,fontFamily:styleConfig.FontFamily,}}>{'Here, secret code is for Impact League. Impact League is a Walkathon oraganised by us where you and your colleagues compete with each other to raise charity.\nWalk. Help. Win! \n\nGreat idea right ? \nTo know more shoot us a mail at\ncontact@impactrun.com \n\nSee you soon.'}</Text>
+            <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSize4,fontFamily:styleConfig.FontFamily,}}>{'Here, secret code is for Impact League. Impact League is a Walkathon oraganised by us where you and your colleagues compete with each other to raise charity.\nWalk. Help. Win! \n\nGreat idea right ? \nTo know more shoot us a mail at'}</Text><Text>{'contact@impactrun.com'} </Text><Text>{'\nSee you soon.'}</Text>
             </View>
           </View>
           </View>
@@ -300,6 +315,7 @@ class ImpactLeagueCode extends Component {
       flex:1,
       justifyContent: 'center',
       alignItems: 'center',
+      marginTop:10,
       padding:10,
     },
 
@@ -325,9 +341,7 @@ class ImpactLeagueCode extends Component {
 
     textEdit: {
       height:48,
-      borderBottomColor: '#e1e1e8', 
       backgroundColor: 'white',
-      borderBottomWidth:1 ,
       borderRadius:8,
       width:deviceWidth-50,
       color:'#4a4a4a',

@@ -89,7 +89,7 @@ class LodingRunScreen extends Component {
 
       var cause = this.props.data;
       console.log('props data' + this.props.data.sponsors);
-      this.props.navigator.push({
+      this.props.navigator.replace({
         title: 'Gps',
         id:'runscreen',
         passProps:{data:cause,user:this.props.user,getUserData:this.props.getUserData,killRundata:this.props.killRundata},
@@ -119,7 +119,7 @@ class LodingRunScreen extends Component {
               <View style={styles.loadingFlex}>
                  <Image style={styles.sponsorLogo} source={{uri:data.sponsors[0].sponsor_logo}}></Image>
                  <View style={styles.sponsorText}>
-                  <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your run.</Text>
+                  <Text style={{color:styleConfig.greyish_brown_two,fontSize:16,fontFamily:styleConfig.FontFamily,}}>is proud to sponsor your workout.</Text>
                  </View>
                 </View>
                   <View style={styles.loadingFlex}>

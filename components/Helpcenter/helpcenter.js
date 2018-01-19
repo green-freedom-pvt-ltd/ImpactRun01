@@ -26,6 +26,7 @@ import QuestionLists from './listviewQuestions';
 import RunHistory from '../profile/runhistory/runHistory';
 import EndFeedBack from './endFeedBackPage';
 import NavBar from '../navBarComponent';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;

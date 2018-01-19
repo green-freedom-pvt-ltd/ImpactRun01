@@ -19,6 +19,7 @@ import Modal from '../downloadsharemeal/CampaignModal'
 import LoginBtns from '../login/LoginBtns'
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavBar from '../navBarComponent';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 var dismissKeyboard = require('dismissKeyboard');
 var deviceWidth = Dimensions.get('window').width;
@@ -78,9 +79,7 @@ class EndFeedBack extends Component {
     postFeedback(){
       NetInfo.isConnected.fetch().then((isConnected) => {
       if (isConnected) {
-        this.setState({
-          isPostingFeedBack:true,
-        })
+        
 
         if (this.props.user){
           console.log("userdata", this.props.data.labelname);
@@ -90,7 +89,10 @@ class EndFeedBack extends Component {
           var convertepoch = parseInt(date.getTime()/1000);
          console.log('this.props.rowData',this.props.rowData,this.props.data,this.props.sub_tag,convertepoch);
         
-       
+       if (this.state.moreText.length > 0) {
+        this.setState({
+          isPostingFeedBack:true,
+        })
           mybody = JSON.stringify({
             "feedback":this.state.moreText,
             "feedback_app_version":'1.0.7',
@@ -122,7 +124,7 @@ class EndFeedBack extends Component {
             })
             console.log('responce',response);
             
-            AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
+            AlertIOS.alert('Successfully Submitted', 'Thank you for giving your feedback');
              Keyboard.dismiss();
              this.navigateToHome();
           })
@@ -132,6 +134,9 @@ class EndFeedBack extends Component {
             })
             console.log('err',err);
           })
+        }else{
+          AlertIOS.alert('Field empty','you are trying to post empty field');
+        }
         }else{
           this.setState({
             open:true,
@@ -149,7 +154,7 @@ class EndFeedBack extends Component {
     onPostsuccessView(){
       if (this.state.isPostingFeedBack) {
         return(
-          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight-114,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
           <Text style={{color:'white',fontWeight:'600'}}>Posting feedback...</Text>
             <ActivityIndicator
              style={{height: 80}}
@@ -168,7 +173,7 @@ class EndFeedBack extends Component {
     leftIconRender(){
           return(
             <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+              <Icon style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
           )
         }

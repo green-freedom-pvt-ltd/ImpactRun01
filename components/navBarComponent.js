@@ -72,7 +72,6 @@ var styles = StyleSheet.create({
    justifyContent:'center',
    alignItems:'flex-end',
    backgroundColor:'transparent',
-   paddingRight:responsiveWidth(6.1),
   },
 
    Navbar:{
@@ -99,16 +98,19 @@ var styles = StyleSheet.create({
     textAlign:'center',
     justifyContent: 'center',
     alignItems: 'center',
-    fontWeight:'800',
+    fontWeight:'900',
     color:'#000',
     fontSize:styleConfig.fontNavTitle,
     fontFamily:styleConfig.LatoBlack,
     opacity:.80,
+    paddingBottom:3,
   },
 
   LeftButton: {
    height:styleConfig.navBarHeight,
-   width:50,
+   width:64,
+   paddingLeft:responsiveWidth(3),
+   backgroundColor:'white',
   },
 })
 

@@ -106,10 +106,10 @@ class ImpactLeague extends Component {
         }
 
       exitLeague(){
-        console.log('this.props.user.auth_token',this.props.user.auth_token)
+        console.log('this.props.user.auth_token',this.props.user.auth_token,this.props.user)
         var data = new FormData();
-        data.append("user",this.props.user.user_id)
-        data.append("team_code",this.props.user.team_code)
+        data.append("user",this.state.user.user_id)
+        data.append("team_code",this.state.user.team_code)
         data.append("is_logout",'true');
         fetch(apis.employeetoteamApi,{
             method: 'put',
@@ -117,8 +117,7 @@ class ImpactLeague extends Component {
               'Authorization':"Bearer "+ this.props.user.auth_token,
               'Content-Type': 'multipart/form-data'
             },
-            body:data
-          
+            body:data,      
           })
           .then(this.handleNetworkErrors.bind(this))
           .then( jsonData => {
@@ -126,10 +125,10 @@ class ImpactLeague extends Component {
             let userData = {
               team_code:jsonData.team_code
             }
-        // first user, delta values
-            AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
+            // first user, delta values
+             AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
              AsyncStorage.getItem('USERDATA', (err, result) => {
-              console.log('result', result)
+              console.log('USerDataresult', result)
               this.navigateTOhome();
              })
             }) 
@@ -273,11 +272,11 @@ class ImpactLeague extends Component {
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
             <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
-              <Text style={{fontFamily: 'Montserrat-Regular',fontWeight:'400',fontSize:styleConfig.fontSizerleaderBoardContent+2,color:textColor,}}>{rowID}</Text>
-              <Text numberOfLines={1} style={[styles.txt,{color:textColor,flex:1}]}>{rowData.team_name}</Text>
+              <Text style={{fontFamily:styleConfig.MontSerratBold,fontWeight:'800',fontSize:styleConfig.ListViewTitelText,color:textColor,}}>{rowID}</Text>
+              <Text numberOfLines={1} style={[styles.txt,{color:textColor,flex:1}]}>{this.capitalizeFirstLetter(rowData.team_name)}</Text>
               <View style={{justifyContent: 'center',alignItems: 'center',}}>
           
-               <Text style={[styles.txtSec,{color:textColor}]}> <Icon2 style={{color:textColor,fontSize:styleConfig.fontSizerleaderBoardContent+2,fontWeight:'400'}}name={me.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) } </Text> 
+               <Text style={[styles.txtSec,{color:textColor}]}> <Icon2 style={{color:textColor,fontSize:styleConfig.ListViewTitelText,fontWeight:'800'}}name={me.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) } </Text> 
               </View>             
             </TouchableOpacity>
           </View>
@@ -306,7 +305,7 @@ class ImpactLeague extends Component {
       leftIconRender(){
           return(
             <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <Icon style={{color:'black',fontSize:responsiveFontSize(4),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
+              <Icon style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon>
             </TouchableOpacity>
           )
         }
@@ -315,7 +314,7 @@ class ImpactLeague extends Component {
 
         rightIconRender(){
         return(
-            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',}} onPress={()=>this.exitLeaguepopu()} >
+            <TouchableOpacity style={{height:60,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-end',paddingRight:responsiveWidth(6.1)}} onPress={()=>this.exitLeaguepopu()} >
               <Icon style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80,}}name={'md-more'}></Icon>
             </TouchableOpacity>
           )
@@ -374,6 +373,12 @@ class ImpactLeague extends Component {
           return this.navigateTOhelpCenter();
         }
       } 
+
+
+
+      capitalizeFirstLetter (userName) {
+        return userName.charAt(0).toUpperCase() + userName.slice(1);
+       }
       
 
       render(rowData,jsonData) {
@@ -389,11 +394,11 @@ class ImpactLeague extends Component {
         return (
 
         <View style={{height:deviceHeight,width:deviceWidth}}>
-          <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()} rightIcon = {this.rightIconRender()}/>
-          <View style={{height:((deviceHeight)/2)-100,width:deviceWidth}}>
-              <Swiper style={styles.wrapper} height={((deviceHeight)/2)-100} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
+          <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()} rightIcon = {this.rightIconRender()} />
+          <View style={{height:styleConfig.sliderHeightIL,width:deviceWidth,top:6}}>
+              <Swiper style={styles.wrapper} height={styleConfig.sliderHeightIL} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
                 <View>
-              <Image source={{uri:this.state.BannerData}} style={{height:((deviceHeight)/2)-100,width:deviceWidth,}}>
+              <Image source={{uri:this.state.BannerData}} style={{height:styleConfig.sliderHeightIL-10,width:deviceWidth,backgroundColor:'white'}} resizeMode ={'contain'} >
               </Image>
                 </View>
                 <View style={styles.slide3}>
@@ -482,6 +487,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:'white',
   },
   text: {
     color: '#fff',
@@ -492,10 +498,10 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor:'white',
-    height:deviceHeight-((deviceHeight/2)-225),
+    height:styleConfig.sliderHeightIL-6-styleConfig.navBarHeight-20,
   },
     shadow: {
-        height:((deviceHeight)/2)-100,
+        height:styleConfig.sliderHeightIL,
         flex: 1,
         width: deviceWidth,
         backgroundColor: 'transparent',
@@ -525,9 +531,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection:'row',
     padding:20,
-    margin:5,
-    width:deviceWidth-10,
-    borderRadius:5,
+    width:deviceWidth,
+    height:styleConfig.ListViewHeight,
     shadowColor: '#000000',
       shadowOpacity: 0.2,
       shadowRadius: 4,
@@ -549,23 +554,23 @@ const styles = StyleSheet.create({
   txt: {
     width:deviceWidth-200,
     color:'#4a4a4a',
-    fontSize: styleConfig.fontSizerleaderBoardContent+2,
+    fontSize: styleConfig.ListViewTitelText,
     fontWeight:'800',
     textAlign: 'left',
-    marginLeft:10,
-    fontFamily: styleConfig.LatoRegular,
+    marginLeft:responsiveWidth(6),
+    fontFamily: styleConfig.MontSerratBold,
   },
   txt3: {
     color:'white',
-    fontSize: 13,
+    fontSize: styleConfig.ListViewTitelText,
     fontWeight:'800',
-    fontFamily: styleConfig.LatoRegular,
+    fontFamily: styleConfig.MontSerratBold,
   },
   txtSec:{
-   fontSize:styleConfig.fontSizerleaderBoardContent+2,
+   fontSize:styleConfig.ListViewTitelText,
    fontWeight:'800',
    textAlign:'center',
-   fontFamily: styleConfig.LatoRegular,
+   fontFamily: styleConfig.MontSerratRegular,
   },
 });
  export default ImpactLeague;

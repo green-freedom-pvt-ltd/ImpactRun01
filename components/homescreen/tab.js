@@ -89,12 +89,12 @@ class Tabs extends Component {
         componentDidMount() {
             this.getUserData();
             if (this.props.dataCauseNum) {
-                console.log('this.prop.dataCauseNum',this.props.dataCauseNum);
                 this.setState({
                     dataCauseNum:this.props.dataCauseNum,
                     isLodaingCause:true,
                 })
             }; 
+
         }
 
         getUserData() {
@@ -105,6 +105,7 @@ class Tabs extends Component {
                     iconImpactleague:(user!= null)?{uri: base64Icon, scale: 6}:{},
                 })
                 if (this.state.dataCauseNum === null) {
+                   this.getCause();
                    this.fetchCauseDataonInternet();
                 };
                 var newDate = new Date();
@@ -136,7 +137,6 @@ class Tabs extends Component {
         postRunData(){
             postUnsyncRun.fetchLocalRunData(this.state.user).
             then((runData)=>{
-               console.log('pastrunData',runData);
             })    
         }
 
@@ -183,7 +183,6 @@ class Tabs extends Component {
                         dataCauseNum:causeNumber,
                         isLodaingCause:true,
                     })
-                    console.log('causeFetchedSuccess',causeNumber);
                 })
             }else{
                 var auth_token = '';
@@ -193,7 +192,6 @@ class Tabs extends Component {
                         dataCauseNum:cause,
                         isLodaingCause:true,
                     })
-                    console.log('causeFetchedSuccess',cause);
                 })
             }            
         }
@@ -216,9 +214,6 @@ class Tabs extends Component {
                     var fetchversion = parseInt(this.state.causeFeatchVersion)+(30);
                     if (fetchversion < epochtime) {
                             this.fetchData();
-                    }else{
-                        console.log('leaked',fetchversion,epochtime);
-                        this.getCause();
                     }
                 }
                 else{
@@ -234,7 +229,6 @@ class Tabs extends Component {
             getLocalData.getData('CauseNumber')
             .then((result)=>{  
                 if (result != null ) {
-                    console.log('this.state.dataCauseNum',result)
                     this.setState({
                        dataCauseNum:JSON.parse(result),
                        isLodaingCause:true,
@@ -255,7 +249,6 @@ class Tabs extends Component {
         
 
         handleNetworkErrors(response){
-            console.log('response',response);
             this.setState({
               NetworkResponcePostRun:response.status,
               isRunResponseOk:response.ok,
@@ -329,24 +322,24 @@ class Tabs extends Component {
                    </View>      
                    <View style={{position:'absolute',bottom:0,height:styleConfig.tabHeight,width:deviceWidth,flexDirection:'row',borderTopWidth:1,borderTopColor:'#e6e6e6',backgroundColor:'white'}}>
                     <TouchableOpacity onPress={()=> this.changeTab('help')} style={styles.tabBtn}>
-                        <Icon name = "help" style={[styles.tabIcon,{color:(this.state.selectedTab === 'help')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'help')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
-                        <Text style = {{color:(this.state.selectedTab === 'help')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'help')?responsiveFontSize(1.5):responsiveFontSize(1.2)}}>Help</Text>
+                        <Icon name = "help" style={[styles.tabIcon,{color:(this.state.selectedTab === 'help')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'help')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
+                        <Text style = {{fontWeight:'600',color:(this.state.selectedTab === 'help')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'help')?responsiveFontSize(1.5):responsiveFontSize(1.4)}}>Help</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=> this.changeTab('profile')} style={styles.tabBtn}>
-                       <Icon name = "person" style={[styles.tabIcon,{color:(this.state.selectedTab === 'profile')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'profile')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
-                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'profile')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'profile')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Me</Text>
+                       <Icon name = "person" style={[styles.tabIcon,{color:(this.state.selectedTab === 'profile')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'profile')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'profile')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'profile')?responsiveFontSize(1.5):responsiveFontSize(1.4)}]}>Me</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=> this.changeTab('welcome')} style={styles.tabBtn}>
-                       <Icon name ={'view-carousel'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'welcome')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'welcome')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
-                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'welcome')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'welcome')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Home</Text>
+                       <Icon name ={'view-carousel'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'welcome')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'welcome')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'welcome')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'welcome')?responsiveFontSize(1.5):responsiveFontSize(1.4)}]}>Home</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=> this.changeTab('Leaderboard')} style={styles.tabBtn}>
-                       <Icon name ={'equalizer'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
-                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Leaderboard</Text>
+                       <Icon name ={'equalizer'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(1.5):responsiveFontSize(1.3)}]}>Leaderboard</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=> this.changeTab('settings')} style={styles.tabBtn}>
-                       <Icon name ={'settings'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(5):responsiveFontSize(3.5)}]}></Icon>
-                       <Text style = {[styles.tabnameText,{color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(1.5):responsiveFontSize(1.2)}]}>Settings</Text>
+                       <Icon name ={'settings'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(1.5):responsiveFontSize(1.4)}]}>Settings</Text>
                     </TouchableOpacity>
                    </View>
                 </View>

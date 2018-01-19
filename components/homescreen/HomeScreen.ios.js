@@ -117,7 +117,6 @@ class Homescreen extends Component {
         AsyncStorage.getItem('Feedcount', (err, result) => { 
           if (result != null) {
           var count = JSON.parse(result).count;
-          console.log("FeedCount",);
           this.setState({
             localfeedCount:count,
 
@@ -131,10 +130,10 @@ class Homescreen extends Component {
       }
 
 
-      snapshot(){
+      snapshot(captureScreenShot){
         var selectedRow = this.rows[this.state.navigation.index-1];
          var ref = this.list;
-        takeSnapshot(selectedRow, this.state.value)
+        takeSnapshot(this.state.navigation.index-1, this.state.value)
         .then(res =>
           this.state.value.result !== "file"
           ? res
@@ -300,7 +299,6 @@ class Homescreen extends Component {
 
 
       componentWillMount() {
-        console.log('responsiveFontSize(2.8)',responsiveFontSize(2.8));
         var me = this;
         setTimeout(()=>{
           me.setState({
@@ -328,7 +326,6 @@ class Homescreen extends Component {
         })
         getLocalData.getData('overall_impact')
         .then ((result )=> {
-          console.log('overall_impact', result);
           this.setState({
             overall_impact:(result != null)? JSON.parse(result):0,
           }) 
@@ -392,7 +389,6 @@ class Homescreen extends Component {
 
              }
           }
-          console.log('arr',arr);
 
           return arr;
 
@@ -422,15 +418,15 @@ class Homescreen extends Component {
       showImage(cause){
         if (this.state.loadingimage === true) {
           return(
-            <Image style={styles.cover}></Image>
+            <Image style={styles.cover} ></Image>
             )
         }else{
           return(
             <View>
               <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.cover} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_image}} style={styles.cover}>        
               </ImageLoad>
-              <View style={{paddingLeft:15,width:responsiveWidth(71),backgroundColor:'rgba(255, 255, 255, 0.75)',top:-30,height:30,justifyContent:'center'}}>
-                  <Text style={{fontWeight:'400', fontSize:styleConfig.causeDisc-2,  color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
+              <View style={{paddingLeft:15,width:responsiveWidth(71),backgroundColor:'rgba(255, 255, 255, 0.65)',top:-responsiveHeight(3),height:responsiveHeight(3),justifyContent:'center'}}>
+                  <Text style={{fontWeight:'400', fontSize:responsiveFontSize(1.5),  color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {cause.cause_category}
                   </Text>
               </View>
@@ -487,7 +483,6 @@ class Homescreen extends Component {
     _buildCoverFlowStyle = ({ layout, position, route, navigationState,data }) => {
       var data = data;
       const { width } = layout;
-      console.log('distancebetweenCards',this.distancebetweenCards(width),responsiveWidth(4.44444));
       const { routes,SecondRoute } = navigationState;
       const currentIndex = routes.indexOf(route);
 
@@ -678,31 +673,27 @@ class Homescreen extends Component {
 
     // RENDER_SCREEN
     _renderScene = ({ route }) => {
-
       if (this.state.renderComponent) {
         var cause = this.state.album[route.key][5]
         // var money = JSON.stringify(parseFloat(parseFloat(this.state.album[route.key][0]).toFixed(0)/parseFloat(this.state.my_rate).toFixed(0)).toFixed(0));
         
         // var Moneyfinalvalue = (Math.round(JSON.parse(money)* 100)/100).toLocaleString(); 
        
-        var runFinalvalue = (this.state.album[route.key][2] != null)?(Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2),{ minimumFractionDigits: 0}):0;
-        //This was length copied pasted @Akash avoid such copy pastes dude
-      
-        
+        var runFinalvalue = (this.state.album[route.key][2] != null)?(Math.round(JSON.parse(this.state.album[route.key][2])*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2),{ minimumFractionDigits: 0}):0;      
         var causeAmountFinalvalue = (cause.amount != null && this.state.my_rate != null)?(Math.round(JSON.parse(cause.amount)/this.state.my_rate*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2),{ minimumFractionDigits: 0}):0;
-           
+          
         if (cause.is_completed != true) {
         return (
-          <View style={{width:deviceWidth,backgroundColor:'transparent',height:responsiveHeight(51),justifyContent: 'center',alignItems: 'center',}}>
+          <View  style={{width:deviceWidth,backgroundColor:'transparent',height:responsiveHeight(51),justifyContent: 'center',alignItems: 'center',}}>
           <View onLayout={(event) => this.measureView(event)} style={styles.page}  >        
            <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause,this.state.album[route.key][9])} >
             <View  style={styles.album}>
               {this.showImage(cause)}
-              <View style={{flex:-1,top:-30,backgroundColor:"transparent",paddingLeft:responsiveWidth(3),paddingRight:responsiveWidth(3)}}>
+              <View style={{flex:-1,top:-responsiveHeight(3),backgroundColor:"transparent",paddingLeft:responsiveWidth(3),paddingRight:responsiveWidth(3)}}>
               <View style={{marginTop:responsiveHeight(1.2),height:responsiveHeight(7.4),backgroundColor:'transparent'}}>
                 <View style={{flex:1}}>
                   <Text numberOfLines={1} style={styles.causeTitle}>{route.key}</Text>
-                  <Text numberOfLines={1} style={{marginTop:responsiveHeight(1),color:styleConfig.black,opacity:.50,fontFamily:styleConfig.LatoRegular,fontSize:styleConfig.ngoText,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
+                  <Text numberOfLines={1} style={{marginTop:responsiveHeight(1),color:styleConfig.black,opacity:.64,fontFamily:styleConfig.LatoRegular,fontSize:styleConfig.ngoText,fontWeight:'400'}}>With {cause.partners[0].partner_ngo} & {cause.sponsors[0].sponsor_company}</Text>      
                 </View>
               </View>
               <View style={{backgroundColor:'transparent'}}>
@@ -713,7 +704,7 @@ class Homescreen extends Component {
                     <View style = {styles.wraptext}>
                       <Text style = {styles.textMoneyraisedlableRemainingpercentage}>{parseFloat((cause.amount_raised/cause.amount)*100).toFixed(0)}%</Text>
                     </View>
-                    <ProgressBar unfilledColor={'black'} height={responsiveHeight(0.9375)} width={responsiveWidth(65)} progress={cause.amount_raised/cause.amount}/>
+                    <ProgressBar style={{top:responsiveHeight(0.7)}} unfilledColor={'black'} height={responsiveHeight(0.9375)} width={responsiveWidth(65)} progress={cause.amount_raised/cause.amount}/>
                     <View style = {styles.TextWaperforCuaseRaisedAmount}>
                       <View style = {styles.wraptext2}>
                         <Text style = {styles.textMoneyraisedlabel}> WALK & RUNS </Text>
@@ -721,7 +712,7 @@ class Homescreen extends Component {
                       </View>
                       <View style = {styles.wraptext2}>
                         <Text style = {styles.textMoneyraised2Label}> GOAL </Text>
-                        <Text style = {styles.textMoneyraised2}><Icon style={{fontSize:styleConfig.cardIconFontSize,color:'#000', fontWeight:'600',textAlign:'right',fontFamily:styleConfig.LatoBlack,opacity:.80}}name={this.state.my_currency.toLowerCase()}></Icon>{causeAmountFinalvalue}</Text>
+                        <Text style = {styles.textMoneyraised2}><Icon style={{fontSize:styleConfig.causeTotalrun-2,color:'#000', fontWeight:'600',textAlign:'right',fontFamily:styleConfig.LatoBlack,opacity:.80}}name={this.state.my_currency.toLowerCase()}></Icon>{causeAmountFinalvalue}</Text>
                       </View>
                     </View>
                   </View>
@@ -800,13 +791,13 @@ class Homescreen extends Component {
     if (cause.is_completed) {
       return(
          <TouchableOpacity  style={styles.btnbegin2}  onPress={()=> this.snapshot()}>
-            <Text style={{fontSize:18,color:'white',fontWeight:'400',fontFamily:styleConfig.LatoBlack}} >Tell your friends</Text>
+            <Text style={{fontSize:responsiveFontSize(2.4),color:'white',fontWeight:'800',fontFamily:styleConfig.LatoBlack}} >TELL YOUR FRIENDS</Text>
           </TouchableOpacity>
       )
     }else{
       return(
         <TouchableOpacity  style={styles.btnbegin2}  onPress={()=>this.navigateToRunScreen(cause)}>
-          <Text style={{fontSize:18,color:'white',fontWeight:'600',fontFamily:styleConfig.LatoBlack}} >{'Let\'s Go'}</Text>
+          <Text style={{fontSize:responsiveFontSize(2.4),color:'white',fontWeight:'900',fontFamily:'Lato-Bold'}} >{'LET\'S GO'}</Text>
         </TouchableOpacity>
       )
     }
@@ -884,7 +875,7 @@ class Homescreen extends Component {
 
     BtnWraperWrap:{
       backgroundColor:'white',
-      height:responsiveHeight(13.3125),
+      height:responsiveHeight(11.3125),
       width:deviceWidth,
       justifyContent: 'center',
       alignItems: 'center',
@@ -901,15 +892,16 @@ class Homescreen extends Component {
        justifyContent:'center',
        textAlign:'center',
        fontSize:styleConfig.labelTotalRaised,
-       color:'grey',
-       fontWeight:'600',
+       color:'black',
+       fontWeight:'400',
        fontFamily:styleConfig.LatoRegular,
        top:0,
+       opacity:0.6,
     },
     TotalRaisedText:{
        fontSize:styleConfig.fontTotalRaised,
        color:styleConfig.new_green,
-       fontWeight:'800',
+       fontWeight:'900',
        fontFamily:styleConfig.LatoBlack,
     },
     btnWrap:{
@@ -998,11 +990,11 @@ class Homescreen extends Component {
     causeTitle:{
       color:styleConfig.black,
       fontSize:styleConfig.causeTitle,
-      fontWeight:'800',
+      fontWeight:'900',
       fontFamily:styleConfig.LatoBlack,
       height:responsiveHeight(3.4375),
       backgroundColor:'transparent',
-      opacity:.80,
+      opacity:.85,
     },
 
     causeBrief:{
@@ -1011,17 +1003,19 @@ class Homescreen extends Component {
       fontSize:styleConfig.causeDisc,
       fontWeight:'400',
       fontFamily:styleConfig.LatoRegular,
-      opacity:.70,
+      opacity:.80,
+      height:responsiveHeight(5),
     },
   
     barWrap:{
-      justifyContent: 'flex-start',
+      justifyContent: 'flex-end',
       backgroundColor:'transparent',
     },
 
     wraptext:{
       justifyContent: 'flex-end',
       flexDirection:'row',
+      top:responsiveHeight(0.3),
     },
 
     TextWaperforCuaseRaisedAmount:{
@@ -1029,7 +1023,7 @@ class Homescreen extends Component {
       flexDirection:'row',
       backgroundColor:'white',
       alignItems:'center',
-      paddingTop:responsiveHeight(1.7),
+      top:responsiveHeight(1.5),
     },
 
     wraptext2:{
@@ -1048,9 +1042,9 @@ class Homescreen extends Component {
       left:0,
       color:styleConfig.black,
       fontSize:styleConfig.lableCause,
-      fontWeight:'800',
-      fontFamily:styleConfig.LatoBlack,
-      opacity:.50,
+      fontWeight:'900',
+      fontFamily:styleConfig.LatoBold,
+      opacity:.60,
     },
     textMoneyraised:{
       left:-2,
@@ -1073,10 +1067,10 @@ class Homescreen extends Component {
       left:0,
       color:styleConfig.black,
       fontSize:styleConfig.lableCause,
-      fontWeight:'800',
+      fontWeight:'900',
       textAlign:'right',
-      fontFamily:styleConfig.LatoBlack,
-      opacity:.50,
+      fontFamily:styleConfig.LatoBold,
+      opacity:.60,
     },
     btnbegin2:{
       flex:1,
@@ -1109,10 +1103,10 @@ class Homescreen extends Component {
     },
     modelWrap:{
       padding:20,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
       backgroundColor:"white",
-      paddingBottom:5,
+      height:responsiveHeight(25),
       borderRadius:5,
     },
     iconWrapmodel:{
@@ -1135,6 +1129,7 @@ class Homescreen extends Component {
     alignItems: 'center',
     backgroundColor:"white",
     width:deviceWidth-100,
+    top:0,
    },
    modelBtnWrap:{
     marginTop:10,

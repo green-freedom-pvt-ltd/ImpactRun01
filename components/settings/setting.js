@@ -227,7 +227,7 @@ class Setting extends Component {
         let shareOptions = {
           title: "ImpactRun",
           message: "I use Impact to track my daily walks and runs and 'do good' for society with every step. Check it out. It's amazing!",
-          url: "http://www.impactrun.com/#",
+          url: "http://onelink.to/impact",
           subject: "Download Impact Now " //  for email
         };
         if (rowData.name === 'Share') {

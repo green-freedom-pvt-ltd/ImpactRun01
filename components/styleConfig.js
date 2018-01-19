@@ -403,6 +403,7 @@ export default {
   profileTotalRunsfont:responsiveFontSize(3.2),
   helpCenterListFontSize:responsiveFontSize(2),
   fontNavTitle:responsiveFontSize(2.7),
+  ListViewTitelText:responsiveFontSize(1.8),
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),
@@ -428,8 +429,10 @@ export default {
   PaddingCard:PaddingCard(),
 
   // navHight
-  navBarHeight:responsiveHeight(8),
+  navBarHeight:responsiveHeight(9),
   tabHeight:responsiveHeight(10),
+  ListViewHeight:responsiveHeight(12),
+  sliderHeightIL:responsiveHeight(37.71875),
   // fontColors
   white_three:'#d8d8d8',
   bright_sky_blue:'#00b9ff',
@@ -451,6 +454,8 @@ export default {
   FontFamily:'Montserrat-Regular',
   FontFamily2:'Montserrat-Thin',
   FontFamily3:'Montserrat-Light',
+  MontSerratBold:'Montserrat-Bold',
+  MontSerratRegular:'Montserrat-Regular',
   pale_magenta:'#d667cd',
   bright_blue:'#0077ff',
   warm_grey_three:'#8a8a8a',

@@ -35,6 +35,7 @@ import fetchRundata from '../../fetchRundata';
 import getLocalData from '../../getLocalData';
 import postUnsyncRun from '../../postUnsyncRun';
 import NavBar from '../../navBarComponent';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 class RunHistory extends Component {
 
@@ -107,7 +108,6 @@ class RunHistory extends Component {
           descend: descending
         };
       });
-      console.log('array',array);
       // schwartzian transform idiom implementation. aka: "decorate-sort-undecorate"
       return array.map(item => {
         return {
@@ -138,7 +138,6 @@ class RunHistory extends Component {
                 runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(this.sortByAttribute(parseResult, '-start_time'))),
                 
               })
-              console.log('datashorting',this.state.runHistoryData,this.sortByAttribute(parseResult, '-start_time'));
             }else{
               var parseResult = [];
               this.setState({
@@ -148,7 +147,6 @@ class RunHistory extends Component {
             }
             })
            AsyncStorage.getItem('UnsyncedData', (err, result) => {
-              console.log( "result",JSON.parse(result));
               var rundata = JSON.parse(result);
               this.setState({
                 RunCount:(rundata != null)? rundata.length:0,
@@ -157,7 +155,6 @@ class RunHistory extends Component {
             })  
          
            NetInfo.isConnected.fetch().then((isConnected) => {
-            console.log('isConnected profile',isConnected);
 
             if (isConnected) {
                   this.fetchLocalRunData();
@@ -169,14 +166,12 @@ class RunHistory extends Component {
             );          
   
             AsyncStorage.getItem('runversion', (err, result) => {
-              console.log("result",result);
 
               if (result != null) {
                 var version = JSON.parse(result).runversion;
                 this.setState({
                   runversion:version,
                 })
-                console.log('runversion',this.state.runversion,version,JSON.parse(result));
               }else{
                 var newDate = new Date();
                 var convertepoch = newDate.getTime()/1000
@@ -185,7 +180,6 @@ class RunHistory extends Component {
                   runversion:epochtime
                 }
                 AsyncStorage.setItem('runversion', JSON.stringify(responceversion), () => {
-                  console.log("runversion",responceversion);
                   this.setState({
                     runversion:responceversion.runversion,
                   }) 
@@ -308,7 +302,6 @@ class RunHistory extends Component {
 
     PostNotSyncedRun(){
       NetInfo.isConnected.fetch().then((isConnected) => {
-        console.log('isConnected',isConnected);
       if (isConnected === true ) {
         this.fetchLocalRunData();
       }else{
@@ -629,7 +622,6 @@ class RunHistory extends Component {
 
       covertmonthArrayToMap(rowData) {
         if (rowData) {
-        console.log('rowData',rowData);
         let _this = this;
         var rundateCategory = {}; // Create the blank map
         var rows = rowData;
@@ -638,14 +630,12 @@ class RunHistory extends Component {
         var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         var MyRunMonth = monthShortNames[RunDate.split("-")[1][0]+ RunDate.split("-")[1][1]-1];
         var day = RunDate.split("-")[2][0]+RunDate.split("-")[2][1]+'  '+MyRunMonth+'  ' + RunDate.split("-")[0];
-        console.log("day",day);
         if (!rundateCategory[day]) {
           // Create an entry in the map for the category if it hasn't yet been created
           rundateCategory[day] = [];
         }
         rundateCategory[day].push(runItem);
         });
-         console.log("rundateCategory",rundateCategory);
        return rundateCategory;
         }else{
        return this.covertmonthArrayToMap();
@@ -661,10 +651,8 @@ class RunHistory extends Component {
            NetInfo.isConnected.fetch().then((isConnected) => {
           if (isConnected) {
           if (this.state.runversion != null ) {
-            console.log('runversion123',runversion);
             fetchRundata.fetchRunhistoryupdataData(this.state.user,this.state.runversion)
             .then((runData)=>{
-              console.log('runData12',this.sortByAttribute(runData, '-start_time'));
               let runDatasoted = (runData != null )?this.sortByAttribute(runData, '-start_time'):[];
               this.setState({
                 runHistoryData:this.state.runHistoryData.cloneWithRowsAndSections(this.covertmonthArrayToMap(runDatasoted)),
@@ -673,7 +661,6 @@ class RunHistory extends Component {
             })
           }else{
 
-            console.log('runversion123',runversion);
             var runversion = 0;
              fetchRundata.fetchRunhistoryupdataData(this.state.user,this.state.runversion)
             .then((runData)=>{
@@ -714,7 +701,7 @@ class RunHistory extends Component {
        leftIconRender(){
           return(
             <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
-              <Icon3 style={{color:'black',fontSize:35,fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
+              <Icon3 style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></Icon3>
             </TouchableOpacity>
           )
         }
@@ -724,7 +711,7 @@ class RunHistory extends Component {
          if (!this.state.runloading) {
           return (
             <View>
-            <NavBar title={'Run History'} leftIcon={this.leftIconRender()}/>
+            <NavBar title={'Workout History'} leftIcon={this.leftIconRender()}/>
               <View style={{height:deviceHeight-styleConfig.navBarHeight-20}}>
               {this.headerFromHelp()}
               {this.RunNotSyncedButton()}

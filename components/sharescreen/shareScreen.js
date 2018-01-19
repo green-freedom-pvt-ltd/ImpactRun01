@@ -38,6 +38,7 @@
   import Tab from '../homescreen/tab';
   const FBSDK = require('react-native-fbsdk');
   const CleverTap = require('clevertap-react-native');
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
    var moment = require('moment');
 
@@ -271,7 +272,6 @@
     ifConnectTonetPost(){
       NetInfo.isConnected.fetch().done(
       (isConnected) => { 
-       console.log('isConnected',isConnected);
         if (isConnected) {
            this.SaveRunLocally();
           }else{
@@ -570,14 +570,16 @@
     }
     
     submitFeedBack(){
-      this.setState({
-        isPostingFeedBack:true,
-      })
+      
       if(this.state.user){
          NetInfo.isConnected.fetch().done(
       (isConnected) => { 
         if (isConnected) {
-      fetch(apis.UserFeedBack, {
+          if (this.state.sadFeedbackText.length > 0 ) {
+            this.setState({
+              isPostingFeedBack:true,
+             })
+           fetch(apis.UserFeedBack, {
             method: "post",
             headers: {
               'Accept': 'application/json',
@@ -603,7 +605,7 @@
               firstModel:false,
             })
             dismissKeyboard();
-            AlertIOS.alert('Successfully Submited', 'Thank you for giving your feedback');
+            AlertIOS.alert('Successfully Submitted', 'Thank you for giving your feedback');
 
           })
           .catch((err) => {
@@ -612,6 +614,9 @@
             })
             console.log('err',err);
           })
+        }else{
+          AlertIOS.alert('Field empty', 'you are trying to post empty feedback');
+        }
           }else{
           this.setState({
             isPostingFeedBack:false,
@@ -666,31 +671,29 @@
     viewData(){
       if (this.state.happyView) {
         return(
-          <View  style={styles.contentWrap}>
-           <TouchableOpacity style={{top:5,position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopuphappyView()}>
+          <View  style={styles.contentWrap3}>
+           <TouchableOpacity style={{top:responsiveHeight(.4),position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopuphappyView()}>
              <Icon style={{color:'black',fontSize:30,fontWeight:'600'}}name={'ios-close'}></Icon>
            </TouchableOpacity>
-            <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
+            <Text style={{textAlign:'center',marginTop:responsiveHeight(4.5),color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
             <View style={styles.modelBtnWrapsad}>
-              <Text style={{width:deviceWidth-120,textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,bottom:10}}>Thank You ! Rate us on  App store, tell others about your experience.</Text>
-              <TouchableOpacity style={styles.modelbtnsadFeedback} onPress ={()=>this.RateUshandleClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>RATE US</Text></TouchableOpacity>
+              <Text style={{width:deviceWidth-120,textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,}}>Thank You ! Rate us on  App store, tell others about your experience.</Text>
+              <TouchableOpacity style={styles.modelbtnsadFeedback2} onPress ={()=>this.RateUshandleClick()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>RATE US</Text></TouchableOpacity>
             </View>
           </View>
           )
       }else if(this.state.sadView){
         return(
-          <View  style={styles.contentWrap}>
-          <TouchableOpacity style={{top:5,position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupsadView()}>
+          <View  style={styles.contentWrapEdit}>
+          <TouchableOpacity style={{top:responsiveHeight(.4),position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupsadView()}>
              <Icon style={{color:'black',fontSize:30,fontWeight:'600'}}name={'ios-close'}></Icon>
            </TouchableOpacity>
-            <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
+            <Text style={{textAlign:'center',marginTop:responsiveHeight(4.5),color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>TELL US ABOUT IT!</Text>
             <View style={styles.modelBtnWrapsad}>
             <TextInput  
-               style={{height:100,borderWidth:1,width:deviceWidth-150}}
-               multiline = {true}
-               numberOfLines = {10}
+               style={{paddingLeft:10,height:responsiveHeight(17),borderWidth:1,borderColor:'gery',width:deviceWidth-150,backgroundColor:'#f5f5f5',borderRadius:5,top:responsiveHeight(4)}}
                onChangeText={(text) => this.setState({sadFeedbackText:text})}
-               placeholder={this.state.sadFeedbackText}>
+               placeholder={"placeholder"}>
              </TextInput>
               <TouchableOpacity style={styles.modelbtnsadFeedback}onPress ={()=>this.submitFeedBack()}><Text style={{textAlign:'center',color:'white',fontWeight:'400',fontFamily: styleConfig.FontFamily}}>SUBMIT</Text></TouchableOpacity>
             </View>
@@ -699,13 +702,13 @@
       }else if(this.state.firstModel){
         return(
           <View  style={styles.contentWrap}>
-          <TouchableOpacity style={{top:5,position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupfirstModel()}>
-             <Icon style={{color:'black',fontSize:30,fontWeight:'600'}}name={'ios-close'}></Icon>
+          <TouchableOpacity style={{top:responsiveHeight(.4),position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupfirstModel()}>
+             <Icon style={{color:'black',fontSize:30,fontWeight:'900'}}name={'ios-close'}></Icon>
            </TouchableOpacity>
-            <Text style={{textAlign:'center',margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>How was you run ?</Text>
+            <Text style={{textAlign:'center',marginTop:responsiveHeight(4.5),margin:5,color:styleConfig.greyish_brown_two,fontWeight:'900',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>How was you run ?</Text>
             <View style={styles.modelBtnWrap}>
-              <TouchableOpacity style={styles.modelbtnSad} onPress ={()=>this.SadIconClick()}><Icon style={{color:styleConfig.bright_blue,fontSize:((deviceHeight/3)/100)*40,}} name={'md-sad'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily}}>NOT GOOD!</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.modelbtnHappy}onPress ={()=>this.HappyIconClick()}><Icon style={{color:styleConfig.bright_blue,fontSize:((deviceHeight/3)/100)*40,}} name={'md-happy'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily}}>I LOVED IT!</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.modelbtnSad} onPress ={()=>this.SadIconClick()}><Icon style={{color:styleConfig.light_sky_blue,fontSize:responsiveFontSize(7),bottom:responsiveHeight(2)}} name={'md-sad'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'800',fontFamily: styleConfig.FontFamily}}>NOT GOOD!</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.modelbtnHappy}onPress ={()=>this.HappyIconClick()}><Icon style={{color:styleConfig.light_sky_blue,fontSize:responsiveFontSize(7),bottom:responsiveHeight(2)}} name={'md-happy'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'800',fontFamily: styleConfig.FontFamily}}>I LOVED IT!</Text></TouchableOpacity>
             </View>
           </View>
         )
@@ -741,7 +744,7 @@
     onPostsuccessView(){
       if (this.state.isPostingFeedBack) {
         return(
-          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight-114,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
+          <View style={{position:'absolute',top:0,backgroundColor:'rgba(4, 4, 4, 0.80)',height:deviceHeight,width:deviceWidth,justifyContent: 'center',alignItems: 'center',}}>
           <Text style={{color:'white',fontWeight:'600'}}>Posting feedback...</Text>
             <ActivityIndicator
              style={{height: 80}}
@@ -775,7 +778,7 @@
             <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
               <View style={styles.wrapperRunContentImpact}>
                 <Text style={{marginBottom:10,fontWeight:'800',color:'#4a4a4a',fontSize:styleConfig.fontSizerImpact-10}}>Thank You {username}</Text>
-                <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.LatoBlack}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'900',fontFamily:styleConfig.LatoBlack}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                 <Text style={styles.lableText}>Impact</Text>
               </View>
               <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
@@ -790,16 +793,16 @@
               </View>
             </View>
             <View style={{height:deviceHeight/3+30,width:deviceWidth,backgroundColor:'white',}}>
-             <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
+             <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{width:deviceWidth,resizeMode:'contain'}} resizeMode ={'contain'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
             </View>
             </View>
             <View style={{flex:1 ,alignItems: 'center',justifyContent: 'center', flexDirection:'column',backgroundColor:'white'}}>
              <View style={{height:styleConfig.navBarHeight-30,width:deviceWidth,flex:-1,flexDirection:'row',width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute',top:0}}>            
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.lableText}>How was it?</Text>
+                  <Text style={styles.lableText}>How Was it?</Text>
                 </View>
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.lableText}>Tell your friends!</Text>                 
+                  <Text style={styles.lableText}>Tell Your Friends!</Text>                 
                 </View>
               </View>
               <View style={{flex:-1,width:deviceWidth, flexDirection:'row'}}>
@@ -814,9 +817,9 @@
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{bottom:10,height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
+              <View style={{bottom:responsiveHeight(5),height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
                 <TouchableOpacity  onPress={() => this.navigateTOhome()}>
-                  <Text style={{color:styleConfig.bright_blue,fontFamily: 'Montserrat-Regular',}}>Skip ></Text>
+                  <Text style={{color:styleConfig.light_sky_blue,fontFamily: 'Montserrat-Regular',fontWeight:'600'}}>Skip ></Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -833,7 +836,7 @@
               <View style={{flexDirection:'column',flex:-1,backgroundColor:'white', height:deviceHeight/3+20,paddingTop:styleConfig.navBarHeight-20}}>
                 <View style={styles.wrapperRunContentImpact}>
                   <Text style={{marginBottom:10,fontWeight:'800',color:'black',fontSize:styleConfig.fontSizerImpact-10,opacity:.80}}>Thank You {username}</Text>
-                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.LatoBlack}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
+                  <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'900',fontFamily:styleConfig.LatoBlack}}><Icon3 style={{color:styleConfig.light_sky_blue,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}/>{(this.state.my_currency == 'INR' ? impact : parseFloat(impact/this.state.my_rate).toFixed(2))}</Text>
                   <Text style={styles.lableText}>Impact</Text>
                 </View>
                 <View style={{width:deviceWidth,flexDirection:"row",top:20,}}>              
@@ -848,33 +851,33 @@
                 </View>
               </View>
               <View style={{height:deviceHeight/3+30,width:deviceWidth,backgroundColor:'white',}}>
-                <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'stretch'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
+                <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={{height:deviceHeight/3+30,width:deviceWidth}} loadingStyle={{size: 'small', color: 'grey'}}  style={{height:deviceHeight/3+30,width:deviceWidth}} resizeMode ={'contain'} source={{uri:cause.cause_thank_you_image_v2[this.state.thankYouimageIndex].cause_thank_you_image}} ></ImageLoad> 
               </View>
             </View>
             <View style={{flex:1 ,alignItems: 'center',justifyContent: 'center', flexDirection:'column',backgroundColor:'white'}}>
-             <View style={{height:styleConfig.navBarHeight-30,width:deviceWidth,flex:-1,flexDirection:'row',width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute',top:0}}>            
+             <View style={{height:styleConfig.navBarHeight-30,width:deviceWidth,flex:-1,flexDirection:'row',width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute',top:responsiveHeight(2)}}>            
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.lableText}>How was it?</Text>
+                  <Text style={styles.lableText}>How Was it?</Text>
                 </View>
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={styles.lableText}>Tell your friends!</Text>                 
+                  <Text style={styles.lableText}>Tell Your Friends!</Text>                 
                 </View>
               </View>
               <View style={{flex:-1,width:deviceWidth, flexDirection:'row'}}>
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <TouchableOpacity onPress={() => this.openModelLikeUnlike()} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
+                  <TouchableOpacity onPress={() => this.openModelLikeUnlike()} style={{height:responsiveHeight(10),width:responsiveHeight(10),borderRadius:responsiveHeight(10)/2,backgroundColor:'white',justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
                    <Icon2 style={{color:styleConfig.greyish_brown_two,fontSize:28,backgroundColor:'transparent'}} name="thumbs-up-down"></Icon2>
                   </TouchableOpacity>
                 </View>
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                  <TouchableOpacity onPress={()=> this.snapshot('captureScreenShot')} style={{height:styleConfig.navBarHeight-10,width:styleConfig.navBarHeight-10,borderRadius:(styleConfig.navBarHeight-10)/2,backgroundColor:styleConfig.light_sky_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
+                  <TouchableOpacity onPress={()=> this.snapshot('captureScreenShot')} style={{height:responsiveHeight(10),width:responsiveHeight(10),borderRadius:responsiveHeight(10)/2,backgroundColor:styleConfig.light_sky_blue,justifyContent: 'center',alignItems: 'center',shadowColor: '#000000',shadowOpacity: 0.4,shadowRadius: 4,shadowOffset: {height: 2,},}}>
                     <Icon style={{color:'white',fontSize:styleConfig.fontSizerlabel+20}}name={'md-share'}></Icon>
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{bottom:10,height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
+              <View style={{bottom:responsiveHeight(5),height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
                 <TouchableOpacity  onPress={() => this.navigateTOhome()}>
-                  <Text style={{color:styleConfig.bright_blue,fontFamily: 'Montserrat-Regular',}}>Skip ></Text>
+                  <Text style={{color:styleConfig.light_sky_blue,fontFamily: 'Montserrat-Regular',fontWeight:'600'}}>Skip ></Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -961,7 +964,7 @@
       borderRadius:30,
     },
     lableText:{
-      fontSize:styleConfig.fontSizerlabel, 
+      fontSize:styleConfig.fontSizerlabel+1, 
       fontFamily: styleConfig.FontFamily,
       color:'grey'
     },
@@ -988,17 +991,31 @@
      },
    },
    contentWrap:{
-    height:deviceHeight/3,
-    justifyContent: 'center',
+    height:responsiveHeight(30),
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor:"white",
+    width:deviceWidth-100,
+   },
+   contentWrap3:{
+    height:responsiveHeight(35),
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor:"white",
+    width:deviceWidth-100,
+   },
+   contentWrapEdit:{
+    height:responsiveHeight(47),
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor:"white",
     width:deviceWidth-100,
    },
    modelBtnWrap:{
-    marginTop:10,
+    marginTop:responsiveHeight(4.6),
     width:deviceWidth-100,
     flexDirection:'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
    },
 
    modelBtnWrapsad:{
@@ -1011,31 +1028,39 @@
 
    modelbtnSad:{
     flexDirection:'column',
-    height:((deviceHeight/3)/100)*50,
-    width:((deviceHeight/3)/100)*50,
-    margin:5,
-    borderRadius:(((deviceHeight/3)/100)*50)/2,
+    height:responsiveHeight(10),
+    width:responsiveHeight(18),
+    borderRadius:responsiveHeight(10)/2,
     backgroundColor:'white',
     justifyContent: 'center',
     alignItems: 'center',
    },
   modelbtnHappy:{
     flexDirection:'column',
-    height:((deviceHeight/3)/100)*50,
-    width:((deviceHeight/3)/100)*50,
-    margin:5,
-    borderRadius:(((deviceHeight/3)/100)*50)/2,
+    height:responsiveHeight(10),
+    width:responsiveHeight(18),
+    borderRadius:responsiveHeight(10)/2,
     backgroundColor:'white',
     justifyContent: 'center',
     alignItems: 'center',
    },
    modelbtnsadFeedback:{
     flexDirection:'column',
-    height:40,
+    height:responsiveHeight(6),
     width:deviceWidth-150,
-    margin:5,
+    marginTop:responsiveHeight(9),
     borderRadius:5,
-    backgroundColor:styleConfig.bright_blue,
+    backgroundColor:styleConfig.light_sky_blue,
+    justifyContent: 'center',
+    alignItems: 'center',
+   },
+   modelbtnsadFeedback2:{
+    flexDirection:'column',
+    height:responsiveHeight(6),
+    width:deviceWidth-150,
+    marginTop:responsiveHeight(4),
+    borderRadius:5,
+    backgroundColor:styleConfig.light_sky_blue,
     justifyContent: 'center',
     alignItems: 'center',
    },

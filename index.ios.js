@@ -85,7 +85,7 @@ class Application extends Component{
         });
 
         AsyncStorage.getItem('runDataAppKill', (err, result) => {
-          console.log("result",result);
+          console.log("result",JSON.parse(result));
           this.setState({
             result:result
           })

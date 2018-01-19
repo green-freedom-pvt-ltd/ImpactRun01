@@ -75,20 +75,20 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
 
    
 
-   capitalizeFirstLetter () {
-    return this.props.userName.charAt(0).toUpperCase() + this.props.userName.slice(1);
+   capitalizeFirstLetter (userName) {
+    return userName.charAt(0).toUpperCase() + userName.slice(1);
    }
 
     render(){
    
       return(
         <View style={styles.Maincontainer}>
-          <Text style={[styles.usernameText,{width:this.props.widthBar}]}>{this.props.userName +" "+this.props.lastname}</Text>
-          <View style={[styles.wrapLevelKm,{width:this.props.widthBar}]}>
+          <Text style={[styles.usernameText,{width:responsiveWidth(62.2222222222)}]}>{ this.capitalizeFirstLetter(this.props.userName)+" "+this.capitalizeFirstLetter(this.props.lastname)}</Text>
+          <View style={[styles.wrapLevelKm,{width:responsiveWidth(62.2222222222)}]}>
            <Text style={styles.kmtext}><Icon style={{fontSize:styleConfig.profileLevelBarlabelFont}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.prevKm : parseFloat(this.props.prevKm/this.state.my_rate).toFixed(2))}</Text><Text  style={styles.kmtext2}><Icon  style={{fontSize:styleConfig.profileLevelBarlabelFont}} name={this.state.my_currency.toLowerCase()}></Icon> {(this.state.my_currency == 'INR' ? this.props.levelKm : parseFloat(this.props.levelKm/this.state.my_rate).toFixed(2))}</Text>
          </View>
-         <LevelBarComponent unfilledColor={'grey'} height={responsiveHeight(0.9)} width={responsiveWidth(70)} progress={this.props.progressVal}  />
-         <Text style = {[styles.leveltext,{width:this.props.widthBar}]}>Level {this.props.level}</Text>
+         <LevelBarComponent unfilledColor={'grey'} height={responsiveHeight(0.9)} width={responsiveWidth(62.2222222222)} progress={this.props.progressVal}  />
+         <Text style = {[styles.leveltext,{width:responsiveWidth(62.2222222222)}]}>Level {this.props.level}</Text>
         </View>
         )
     }
@@ -96,20 +96,26 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
 
   var styles = StyleSheet.create({
     Maincontainer:{
-
+      backgroundColor:'white',
+      flex:1,
+      width:responsiveWidth(62.2222222222),
+      left:responsiveWidth(4),
+      
     },
     wrapLevelKm:{
       flexDirection:'row',
+      bottom:responsiveHeight(0.234375),
     },
     progress:{
       flex:1,
     },
     usernameText:{
-      color:styleConfig.greyish_brown_two,
+      color:'#000',
       fontFamily:styleConfig.FontFamily,
       fontWeight:"600",
       fontSize:styleConfig.profileNameFont,
       marginBottom:responsiveHeight(1.2),
+      opacity:.75,
     },
     kmtext:{
       fontWeight:'800',
@@ -133,10 +139,11 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
     },
     leveltext:{
       top:responsiveHeight(0.46875),
-      color:styleConfig.greyish_brown_two,
+      color:styleConfig.black,
       fontSize:styleConfig.profileLevelFont,
-      fontWeight:'800',
+      fontWeight:'900',
       fontFamily:styleConfig.LatoBlack,
+      opacity:.75,
     }
   })
 
