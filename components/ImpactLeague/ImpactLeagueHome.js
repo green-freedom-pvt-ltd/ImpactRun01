@@ -32,6 +32,7 @@ var deviceHeight = Dimensions.get('window').height;
 import impactleagueleaderboard from '../ImpactLeague/ImpactLeagueLeaderboard';
 import Swiper from 'react-native-swiper';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+const CleverTap = require('clevertap-react-native');
 
 var iphone5 = 568;
 var iphone5s = 568;
@@ -98,7 +99,6 @@ class ImpactLeague extends Component {
       }
       
       handleNetworkErrors(response){
-           console.log('responseStatus',response);
             this.setState({
               NetworkResponcePostRun:response.status,
             })
@@ -106,7 +106,6 @@ class ImpactLeague extends Component {
         }
 
       exitLeague(){
-        console.log('this.props.user.auth_token',this.props.user.auth_token,this.props.user)
         var data = new FormData();
         data.append("user",this.state.user.user_id)
         data.append("team_code",this.state.user.team_code)
@@ -121,19 +120,18 @@ class ImpactLeague extends Component {
           })
           .then(this.handleNetworkErrors.bind(this))
           .then( jsonData => {
-            console.log('jsonData123',jsonData);
             let userData = {
               team_code:jsonData.team_code
             }
             // first user, delta values
              AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
              AsyncStorage.getItem('USERDATA', (err, result) => {
-              console.log('USerDataresult', result)
+               AsyncStorage.removeItem('teamleaderBoardData',(err) => {  
+              });
               this.navigateTOhome();
              })
             }) 
           }).catch((error)=>{
-           console.log('erroremployeTeam', error);
           })
       }
 
@@ -185,7 +183,6 @@ class ImpactLeague extends Component {
           this.setState({
             user: user,
           })
-          console.log('user',this.state.user);
           NetInfo.isConnected.fetch().done(
             (isConnected) => { this.setState({isConnected}); 
               if (isConnected) {
@@ -198,8 +195,8 @@ class ImpactLeague extends Component {
 
     
       fetchLeaderBoardData() {    
-        console.log('auth_token',this.props.user.auth_token,this.state.user) ;
         var token = this.props.user.auth_token;
+        var userdata = this.props.user;
         var url = apis.ImpactLeagueTeamLeaderBoardV2Api;
         fetch(url,{
           method: "GET",
@@ -210,6 +207,8 @@ class ImpactLeague extends Component {
         })
         .then( response => response.json() )
         .then( jsonData => {
+
+          CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email,'Identity':userdata.user_id,'LeagueName':jsonData.impactleague_name});
           this.setState({
             LeaderBoardData: this.state.LeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,
@@ -356,7 +355,7 @@ class ImpactLeague extends Component {
 
 
       renderRowTooltiplist(rowData){
-        console.log('rowData',rowData)
+
         return(
           <TouchableOpacity onPress={()=> this.onclickpopuRow(rowData)}style={{width:200,height:50,justifyContent: 'center',paddingLeft:10,}}>
             <Text>{rowData.title}</Text>
@@ -366,7 +365,7 @@ class ImpactLeague extends Component {
       
 
       onclickpopuRow(rowData){
-        console.log('rowData1', rowData);
+
         if (rowData.functions === 'exitLeague') {
           return this.exitLeague();
         }else if(rowData.functions === 'help'){
@@ -383,19 +382,19 @@ class ImpactLeague extends Component {
 
       render(rowData,jsonData) {
         if (this.state.isMounted) {
-        console.log('user',this.state.user);
+
         if (this.state.user) {
         if (this.state.user.team_code != 0) {
         if (!this.state.loaded) {
           return this.renderLoadingView();
         }
 
-        console.log("this.state.total_amount", this.state.total_amount);
+
         return (
 
         <View style={{height:deviceHeight,width:deviceWidth}}>
           <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()} rightIcon = {this.rightIconRender()} />
-          <View style={{height:styleConfig.sliderHeightIL,width:deviceWidth,top:6}}>
+          <View style={styles.ImpactLeagueBanner}>
               <Swiper style={styles.wrapper} height={styleConfig.sliderHeightIL} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
                 <View>
               <Image source={{uri:this.state.BannerData}} style={{height:styleConfig.sliderHeightIL-10,width:deviceWidth,backgroundColor:'white'}} resizeMode ={'contain'} >
@@ -484,7 +483,7 @@ const styles = StyleSheet.create({
 
   },
   slide3: {
-    flex: 1,
+    height:styleConfig.sliderHeightIL-10,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:'white',
@@ -499,6 +498,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor:'white',
     height:styleConfig.sliderHeightIL-6-styleConfig.navBarHeight-20,
+    top:10,
   },
     shadow: {
         height:styleConfig.sliderHeightIL,
@@ -506,6 +506,18 @@ const styles = StyleSheet.create({
         width: deviceWidth,
         backgroundColor: 'transparent',
         justifyContent: 'center',
+    },
+
+    ImpactLeagueBanner:{
+      height:styleConfig.sliderHeightIL,
+      width:deviceWidth,
+      top:6,
+      shadowColor: '#000000',
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      shadowOffset: {
+        height: 4,
+      },
     },
 
     page:{
@@ -533,12 +545,8 @@ const styles = StyleSheet.create({
     padding:20,
     width:deviceWidth,
     height:styleConfig.ListViewHeight,
-    shadowColor: '#000000',
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      shadowOffset: {
-        height: 3,
-      },
+    borderBottomWidth:1,
+    borderColor:'#979797',
   },
   swipedown:{
     height:30,

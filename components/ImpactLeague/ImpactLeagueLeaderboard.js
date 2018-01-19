@@ -91,20 +91,18 @@ class ImpactLeagueLeaderBoard extends Component {
           })
           .then( response => response.json())
           .then( jsonData => {
-            console.log('jsonData123',jsonData);
             let userData = {
               team_code:jsonData.team_code
             }
         // first user, delta values
             AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
              AsyncStorage.getItem('USERDATA', (err, result) => {
-              console.log('result', result)
+              AsyncStorage.removeItem('teamleaderBoardData',(err) => {  
+              });
               this.navigateTOhome();
              })
             }) 
-            AlertIOS.alert('title',JSON.stringify(jsonData));
           }).catch((error)=>{
-           console.log('erroremployeTeam', error);
           })
       }
       
@@ -146,7 +144,6 @@ class ImpactLeagueLeaderBoard extends Component {
        
           var boardData = JSON.parse(result);        
           if (boardData != null) {
-            console.log('result',boardData);
             this.setState({
               ImpactLeagueLeaderBoardData:this.state.ImpactLeagueLeaderBoardData.cloneWithRows(boardData.results),
               BannerData:boardData.results,
@@ -176,7 +173,6 @@ class ImpactLeagueLeaderBoard extends Component {
       FetchLeaderBoard() {                
         var url = apis.ImpactLeagueLeaderboardV2Api;
         var token = this.props.user.auth_token;
-        console.log('token ' + token,this.props.user);
         if (this.props.user.team_code == this.props.Team_id) {
           CleverTap.recordEvent('ON_CLICK_SELF_TEAM_LEAGUE_BOARD');
           fetch(url,{
@@ -210,7 +206,6 @@ class ImpactLeagueLeaderBoard extends Component {
           })
           .then( response => response.json() )
           .then( jsonData => {
-            console.log('ILleaderBoardData',jsonData);
           this.setState({
             ImpactLeagueLeaderBoardData: this.state.ImpactLeagueLeaderBoardData.cloneWithRows(jsonData.results),
             loaded: true,

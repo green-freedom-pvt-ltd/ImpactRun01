@@ -437,7 +437,7 @@ class Home extends Component {
               'activity_type':this.state.activityType.type,
               'activity_confidence':this.state.activityType.confidence,
             });
-            return this.usainBoltPopup();
+             return this.usainBoltPopup();
         }else{
               return this.addDistance(location);
         }
@@ -511,7 +511,6 @@ class Home extends Component {
       previousDistanceforSpeedCheck:this.state.distanceTravelled,
       previousDurationforSpeedCheck:this.state.mainTimer,
     })
-    console.log('currentSpeed',currentSpeed,Number(timeBetweenLastCheck/1000),timeInhrs,timeBetweenLastCheck,distancBetweenLastCheck);
     if (this.state.currentSpeed === 0) {
       if (this.state.isStillCheck === 3){
         if(this.state.isRunning){

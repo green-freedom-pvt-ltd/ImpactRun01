@@ -113,6 +113,7 @@
           return response.json();
          })
         .then((responseJson) => {
+          console.log('responseJson',responseJson);
           this.setState({
             loding:false,
             data:responseJson,

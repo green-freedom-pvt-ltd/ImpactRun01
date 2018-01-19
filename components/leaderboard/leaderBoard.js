@@ -150,7 +150,6 @@ var iphone7Plus = 736;
       renderRow(rowData, index,rowID){
         rowID++       
         var myflex = (this.state.user.user_id === rowData.user_id)?1:0;
-        // console.log('rodatacount',this.state.userCount,this.state.responce);
         var textColor = (this.state.user.user_id === rowData.user_id)?"white":"#4a4a4a";
         var backgroundcolor=(this.state.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:"white";
         var myposition = (this.state.user.user_id === rowData.user_id)?'absolute':'relative';
@@ -196,14 +195,7 @@ var iphone7Plus = 736;
 
 
       componentDidMount() {
-          // get current route
-       //   var route = this.props.route;
-       //   console.log('route',route);
-       // // update onRightButtonPress func
-       //  this.props.rightButtonTitle = (this.state.user)?'title':'league'; 
-       //  console.log('route',route);
-       // // component will not rerender
-       // this.props.navigator.replace(route);
+    
        setTimeout(() => {this.setState({downrefresh: false})}, 1000)
        this.getUserData();
        this.fetchLeaderBoardLocally(this.state.value);
@@ -216,7 +208,6 @@ var iphone7Plus = 736;
         NetInfo.isConnected.fetch().done(
           (isConnected) => { this.setState({isConnected}); 
             if (isConnected) {
-              console.log('isConnect leaderBoard',isConnected);
               this.fetchLeaderBoard();
             }else{
                this.fetchLeaderBoardLocally(this.state.value);
@@ -228,13 +219,11 @@ var iphone7Plus = 736;
       
 
       fetchLeaderBoard() {
-        AsyncStorage.removeItem('leaderBoard' + this.state.value,(err) => {
-        });
+        
          this.setState({
             fetched:false,
           });
         var token = this.state.user.auth_token;
-        console.log("token",token);
         var stateValue = '';
         if (this.state.value == 'Last 7 days'){
           stateValue = 'last_7';
@@ -246,7 +235,6 @@ var iphone7Plus = 736;
           stateValue = 'all_time';  
         }
         var url = apis.leaderBoardapi +'?interval=' + stateValue + '&orderby=amount';
-        console.log('fetchLeaderBoardvalue',url);
         fetch(url,{
           method: "GET",
           headers: {  
@@ -256,6 +244,8 @@ var iphone7Plus = 736;
         })
         .then( response => response.json() )
         .then( jsonData => {
+          AsyncStorage.removeItem('leaderBoard' + this.state.value,(err) => {
+          });
           this.setState({
             LeaderBoard:this.state.LeaderBoard.cloneWithRows(jsonData.results),
             fetched:true,
@@ -263,7 +253,6 @@ var iphone7Plus = 736;
           });
           this.render(this.state.LeaderBoardResult);   
           let leaderBoard = jsonData;
-          console.log('leaderBoard',leaderBoard);
           AsyncStorage.setItem('leaderBoard'+this.state.value,JSON.stringify(leaderBoard));
           AsyncStorage.getItem('leaderBoard'+this.state.value, (err, result) => {   
           });  
@@ -273,6 +262,7 @@ var iphone7Plus = 736;
           console.log('Error fetching: ' + error)
           this.setState({
             fetched:false,
+            refreshing:false,
           });
         });
       }
@@ -284,7 +274,6 @@ var iphone7Plus = 736;
 
          AsyncStorage.getItem('USERDATA', (err, result) => {
           let user = JSON.parse(result);
-          console.log("user",user.team_code);
           this.setState({
             user:user,
           })

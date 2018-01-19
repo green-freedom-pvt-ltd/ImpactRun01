@@ -15,7 +15,8 @@ import{
     Platform,
     ActivityIndicator,
     AsyncStorage,
-    Linking
+    Linking,
+    NetInfo
   } from 'react-native';
 import commonStyles from '../styles';
 import apis from '../apis';
@@ -26,6 +27,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ImpactLeagueForm2 from './ImpactLeagueForm2'
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+const CleverTap = require('clevertap-react-native');
+
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 
@@ -57,12 +60,26 @@ class ImpactLeagueCode extends Component {
       this.codeDoesnotExistCheck = this.codeDoesnotExistCheck.bind(this);
     }
 
-    SubmitCode(){
+    SubmitCode(){ 
+      NetInfo.isConnected.fetch().done(
+        (isConnected) => { this.setState({isConnected}); 
+          if (isConnected) {
+             this.CodePostRequest();
+          }else{
+            AlertIOS.alert('Network error','There is no internet connection on this device.');
+          } 
+        }
+      );
+     
+    }
 
+
+
+
+    CodePostRequest(){
       this.setState({
         loading:true,
       })
-
       var http = new XMLHttpRequest();
       var user_id = this.props.user.user_id;
       var token = this.props.user.auth_token;
@@ -144,6 +161,8 @@ class ImpactLeagueCode extends Component {
         let userData = {
           team_code:responseJson.team_code
         }
+        CleverTap.profileSet({'Name': userdata.first_name +' '+userdata.last_name, 'UserId':userdata.user_id , 'Email': userdata.email,'Identity':userdata.user_id,'TeamCode':responseJson.team_code});
+
         // first user, delta values
         AsyncStorage.mergeItem('USERDATA', JSON.stringify(userData), () => {
          AsyncStorage.getItem('USERDATA', (err, result) => {
@@ -210,22 +229,37 @@ class ImpactLeagueCode extends Component {
     codeDoesnotExistCheck(responseJson){
       var valueReturn = "Object with team_code="+this.state.moreText+" does not exist.";
       var valueReturn2 = "The fields user, team must make a unique set.";
+      console.log('responseJson123',responseJson.team[0],valueReturn,valueReturn2);
       // console.log('responcedatacode',JSON.stringify(responseJson.non_field_errors[0])==valueReturn2);
-      if (responseJson) {
-        if (responseJson.non_field_errors) {
-        if (JSON.stringify(responseJson.non_field_errors[0]) != null) {
+      if (responseJson.team != null && responseJson.team != undefined) {
+        if (responseJson.team != this.state.moreText) {
           console.log('react2');
           this.setState({
-            codenotextist:JSON.stringify(responseJson.non_field_errors[0]),
+            codenotextist:(responseJson.team[0] === valueReturn)?'Sorry! That\'s not a code':'Try again later',
           })
         }else{
-          console.log('react3');
-          this.Navigate_To_nextpage(responseJson);
+          if (responseJson.team_code != null && responseJson.team_code != undefined){
+            console.log('react3',responseJson);
+            this.Navigate_To_nextpage(responseJson);
+          }else{
+            this.setState({
+             codenotextist:responseJson.team[0],
+            })
+            console.log('react4',responseJson);
+          }
         }
-      }else{
-        this.Navigate_To_nextpage(responseJson);
-      }
-      }
+        }else{
+          if (responseJson.team_code != null && responseJson.team_code != undefined){
+            console.log('react5',responseJson);
+            this.Navigate_To_nextpage(responseJson);
+          }else{
+            console.log('react6',responseJson);
+            this.setState({
+             codenotextist:responseJson.team[0],
+            })
+          }
+        }
+      
     }
      
     isloading(){
