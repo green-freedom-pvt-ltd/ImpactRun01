@@ -12,7 +12,7 @@ export default {
 async checkForTooFast(location,enabled,activityType){
         var location = location;
         if (enabled === true) {
-          if (activityType.type === 'AUTOMOTIVE' && activityType.confidence >= 2) {    
+          if (activityType.type === 'AUTOMOTIVE' && activityType.confidence >= 2 || activityType.type === 'CYCLING' &&  activityType.confidence >= 2 ) {    
               return true
           }else{
             return false

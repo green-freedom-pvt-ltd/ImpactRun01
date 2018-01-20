@@ -252,7 +252,7 @@ class RunHistory extends Component {
 
 
       onPressFlagedRun(rowData){
-       AlertIOS.alert('Flagged Run','We found some error with this run, this will not be recorded. Do give feedback for this run, if you have any.',
+       AlertIOS.alert('Something\'s not right !','We have found some error with this workout session. So we won\'t record it. Please give us feedback for this session, if you feel like.',
          [
          {text: 'OK',},
          {text: 'FEEDBACK', onPress: () => this.GiveFeedback(rowData)}
@@ -426,9 +426,9 @@ class RunHistory extends Component {
                 <View style={styles.iconWrapmodel}>
                   <Icon3 style={{color:"white",fontSize:30,}} name={'md-create'}></Icon3>
                 </View>
-                <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>ENTER BODY WEIGHT</Text>
+                <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>PLEASE ENTER BODY WEIGHT</Text>
                 <View style={{justifyContent: 'center',alignItems: 'center',}}>
-                  <Text style={{textAlign:'center', marginBottom:10,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your body weight is required to calculate calories burnt in every run or walk </Text>
+                  <Text style={{textAlign:'center', marginBottom:10,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your body weight is required to count calories </Text>
                   <TextInput
                     placeholder="Enter Your weight in KG"
                     style={{width:deviceWidth-100,height:40,borderColor:'grey',borderWidth:1,padding:1,paddingLeft:5,fontSize:12}}

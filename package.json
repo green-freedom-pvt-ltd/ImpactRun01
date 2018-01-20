@@ -34,6 +34,7 @@
     "react-native-snap-carousel": "^3.1.0",
     "react-native-swiper": "^1.5.10",
     "react-native-tab-view": "0.0.18",
+    "react-native-tts": "^1.4.1",
     "react-native-uuid-generator": "^3.0.2",
     "react-native-vector-icons": "^4.0.1",
     "react-native-view-shot": "^1.5.1",

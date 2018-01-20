@@ -156,7 +156,7 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
        
         }else{
           this.SaveRunLocally();
-          AlertIOS.alert('Login', 'please login to create impact');
+          AlertIOS.alert('Login to make it count', 'Your workout will not convert into impact for the charity. Are you sure you don\'t want to login?');
         }
       },1000);
         
@@ -875,9 +875,9 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{bottom:responsiveHeight(5),height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
-                <TouchableOpacity  onPress={() => this.navigateTOhome()}>
-                  <Text style={{color:styleConfig.light_sky_blue,fontFamily: 'Montserrat-Regular',fontWeight:'600'}}>Skip ></Text>
+              <View style={{bottom:responsiveHeight(4.5),height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
+                <TouchableOpacity onPress={() => this.navigateTOhome()}>
+                  <Text style={{height:30,color:styleConfig.light_sky_blue,fontFamily: 'Montserrat-Regular',fontWeight:'600'}}>{'Continue >'}</Text>
                 </TouchableOpacity>
               </View>
             </View>

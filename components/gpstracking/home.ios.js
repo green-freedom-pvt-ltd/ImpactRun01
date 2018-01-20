@@ -44,10 +44,12 @@ import getLocalData from '../getLocalData.js';
 var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
 import usainBoltCheck from './checkUsainBolt.js';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 var distancePriv = 0;
 var timepriv = 0;
 var calories = 0;
-
+var previousDistanceToRemove = 0;
 
 
 class Home extends Component {
@@ -115,10 +117,12 @@ class Home extends Component {
           'type':'STATIONARY',
           'confidence':1,
         },
+        StartLocation:null,
         client_run_id:null,
         speedBetweenTwoPoint:0,
         locationArray:[],
         locationObjectsArray:[],
+        newlatlong:null,
       };
     }
 
@@ -126,6 +130,8 @@ class Home extends Component {
 
   
   componentDidMount(){ 
+    Location.setAllowsBackgroundLocationUpdates(true);
+    this.getLocationUpdate();
     this.state.componentISmounted = true;
     const detectionIntervalMillis = 1000
     ActivityRecognition.start(detectionIntervalMillis)
@@ -143,7 +149,7 @@ class Home extends Component {
     this._startStepCounterUpdates()
    
     this.updatePaceButtonStyle(); 
-    this.getSpeedEvery30Sec();
+    this.getSpeed();
       var d = moment().format('YYYY-MM-DD HH:mm:ss');
       this.setState({
         myrundate:d,
@@ -152,7 +158,7 @@ class Home extends Component {
   }
 
 
-  getSpeedEvery30Sec(){
+  getSpeed(){
     this.getSpeedEvery30Sec = setInterval(()=>{
       this.getCurrentSpeed();
     },7000);
@@ -167,6 +173,8 @@ class Home extends Component {
         calorieBurned:Number(runData.calories_burnt)+Number(this.state.calorieBurned),
         locationArray:(runData.locationArray === 1)?[]:runData.locationArray,
         mainTimer:runData.time,
+        newlatlong2:runData.EndLocation,
+        StartLocation2:runData.StartLocation,
       })
        this._handleStartStop(runData.time);
      } else{
@@ -323,8 +331,7 @@ class Home extends Component {
       })
     })
 
-    Location.setAllowsBackgroundLocationUpdates(true);
-    this.getLocationUpdate();
+
   }
 
   getLocationUpdate(){
@@ -341,6 +348,7 @@ class Home extends Component {
   // Add Marker if check clear
   addMarker (location) {
     if (this.state.enabled === true) {
+      console.log('this.state.enabled',this.state.enabled);
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -377,14 +385,17 @@ class Home extends Component {
         "nspk": this.state.num_spikes,
         "dis": this.state.distanceTravelled,
       };
+
      this.state.locationObjectsArray.push(locationObject) ;
       this.setState({
         sourceCount:false,
       })
 
-    
-
-      this.checkForTooFast(location);
+      if(this.state.currentSpeed != 0 && this.state.currentSpeed != null ){
+        this.checkForTooFast(location);
+      }else{
+        this.addDistance(location);
+      }
     }else{
         var Prevdistance = this.state.prevDistance*1000;
         var locationAccuracy=location.coords.accuracy;
@@ -393,7 +404,11 @@ class Home extends Component {
         var thresholdFactor = 5; 
         var currentDistance = Prevdistance;
         if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){       
-          this.checkForTooFast(location);
+          if(this.state.currentSpeed != 0 && this.state.currentSpeed != null ){
+            this.checkForTooFast(location);
+          }else{
+            this.addDistance(location);
+          }
         }else{
           if (locationAccuracy > 100){
             CleverTap.recordEvent('DETECTED_GPS_SPIKE');
@@ -416,7 +431,6 @@ class Home extends Component {
      
     }
   }else{
-    return console.log('enabled false');
   }
       
   }
@@ -427,28 +441,37 @@ class Home extends Component {
       usainBoltCheck.checkForTooFast(location,this.state.enabled,this.state.activityType)
       .then((isUsainBolt )=>{
         if (isUsainBolt == true) {
-            CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
-              'detected_by':'activity_recognition ',
-              'distance':this.state.distanceTravelled,
-              'time_elapsed':TimeFormatter(this.state.mainTimer),
-              'num_steps':this.state.numberOfSteps,
-              'client_run_id':this.state.client_run_id,
-              'speed':this.state.currentSpeed + ' km/hr',
-              'activity_type':this.state.activityType.type,
-              'activity_confidence':this.state.activityType.confidence,
-            });
-             return this.usainBoltPopup();
+           if (this.state.currentSpeed > 20){ 
+             CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
+                'detected_by':'activity_recognition ',
+                'distance':this.state.distanceTravelled,
+                'time_elapsed':TimeFormatter(this.state.mainTimer),
+                'num_steps':this.state.numberOfSteps,
+                'client_run_id':this.state.client_run_id,
+                'speed':this.state.currentSpeed + ' km/hr',
+                'activity_type':this.state.activityType.type,
+                'activity_confidence':this.state.activityType.confidence,
+                'previousDistanceforSpeedCheck':this.state.previousDistanceforSpeedCheck,
+              });
+  
+              this.setState({
+                distanceTravelled:this.state.distanceTravelled-previousDistanceToRemove
+              })
+               return this.usainBoltPopup();
+             }else{
+               return this.addDistance(location);
+             }
         }else{
               return this.addDistance(location);
         }
       }).then(()=>{
         if (this.state.enabled === true) {  
           if (this.state.currentSpeed != NaN && this.state.currentSpeed != 0) {
-          if (this.state.currentSpeed < 35 ) { 
+          if (this.state.currentSpeed < 40 ) { 
               
             return this.addDistance(location);
           }else{
-            
+
             CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
             'detected_by':'speed_logic',
             'distance':this.state.distanceTravelled,
@@ -458,14 +481,16 @@ class Home extends Component {
             'speed':this.state.currentSpeed + ' km/hr',
             'activity_type':this.state.activityType.type,
             'activity_confidence':this.state.activityType.confidence,
+            'previousDistanceforSpeedCheck':this.state.previousDistanceforSpeedCheck,
            });
+            this.setState({
+              distanceTravelled:this.state.distanceTravelled-previousDistanceToRemove
+            })
           this.usainBoltPopup();
           }
           }
           }else{
-            CleverTap.recordEvent('ON_USAIN_BOLT_ALERT_SPEED_LOGIC_ENABLED_FALSE',{
-              'enable':this.state.enabled,
-            })
+      
           }
       })
       // AlertIOS.alert('mostProbableActivity',JSON.stringify(mostProbableActivity));
@@ -501,11 +526,13 @@ class Home extends Component {
 
 
   getCurrentSpeed(){   
+
     if(this.state.enabled){
     let timeBetweenLastCheck = Number(this.state.mainTimer) - Number(this.state.previousDurationforSpeedCheck);
     let distancBetweenLastCheck = Number(this.state.distanceTravelled) - Number(this.state.previousDistanceforSpeedCheck);
     let timeInhrs = ((parseInt(timeBetweenLastCheck)/1000)/60)/60;
     let currentSpeed = parseInt(distancBetweenLastCheck/timeInhrs);
+    previousDistanceToRemove = distancBetweenLastCheck;
     this.setState({
       currentSpeed:currentSpeed,
       previousDistanceforSpeedCheck:this.state.distanceTravelled,
@@ -532,6 +559,11 @@ class Home extends Component {
   }
   }
 
+  clearCurrentSpeed(){
+    clearInterval(this.getSpeedEvery30Sec);
+    
+  }
+
 
 
 
@@ -540,7 +572,7 @@ class Home extends Component {
       PushNotification.localNotification({
         vibrate: true, // (optional) default: true
         vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-        message: "Seems you are  still pause your workout", // (required)
+        message: "It seems you aren't moving.", // (required)
         playSound: true, // (optional) default: true
       });
     }
@@ -580,12 +612,12 @@ class Home extends Component {
 
 
   _onNotification(notification) {
-     
-      PushNotification.localNotification({
+      PushNotification.localNotificationSchedule({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      message: "Seems you are in a vehicle. Pausing workout", // (required)
+      message: "Seems you are in a vehicle or cycling. We have paused your workout.", // (required)
       playSound: true, // (optional) default: true
+      date: new Date(Date.now() + (3000)) // in 60 secs
     });
   }
 
@@ -595,7 +627,7 @@ class Home extends Component {
      PushNotification.localNotification({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-      message: "Seems your GPS signals are weak", // (required)
+      message: "Weak GPS try to be in open areas and enable data.", // (required)
       playSound: true, // (optional) default: true
     });
   }
@@ -611,9 +643,10 @@ class Home extends Component {
     clearInterval(this.IntervelSaveRun);
     clearInterval(this.getSpeedEvery30Sec);
     clearInterval(this.interval);
+    ActivityRecognition.stop()
     // this.clearLocationUpdate();
     DeviceEventEmitter.removeListener('locationUpdated');
-    ActivityRecognition.stop()
+    
     this.unsubscribe()
 
   }
@@ -640,31 +673,36 @@ class Home extends Component {
     var me = this;
     if (this.state.enabled) {
       this.CleverTapOnpauseEvent('user_clicked',this.state.distanceTravelled,TimeFormatter(this.state.mainTimer),this.state.numberOfSteps);
-     this.setEnabled(false);
       this.setState({
         prevLatLng:null,
       });  
+
+      this.setEnabled(false);
        setTimeout(()=>{ 
         this.updatePaceButtonStyle();
-        this._handleStartStop(this.state.mainTimer);     
+        this._handleStartStop(this.state.mainTimer); 
+        this.clearCurrentSpeed();    
        },30) ;
-          
+      
       
     }else{   
+
       CleverTap.recordEvent('ON_CLICK_RESUME_RUN',{
         'distance':this.state.distanceTravelled,
         'time_elapsed':TimeFormatter(this.state.mainTimer),
         'num_steps':this.state.numberOfSteps,
         'client_run_id':this.state.client_run_id,
       });
-      this.setEnabled(true);
+      
       this.setState({
         isMoving:isMoving,
         prevLatLng:null,
       });  
+      this.setEnabled(true);
        setTimeout(()=>{ 
-        this.updatePaceButtonStyle();
-        this._handleStartStop(this.state.mainTimer);     
+        me.updatePaceButtonStyle();
+        me._handleStartStop(this.state.mainTimer);
+        me.getSpeed();     
        },30) ;
     } 
     
@@ -675,14 +713,26 @@ class Home extends Component {
 
   onClickEnable(location) {
      var _this = this;
-    if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
-      
-  
-      _this.EndRunConfimationForlongRun();  
-     }else{
-      _this.EndRunConfimation();
-      PushNotification.cancelAllLocalNotifications();
-    }        
+     this.setState({
+      onCarDetectedEndRunModel:false,
+      open:false,
+     })
+     if (location === 'modelEnd') {
+      if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
+         this.ConfirmRunEnd()
+       }else{
+         this.popRoute()
+       }
+      }else{
+      if (Number(parseFloat(_this.state.distanceTravelled).toFixed(1))>= 0.1) {
+        
+    
+        _this.EndRunConfimationForlongRun();  
+       }else{
+        _this.EndRunConfimation();
+        PushNotification.cancelAllLocalNotifications();
+      }       
+    } 
   }
 
 
@@ -713,24 +763,29 @@ class Home extends Component {
   
 
   usainBoltPopup(){
-     if (this.state.ussainBoltCount > 3) {
-          this.setEnabled(false);
+     if (this.state.ussainBoltCount === 3) {
+          
           this.setState({
             currentSpeed:0,
           })
+          this.setEnabled(false);
           setTimeout(()=>{ 
             this.setState({
               onCarDetectedEndRunModel:true,
             })
            },1000) ;
+          this.clearCurrentSpeed();
           this.updatePaceButtonStyle();
           this._handleStartStop(this.state.mainTimer); 
         }else{
-          this.setEnabled(false);
+         
+
           this.setState({
-            ussainBoltCount:this.state.ussainBoltCount+1,   
             currentSpeed:0,
+            ussainBoltCount:this.state.ussainBoltCount+1,   
           })
+          this.setEnabled(false);
+          this.clearCurrentSpeed();
           this.updatePaceButtonStyle();
           this._handleStartStop(this.state.mainTimer);
            setTimeout(()=>{ 
@@ -754,9 +809,8 @@ class Home extends Component {
 
   getMetsValue(speed){
      // deltaSpeed is in m/s
-     if (speed != NaN) {
-     var speed = speed*1000;
-     var mph = 2.2369 * speed;
+     if (this.state.currentSpeed != NaN) {
+     var mph = this.state.currentSpeed*0.64;
 
        if (mph <= 0.625) {
             this.setState({
@@ -897,7 +951,7 @@ class Home extends Component {
  
    // function for calculating new and previous latlag
    calcDistance(newLatLng) {
-    if (this.state.prevLatLng != null) {
+    if (this.state.prevLatLng != null && this.state.prevDistance < 0.150) {
       const { prevLatLng } = this.state
       return (haversine(prevLatLng, newLatLng) || 0)
     } else{
@@ -939,8 +993,8 @@ class Home extends Component {
           isUserlogin:user,
           calories_burnt:this.state.calorieBurned,
           time:TimeFormatter(this.state.mainTimer),
-          StartLocation:this.state.StartLocation,
-          EndLocation:this.state.newlatlong,
+          StartLocation:(this.state.StartLocation != null)?this.state.StartLocation:this.state.StartLocation2,
+          EndLocation:(this.state.newlatlong != null)?this.state.newlatlong:this.state.newlatlong2,
           StartRunTime:this.state.myrundate,
           EndRunTime:this.state.endDate,
           noOfsteps:this.state.numberOfSteps,
@@ -980,7 +1034,7 @@ class Home extends Component {
         'client_run_id':this.state.client_run_id,
      });
       AlertIOS.alert(
-         'Too short',
+         'That’s too short!',
          'You need to run a minimum of 100m to convert the distance into impact.',
         [
           {text: 'Continue',},
@@ -1012,12 +1066,23 @@ class Home extends Component {
         this.state.distanceTravelled = 0;
         this.state.prevDistance = 0;
         this.setEnabled(false);
-        this.updatePaceButtonStyle();    
+        this.updatePaceButtonStyle();  
+        clearInterval(this.IntervelSaveRun);
+        clearInterval(this.getSpeedEvery30Sec);
+        clearInterval(this.interval);
+        ActivityRecognition.stop()
+        // this.clearLocationUpdate();
+        DeviceEventEmitter.removeListener('locationUpdated');
+        
+        this.unsubscribe()  
       }else{
         AsyncStorage.removeItem('runDataAppKill');
         this.navigateTOHomeScreen();
       }
     }
+
+
+
 
 
     
@@ -1061,7 +1126,7 @@ class Home extends Component {
                             <View style={{flex:1,flexDirection:'row',backgroundColor:'transparent'}}>
                                 <View style={styles.timeDistanceWrap}>
                                     <Icon style={{color:styleConfig.greyish_brown_two,fontSize:30,}} name={'ios-walk-outline'}></Icon>
-                                    <Text style={styles.distance}>{(this.state.my_distance == 'miles' ? parseFloat(this.state.distanceTravelled*0.621).toFixed(1) : parseFloat(this.state.distanceTravelled).toFixed(1))}</Text>
+                                    <Text style={styles.distance}>{(this.state.my_distance == 'miles' ? parseFloat(this.state.distanceTravelled*0.621).toFixed(1) : parseFloat(this.state.distanceTravelled).toFixed(2))}</Text>
                                     <Text style={{fontFamily:styleConfig.FontFamily,color:styleConfig.greyish_brown_two,opacity:0.7,}}>{(this.state.my_distance == 'miles' ? 'MI' : 'KMS')}</Text>
                                 </View>
                                 <View style={styles.timeDistanceWrap2}>
@@ -1108,9 +1173,9 @@ class Home extends Component {
                     <View style={styles.iconWrapmodel}>
                       <Icon style={{color:"white",fontSize:30,}} name={'ios-car'}></Icon>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>Too Fast</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:responsiveFontSize(3)}}>Too Fast</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>It seems you are in a vehicle. Pausing workout</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:responsiveFontSize(2)}}>Seems you are in a vehicle. We have paused your workout.</Text>
                    <View style={styles.modelBtnWrap}>
                     <TouchableOpacity style={styles.modelbtnResumeRun} onPress ={()=>this.closemodel()}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
                     <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.ResumeRunFromPopup()}><Text style={styles.btntext}>Resume</Text></TouchableOpacity>
@@ -1134,11 +1199,11 @@ class Home extends Component {
                     <View style={styles.iconWrapmodel}>
                       <Icon style={{color:"white",fontSize:30,}} name={'ios-car'}></Icon>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>On-vehicle detected</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:responsiveFontSize(3)}}>In a Vehicle !</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>It seems you are in a moving vehicle. So we are ending your workout.</Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:responsiveFontSize(2)}}>you are in a moving vehicle. So we are ending your workout.</Text>
                    <View style={styles.modelBtnWrap}>
-                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.ConfirmRunEnd()}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.onClickEnable('modelEnd')}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
                   </View>
                    </View>
                    </View>
@@ -1165,9 +1230,9 @@ class Home extends Component {
                         <View style={[styles.signalline,{backgroundColor:"white",height:17}]}></View>
                       </View>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>Weak GPS Signal</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:responsiveFontSize(3)}}>Weak GPS</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>GPS signal is weak on your phone. So tracking may be inaccurate. </Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:responsiveFontSize(2)}}>Try to be in open areas and enable data.</Text>
                    <View style={styles.modelBtnWrap}>
                     <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.closemodel()}><Text style={styles.btntext}>Okay</Text></TouchableOpacity>
                   </View>
@@ -1314,7 +1379,7 @@ var styles = StyleSheet.create({
      },
    },
    contentWrap:{
-    height:deviceheight/3,
+    height:responsiveHeight(30),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:"white",

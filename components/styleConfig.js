@@ -403,7 +403,7 @@ export default {
   profileTotalRunsfont:responsiveFontSize(3.2),
   helpCenterListFontSize:responsiveFontSize(2),
   fontNavTitle:responsiveFontSize(2.7),
-  ListViewTitelText:responsiveFontSize(1.8),
+  ListViewTitelText:responsiveFontSize(2),
   FontSizeTitle:fontSizer1(),
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),

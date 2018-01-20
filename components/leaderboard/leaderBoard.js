@@ -149,12 +149,12 @@ var iphone7Plus = 736;
 
       renderRow(rowData, index,rowID){
         rowID++       
-        var myflex = (this.state.user.user_id === rowData.user_id)?1:0;
-        var textColor = (this.state.user.user_id === rowData.user_id)?"white":"#4a4a4a";
-        var backgroundcolor=(this.state.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:"white";
-        var myposition = (this.state.user.user_id === rowData.user_id)?'absolute':'relative';
-        var mytop = (this.state.user.user_id === rowData.user_id)?-100:0;
-        var visiblity = (this.state.user.user_id === rowData.user_id)?0:1;
+        var myflex = (this.props.user.user_id === rowData.user_id)?1:0;
+        var textColor = (this.props.user.user_id === rowData.user_id)?"white":"#4a4a4a";
+        var backgroundcolor=(this.props.user.user_id === rowData.user_id)?styleConfig.light_sky_blue:"white";
+        var myposition = (this.props.user.user_id === rowData.user_id)?'absolute':'relative';
+        var mytop = (this.props.user.user_id === rowData.user_id)?-100:0;
+        var visiblity = (this.props.user.user_id === rowData.user_id)?0:1;
         let style = [
           styles.row, 
           {
@@ -187,8 +187,15 @@ var iphone7Plus = 736;
 
       renderLoadingView() {
         return (
+          <View>
+          <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/> 
+          <View style= {styles.textlast7daysWrap}>
+            <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
+            </ModalDropDown>
+          </View>     
           <View style={{top:-8,height:deviceHeight-150, width:deviceWidth,}}>
             <LodingScreen />
+          </View>
           </View>
         );
       }
@@ -220,10 +227,12 @@ var iphone7Plus = 736;
 
       fetchLeaderBoard() {
         
-         this.setState({
+         
+         if (this.props.user != undefined || this.props.user != null) {
+          this.setState({
             fetched:false,
           });
-        var token = this.state.user.auth_token;
+        var token = this.props.user.auth_token;
         var stateValue = '';
         if (this.state.value == 'Last 7 days'){
           stateValue = 'last_7';
@@ -258,6 +267,8 @@ var iphone7Plus = 736;
           });  
           
         })
+        
+       
         .catch( (error) => {
           console.log('Error fetching: ' + error)
           this.setState({
@@ -265,6 +276,9 @@ var iphone7Plus = 736;
             refreshing:false,
           });
         });
+         }else{
+           AlertIOS.alert('Please login', 'Please login to see leaderboard.');
+        }
       }
 
 
@@ -342,44 +356,24 @@ var iphone7Plus = 736;
        }
 
 
-      renderLeaderboadScreen(dataleaderboad){
-        if (this.props.user != null || undefined) {
-          if (this.state.fetched === true) {
-        return (
-          <View style={{height:deviceHeight,width:deviceWidth}}>
-            <View style={{backgroundColor:'white',height:deviceHeight-styleConfig.tabHeight-styleConfig.navBarHeight-10,width:deviceWidth,paddingBottom:53}}>
-            {this.swwipeDowntoRefress()}
-               <ListView
-                style={styles.container}
-                renderRow={this.renderRow}
-                refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />}
-                dataSource={this.state.LeaderBoard}/>
-             </View>
-            
-          </View> 
-        );
-      }else{
-        return this.renderLoadingView()
-      }
-     
-        }else{
+      renderLeaderboadScreen(){
+        
         return(
-          <View>
-            <View style = {{width:deviceWidth,justifyContent:'center',alignItems:'center'}}>
+          <View>   
+            <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/>      
+            <View style= {styles.textlast7daysWrap}>
+              <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
+              </ModalDropDown>
+            </View>
+            <View style = {{width:deviceWidth,height:responsiveHeight(5),justifyContent:'center',alignItems:'center'}}>
             <Text style={{top:responsiveHeight(8),fontSize:responsiveFontSize(2.2),FontFamily:styleConfig.LatoRegular,fontWeight:'600',opacity:.80}}>Please login to see leaderboard.</Text>
             </View>
            <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
-
            <LoginBtn getUserData={this.props.getUserData}/>
            </View>
            </View>
 
           )
-        }
       }
 
       renderImpactLeagueIcon(){
@@ -398,16 +392,36 @@ var iphone7Plus = 736;
 
       render() {
         var dataleaderboad = this.state.LeaderBoardResult;
-        return (
-          <View>
-            <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/>      
-            <View style= {styles.textlast7daysWrap}>
-              <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
-              </ModalDropDown>
-            </View>
-             <View>{this.renderLeaderboadScreen(dataleaderboad)}</View>
-          </View>
-        );
+         if (this.props.user != null && this.props.user != undefined) {
+          if (this.state.fetched === true) {
+            return (
+              <View style={{height:deviceHeight,width:deviceWidth}}>
+                <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/>      
+                <View style= {styles.textlast7daysWrap}>
+                  <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
+                  </ModalDropDown>
+                </View>
+                <View style={{backgroundColor:'white',height:deviceHeight-styleConfig.tabHeight-styleConfig.navBarHeight-10,width:deviceWidth,paddingBottom:53}}>
+                {this.swwipeDowntoRefress()}
+                   <ListView
+                    style={styles.container}
+                    renderRow={this.renderRow}
+                    refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this._onRefresh.bind(this)}
+                    />}
+                    dataSource={this.state.LeaderBoard}/>
+                 </View>  
+              </View> 
+            );
+        }else{
+          return this.renderLoadingView();
+        }  
+
+      }else{
+        return this.renderLeaderboadScreen();
+      }
       }
 }
 var styles = StyleSheet.create({

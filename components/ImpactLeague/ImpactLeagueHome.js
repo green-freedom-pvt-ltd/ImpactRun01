@@ -403,13 +403,13 @@ class ImpactLeague extends Component {
                 <View style={styles.slide3}>
                  <Image source={require('../../images/impactleaguebanner.png')} style={styles.shadow}>         
                  
-                  <View style={{alignItems:'center', justifyContent:'center',     paddingTop: 20}}>
-                      <Text style={{fontSize:styleConfig.FontSizeDisc+2, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
-                      <Text style={{fontSize:styleConfig.fontSizerImpact, color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
+                  <View style={{alignItems:'center', justifyContent:'center',paddingTop: responsiveHeight(10)}}>
+                      <Text style={{fontSize:styleConfig.FontSizeDisc+2,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
+                      <Text style={{fontSize:styleConfig.fontTotalRaised,top:responsiveHeight(1), color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
                       {typeof this.state.total_amount == 'undefined' ? 0 :  (this.state.my_currency == 'INR' ? parseFloat(this.state.total_amount).toFixed(0) : parseFloat(this.state.total_amount/this.state.my_rate).toFixed(2)) }
                       </Text>
                   </View>
-                   <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
+                    <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
                       <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
                       <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
                       {typeof this.state.total_runs == 'undefined' ? 0 :  this.state.total_runs }
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor:'white',
     height:styleConfig.sliderHeightIL-6-styleConfig.navBarHeight-20,
-    top:10,
+    top:5,
   },
     shadow: {
         height:styleConfig.sliderHeightIL,

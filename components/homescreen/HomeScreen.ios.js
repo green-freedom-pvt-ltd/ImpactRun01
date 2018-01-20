@@ -182,9 +182,9 @@ class Homescreen extends Component {
                     <View style={styles.iconWrapmodel}>
                       <Icon3 style={{color:"white",fontSize:30,}} name={'md-warning'}></Icon3>
                     </View>
-                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>Share location access</Text>
+                     <Text style={{textAlign:'center',marginTop:10,margin:5,color:styleConfig.greyish_brown_two,fontWeight:'600',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:25}}>GPS Unavailable</Text>
                      <View style={{flex:1,justifyContent: 'center',alignItems: 'center',}}>
-                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>We need GPS location to track your walks/jogs. Please go to Location and click on > While Using the App </Text>
+                     <Text style={{textAlign:'center', marginBottom:5,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily: styleConfig.FontFamily,fontSize:15}}>Your distance might not get tracked. Please turn GPS on and try using app in open areas. Please go to Location and click on > While Using the App </Text>
                    <View style={styles.modelBtnWrap}>
                     <TouchableOpacity style={styles.modelbtnEndRun}onPress ={()=>this.navigateToIOSsetting()}><Text style={styles.btntext}>Allow</Text></TouchableOpacity>
                   </View>

@@ -27,6 +27,8 @@ import Tabs from '../homescreen/tab';
 import fetchDatafromApi from '../getDataFromApi.js';
 import setDataLocally from '../setLocalData.js';
 import fetchCauseData from '../fetchCauseData.js';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+
 import {
     GoogleSignin,
     GoogleSigninButton
@@ -318,11 +320,11 @@ class Login extends Component {
           var user = this.state.user;
           var text = this.state.user ? "LOG OUT" : "LOGIN WITH FACEBOOK";
           return  (
-            <View style={{flex:1,backgroundColor:'white'}}>
+            <View style={{height:deviceHeight+5,width:deviceWidth,backgroundColor:'white'}}>
               <Image source={require('../../images/login_background.png')} style={styles.shadow}>         
                 <View style={styles.center}>         
-                  <Image source={require('../../images/Logo.png')} style={styles.logo}/>
-                  <Text style={{color:styleConfig.black,fontFamily: styleConfig.FontFamily,}}>Get Fit. Do Good.</Text>
+                  <Image source={require('../../images/Logo.png')} style={styles.logo} />
+                  <Text style={styles.getFit}>Get Fit. Do Good.</Text>
                 </View>
 
                 <View style={styles.container}>
@@ -331,7 +333,7 @@ class Login extends Component {
                       <View style={{width:deviceWidth-150,}}>
                         <Text style={{color:'#3b5998',textAlign:'center',fontFamily: styleConfig.FontFamily,fontSize:styleConfig.FontSizeLogin}}>{text}</Text>
                       </View>
-                      <Image source={require('../../images/facebook.png')} style={styles.facebook}/>
+                      <Image source={require('../../images/facebook.png')} style={styles.facebook} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this._signInGoogle()} style={styles.Loginbtngg}>
                       <View style={{width:deviceWidth-150,}}>
@@ -360,6 +362,7 @@ var styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        top:-50,
     },
     center: {
         flex: 1,
@@ -389,11 +392,11 @@ var styles = StyleSheet.create({
     },
     shadow: {
         position: 'absolute',
-        height: deviceHeight,
-        flex: 1,
+        height: deviceHeight+5,
         width: deviceWidth,
         backgroundColor: 'transparent',
         justifyContent: 'center',
+        top:1,
     },
     skip: {
         flex: 1,
@@ -402,10 +405,9 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
     },
     logo: {
-        width: 192,
-        height: 65,
-        justifyContent: 'center',
-        alignItems: 'center',
+        height:responsiveHeight(8),
+        width:responsiveWidth(40),
+        resizeMode:'contain',
     },
     facebook: {
         position: 'absolute',
@@ -420,6 +422,11 @@ var styles = StyleSheet.create({
         height: 45,
         right: 2,
         marginTop: 2,
+    },
+    getFit:{
+      color:styleConfig.black,
+      fontFamily: styleConfig.FontFamily,
+      fontSize:responsiveFontSize(1.8),
     }
 })
 

@@ -15,7 +15,7 @@ export default {
                     if (rundata != null  ) {
                       if (rundata.length > 0 ) {
                             if(user != null){
-                               return this.postPastRun(rundata[0],user,rundata);
+                               return this.postPastRun(rundata[rundata.length-1],user,rundata);
                             }
                       }else{
                         console.log('runData ',rundata);
