@@ -29,6 +29,7 @@ import LoginBtns from '../login/LoginBtns';
 import AnimateNumber from 'react-native-animate-number';
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
+import ImageLoad from 'react-native-image-placeholder';
 import impactleagueleaderboard from '../ImpactLeague/ImpactLeagueLeaderboard';
 import Swiper from 'react-native-swiper';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
@@ -59,6 +60,7 @@ class ImpactLeague extends Component {
           my_rate:1.0,
           my_currency:"INR",
           openTooltip:false,
+          doScroll:false,
 
         };
         this.fetchLeaderBoardData = this.fetchLeaderBoardData.bind(this);
@@ -178,6 +180,7 @@ class ImpactLeague extends Component {
       }
 
       getUserData(){
+        this.props.getUserData();
         AsyncStorage.getItem('USERDATA', (err, result) => {
           let user = JSON.parse(result);
           this.setState({
@@ -186,8 +189,18 @@ class ImpactLeague extends Component {
           NetInfo.isConnected.fetch().done(
             (isConnected) => { this.setState({isConnected}); 
               if (isConnected) {
+                if (this.state.user != null || this.state.user != undefined){
                  this.fetchLeaderBoardData();
-              };  
+                }else{
+                  this.setState({
+                    loaded:true,
+                  })
+                }
+              }else{
+                this.setState({
+                    loaded:true,
+                  })
+              }  
             }
           );
         })
@@ -195,8 +208,8 @@ class ImpactLeague extends Component {
 
     
       fetchLeaderBoardData() {    
-        var token = this.props.user.auth_token;
-        var userdata = this.props.user;
+        var token = this.state.user.auth_token;
+        var userdata = this.state.user;
         var url = apis.ImpactLeagueTeamLeaderBoardV2Api;
         fetch(url,{
           method: "GET",
@@ -263,11 +276,65 @@ class ImpactLeague extends Component {
       }
 
       renderRow(rowData,index,rowID){
-
+        console.log('index',rowID)
         rowID++
         var me = this;
         var textColor=(me.state.user.team_code === rowData.team_id)?'#fff':"#4a4a4a";
         var backgroundColor =(me.state.user.team_code === rowData.team_id)?styleConfig.light_sky_blue:'#fff';
+        if (rowID === 1) {
+          return(
+            <View>
+              <View style={styles.ImpactLeagueBanner}>
+              <Swiper style={styles.wrapper} height={styleConfig.sliderHeightIL} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
+                <View>
+
+              <ImageLoad isShowActivity={true} placeholderStyle={{height:styleConfig.sliderHeightIL-10,width:deviceWidth,backgroundColor:'white'}} loadingStyle={{size: 'small', color: 'grey'}} placeholderSource = {require('../../images/placeholderBanner.png')} source={{uri:this.state.BannerData}} style={{height:styleConfig.sliderHeightIL-10,width:deviceWidth,backgroundColor:'white'}}  >
+              </ImageLoad>
+                </View>
+                <View style={styles.slide3}>
+                 <Image source={require('../../images/impactleaguebanner.png')} style={styles.shadow}>         
+                 
+                  <View style={{alignItems:'center', justifyContent:'center',paddingTop: responsiveHeight(10)}}>
+                      <Text style={{fontSize:styleConfig.FontSizeDisc+2,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
+                      <Text style={{fontSize:styleConfig.fontTotalRaised,top:responsiveHeight(1), color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
+                      {typeof this.state.total_amount == 'undefined' ? 0 :  (this.state.my_currency == 'INR' ? parseFloat(this.state.total_amount).toFixed(0) : parseFloat(this.state.total_amount/this.state.my_rate).toFixed(2)) }
+                      </Text>
+                  </View>
+                    <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
+                      <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
+                      <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
+                      {typeof this.state.total_runs == 'undefined' ? 0 :  this.state.total_runs }
+                      </Text>
+                      <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walk/Runs</Text>
+                      </View>
+
+                      <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
+                        <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
+                          {typeof this.state.total_members == 'undefined' ? 0 :  this.state.total_members }
+                        </Text>
+                        <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Members </Text>
+                      </View>
+                    </View>
+
+                </Image>
+                
+                </View>
+              </Swiper>
+             
+          </View>
+           <View style={{justifyContent: 'center',alignItems: 'center',}}>
+            <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
+              <Text style={{fontFamily:styleConfig.MontSerratBold,fontWeight:'800',fontSize:styleConfig.ListViewTitelText,color:textColor,}}>{rowID}</Text>
+              <Text numberOfLines={1} style={[styles.txt,{color:textColor,flex:1}]}>{this.capitalizeFirstLetter(rowData.team_name)}</Text>
+              <View style={{justifyContent: 'center',alignItems: 'center',}}>
+          
+               <Text style={[styles.txtSec,{color:textColor}]}> <Icon2 style={{color:textColor,fontSize:styleConfig.ListViewTitelText,fontWeight:'800'}}name={me.state.my_currency.toLowerCase()}></Icon2> {(this.state.my_currency == 'INR' ? parseFloat(rowData.amount).toFixed(0) : parseFloat(rowData.amount/this.state.my_rate).toFixed(2)) } </Text> 
+              </View>             
+            </TouchableOpacity>
+          </View>
+          </View>
+            )
+        }else{
         return (
           <View style={{justifyContent: 'center',alignItems: 'center',}}>
             <TouchableOpacity onPress={()=>this.NavigateToDetail(rowData)} style={[styles.cardLeaderBoard,{backgroundColor:backgroundColor}]}>
@@ -280,12 +347,14 @@ class ImpactLeague extends Component {
             </TouchableOpacity>
           </View>
         );
+
+      }
       
       }
       renderLoadingView() {
         return (
           <View style={{height:deviceHeight}}>
-            <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()}/>
+            <NavBar title={this.state.leaguename}/>
             <LodingScreen style={{height:deviceHeight-50}}/>
           </View>
         );
@@ -383,54 +452,18 @@ class ImpactLeague extends Component {
       render(rowData,jsonData) {
         if (this.state.isMounted) {
 
-        if (this.state.user) {
-        if (this.state.user.team_code != 0) {
-        if (!this.state.loaded) {
+        if (this.props.user != null || this.props.user != undefined) {
+        if (this.props.user.team_code != 0) {
+        if (this.state.loaded === false) {
           return this.renderLoadingView();
         }
 
 
         return (
 
-        <View style={{height:deviceHeight,width:deviceWidth}}>
-          <NavBar title={this.state.leaguename} leftIcon={this.leftIconRender()} rightIcon = {this.rightIconRender()} />
-          <View style={styles.ImpactLeagueBanner}>
-              <Swiper style={styles.wrapper} height={styleConfig.sliderHeightIL} width={deviceWidth} showsButtons={false} autoplay={true} autoplayTimeout = {4}>
-                <View>
-              <Image source={{uri:this.state.BannerData}} style={{height:styleConfig.sliderHeightIL-10,width:deviceWidth,backgroundColor:'white'}} resizeMode ={'contain'} >
-              </Image>
-                </View>
-                <View style={styles.slide3}>
-                 <Image source={require('../../images/impactleaguebanner.png')} style={styles.shadow}>         
-                 
-                  <View style={{alignItems:'center', justifyContent:'center',paddingTop: responsiveHeight(10)}}>
-                      <Text style={{fontSize:styleConfig.FontSizeDisc+2,color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily}}>Total Raised</Text>
-                      <Text style={{fontSize:styleConfig.fontTotalRaised,top:responsiveHeight(1), color:styleConfig.light_sky_blue,fontWeight:'500',fontFamily:styleConfig.FontFamily}} ><Icon2 style={{color:styleConfig.orange,fontSize:styleConfig.fontSizerImpact-5,fontWeight:'400'}}name={this.state.my_currency.toLowerCase()}></Icon2>
-                      {typeof this.state.total_amount == 'undefined' ? 0 :  (this.state.my_currency == 'INR' ? parseFloat(this.state.total_amount).toFixed(0) : parseFloat(this.state.total_amount/this.state.my_rate).toFixed(2)) }
-                      </Text>
-                  </View>
-                    <View style={{flex: 1, marginTop:15, flexDirection:'row'}}>
-                      <View style={{flex:1, justifyContent:'center',paddingLeft:20,}}>
-                      <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'left'}} > 
-                      {typeof this.state.total_runs == 'undefined' ? 0 :  this.state.total_runs }
-                      </Text>
-                      <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey'}}> Walk/Runs</Text>
-                      </View>
-
-                      <View style={{flex:1, justifyContent:'center',paddingRight:20,}}>
-                        <Text style={{fontSize:styleConfig.FontSizeTitle+5, color:styleConfig.greyish_brown_two,fontWeight:'400',fontFamily:styleConfig.FontFamily, textAlign:'right'}} >
-                          {typeof this.state.total_members == 'undefined' ? 0 :  this.state.total_members }
-                        </Text>
-                        <Text style={{fontSize:styleConfig.fontSizerlabel, fontFamily: styleConfig.FontFamily, color:'grey',textAlign:'right'}}> Members </Text>
-                      </View>
-                    </View>
-
-                </Image>
-                
-                </View>
-              </Swiper>
-             
-          </View>
+        <View style={{height:deviceHeight-(styleConfig.navBarHeight+10),width:deviceWidth}}>
+          <NavBar title={this.state.leaguename} rightIcon = {this.rightIconRender()} />
+         
           <View>
            {this.swwipeDowntoRefress()}
            </View>
@@ -440,10 +473,12 @@ class ImpactLeague extends Component {
                   refreshing={this.state.refreshing}
                   onRefresh={this._onRefresh.bind(this)}/>}
                 dataSource={this.state.LeaderBoardData}
+                
                 renderRow={this.renderRow}
                 style={styles.container}>
                 <View style={{width:deviceWidth,height:20,backgroundColor:'red'}}></View>
               </ListView>
+           
               {this.openTooltip()}
           </View>
         );
@@ -456,7 +491,15 @@ class ImpactLeague extends Component {
         }
        }else{
           return(
-            <LodingScreen/>
+           <View style={{height:deviceHeight}}>
+            <NavBar title={this.state.leaguename}/>
+              <View style = {{width:deviceWidth,height:responsiveHeight(5),justifyContent:'center',alignItems:'center'}}>
+            <Text style={{top:responsiveHeight(8),fontSize:responsiveFontSize(2.2),FontFamily:styleConfig.LatoRegular,fontWeight:'600',opacity:.80}}>Please login to see ImpactLeague.</Text>
+            </View>
+           <View style={{width:deviceWidth,height:deviceHeight,paddingTop:(deviceHeight/2)-200}}>
+           <LoginBtns getUserData={this.getUserData}/>
+           </View>
+          </View>
             )
        }
      }
@@ -496,9 +539,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   container: {
-    backgroundColor:'white',
-    height:styleConfig.sliderHeightIL-6-styleConfig.navBarHeight-20,
-    top:5,
+    backgroundColor:'transparent',
+    height:deviceHeight,
   },
     shadow: {
         height:styleConfig.sliderHeightIL,
@@ -512,12 +554,6 @@ const styles = StyleSheet.create({
       height:styleConfig.sliderHeightIL,
       width:deviceWidth,
       top:6,
-      shadowColor: '#000000',
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      shadowOffset: {
-        height: 4,
-      },
     },
 
     page:{
@@ -546,12 +582,12 @@ const styles = StyleSheet.create({
     width:deviceWidth,
     height:styleConfig.ListViewHeight,
     borderBottomWidth:1,
-    borderColor:'#979797',
+    borderColor:'#CCC',
   },
   swipedown:{
     height:30,
     width:deviceWidth,
-    backgroundColor:styleConfig.bright_blue,
+    backgroundColor:styleConfig.light_sky_blue,
     justifyContent: 'center',
     alignItems: 'center',
   },

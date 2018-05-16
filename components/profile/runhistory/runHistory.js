@@ -518,9 +518,9 @@ class RunHistory extends Component {
       renderRunsRow(rowData) {
         if (rowData) {
         if (this.state.weight != null) {
-          var colorie = (rowData.calories_burnt === null)? <TouchableOpacity onPress={()=> this.whyIamNotSeeingCaloriePopup()}><Text>--</Text></TouchableOpacity>:<Text style={styles.runContentText}>{parseFloat(rowData.calories_burnt).toFixed(1)} cal</Text>;
+          var colorie = (rowData.calories_burnt === null)? <TouchableOpacity onPress={()=> this.whyIamNotSeeingCaloriePopup()}><Text>--</Text></TouchableOpacity>:<Text style={styles.runContentText}>{parseFloat(rowData.calories_burnt).toFixed(0)} cal</Text>;
         }else{
-         var colorie = (rowData.calories_burnt === null)? <TouchableOpacity onPress={()=> this.EnterWeight()}><Text>--</Text></TouchableOpacity>:<Text style={styles.runContentText}>{parseFloat(rowData.calories_burnt).toFixed(1)} cal</Text>;
+         var colorie = (rowData.calories_burnt === null)? <TouchableOpacity onPress={()=> this.EnterWeight()}><Text>--</Text></TouchableOpacity>:<Text style={styles.runContentText}>{parseFloat(rowData.calories_burnt).toFixed(0)} cal</Text>;
         }
         var RunAmount=parseFloat(rowData.run_amount).toFixed(0);
         var RunDistance = parseFloat(rowData.distance).toFixed(1);
@@ -789,7 +789,7 @@ const styles = StyleSheet.create({
   modelWrap:{
     top:-70,
     padding:20,
-    height:deviceHeight/3,
+    height:(deviceHeight/3)+50,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:"white",
@@ -864,7 +864,7 @@ const styles = StyleSheet.create({
     fontFamily:styleConfig.FontFamily,
   },
   title: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(2.4),
     marginLeft:3,
     color:styleConfig.greyish_brown_two,
     fontWeight:'400',
@@ -894,7 +894,7 @@ const styles = StyleSheet.create({
   runContentText: {
     color:styleConfig.greyish_brown_two,
     fontWeight:'500',
-    fontSize:16,
+    fontSize:responsiveFontSize(2),
     left:-1,
     fontFamily:styleConfig.FontFamily,
   },

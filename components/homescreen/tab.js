@@ -24,7 +24,6 @@ import styleConfig from '../../components/styleConfig';
 import ProfileForm from '../profile/profileForm.js';
 import EventEmitter from 'EventEmitter';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
-
 var deviceWidth = Dimensions.get('window').width;
 var deviceHeight = Dimensions.get('window').height;
 var REQUEST_URL = apis.causeListapi;
@@ -84,6 +83,7 @@ class Tabs extends Component {
             };
             this.handleFirstConnectivityChange = this.handleFirstConnectivityChange.bind(this);
             this.getUserData = this.getUserData.bind(this);
+            this.fetchCauseDataonInternet = this.fetchCauseDataonInternet.bind(this);
         }
         
         componentDidMount() {
@@ -337,9 +337,9 @@ class Tabs extends Component {
                        <Icon name ={'equalizer'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
                        <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'Leaderboard')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'Leaderboard')?responsiveFontSize(1.5):responsiveFontSize(1.3)}]}>Leaderboard</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=> this.changeTab('settings')} style={styles.tabBtn}>
-                       <Icon name ={'settings'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
-                       <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'settings')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'settings')?responsiveFontSize(1.5):responsiveFontSize(1.4)}]}>Settings</Text>
+                    <TouchableOpacity onPress={()=> this.changeTab('league')} style={styles.tabBtn}>
+                       <Icon name ={'security'} style={[styles.tabIcon,{color:(this.state.selectedTab === 'league')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'league')?responsiveFontSize(5):responsiveFontSize(3.7)}]}></Icon>
+                       <Text style = {[styles.tabnameText,{fontWeight:'600',color:(this.state.selectedTab === 'league')?styleConfig.light_sky_blue:'#a2a2a2',fontSize:(this.state.selectedTab === 'league')?responsiveFontSize(1.5):responsiveFontSize(1.4)}]}>League</Text>
                     </TouchableOpacity>
                    </View>
                 </View>
@@ -373,7 +373,7 @@ class Tabs extends Component {
 
             }else if (this.state.selectedTab === 'welcome') {
                 return(
-                  <Welcome my_currency = {this.props.my_currency} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>
+                  <Welcome fetchDataonInternet={this.fetchCauseDataonInternet} my_currency = {this.props.my_currency} user={this.state.user} getUserData={this.getUserData} myCauseNum={this.state.dataCauseNum} navigator={this.props.navigator}/>
                 )
 
             }else if (this.state.selectedTab === 'Leaderboard') {
@@ -381,9 +381,9 @@ class Tabs extends Component {
                   <Leaderboard user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator}/>
                 )
 
-            }else if (this.state.selectedTab === 'settings') {
+            }else if (this.state.selectedTab === 'league') {
                 return(
-                  <Setting navigator={this.props.navigator} />
+                  <ImpactLeague user={this.state.user} getUserData={this.getUserData} navigator={this.props.navigator} />
                 )
 
             }else{

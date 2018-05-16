@@ -16,19 +16,10 @@ var {
   VibrationIOS,
   DeviceEventEmitter,
   PushNotificationIOS,
-  NetInfo,
  } = ReactNative;
-
- var {
-    Accelerometer,
-    Gyroscope,
-    Magnetometer
-} = require('NativeModules');
-import postUnsyncRun from '../postUnsyncRun.js';
  var PushNotification = require('react-native-push-notification');
  var { RNLocation: Location } = require('NativeModules');
  var moment = require('moment');
- import getGetSteps from './stepTrackingandDistanceCalculator.js';
 import TimeFormatter from '../counterRuntime.js';
 const { SampleView } = require('react-native').NativeModules;
 import Modal from '../downloadsharemeal/CampaignModal'
@@ -54,7 +45,7 @@ var deviceWidth = Dimensions.get('window').width;
 var deviceheight = Dimensions.get('window').height;
 import usainBoltCheck from './checkUsainBolt.js';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
-
+import matValue from "./getmatvalue.js";
 var distancePriv = 0;
 var timepriv = 0;
 var calories = 0;
@@ -99,6 +90,7 @@ class Home extends Component {
         mapWidth: 300,
         zoom: 18,
         open:false,
+        metval:0,
         sourceCount:true,
         GpsAccuracyCheck:true,
         openGpsModel:false,
@@ -107,14 +99,13 @@ class Home extends Component {
         StillDecteting:true,
         location:{},
         pointsCollected:0,
-        currentSpeed:1,
+        currentSpeed:0,
         isStillCheck:0,
         pressAction: new Animated.Value(0,{ useNativeDriver: true }),
         center: {
           latitude: 40.72052634,
           longitude: -73.97686958312988
         },
-        gpsPoints:0,
         previousDurationforSpeedCheck:0,
         previousDistanceforSpeedCheck:0,
         onCarDetectedEndRunModel:false,
@@ -124,20 +115,16 @@ class Home extends Component {
         my_currency:"INR",
         num_spikes:0,
         activityType:{
-          'type':'',
+          'type':'STATIONARY',
           'confidence':1,
         },
-        collectedPoints:0,
         StartLocation:null,
         client_run_id:null,
         speedBetweenTwoPoint:0,
         locationArray:[],
         locationObjectsArray:[],
         newlatlong:null,
-        GPSspeed:0,
-        steps:0,
-        CountBySteps:false,
-        outpoint:0,
+        checkedForGpsPoint:0,
       };
     }
 
@@ -145,45 +132,6 @@ class Home extends Component {
 
   
   componentDidMount(){ 
-
-      NetInfo.isConnected.fetch().then((isConnected) => {
-          if (isConnected) {
-              postUnsyncRun.fetchLocalRunData(this.props.user).
-               then((runData)=>{
-              })                  
-          }
-      })
-
-    var Thershold = 1;
-    var me = this;
-    var accPoint = [];
-    Accelerometer.setAccelerometerUpdateInterval(0.2);
-    DeviceEventEmitter.addListener('AccelerationData', function (data) {
-      // console.log('data',data);
-      var x = data.acceleration.x;
-      var y = data.acceleration.y;
-      var z = data.acceleration.z;
-      // console.log('data.acceleration.x',data.acceleration.x);
-      // console.log('data.acceleration.y',data.acceleration.y);
-      // console.log('data.acceleration.z',data.acceleration.z);
-      // console.log('SQRT ',Math.sqrt(x*x+y*y+z*z));
-   
-      if (Math.sqrt(x*x+y*y+z*z) > 1.3 || Math.sqrt(x*x+y*y+z*z) < 0.7) {
-        me.setState({
-          steps:me.state.steps+1,
-
-          distanceTravelled:(me.state.CountBySteps)? me.state.distanceTravelled + (0.7*1)/1000:me.state.distanceTravelled,
-
-        })
-      
-      }
-      
-
-
-    });
-    this.getMetsValue(this.state.currentSpeed);
-    Accelerometer.startAccelerometerUpdates();
-    getGetSteps.getGetSteps();
     Location.setAllowsBackgroundLocationUpdates(true);
     this.getLocationUpdate();
     this.state.componentISmounted = true;
@@ -203,16 +151,13 @@ class Home extends Component {
     this._startStepCounterUpdates()
    
     this.updatePaceButtonStyle(); 
-
-      var d = moment().format('YYYY-MM-DD HH:mm:ss');
+       var d = moment().format('YYYY-MM-DD HH:mm:ss');
       this.setState({
         myrundate:d,
       });
     }
   }
 
-
- 
 
 
   appKillDuringData(){   
@@ -260,7 +205,7 @@ class Home extends Component {
             data:this.props.data,
             distance:parseFloat(this.state.distanceTravelled).toFixed(1),
             impact:parseFloat(this.state.distance * this.props.data.conversion_rate).toFixed(0)/this.state.my_rate,
-            speed:this.state.speed,
+            speed:this.state.currentSpeed,
             time:this.state.mainTimer,
             StartLocation:this.state.StartLocation,
             EndLocation:this.state.newlatlong,
@@ -277,7 +222,7 @@ class Home extends Component {
               data:this.props.data,
               distance:parseFloat(this.state.distanceTravelled).toFixed(1),
               impact:parseFloat(this.state.distanceTravelled).toFixed(1) * this.props.data.conversion_rate/this.state.my_rate,
-              speed:this.state.speed,
+              speed:this.state.currentSpeed,
               time:this.state.mainTimer,
               calories_burnt:this.state.calorieBurned,
               StartLocation:this.state.StartLocation,
@@ -299,8 +244,6 @@ class Home extends Component {
     Pedometer.startPedometerUpdatesFromDate(today.getTime(), (motionData) => {
       this.setState(motionData);
     });
-   
-  
   }
 
 
@@ -400,7 +343,7 @@ class Home extends Component {
   // Add Marker if check clear
   addMarker (location) {
     if (this.state.enabled === true) {
-    this.caloriCounterStart();
+      console.log('this.state.enabled',this.state.enabled);
     const {distanceTravelled,prevDistance } = this.state
     const newLatLngs = {latitude: location.coords.latitude, longitude: location.coords.longitude }
     const newDistance = distanceTravelled + this.calcDistance(newLatLngs)
@@ -412,14 +355,8 @@ class Home extends Component {
         weakGPSPoints: this.state.weakGPSPoints + 1,
       })
     }
-
-
-
-
     var sourceAccuracy = (this.state.sourceCount)?40:25;
     if (location.coords.accuracy <= sourceAccuracy){
-
-
       if(this.state.weakGPSPoints > 0){
         this.setState({
         weakGPSPoints: this.state.weakGPSPoints - 1,
@@ -428,6 +365,19 @@ class Home extends Component {
       if (this.state.sourceCount) {
         this.setState({
           StartLocation:location.coords, 
+        })
+      }
+
+
+      if (this.state.checkedForGpsPoint > 3){
+        this.setState({
+          currentSpeed:location.coords.speed, // speed in meter/second
+          checkedForGpsPoint:0
+        })
+
+      }else{
+        this.setState({
+          checkedForGpsPoint:this.state.checkedForGpsPoint+1,
         })
       }
 
@@ -443,27 +393,12 @@ class Home extends Component {
         "nspk": this.state.num_spikes,
         "dis": this.state.distanceTravelled,
       };
+
      this.state.locationObjectsArray.push(locationObject) ;
       this.setState({
         sourceCount:false,
-        GPSspeed:location.coords.speed*2.24,// in miles/hrs
-        CountBySteps:false,
-        
       })
-      console.log('gpsspeed',this.state.GPSspeed + ":  inmeterpersec : ",location.coords.speed);
 
-      if (this.state.gpsPoints > 3){
-       this.setState({
-        currentSpeed:location.coords.speed*2.24,// in miles/hrs
-        gpsPoints:0,
-       })
-      }else{
-        this.setState({
-          gpsPoints:this.state.gpsPoints+1,
-        })
-      }
-
-      
       if(this.state.currentSpeed != 0 && this.state.currentSpeed != null ){
         this.checkForTooFast(location);
       }else{
@@ -476,27 +411,13 @@ class Home extends Component {
         var offset = 1;
         var thresholdFactor = 5; 
         var currentDistance = Prevdistance;
-        if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){   
+        if(Prevdistance/(locationAccuracy - (thresholdAccuracy-offset)) > thresholdFactor){       
           if(this.state.currentSpeed != 0 && this.state.currentSpeed != null ){
             this.checkForTooFast(location);
           }else{
             this.addDistance(location);
           }
         }else{
-          if (this.state.outpoint >= 5) {
-            if (this.state.distanceTravelled == 0.0) {
-              this.setState({
-               CountBySteps:true,
-              })
-            }else{
-
-            }
-            
-          }else{
-            this.setState({
-               outpoint:this.state.outpoint+1,
-            })
-          }
           if (locationAccuracy > 100){
             CleverTap.recordEvent('DETECTED_GPS_SPIKE');
             this.setState({
@@ -526,23 +447,21 @@ class Home extends Component {
   checkForTooFast(location){
 
       usainBoltCheck.checkForTooFast(location,this.state.enabled,this.state.activityType)
-      .then((isUsainBolt)=>{
-        if (isUsainBolt == true) {
-           if (this.state.currentSpeed > 17){ 
+      .then((isUsainBolt )=>{
+        if (isUsainBolt === true) {
+          alert("this is in");
+           if (this.state.currentSpeed > 9){ 
              CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
                 'detected_by':'activity_recognition ',
                 'distance':this.state.distanceTravelled,
                 'time_elapsed':TimeFormatter(this.state.mainTimer),
                 'num_steps':this.state.numberOfSteps,
                 'client_run_id':this.state.client_run_id,
-                'speed':this.state.currentSpeed + ' miles/hr',
+                'speed':JSON.stringify(this.state.currentSpeed) + ' m/s',
                 'activity_type':this.state.activityType.type,
                 'activity_confidence':this.state.activityType.confidence,
-                'previousDistanceforSpeedCheck':this.state.previousDistanceforSpeedCheck,
+              
               });
-              this.setState({
-                distanceTravelled:this.state.distanceTravelled
-              })
                return this.usainBoltPopup();
              }else{
                return this.addDistance(location);
@@ -551,37 +470,37 @@ class Home extends Component {
               return this.addDistance(location);
         }
       }).then(()=>{
-        if (this.state.enabled === true) { 
-          if (this.state.activityType.type === "WALKING" || this.state.activityType.type === "RUNNING" || this.state.activityType.type === "STATIONARY" || this.state.activityType.type === "UNKNOWN") {
-            this.addDistance(location);
-          }else{
-          if (this.state.currentSpeed != NaN) {
-          if (this.state.currentSpeed < 25 ) {        
+        
+        if (this.state.enabled === true) {  
+           
+          if (this.state.currentSpeed != NaN && this.state.currentSpeed != 0) {
+          if (this.state.currentSpeed < 9 ) { 
+              alert("this is in2 "+JSON.stringify(this.state.currentSpeed));
             return this.addDistance(location);
           }else{
-          if (this.state.activityType.type != "WALKING" || this.state.activityType.type != "RUNNING" || this.state.activityType.type != "STATIONARY") {
+             
+            if (this.state.activityType.type != "WALKING" || this.state.activityType.type != "RUNNING" || this.state.activityType.type != "STATIONARY") {
+               alert("this is in3 "+JSON.stringify(this.state.currentSpeed));
 
-            CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
-            'detected_by':'speed_logic',
-            'distance':this.state.distanceTravelled,
-            'time_elapsed':TimeFormatter(this.state.mainTimer),
-            'num_steps':this.state.numberOfSteps,
-            'client_run_id':this.state.client_run_id,
-            'speed':this.state.currentSpeed + ' miles/hr',
-            'activity_type':this.state.activityType.type,
-            'activity_confidence':this.state.activityType.confidence,
-            'previousDistanceforSpeedCheck':this.state.previousDistanceforSpeedCheck,
-           });
-            this.setState({
-              distanceTravelled:this.state.distanceTravelled
-            })
-          this.usainBoltPopup();
+              CleverTap.recordEvent('ON_USAIN_BOLT_ALERT',{
+              'detected_by':'speed_logic',
+              'distance':this.state.distanceTravelled,
+              'time_elapsed':TimeFormatter(this.state.mainTimer),
+              'num_steps':this.state.numberOfSteps,
+              'client_run_id':this.state.client_run_id,
+              'speed':JSON.stringify(this.state.currentSpeed) + ' m/s',
+              'activity_type':(this.state.activityType.type != null )?this.state.activityType.type:"",
+              'activity_confidence':(this.state.activityType.confidence != null && this.state.activityType.confidence != undefined)?this.state.activityType.confidence:"" ,
+            
+             });
 
-          }else{
-          alert("this is in4",this.state.currentSpeed);
+              
+            this.usainBoltPopup();
+            }else{
+              alert("this is in4",this.state.currentSpeed);
               if (this.state.activityType.type === null) {
                   alert("this is in5,",this.state.currentSpeed);
-                  if (this.state.currentSpeed < 25 ) {
+                  if (this.state.currentSpeed < 9 ) {
                      alert("this is in6");
                   return this.addDistance(location);
                   }else{
@@ -592,7 +511,7 @@ class Home extends Component {
                   'time_elapsed':TimeFormatter(this.state.mainTimer),
                   'num_steps':this.state.numberOfSteps,
                   'client_run_id':this.state.client_run_id,
-                  'speed':JSON.stringify(this.state.currentSpeed) + ' miles/hr',
+                  'speed':JSON.stringify(this.state.currentSpeed) + ' m/s',
                   'activity_type':this.state.activityType.type,
                   'activity_confidence':this.state.activityType.confidence,
                  
@@ -601,29 +520,13 @@ class Home extends Component {
                   this.usainBoltPopup();
                   }
               }
+             
+           }
           }
           }
           }else{
-            CleverTap.recordEvent('ON_USAIN_BOLT_ALERT_NAN_SPEED',{
-            'detected_by':'speed_logic',
-            'distance':this.state.distanceTravelled,
-            'time_elapsed':TimeFormatter(this.state.mainTimer),
-            'num_steps':this.state.numberOfSteps,
-            'client_run_id':this.state.client_run_id,
-            'speed':this.state.currentSpeed + ' miles/hr',
-            'activity_type':this.state.activityType.type,
-            'activity_confidence':this.state.activityType.confidence,
-            'previousDistanceforSpeedCheck':this.state.previousDistanceforSpeedCheck,
-           });
-            this.setState({
-               currentSpeed:0,
-            })
+      
           }
-          
-         }
-        }else{
-          return;
-        }
       })
       // AlertIOS.alert('mostProbableActivity',JSON.stringify(mostProbableActivity));
    
@@ -650,46 +553,14 @@ class Home extends Component {
 
     if (timeBetweenTwoPoint) {
       this.previousLocationTime(newTimeStamp);
-      
+      this.caloriCounterStart(newTimeStamp);
     }else{
     }
     return;
  }
 
 
-  getCurrentSpeed(){   
 
-    if(this.state.enabled){
-    let timeBetweenLastCheck = Number(this.state.mainTimer) - Number(this.state.previousDurationforSpeedCheck);
-    let distancBetweenLastCheck = Number(this.state.distanceTravelled) - Number(this.state.previousDistanceforSpeedCheck);
-    let timeInhrs = ((parseInt(timeBetweenLastCheck)/1000)/60)/60;
-    let currentSpeed = (isNaN(parseInt(distancBetweenLastCheck/timeInhrs)))?0:parseInt(distancBetweenLastCheck/timeInhrs);
-    previousDistanceToRemove = distancBetweenLastCheck;
-    this.setState({
-      currentSpeed:currentSpeed,
-      previousDistanceforSpeedCheck:this.state.distanceTravelled,
-      previousDurationforSpeedCheck:this.state.mainTimer,
-    })    
-    if (this.state.currentSpeed === 0) {
-      if (this.state.isStillCheck === 3){
-        if(this.state.isRunning){
-          this.setState({
-             isStillCheck:this.state.isStillCheck + 1,
-          })
-          this.StillDetictiion();
-        }
-      }else{
-        this.setState({
-           isStillCheck:this.state.isStillCheck + 1,
-        })
-      }
-    }else{
-        this.setState({
-           isStillCheck:0,
-        })
-    }
-  }
-  }
 
 
 
@@ -739,12 +610,11 @@ class Home extends Component {
 
 
   _onNotification(notification) {
-      PushNotification.localNotificationSchedule({
+      PushNotification.localNotification({
       vibrate: true, // (optional) default: true
       vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
       message: "Seems you are in a vehicle or cycling. We have paused your workout.", // (required)
       playSound: true, // (optional) default: true
-      date: new Date(Date.now() + (3000)) // in 60 secs
     });
   }
 
@@ -768,10 +638,9 @@ class Home extends Component {
     })
     // Location.stopUpdatingLocation();
     clearInterval(this.IntervelSaveRun);
+    // clearInterval(this.getSpeedEvery30Sec);
     clearInterval(this.interval);
-    ActivityRecognition.stop();
-    Pedometer.stopPedometerUpdates();
-    Accelerometer.stopAccelerometerUpdates();
+    ActivityRecognition.stop()
     // this.clearLocationUpdate();
     DeviceEventEmitter.removeListener('locationUpdated');
     
@@ -809,6 +678,7 @@ class Home extends Component {
        setTimeout(()=>{ 
         this.updatePaceButtonStyle();
         this._handleStartStop(this.state.mainTimer); 
+        // this.clearCurrentSpeed();    
        },30) ;
       
       
@@ -828,7 +698,8 @@ class Home extends Component {
       this.setEnabled(true);
        setTimeout(()=>{ 
         me.updatePaceButtonStyle();
-        me._handleStartStop(this.state.mainTimer);     
+        me._handleStartStop(this.state.mainTimer);
+        
        },30) ;
     } 
     
@@ -889,7 +760,7 @@ class Home extends Component {
   
 
   usainBoltPopup(){
-     if (this.state.ussainBoltCount === 2) {
+     if (this.state.ussainBoltCount === 3) {
           
           this.setState({
             currentSpeed:0,
@@ -900,6 +771,7 @@ class Home extends Component {
               onCarDetectedEndRunModel:true,
             })
            },1000) ;
+          // this.clearCurrentSpeed();
           this.updatePaceButtonStyle();
           this._handleStartStop(this.state.mainTimer); 
         }else{
@@ -910,6 +782,7 @@ class Home extends Component {
             ussainBoltCount:this.state.ussainBoltCount+1,   
           })
           this.setEnabled(false);
+          // this.clearCurrentSpeed();
           this.updatePaceButtonStyle();
           this._handleStartStop(this.state.mainTimer);
            setTimeout(()=>{ 
@@ -931,125 +804,12 @@ class Home extends Component {
     }
 
 
-  getMetsValue(speed){
-     // deltaSpeed is in m/s
-     if (!isNaN(this.state.currentSpeed)) {
-     
-     var mph = this.state.currentSpeed;
-
-       if (mph <= 0.625) {
-            this.setState({
-              metval:0.1
-            })
-            
-        }else if (mph <= 1){
-          this.setState({
-              metval:1.3
-            })
-         
-        }else if (mph <= 2){
-          this.setState({
-              metval:(1.3 + 1.5*(mph - 1))
-            })
-          
-          // 2.8 at 2 mph
-        }else if (mph <= 2.5){
-          this.setState({
-              metval:2.8 + 0.4*(mph - 2)
-            })
-           
-           // 3.0 at 2.5 mph
-        }else if (mph <= 3.5){
-          this.setState({
-              metval:1.3
-            })
-           
-            // 4.3 at 3.5 mph
-        }else if (mph <= 4){  
-          this.setState({
-              metval:3.0 + 1.3*(mph - 2.5)
-            })
-           
-          // 6.0 at 4 mph
-        }
-        else if (mph <= 5){
-          this.setState({
-              metval:6 + 2.3*(mph - 4)
-            })
-           
-          // 8.3 at 5 mph
-           
-        }else if (mph <= 6){
-          this.setState({
-              metval:8.3 + 1.5*(mph - 5)
-            })
-          
-             // 9.8 at 6 mph
-        }else if (mph <= 7){
-          this.setState({
-              metval:9.8 + 1.2*(mph - 6)
-            })
-           
-           // 11.0 at 7mph
-        }else if (mph <= 7.7){
-          this.setState({
-              metval:11 + 1.143*(mph - 7)
-            })
-           
-             // 11.8 at 7.7 mph
-        }else if (mph <= 9){
-          this.setState({
-              metval:11.8 + 0.77*(mph - 7.7)
-            })
-           
-           // 12.8 at 9 mph
-        }else if (mph <= 10){
-          this.setState({
-              metval:12.8 + 1.7*(mph - 9)
-            })
-          
-           // 14.5 at 10 mph
-        }else if (mph <= 11){
-          this.setState({
-              metval:14.5 + 1.5*(mph - 10)
-            })
-          
-         // 16 at 11 mph
-        }else if (mph <= 12){
-          this.setState({
-              metval:16 + 3*(mph - 11)
-            })
-           
-          // 19 at 12 mph
-        }else if (mph <= 14){
-          this.setState({
-              metval:19 + 2*(mph - 12)
-            })
-          
-          // 23 at 14 mph
-        }else if (mph <= 15){
-          this.setState({
-              metval:23 + 1*(mph - 14)
-            })
-          
-           
-          // 24 at 15 mph
-        }else {
-
-          this.setState({
-              metval:1.3
-            })      
-            
-            // For speeds greater than 15 mph (23 kmph) we assume that the person is driving so we don't add calories
-        }
-    }
-  }
-
+  
 
       
   caloriCounterStart(){
     
-    var time = 0.000277778;
+    var time =(this.state.timeBetweenTwoPoint/1000)/3600;
     var Calories =  this.state.metval*this.state.weight*time;
     var totalCaloriesBurned = Number(this.state.calorieBurned);
     totalCaloriesBurned += Calories
@@ -1073,32 +833,36 @@ class Home extends Component {
       speedBetweenTwoPoint:speed,
     })
     if (speed != NaN) {
-    this.getMetsValue(speed);
+      matValue.getMetsValue(speed)
+      .then((metVal)=>{
+          this.setState({
+            metval:metVal
+          })
+      })
     }else{
+      return;
     }
   }
 
 
  
-    // function for calculating new and previous latlag
-    
-    calcDistance(newLatLng) {
-      var pointSpeed = this.state.prevDistance*1000/(this.state.timeBetweenTwoPoint/1000)
-      if (this.state.prevLatLng != null && pointSpeed < 8) {
-        const { prevLatLng } = this.state
-        return (haversine(prevLatLng, newLatLng) || 0)
-      } else{
-        return 0;
-      }
+   // function for calculating new and previous latlag
+   calcDistance(newLatLng) {
+    if (this.state.prevLatLng != null && this.state.prevDistance < 0.150) {
+      const { prevLatLng } = this.state
+      return (haversine(prevLatLng, newLatLng) || 0)
+    } else{
+      return 0;
     }
+   }
 
 
     navigateTOHomeScreen(){
       this.props.navigator.push({
-        title:' Impactrun ',
-        id:'tab',
-        navigator: this.props.navigator,
-      })
+      title:'Impactrun',
+      id:'tab',
+      navigator: this.props.navigator,
+     })
     }
 
 
@@ -1122,7 +886,7 @@ class Home extends Component {
           user:this.props.user,
           distance:parseFloat(this.state.distanceTravelled).toFixed(1),
           impact:parseFloat(this.state.distanceTravelled).toFixed(1)*data.conversion_rate,
-          speed:this.state.speed,
+          speed:this.state.currentSpeed,
           isUserlogin:user,
           calories_burnt:this.state.calorieBurned,
           time:TimeFormatter(this.state.mainTimer),
@@ -1201,6 +965,7 @@ class Home extends Component {
         this.setEnabled(false);
         this.updatePaceButtonStyle();  
         clearInterval(this.IntervelSaveRun);
+        // clearInterval(this.getSpeedEvery30Sec);
         clearInterval(this.interval);
         ActivityRecognition.stop()
         // this.clearLocationUpdate();

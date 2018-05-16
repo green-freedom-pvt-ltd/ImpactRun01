@@ -132,6 +132,7 @@ export default {
                 CleverTap.recordEvent('ON_RUN_SYNC_LOCATION_POINTS',{
                     'upload_result':'failed',
                     'client_run_id':data.client_run_id,
+                    'error':err,
                   });
                 console.log('postlocationdataerror',err);
               })

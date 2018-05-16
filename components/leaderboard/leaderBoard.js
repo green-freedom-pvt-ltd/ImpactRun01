@@ -188,7 +188,7 @@ var iphone7Plus = 736;
       renderLoadingView() {
         return (
           <View>
-          <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/> 
+          <NavBar title={'Leaderboard'}/> 
           <View style= {styles.textlast7daysWrap}>
             <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
             </ModalDropDown>
@@ -360,7 +360,7 @@ var iphone7Plus = 736;
         
         return(
           <View>   
-            <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/>      
+            <NavBar title={'Leaderboard'}/>      
             <View style= {styles.textlast7daysWrap}>
               <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
               </ModalDropDown>
@@ -396,7 +396,7 @@ var iphone7Plus = 736;
           if (this.state.fetched === true) {
             return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-                <NavBar title={'Leaderboard'} rightIcon={this.renderImpactLeagueIcon()} rightBtn={this.navigateToImpactLeague}/>      
+                <NavBar title={'Leaderboard'}/>      
                 <View style= {styles.textlast7daysWrap}>
                   <ModalDropDown textStyle={styles.last7dayText} defaultValue = {'Last 7 days'} options={['Last 7 days', 'Last 30 days', 'All Time']} onSelect={(idx, value) => this.onSelectBoardType(idx, value)} >
                   </ModalDropDown>
@@ -455,7 +455,7 @@ var styles = StyleSheet.create({
    swipedown:{
     height:30,
     width:deviceWidth,
-    backgroundColor:styleConfig.bright_blue,
+    backgroundColor:styleConfig.light_sky_blue,
     justifyContent: 'center',
     alignItems: 'center',
   },

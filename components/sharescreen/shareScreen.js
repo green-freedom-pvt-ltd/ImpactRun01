@@ -38,6 +38,8 @@
   import Tab from '../homescreen/tab';
   const FBSDK = require('react-native-fbsdk');
   const CleverTap = require('clevertap-react-native');
+  import postUnsyncRun from '../postUnsyncRun.js';
+
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
    var moment = require('moment');
@@ -199,15 +201,20 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
 
     onCancel() {
 
-      console.log("CANCEL")
       this.setState({visible:false});
     }
     onOpen() {
-      console.log("OPEN")
       this.setState({visible:true});
     }
 
     componentDidMount(){
+      NetInfo.isConnected.fetch().then((isConnected) => {
+          if (isConnected) {
+              postUnsyncRun.fetchLocalRunData(this.props.user).
+            then((runData)=>{
+            })                 
+          }
+      })
       CleverTap.recordEvent('ON_LOAD_SHARE_SCREEN',{
         'distance': this.props.distance,
         'time_elapsed':this.props.time,
@@ -232,7 +239,7 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
         this.AddruntoRunHistory(time);  
       var cause = this.props.data;
       this.setState({
-        thankYouimageIndex:Math.floor(Math.random() * cause.cause_thank_you_image_v2.length)
+        thankYouimageIndex:(cause.cause_thank_you_image_v2.length > 1)? Math.floor(Math.random() * cause.cause_thank_you_image_v2.length):0,
       })
       // var data = this.props.data;
       // setTimeout(function(){
@@ -320,10 +327,10 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
         is_flag:false,
         calories_burnt:calories_burnt,
         team_id:(this.state.user != null)?this.state.user.team_code:null,
-        start_location_lat:startPosition.latitude,
-        start_location_long:startPosition.longitude,
-        end_location_lat:endPosition.latitude,
-        end_location_long:endPosition.longitude,
+        start_location_lat:(startPosition != null && startPosition != undefined)?startPosition.latitude:0.00,
+        start_location_long:(startPosition != null && startPosition != undefined)?startPosition.longitude:0.00,
+        end_location_lat:(endPosition != null && endPosition != undefined)?endPosition.latitude:0.00,
+        end_location_long:(endPosition != null && endPosition != undefined)?endPosition.longitude:0.00,
         no_of_steps:steps,
         is_ios:true,
         num_spikes:this.props.num_spikes,
@@ -418,10 +425,10 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
                run_duration: time,
                is_flag:false,
                calories_burnt:calories_burnt,
-               start_location_lat:startPosition.latitude,
-               start_location_long:startPosition.longitude,
-               end_location_lat:endPosition.latitude,
-               end_location_long:endPosition.longitude,
+               start_location_lat:(startPosition != null && startPosition != undefined)?startPosition.latitude:0.00,
+               start_location_long:(startPosition != null && startPosition != undefined)?startPosition.longitude:0.00,
+               end_location_lat:(endPosition != null && endPosition != undefined)?endPosition.latitude:0.00,
+               end_location_long:(endPosition != null && endPosition != undefined)?endPosition.longitude:0.00,
                no_of_steps:steps,
                is_ios:true,  
                client_run_id:me.props.client_run_id,
@@ -448,10 +455,10 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
                is_flag:false,
                calories_burnt:calories_burnt,
                team_id:(me.state.user != null )?me.state.user.team_code:null,
-               start_location_lat:startPosition.latitude,
-               start_location_long:startPosition.longitude,
-               end_location_lat:endPosition.latitude,
-               end_location_long:endPosition.longitude,
+               start_location_lat:(startPosition != null && startPosition != undefined)?startPosition.latitude:0.00,
+               start_location_long:(startPosition != null && startPosition != undefined)?startPosition.longitude:0.00,
+               end_location_lat:(endPosition != null && endPosition != undefined)?endPosition.latitude:0.00,
+               end_location_long:(endPosition != null && endPosition != undefined)?endPosition.longitude:0.00,
                no_of_steps:steps,
                is_ios:true, 
                client_run_id:me.props.client_run_id, 
@@ -612,7 +619,6 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
             this.setState({
               isPostingFeedBack:false,
             })
-            console.log('err',err);
           })
         }else{
           AlertIOS.alert('Field empty', 'you are trying to post empty feedback');
@@ -705,7 +711,7 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
           <TouchableOpacity style={{top:responsiveHeight(.4),position:'absolute',right:10,backgroundColor:'transparent'}} onPress = {()=>this.closePopupfirstModel()}>
              <Icon style={{color:'black',fontSize:30,fontWeight:'900'}}name={'ios-close'}></Icon>
            </TouchableOpacity>
-            <Text style={{textAlign:'center',marginTop:responsiveHeight(4.5),margin:5,color:styleConfig.greyish_brown_two,fontWeight:'900',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>How was you run ?</Text>
+            <Text style={{textAlign:'center',marginTop:responsiveHeight(4.5),margin:5,color:styleConfig.greyish_brown_two,fontWeight:'900',fontFamily: styleConfig.FontFamily,width:deviceWidth-100,fontSize:20}}>How was it ?</Text>
             <View style={styles.modelBtnWrap}>
               <TouchableOpacity style={styles.modelbtnSad} onPress ={()=>this.SadIconClick()}><Icon style={{color:styleConfig.light_sky_blue,fontSize:responsiveFontSize(7),bottom:responsiveHeight(2)}} name={'md-sad'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'800',fontFamily: styleConfig.FontFamily}}>NOT GOOD!</Text></TouchableOpacity>
               <TouchableOpacity style={styles.modelbtnHappy}onPress ={()=>this.HappyIconClick()}><Icon style={{color:styleConfig.light_sky_blue,fontSize:responsiveFontSize(7),bottom:responsiveHeight(2)}} name={'md-happy'}></Icon><Text style={{textAlign:'center',color:styleConfig.greyish_brown_two,fontWeight:'800',fontFamily: styleConfig.FontFamily}}>I LOVED IT!</Text></TouchableOpacity>
@@ -875,7 +881,7 @@ import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-nat
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{bottom:responsiveHeight(4.5),height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
+              <View style={{bottom:responsiveHeight(2),height:40,width:deviceWidth,justifyContent: 'center',alignItems: 'center',position:'absolute'}}>            
                 <TouchableOpacity onPress={() => this.navigateTOhome()}>
                   <Text style={{height:30,color:styleConfig.light_sky_blue,fontFamily: 'Montserrat-Regular',fontWeight:'600'}}>{'Continue >'}</Text>
                 </TouchableOpacity>

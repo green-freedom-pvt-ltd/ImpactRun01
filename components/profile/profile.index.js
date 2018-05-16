@@ -161,7 +161,7 @@ class Profile extends Component {
                 })
                 fetchRundata.fetchRunhistoryupdataData(this.props.user,this.state.runversion)
                .then((runData)=>{
-                console.log('runData',runData);
+                 console.log('runData',runData);
 
              
                   // console.log('getrunDataifrunversion',runData);
@@ -176,6 +176,11 @@ class Profile extends Component {
                     this.fetchTotalDistance();
                  
                     console.log('loadingRuns',this.state.loadingRuns);
+                  }else{
+                    this.setState({
+                      rawData:[],
+                      loadingRuns:false,
+                    })
                   }
                 })
                
@@ -185,6 +190,7 @@ class Profile extends Component {
                 })
                fetchRundata.fetchRunhistoryupdataData(this.props.user,this.state.runversion)
                .then((runData)=>{
+                console.log('rundata123',runData);
                 // console.log('getrunDataifrunversion0',runData);
                
                   // console.log('RunData',runData);
@@ -197,6 +203,11 @@ class Profile extends Component {
                     this.getRunCount();
                     this.fetchAmount();
                     this.fetchTotalDistance();
+                  }else{
+                    this.setState({
+                      rawData:[],
+                      loadingRuns:false,
+                    })
                   }
                 })
               

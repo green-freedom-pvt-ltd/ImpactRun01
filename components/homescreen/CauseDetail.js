@@ -63,7 +63,7 @@ class CauseDetail extends Component {
       if (authorization === "authorizedWhenInUse") {
       me.props.navigator.push({
          id:'runlodingscreen',
-         passProps: {data: data,killRundata:null},
+         passProps: {data: data,user:this.props.user,killRundata:null},
            navigationOptions: {
               gesturesEnabled: false,
             },
@@ -285,10 +285,11 @@ class CauseDetail extends Component {
   Disctext:{
     fontSize:styleConfig.causeDisc+2,
     marginBottom:100,
-    color:styleConfig.black_two,
+    color:styleConfig.black,
     top:10,
     fontFamily:styleConfig.LatoRegular,
     lineHeight:20,
+    opacity:.80,
   },
   bytext:{
     paddingBottom:10,

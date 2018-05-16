@@ -73,9 +73,15 @@ class HelpCenter extends Component {
             return this.navigateToFeedbackPage(rowData);
         }else if(rowData.name === 'My issue isn\'t listed here'){
           return this.navigateToListOfQuestions(rowData);
-        }
-
+        }else if (rowData.name === 'Settings');
+          return this.navigateToSettings();
        }
+
+       navigateToSettings(){
+        this.props.navigator.push({
+          id:'setting',         
+        })
+      }
        
         navigateToHelp(rowData){
         this.props.navigator.push({
@@ -272,6 +278,9 @@ class HelpCenter extends Component {
               },
             ],
          },
+         {
+          'name':'Settings',
+         }
       
         ]
        
@@ -299,12 +308,17 @@ class HelpCenter extends Component {
 
 
       renderRow(rowData) {
+       var top = (rowData.name == 'Settings')? deviceHeight-(50*4)-styleConfig.tabHeight-50-styleConfig.navBarHeight-45:(rowData.name === "I have an issue with past workout")?15:0;
+       var postion = (rowData.name == 'Settings')? 'relative':'relative';
+       var BorderTop = (rowData.name == 'Settings')? 1:0;
+       var BorderBottom = (rowData.name == 'Settings')? 0:1;
+
         return (
-          <TouchableOpacity  onPress={()=> this.navigateToNextPage(rowData)}style={{paddingLeft:20,height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",}}>           
-            <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',alignItems:'flex-start'}}>
+          <TouchableOpacity  onPress={()=> this.navigateToNextPage(rowData)}style={{marginTop:top,paddingLeft:20,height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",position:postion}}>           
+            <View style = {{flex:1,justifyContent: 'center',borderTopWidth:BorderTop,borderBottomWidth:BorderBottom,borderColor:'#f9f9f9',alignItems:'flex-start'}}>
               <Text style={{fontWeight:'600',color:'#595c5d',fontFamily:styleConfig.LatoBlack,fontSize:styleConfig.helpCenterListFontSize,opacity:.90}}>{rowData.name}</Text>
             </View>
-            <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',}}>
+            <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderTopWidth:BorderTop,borderBottomWidth:BorderBottom,borderColor:'#f9f9f9',}}>
                 <IconSec style={{color:'#c1c6c7',fontSize:20,}}name={'ios-arrow-forward'}></IconSec>
             </View>
           </TouchableOpacity>
@@ -314,13 +328,16 @@ class HelpCenter extends Component {
       render() {
          return (
               <View style={{height:deviceHeight,width:deviceWidth}}>
-              <NavBar title={'Help'}/>
+              
                 <ListView
-                style={{top:10,height:deviceHeight,width:deviceWidth,backgroundColor:'white',}}
+                style={{top:styleConfig.navBarHeight+20,height:deviceHeight,width:deviceWidth,backgroundColor:'#f9f9f9',}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
                 dataSource={this.state.HelpCenterTabs}
                 scrollEnabled={false}/>
+                <View style ={{position:'absolute',top:0}}>
+                <NavBar title={'Help'}/>
+                </View>
                </View>
               );
           }

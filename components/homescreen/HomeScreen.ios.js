@@ -92,7 +92,7 @@ class Homescreen extends Component {
             snapshotContentContainer: false,
           },
           isDenied:false,
-          overall_impact:'',
+          overall_impact:0,
           my_rate:1,
           loadingImpact:true,
         };
@@ -425,7 +425,7 @@ class Homescreen extends Component {
             <View>
               <ImageLoad placeholderSource={require('../../images/cause_image_placeholder.jpg')} isShowActivity={true} placeholderStyle={styles.cover} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_image}} style={styles.cover}>        
               </ImageLoad>
-              <View style={{paddingLeft:15,width:responsiveWidth(71),backgroundColor:'rgba(255, 255, 255, 0.65)',top:-responsiveHeight(3),height:responsiveHeight(3),justifyContent:'center'}}>
+              <View style={{paddingLeft:15,width:responsiveWidth(71),backgroundColor:'rgba(255, 255, 255, 0.65)',top:-responsiveHeight(2.9),height:responsiveHeight(3),justifyContent:'center'}}>
                   <Text style={{fontWeight:'400', fontSize:responsiveFontSize(1.5),  color:styleConfig.greyish_brown_two, fontFamily:styleConfig.FontFamily,}}>
                     {cause.cause_category}
                   </Text>
@@ -729,8 +729,8 @@ class Homescreen extends Component {
           <View style={styles.page} ref={(instance) => this.rows.push(instance)}>        
             <TouchableWithoutFeedback  accessible={false} onPress={()=>this.navigateToCauseDetail(cause)} >
             <View style={styles.album} >
-              <Image source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5, resizeMode: "contain",}}>
-              </Image>
+              <ImageLoad placeholderSource={require('../../images/placeholderPort.png')} isShowActivity={true} placeholderStyle={{height:this.state.height,width:this.state.width,borderRadius:5,}} loadingStyle={{size: 'small', color: 'grey'}} source={{uri:cause.cause_completed_image}} style={{height:this.state.height,width:this.state.width,borderRadius:5,}}>
+              </ImageLoad>
             </View>
             </TouchableWithoutFeedback>
           </View>
@@ -814,22 +814,21 @@ class Homescreen extends Component {
         } else {
           cause = {}
         }
-       var Overallimpact = this.state.overall_impact/this.state.my_rate;
-       var Impact = parseFloat(Overallimpact).toFixed(0);
+
+       var Overallimpact = parseFloat(this.state.overall_impact/this.state.my_rate).toFixed(0);
+       var comma = (Math.round(Overallimpact*100)/100).toLocaleString('en-'+this.state.my_currency.slice(0,2));
+       var Impact = (Overallimpact != null && Overallimpact != NaN)? comma:0;
       if (!this.state.loadingImpact && this.props.myCauseNum != null) {
       return (
           <View style={{backgroundColor:'white',height:deviceheight,width:deviceWidth}}>
           <View style={{backgroundColor:'white',height:deviceheight}}>
+          <View style = {{width:deviceWidth,height:20,backgroundColor:styleConfig.light_sky_blue}}></View>
           <View style={styles.TotalRaisedTextWrap}>
            <View style={{flexDirection:'column'}}>           
             <Text style={styles.TotalRaisedText}>
 
             <Icon style={[styles.TotalRaisedText,{fontSize:styleConfig.fontTotalRaised-5}]}name={this.state.my_currency.toLowerCase()}></Icon>
-            <Text>{' '}</Text>
-              <AnimateNumber myRate = {this.state.my_rate} TotalRaisedimpact = {Impact} currencyString = {this.state.my_currency.slice(0,2)} value={Impact} formatter={(val) => {
-                  return ' ' + parseFloat(val).toFixed(0)
-                }} ></AnimateNumber>  
-
+             <Text>{Impact}</Text>
            </Text>
            <Text style={styles.totaltextlable}>Impact so far</Text>     
           </View>
@@ -879,10 +878,10 @@ class Homescreen extends Component {
       width:deviceWidth,
       justifyContent: 'center',
       alignItems: 'center',
-      top:responsiveHeight(24)-responsiveHeight(7.8125),
+      top:responsiveHeight(24)-responsiveHeight(7.8125)-20,
     },
     TotalRaisedTextWrap:{
-       top:responsiveHeight(10.2),
+       top:responsiveHeight(10.2)-20,
        width:deviceWidth,
        backgroundColor:'white',
        alignItems: 'center',
@@ -915,7 +914,7 @@ class Homescreen extends Component {
       paddingLeft:0,
       height:responsiveHeight(52),
       justifyContent: 'center',
-      top:responsiveHeight(24)-responsiveHeight(7.8125),
+      top:responsiveHeight(24)-responsiveHeight(7.8125)-20,
     },
 
     page:{

@@ -4,11 +4,11 @@ import {
 } from 'react-native';
 import getLocalData from './getLocalData.js';
 import apis from './apis.js';
-const CleverTap = require('clevertap-react-native');
+const  CleverTap = require('clevertap-react-native');
 import fetchDatafromApi from './getDataFromApi.js';
 import setLocalData from './setLocalData.js';
 export default {
-       getCauseFromApi(auth_token){
+        getCauseFromApi(auth_token){
             let headerData = {
                 method: "GET",
                 headers: {
@@ -71,6 +71,7 @@ export default {
             getLocalData.getData('overall_impact')
             .then((result)=>{
                 if (result != null) {
+                    console.log('resultoverall_impact',overall_impact);
                     AsyncStorage.removeItem('oldoverall_impact',(err) => {
                     });
                     setLocalData.setData('oldoverall_impact',result)

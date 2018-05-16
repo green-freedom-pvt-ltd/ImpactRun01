@@ -186,7 +186,7 @@ class Application extends Component{
            return Navigator.SceneConfigs.FloatFromBottom
            break;
            case 'setting':
-           return Navigator.SceneConfigs.FloatFromLeft
+           return Navigator.SceneConfigs.FloatFromRight
            break;
            case 'thankyouscreen':
            return Navigator.SceneConfigs.FloatFromRight

@@ -308,7 +308,8 @@ class ImpactLeagueCode extends Component {
       if (this.state.FormScreen!= true) {
   		  return (
           <View style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white'}}>
-          <NavBar title={'Impact League'} leftIcon={this.leftIconRender()} />
+          <NavBar title={'Impact League'}  />
+          <ScrollView style ={{height:deviceHeight,width:deviceWidth}}>
           <View style={styles.container}>
           <View style={styles.ContentWrap}>
           <Text style={{marginTop:10,color:styleConfig.purplish_brown,fontSize:styleConfig.FontSizeDisc,fontFamily:styleConfig.FontFamily,}}>Enter the secret code here.</Text>
@@ -332,7 +333,9 @@ class ImpactLeagueCode extends Component {
             </View>
           </View>
           </View>
+          </ScrollView>
           {this.isloading()}
+
           </View>
   			);
       }else{

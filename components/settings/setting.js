@@ -31,6 +31,7 @@ var DeviceInfo = require('react-native-device-info');
 var my_distance = 'km';
 var my_currency = [];
 
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
 
 
 var FBLoginManager = require('react-native-facebook-login').FBLoginManager;
@@ -398,10 +399,11 @@ class Setting extends Component {
       renderRow(rowData) {
         var alignItems = (rowData.name === 'Logout')? 'flex-start':'flex-start';
         // console.log('rowData',rowData);
-        var marginTop = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?200:0;
+        var top = (rowData.name === 'Logout')?15:(rowData.name === 'Version')?deviceHeight-styleConfig.navBarHeight-70-styleConfig.tabHeight-(50*5):(rowData.name === 'Share')?15:0;
+        var postion = (rowData.name === 'Version')?"absolute":"relative";
         var borderBottomWidth = (rowData.name === 'Logout' || rowData.name === 'help')?0:0.5;
         return (
-          <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:marginTop}}>
+          <TouchableOpacity  onPress={()=> this.onClickLi(rowData)}style={{height:50,width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",marginTop:top}}>
             <View style={{borderBottomWidth:borderBottomWidth,borderBottomColor:'#e2e5e6',flex:-1,width:50,justifyContent: 'center',alignItems: 'center',}}>
                {this.ListIconfirst(rowData)}
             </View>
@@ -414,17 +416,35 @@ class Setting extends Component {
           </TouchableOpacity>
         );
       }
+      
+
+      goBack(){
+          this.props.navigator.pop({});
+      }
+
+
+
+      leftIconRender(){
+          return(
+            <TouchableOpacity style={{paddingLeft:10,height:styleConfig.navBarHeight,width:50,backgroundColor:'transparent',justifyContent: 'center',alignItems: 'flex-start',}} onPress={()=>this.goBack()} >
+              <IconSec style={{color:'black',fontSize:responsiveFontSize(3.5),fontWeight:'bold',opacity:.80}}name={(this.props.data === 'fromshare')?'md-home':'ios-arrow-back'}></IconSec>
+            </TouchableOpacity>
+          )
+        }
 
       render() {
          return (
-              <View style={{height:deviceHeight-styleConfig.tabHeight,width:deviceWidth}}>
-                 <NavBar title={'Settings'}/>      
+              <View style={{height:deviceHeight,width:deviceWidth}}>
+                     
                <ListView
-                style={{height:deviceHeight-styleConfig.tabHeight,width:deviceWidth,backgroundColor:'white',top:5,}}
+                style={{height:deviceHeight-styleConfig.navBarHeight,width:deviceWidth,backgroundColor:'#f9f9f9',top:styleConfig.navBarHeight+20,}}
                 renderRow={this.renderRow}
                 automaticallyAdjustContentInsets={false}
                 dataSource={this.state.SettingTabs}
                 scrollEnabled={false}/>
+                <View style={{position:'absolute',top:0,}}> 
+                  <NavBar title={'Settings'} leftIcon = {this.leftIconRender()}/> 
+                </View>
                </View>
               );
           }

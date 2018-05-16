@@ -65,7 +65,6 @@ class QuestionLists extends Component {
  
 
       componentDidMount() {
-        console.log('tags',this.props.tag);
         this.setState({
            HelpCenterTabs: this.state.HelpCenterTabs.cloneWithRows(this.props.data),
         })
@@ -93,13 +92,12 @@ class QuestionLists extends Component {
 
 
       renderRow(rowData) {
-        console.log('rowData',rowData);
         return (
           <TouchableOpacity  onPress={()=> this.navigateToNextPage(rowData)}style={{paddingLeft:20,height:50, width:deviceWidth,justifyContent: 'center',flexDirection:'row',backgroundColor:"white",}}>           
-            <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',alignItems:'flex-start'}}>
+            <View style = {{flex:1,justifyContent: 'center',borderBottomWidth:1,borderBottomColor:'#f9f9f9',alignItems:'flex-start'}}>
               <Text style={{color:'#595c5d',fontSize:styleConfig.helpCenterListFontSize,fontFamily:styleConfig.LatoBlack,fontWeight:'600'}}>{rowData.name}</Text>
             </View>
-            <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#e2e5e6',}}>
+            <View style={{flex:-1,width:50 ,justifyContent: 'center',alignItems: 'center',borderBottomWidth:1,borderBottomColor:'#f9f9f9',}}>
                 <IconSec style={{color:'#c1c6c7',fontSize:20,}}name={'ios-arrow-forward'}></IconSec>
             </View>
           </TouchableOpacity>
@@ -111,7 +109,7 @@ class QuestionLists extends Component {
               <View style={{height:deviceHeight,width:deviceWidth}}>
               <NavBar title={'Select issue'} leftIcon={this.leftIconRender()}/>
               <ListView
-                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'white',top:10}}
+                style={{height:deviceHeight,width:deviceWidth,backgroundColor:'#f9f9f9',top:10}}
                 renderRow={this.renderRow}
                 dataSource={this.state.HelpCenterTabs}
                 scrollEnabled={false}/>

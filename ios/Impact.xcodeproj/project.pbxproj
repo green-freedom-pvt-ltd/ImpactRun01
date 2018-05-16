@@ -59,6 +59,7 @@
 		38A2DC671F51816B008B28E3 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38A2DC661F518161008B28E3 /* libRNShare.a */; };
 		38A2DC6E1F51CD91008B28E3 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38A2DC6D1F51CD87008B28E3 /* libRNViewShot.a */; };
 		38A8ABE51FD532AF00906B60 /* libCleverTapReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38A8ABE41FD532A000906B60 /* libCleverTapReact.a */; };
+		38FAB7502024682C001531F9 /* libRNMotionManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FAB74D20246818001531F9 /* libRNMotionManager.a */; };
 		460E5E6347BC4EDA954E2EE0 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4AB63F98784C059AF4EFA0 /* libRNDeviceInfo.a */; };
 		4BB182AF059E4C12B5F4560C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D0CA80CF7D534678BC658915 /* libc++.tbd */; };
 		4DA7BA09586042CBAA64B74F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3FF5421BD81B40CC986321F5 /* Zocial.ttf */; };
@@ -73,7 +74,6 @@
 		BF23EE30693248BF898F6A55 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2819C9B846CC44B8BA0F3A5A /* MaterialIcons.ttf */; };
 		C283A818016146B2914F8ACA /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3CBDACC10A04CEFBF09A1E0 /* libRealmReact.a */; };
 		CA93DD9E7D11486493DE58DB /* libRNUUIDGenerator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 361B7F17D73D484BB04EF406 /* libRNUUIDGenerator.a */; };
-		CFD4861D4ACD6E76AC37A3C7 /* libPods-Impact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C5319C0D20D7E29174ACB12D /* libPods-Impact.a */; };
 		EB67F453274E4E0B8A8EBEBA /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA7442DC8B7141A2B0FBE5FD /* EvilIcons.ttf */; };
 		FBE6F199334A4AFDB4C92821 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10260D3FD10545F894B36155 /* MaterialCommunityIcons.ttf */; };
 /* End PBXBuildFile section */
@@ -289,6 +289,20 @@
 			remoteGlobalIDString = F60690131CA2766F0003FB26;
 			remoteInfo = RealmReact;
 		};
+		38FAB74C20246818001531F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 38FAB74720246816001531F9 /* RNMotionManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BB9CC7ED1AE0A2EB008A1D08;
+			remoteInfo = RNMotionManager;
+		};
+		38FAB74E20246818001531F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 38FAB74720246816001531F9 /* RNMotionManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BB9CC7F81AE0A2EB008A1D08;
+			remoteInfo = RNMotionManagerTests;
+		};
 		3DAD3E831DF850E9000B6D8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
@@ -439,7 +453,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -498,6 +511,7 @@
 		38A2DC611F518160008B28E3 /* RNShare.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
 		38A2DC681F51CD86008B28E3 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
 		38A8ABDF1FD5329C00906B60 /* CleverTapReact.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CleverTapReact.xcodeproj; path = "../node_modules/clevertap-react-native/ios/CleverTapReact.xcodeproj"; sourceTree = "<group>"; };
+		38FAB74720246816001531F9 /* RNMotionManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMotionManager.xcodeproj; path = "../node_modules/react-native-motion-manager/RNMotionManager.xcodeproj"; sourceTree = "<group>"; };
 		3FF5421BD81B40CC986321F5 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		40CF99F43C421B664632C23E /* Pods-Impact.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Impact.release.xcconfig"; path = "Pods/Target Support Files/Pods-Impact/Pods-Impact.release.xcconfig"; sourceTree = "<group>"; };
 		4A919148FA8A49F3967FCF5E /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
@@ -518,7 +532,6 @@
 		B647DEFC1F8FCAEB00C91C8C /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		B9FD4348E66C4D8A98A09607 /* RealmReact.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RealmReact.xcodeproj; path = "../node_modules/realm/react-native/ios/RealmReact.xcodeproj"; sourceTree = "<group>"; };
 		BECFD123918048758D21C286 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		C5319C0D20D7E29174ACB12D /* libPods-Impact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Impact.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0CA80CF7D534678BC658915 /* libc++.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		D3CBDACC10A04CEFBF09A1E0 /* libRealmReact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRealmReact.a; sourceTree = "<group>"; };
 		EA7442DC8B7141A2B0FBE5FD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -530,6 +543,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38FAB7502024682C001531F9 /* libRNMotionManager.a in Frameworks */,
 				38A8ABE51FD532AF00906B60 /* libCleverTapReact.a in Frameworks */,
 				B647DF051F8FCB3200C91C8C /* libBVLinearGradient.a in Frameworks */,
 				383A0B271F6402F100E6E184 /* libRNVectorIcons.a in Frameworks */,
@@ -571,7 +585,6 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				387850D61F4DC9DF00910BA6 /* Fabric.framework in Frameworks */,
 				460E5E6347BC4EDA954E2EE0 /* libRNDeviceInfo.a in Frameworks */,
-				CFD4861D4ACD6E76AC37A3C7 /* libPods-Impact.a in Frameworks */,
 				140BDA59B6B943148574F666 /* libRNActivityRecognition.a in Frameworks */,
 				CA93DD9E7D11486493DE58DB /* libRNUUIDGenerator.a in Frameworks */,
 				C283A818016146B2914F8ACA /* libRealmReact.a in Frameworks */,
@@ -647,7 +660,6 @@
 			children = (
 				3831F1501FBD78E2000E11AA /* Bolts.framework */,
 				387851111F4DCF0A00910BA6 /* Impactrun.entitlements */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				3841D6FF1F4DEB4B00BE50D5 /* Montserrat-Bold.ttf */,
 				3841D7001F4DEB4B00BE50D5 /* Montserrat-Regular.ttf */,
@@ -789,7 +801,6 @@
 				387ED9FA1F4DE18600BFA136 /* SystemConfiguration.framework */,
 				387ED9F81F4DE16D00BFA136 /* SafariServices.framework */,
 				387ED9D01F4DE15B00BFA136 /* AddressBook.framework */,
-				C5319C0D20D7E29174ACB12D /* libPods-Impact.a */,
 				D0CA80CF7D534678BC658915 /* libc++.tbd */,
 			);
 			name = Frameworks;
@@ -859,6 +870,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		38FAB74820246816001531F9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				38FAB74D20246818001531F9 /* libRNMotionManager.a */,
+				38FAB74F20246818001531F9 /* RNMotionManagerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -880,6 +900,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				38FAB74720246816001531F9 /* RNMotionManager.xcodeproj */,
 				38A8ABDF1FD5329C00906B60 /* CleverTapReact.xcodeproj */,
 				B647DEFC1F8FCAEB00C91C8C /* BVLinearGradient.xcodeproj */,
 				383A0B211F64028F00E6E184 /* RNVectorIcons.xcodeproj */,
@@ -1007,6 +1028,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = SMK2PD2433;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1122,6 +1144,10 @@
 				{
 					ProductGroup = 389B8DC61F4F17A4002DDCB9 /* Products */;
 					ProjectRef = 389B8DC51F4F17A4002DDCB9 /* RNLocation.xcodeproj */;
+				},
+				{
+					ProductGroup = 38FAB74820246816001531F9 /* Products */;
+					ProjectRef = 38FAB74720246816001531F9 /* RNMotionManager.xcodeproj */;
 				},
 				{
 					ProductGroup = 389B8DCD1F4F1998002DDCB9 /* Products */;
@@ -1360,6 +1386,20 @@
 			fileType = archive.ar;
 			path = libRealmReact.a;
 			remoteRef = 38F90DB72012AD7500B4B7D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		38FAB74D20246818001531F9 /* libRNMotionManager.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNMotionManager.a;
+			remoteRef = 38FAB74C20246818001531F9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		38FAB74F20246818001531F9 /* RNMotionManagerTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RNMotionManagerTests.xctest;
+			remoteRef = 38FAB74E20246818001531F9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3DAD3E841DF850E9000B6D8A /* libRCTImage-tvOS.a */ = {
@@ -1624,6 +1664,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Impactrun/Impactrun.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = SMK2PD2433;
@@ -1671,6 +1712,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.impactrun.appImpactrun;
 				PRODUCT_NAME = Impact;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1682,6 +1725,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = Impactrun/Impactrun.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SMK2PD2433;
 				ENABLE_BITCODE = NO;

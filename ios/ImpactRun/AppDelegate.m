@@ -33,8 +33,8 @@
                                                          appId:@"fe19376e-04a5-4ba1-a4a8-74f9ea9b0ca8"];
   NSURL *jsCodeLocation;
 
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
-//  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.2:8081/index.ios.bundle?platform=ios&dev=true"];
+   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+ // jsCodeLocation = [NSURL URLWithString:@"http://192.168.201.243:8081/index.ios.bundle?platform=ios&dev=true"];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Impactrun"
                                                initialProperties:nil

@@ -12,6 +12,7 @@ import {
     TouchableOpacity,
     AsyncStorage,
     Image,
+    ImageBackground,
     NetInfo
 } from 'react-native'
 import apis from '../../components/apis';
@@ -321,10 +322,9 @@ class Login extends Component {
           var text = this.state.user ? "LOG OUT" : "LOGIN WITH FACEBOOK";
           return  (
             <View style={{height:deviceHeight+5,width:deviceWidth,backgroundColor:'white'}}>
-              <Image source={require('../../images/login_background.png')} style={styles.shadow}>         
+              <ImageBackground source={require('../../images/loginBackground.png')} style={styles.shadow}>         
                 <View style={styles.center}>         
-                  <Image source={require('../../images/Logo.png')} style={styles.logo} />
-                  <Text style={styles.getFit}>Get Fit. Do Good.</Text>
+                 
                 </View>
 
                 <View style={styles.container}>
@@ -350,7 +350,7 @@ class Login extends Component {
                     </View>
                   </View>
                 </View>
-              </Image> 
+              </ImageBackground> 
             </View>   
           )
       }

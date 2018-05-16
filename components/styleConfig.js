@@ -408,7 +408,7 @@ export default {
   FontSizeDisc:fontSizer2(),
   FontSize3:fontSizer3(),
   FontSize4:fontSizer4(),
-  FontSizeLogin:FontSizeLogin(),
+  FontSizeLogin:responsiveFontSize(1.8),
   beginRunBtnHeight:BtnHight(),
   beginRunBtnWidth:BtnWidth(),
   LogoHeight:LogoHeight(),

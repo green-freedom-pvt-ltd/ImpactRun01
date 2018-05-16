@@ -1,6 +1,6 @@
 import {
-   AsyncStorage,
-   AlertIOS,
+  AsyncStorage,
+  AlertIOS,
 } from 'react-native';
 import getLocalData from './getLocalData.js';
 import apis from './apis.js';
@@ -82,6 +82,7 @@ export default {
                                 setLocalData.setData("pastRunSyncTime",JSON.stringify(this.returnNEwDate()))
                             })
                         });
+                        console.log('JSON.parse(fetchRunhistoryData)',JSON.parse(fetchRunhistoryData));
                         return JSON.parse(fetchRunhistoryData);                   
                       
                     } 
